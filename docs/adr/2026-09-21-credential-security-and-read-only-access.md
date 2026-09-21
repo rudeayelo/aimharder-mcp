@@ -21,3 +21,7 @@ These require an explicit request, unambiguous identification of the date/sessio
 ## Verification and privacy
 
 Sanitized evidence consists of the endpoint, HTTP status, structure, and minimal result. Do not store authentication headers, passwords, cookies, or full responses containing other users' information. Keep `evidence/` out of Git. Prepare separate anonymized samples and review them before publication.
+
+## Account/gym implementation
+
+Issue #2 implements this policy with fixed HTTPS login/discovery endpoints, an in-memory cookie jar, identity comparison, rejected redirects, bounded responses and timeouts, and sanitized errors. Authentication failures stop further login attempts until restart. See the [implementation ADR](2026-09-21-account-discovery-and-local-runtime.md) for the verified `.es` contract and [validation results](../validation.md) for the distinction between live and fixture-tested behavior.

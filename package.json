@@ -1,0 +1,30 @@
+{
+  "name": "aimharder-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local read-only AimHarder MCP server",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "packageManager": "pnpm@12.5.1",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:live": "node scripts/live-check.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "tough-cookie": "6.0.2",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.6",
+    "msw": "2.15.0",
+    "typescript": "7.0.2",
+    "vitest": "5.0.1"
+  }
+}

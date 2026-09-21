@@ -1,6 +1,6 @@
 # ADR: initial scope and implementation pause
 
-Status: provisional scope superseded by [the local TypeScript MCP MVP](2026-09-21-local-typescript-mcp-mvp.md). Retained as a historical record of the initial pause. The MVP definition is confirmed; implementation remains pending. The initial publication restriction is superseded by [the public repository decision](2026-09-21-public-repository-and-mit-license.md).
+Status: provisional scope superseded by [the local TypeScript MCP MVP](2026-09-21-local-typescript-mcp-mvp.md). Retained as a historical record of the initial pause. The MVP definition is confirmed; implementation of issue #2 was subsequently authorized; see the [implementation ADR](2026-09-21-account-discovery-and-local-runtime.md). The initial publication restriction is superseded by [the public repository decision](2026-09-21-public-repository-and-mit-license.md).
 
 ## Context
 
@@ -12,4 +12,4 @@ Pause ongoing implementation. Document decisions in `docs/adr/` using `YYYY-MM-D
 
 ## Consequences
 
-Implementation remains pending. Documentation distinguishes goals, proposals, and verified results; the MVP defines the current scope and acceptance criteria.
+At the time of this historical decision, implementation was pending. Documentation distinguishes goals, proposals, and verified results; the MVP defines the current scope and acceptance criteria.

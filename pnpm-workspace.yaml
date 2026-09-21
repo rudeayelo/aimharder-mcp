@@ -1,0 +1,3 @@
+# Node tests do not use MSW's browser service-worker installer.
+allowBuilds:
+  msw: false

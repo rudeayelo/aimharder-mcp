@@ -10,7 +10,7 @@ The user requires all project content to be in English; conversation may remain 
 
 ## Decision
 
-Publish `rudeayelo/aimharder-mcp` as a public repository with `main` as the initial branch, an English README, and an MIT `LICENSE` file. Maintain all project content and repository metadata in English, including document filenames. Preserve external API identifiers, proper names, and original research evidence. The first delivery contains documentation and Git configuration; server implementation remains pending.
+Publish `rudeayelo/aimharder-mcp` as a public repository with `main` as the initial branch, an English README, and an MIT `LICENSE` file. Maintain all project content and repository metadata in English, including document filenames. Preserve external API identifiers, proper names, and original research evidence. The initial publication contained documentation and Git configuration; server implementation was pending at that time. Subsequent implementation status is maintained in the [README](../../README.md).
 
 Exclude `evidence/`, environment files containing secrets, and generated output through `.gitignore`. Remove personal references and private configuration details from public documentation. Add future API samples only after anonymization and review.
 

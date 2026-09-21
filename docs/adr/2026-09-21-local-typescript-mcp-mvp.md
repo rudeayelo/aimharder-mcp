@@ -4,7 +4,7 @@ Status: accepted by the user on 2026-09-21; validation clarified the same day to
 
 ## Context
 
-Personal exploration evolved into a reusable MCP server. The definition interview settled scope, format, operation, validation, and future development. This supersedes the provisional scope of [the initial pause](2026-09-21-initial-scope-and-project-pause.md); current work remains limited to documentation.
+Personal exploration evolved into a reusable MCP server. The definition interview settled scope, format, operation, validation, and future development. This supersedes the provisional scope of [the initial pause](2026-09-21-initial-scope-and-project-pause.md); the user subsequently authorized implementation of issue #2. Account/gym discovery is implemented; see the [implementation ADR](2026-09-21-account-discovery-and-local-runtime.md).
 
 ## Decision
 

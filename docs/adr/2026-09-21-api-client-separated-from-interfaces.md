@@ -1,6 +1,6 @@
 # ADR: API client separated from interfaces
 
-Status: accepted for the MVP; implementation pending. See [the local TypeScript MCP MVP](2026-09-21-local-typescript-mcp-mvp.md).
+Status: accepted for the MVP; implemented for account/gym discovery in issue #2. See [the local TypeScript MCP MVP](2026-09-21-local-typescript-mcp-mvp.md).
 
 ## Context
 
@@ -16,4 +16,4 @@ Keep authentication, transport, models, and response validation decoupled from p
 
 ## Uncertainties
 
-FitBot uses .com; the provided gym uses .es. The user believes they are equivalent, but cookies, redirects, and authentication across domains remain unverified. WODs require investigating additional operations; per-exercise personal record analysis is outside the MVP.
+FitBot uses .com; the provided gym uses .es. The user believes they are equivalent, but cross-domain equivalence remains unverified. The `.es` authentication and account/gym flow is now verified; see the [implementation ADR](2026-09-21-account-discovery-and-local-runtime.md). WODs require investigating additional operations; per-exercise personal record analysis is outside the MVP.

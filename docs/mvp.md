@@ -1,12 +1,12 @@
 # AimHarder MCP server MVP
 
-Date: 2026-09-21. Status: scope confirmed by the user; [implementation specification published as GitHub issue #1](https://github.com/rudeayelo/aimharder-mcp/issues/1); implementation pending.
+Date: 2026-09-21. Status: scope confirmed by the user; [implementation specification published as GitHub issue #1](https://github.com/rudeayelo/aimharder-mcp/issues/1); account/gym slice implemented; remaining MVP slices pending. See [validation results](validation.md).
 
 ## Product and users
 
 A local TypeScript MCP server, with one account per instance. The initial use case is personal, with possible later validation by a small group already familiar with connecting an MCP server. The server targets MCP-compatible clients and harnesses without depending on a particular agent or requiring a dedicated integration.
 
-Distribution: a repository with setup and startup instructions. License: [MIT](../LICENSE). A public repository has been created on [GitHub](https://github.com/rudeayelo/aimharder-mcp); see [the publication ADR](adr/2026-09-21-public-repository-and-mit-license.md). All project content is maintained in English. Setup and startup instructions will be added when the server is implemented. Potential collaboration with AimHarder will be considered once a useful, viable product exists, without assuming platform interest or endorsement.
+Distribution: a repository with setup and startup instructions. License: [MIT](../LICENSE). A public repository has been created on [GitHub](https://github.com/rudeayelo/aimharder-mcp); see [the publication ADR](adr/2026-09-21-public-repository-and-mit-license.md). All project content is maintained in English. Setup and startup instructions for account/gym discovery are in the [README](../README.md). Potential collaboration with AimHarder will be considered once a useful, viable product exists, without assuming platform interest or endorsement.
 
 Domain terms are defined in the root [glossary](../CONTEXT.md).
 
@@ -59,11 +59,11 @@ Every slice includes behavioral tests at the MCP interface, separate live read-o
 
 ## Operation
 
-Keep the AimHarder client independent of the MCP layer, with runtime validation of external responses. Supply credentials through environment variables; the user may inject them from 1Password or another manager. Variable names and commands await implementation.
+Keep the AimHarder client independent of the MCP layer, with runtime validation of external responses. Supply credentials through environment variables; the user may inject them from 1Password or another manager. Configuration variables and commands for the implemented account/gym slice are documented in the [README](../README.md).
 
 Query AimHarder on demand, without a database or persistent cache; reuse the session in memory. On session expiration, allow one automatic reauthentication per request and a single query retry. On invalid credentials, 2FA, or restrictions, return a clear error and stop retrying. Rate limits have not been verified.
 
-Select the gym automatically when the account has only one. If there are several, require a default gym in configuration. Each query may optionally select another gym without restarting the server; use the default when omitted and accept only gyms whose accessibility for the account has been verified. Account and gym discovery still need technical validation.
+Select the gym automatically when the account has only one. If there are several, require a default gym in configuration. Each query may optionally select another gym without restarting the server; use the default when omitted and accept only gyms whose accessibility for the account has been verified. The `.es` client membership discovery contract has live validation for one account and gym; broader account variants remain unverified.
 
 ## Query semantics
 
@@ -84,7 +84,7 @@ Select the gym automatically when the account has only one. If there are several
 
 ## Testing strategy
 
-Exercise the public MCP interface with the real API client and replace only AimHarder's HTTP responses with anonymized fixtures. Assert observable query results, errors, coverage, and security-relevant outbound behavior rather than private implementation details. No existing test suite or reusable test infrastructure is present.
+Exercise the public MCP interface with the real API client and replace only AimHarder's HTTP responses with anonymized fixtures. Assert observable query results, errors, coverage, and security-relevant outbound behavior rather than private implementation details. The account/gym slice establishes this test boundary in `tests/context.test.ts`; extend it for subsequent slices.
 
 Include weekly schedules, specific-session occupancy, recent-training summaries, monthly counts with a verified counting basis, and the WOD-plus-booking experience. Test ambiguous publications, pagination and duplicate records, date boundaries, gym selection, authentication retry limits, and incomplete results. Fixture-based tests do not establish the real upstream contract.
 
@@ -98,4 +98,4 @@ Next priority: creating and canceling bookings through explicit requests, with u
 
 ## Technical validation
 
-See [API research](api-research.md) for sources, observed endpoints, user-provided samples, and unresolved validation questions. These observations do not establish a verified API contract or completed integration tests.
+See [API research](api-research.md) for sources, observed endpoints, user-provided samples, and unresolved validation questions. The account/gym observations distinguish live-verified contracts from unresolved assumptions; other query families remain unverified.
