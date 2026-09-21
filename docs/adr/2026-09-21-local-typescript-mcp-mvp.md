@@ -1,6 +1,6 @@
 # ADR: local TypeScript MCP MVP
 
-Status: accepted by the user on 2026-09-21.
+Status: accepted by the user on 2026-09-21; validation clarified the same day to require an MCP-compatible client or harness without naming a specific agent.
 
 ## Context
 
@@ -14,4 +14,8 @@ TypeScript reflects the user's maintenance preference. The Python reference help
 
 ## Consequences
 
-Validate responses at runtime as well as defining their types. The design does not depend on Ona or a particular secrets manager. Acceptance requires automated tests and live read-only queries; Ona validation comes later. Write operations and a remote service belong to later phases. Publication is subsequently authorized through [the public repository ADR](2026-09-21-public-repository-and-mit-license.md).
+Validate responses at runtime as well as defining their types. The design does not depend on a particular agent, client, harness, or secrets manager. Acceptance requires automated tests and live read-only queries validated in at least one MCP-compatible client or harness, with the environment and observed results recorded. Write operations and a remote service belong to later phases. Publication is subsequently authorized through [the public repository ADR](2026-09-21-public-repository-and-mit-license.md).
+
+## Validation clarification
+
+The user confirmed behavioral testing through the public MCP interface with the real API client, substituting only upstream HTTP responses with anonymized fixtures. This keeps the principal test boundary external while testing the layers together. Separate live read-only checks establish whether those fixtures and interpretations match AimHarder; passing fixture-based tests alone does not establish integration acceptance. Recent-training summaries and period counts are part of personal activity queries, with grouping and coverage verified before claiming a training-session total.

@@ -8,7 +8,7 @@ FitBot serves as a reference for accessing AimHarder but focuses on automated bo
 
 ## Decision
 
-Create a reusable TypeScript API client, separate from the MCP layer, with runtime response validation. Ona uses the server as an MCP client without a dedicated adapter. Use FitBot as a reference; do not deploy its scheduler or execute the repository without review. The MVP is local and uses no database; a standalone CLI and UI are outside the agreed scope.
+Create a reusable TypeScript API client, separate from the MCP layer, with runtime response validation. MCP-compatible clients and harnesses consume the server without an agent-specific adapter. Use FitBot as a reference; do not deploy its scheduler or execute the repository without review. The MVP is local and uses no database; a standalone CLI and UI are outside the agreed scope.
 
 ## Consequences
 

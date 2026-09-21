@@ -7,13 +7,16 @@ A local MCP server for querying AimHarder from clients that support Model Contex
 ## Planned MVP
 
 - Query classes by date, including available schedules, occupancy, and capacity.
-- Retrieve the detailed workout associated with a session when published.
+- Retrieve published workout details, including future workouts shared by several class sessions.
 - Query upcoming bookings and available booking history.
-- Query personal activity by date, with a maximum of one month per request and clear notices for partial results.
+- Query personal activity by date, with a maximum of 31 consecutive calendar dates per request and clear notices for partial results.
+- Summarize recent training and activity counts using verified grouping and coverage.
 
 The agreed design uses TypeScript, one account per instance, and an API client separate from the MCP layer. Queries fetch current data, with an in-memory session and no database or persistent cache.
 
 Creating or canceling bookings, automation, per-exercise analysis, a UI, and a remote service are outside the MVP scope.
+
+The first planned functional delivery answers "What are we doing in tomorrow's WOD, and when am I booked?", combining published workout content, class sessions, and upcoming bookings. Personal activity and booking history follow within the same MVP.
 
 ## Configuration and security
 
@@ -25,7 +28,9 @@ Local evidence, credentials, cookies, tokens, and personal data are excluded fro
 
 ## Documentation
 
-- [Scope and acceptance criteria](docs/mvp.md).
+- [Domain glossary](CONTEXT.md).
+- [Scope, acceptance criteria, and implementation tickets](docs/mvp.md).
+- [MVP specification](https://github.com/rudeayelo/aimharder-mcp/issues/1).
 - [API research and validation gaps](docs/api-research.md).
 - [MVP decision](docs/adr/2026-09-21-local-typescript-mcp-mvp.md).
 - [API client separation](docs/adr/2026-09-21-api-client-separated-from-interfaces.md).

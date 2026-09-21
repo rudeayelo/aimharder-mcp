@@ -37,6 +37,16 @@ The user provided API responses during definition. They are evidence of those sa
 
 Authentication, domains, identity, gym and time zone, states and units, pagination, and the relationship between sessions and published workouts remain unverified. Original responses attached to the conversation have not been copied into the repository; prepare anonymized samples when implementing tests.
 
+## Reported 9NBC workout convention
+
+The user reports that a daily workout published in the gym activity feed is shared by the day's class sessions of that type. For example, three WOD sessions at different times use the same daily WOD content; the feed workout is not assigned to one unique session.
+
+This is a user-reported convention, not an integration result. Whether other gyms publish shared daily workouts or session-specific workouts remains unknown. Verify how the feed identifies the intended workout date and class type, and how to relate those to the account holder's bookings. Do not assume that publication time is the workout date or that matching calendar dates alone establish applicability.
+
+## Activity interpretation for summaries
+
+Recent-training summaries and monthly training counts require verifying whether multiple activity entries describe one training session, how duplicates and pagination overlap are identified, and whether the data establishes attendance. Do not equate activity entries, days with activity, bookings, and completed training sessions. Verify chronology and complete coverage before reporting the latest five sessions or an exact monthly total.
+
 ## Validation priorities
 
 1. Verify the current login flow and destination domains before sending credentials. Apply the [credential and read-only access policy](adr/2026-09-21-credential-security-and-read-only-access.md), including stopping on invalid credentials, 2FA, or restrictions.
