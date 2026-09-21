@@ -1,0 +1,19 @@
+# Local evidence and secrets
+/evidence/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Dependencies and generated output
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+*.log
+
+# Local system files
+.DS_Store
