@@ -2,7 +2,7 @@
 
 A local MCP server for querying AimHarder from clients that support Model Context Protocol. An independent project, neither affiliated with nor endorsed by AimHarder.
 
-**Status: account discovery (#2) and class schedule queries (#3) implemented.** Authentication and gym selection have live MCP validation. Daily classes and occupancy have been inspected against AimHarder; final class acceptance and its time-zone confirmation are recorded in [validation](docs/validation.md). Date queries require a per-gym, user-confirmed IANA zone. Workouts, bookings, and personal activity remain pending; the complete MVP is not delivered yet.
+**Status: account discovery (#2) and class schedule queries (#3) implemented.** Authentication and gym selection have live MCP validation. Class intervals and specific-session occupancy have also passed live MCP comparisons against AimHarder after user confirmation of the gym time zone; see [validation](docs/validation.md). Date queries require a per-gym, user-confirmed IANA zone. Workouts, bookings, and personal activity remain pending; the complete MVP is not delivered yet.
 
 ## Install
 

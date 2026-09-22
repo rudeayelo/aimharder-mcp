@@ -1,6 +1,6 @@
 # AimHarder MCP server MVP
 
-Date: 2026-09-21. Status: scope confirmed by the user; [implementation specification published as GitHub issue #1](https://github.com/rudeayelo/aimharder-mcp/issues/1); account/gym and class-query slices implemented; class live acceptance is tracked in [validation](validation.md); remaining MVP slices pending. See [validation results](validation.md).
+Date: 2026-09-21. Status: scope confirmed by the user; [implementation specification published as GitHub issue #1](https://github.com/rudeayelo/aimharder-mcp/issues/1); account/gym and class-query slices implemented; class live acceptance passed (see [validation](validation.md)); remaining MVP slices pending. See [validation results](validation.md).
 
 ## Product and users
 

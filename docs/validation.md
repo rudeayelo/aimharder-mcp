@@ -50,7 +50,17 @@ Scope: [issue #3](https://github.com/rudeayelo/aimharder-mcp/issues/3), under [s
 
 Authorized read-only inspection verified the gym frontend's daily request, membership `boid` as `box`, a 19-session day, a successful empty Sunday, the time-label format, and displayed `ocupation/limit` semantics. The Wednesday 07:00 Metcon appeared with available occupancy and capacity. No participant lists, family accounts, bookings, cancellations, or profile writes were requested; account fields were held in memory and omitted from evidence.
 
-**Pending acceptance:** the investigated responses did not establish an authoritative gym time zone. The user has been asked to confirm the real gym's IANA zone, including DST. No such confirmation is claimed here. `AIMHARDER_GYM_TIME_ZONES` allows an operator-confirmed mapping and explicitly reports `user-confirmed` provenance; this configuration mechanism does not itself verify the real gym. Final live MCP interval and specific-session comparisons remain pending that confirmation. Do not close issue #3 as fully accepted until these checks pass.
+**Acceptance completed:** on 2026-09-22 the user confirmed that the tested gym uses `Europe/Madrid`, including daylight-saving changes. That per-gym mapping was injected into the harness/server environment, with `timeZoneStatus: "user-confirmed"`. This is operator confirmation, not an upstream time-zone field or a hard-coded application default.
+
+The official MCP SDK client over stdio passed both independent live comparisons:
+
+| Query | Observed result |
+| --- | --- |
+| Inclusive 2026-09-21 through 2026-09-27 | Seven daily partitions, 73 sessions, two empty days; MCP session identities, dates, time labels, class types, occupancy, and capacity matched the independent raw responses. |
+| Wednesday 2026-09-23 | 19 sessions; the separate exact `07:00` / `Metcon` MCP query matched the raw response, including occupancy and capacity. |
+| Context and access checks in both runs | One accessible gym; explicit selection passed; inaccessible selection rejected; confirmed time-zone provenance returned; server stderr empty. |
+
+Both runs used the implementation in `4c7145a`, with no code changes after the 100-test full-suite result. Only authentication, account discovery, and allowed daily schedule reads were performed. Credentials and raw responses remained in process memory; the recorded summaries contain only counts and verification outcomes. The previous live-acceptance blocker is resolved.
 
 The extended `scripts/live-check.mjs` is an official MCP SDK client over stdio. Optional explicit date environment variables enable an interval query and exact time/type query, compared with independent raw read-only AimHarder responses in memory. It prints only pass/fail counts and provenance. Without dates it retains the existing account/context check. A changing occupancy between independent reads may cause a comparison failure; passing checks represent the observed run, not an atomic snapshot.
 
@@ -58,7 +68,7 @@ The extended `scripts/live-check.mjs` is an official MCP SDK client over stdio. 
 
 `tests/classes.test.ts` covers an inclusive week, Wednesday 07:00 Metcon, distinct times/types and ambiguous matches, unchanged source names, missing/null/zero counts, empty results, malformed/unknown/restricted envelopes, duplicate IDs, later-day failure, explicit/default/unknown gyms, numeric gym routing, one shared recovery allowance, session serialization, safe redirect/transport failures, configuration errors, DST and leap/month/year boundaries, and unknown-zone refusal. Only upstream HTTP responses are substituted; the MCP SDK and API client are real. No automated test reads live credentials.
 
-During implementation, all 48 class tests passed with `TZ=Pacific/Honolulu` and all 52 existing context tests passed. Typechecking and the build passed. Final checks passed: `pnpm typecheck`, `pnpm test` (100 tests), `pnpm build`, `node --check scripts/live-check.mjs`, and `git diff --check`. Local Markdown links resolved. The updated live stdio account/context harness passed (one accessible gym, explicit selection accepted, inaccessible selection rejected, unconfigured zone reported unverified, server stderr empty). Standards review found zero issues; Spec review found zero code defects and the one documented live acceptance blocker above. The independent reviews used baseline `aee618b` and excluded unrelated concurrent npm-planning changes.
+During implementation, all 48 class tests passed with `TZ=Pacific/Honolulu` and all 52 existing context tests passed. Typechecking and the build passed. Final checks passed: `pnpm typecheck`, `pnpm test` (100 tests), `pnpm build`, `node --check scripts/live-check.mjs`, and `git diff --check`. Local Markdown links resolved. The updated live stdio account/context harness passed (one accessible gym, explicit selection accepted, inaccessible selection rejected, unconfigured zone reported unverified, server stderr empty). Standards review found zero issues; Spec review found zero code defects and initially flagged the live acceptance blocker, resolved by the subsequent confirmation and successful comparisons above. The independent reviews used baseline `aee618b` and excluded unrelated concurrent npm-planning changes.
 
 ### Remaining limitations
 
