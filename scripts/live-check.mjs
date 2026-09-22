@@ -48,6 +48,7 @@ try {
     classes = await checkClasses(client, context.selectedGym);
   }
   const bookings = process.env.AIMHARDER_LIVE_BOOKINGS === '1' ? await checkBookings(client, context.selectedGym) : undefined;
+  const activityPeriod = process.env.AIMHARDER_LIVE_PERIOD_START || process.env.AIMHARDER_LIVE_PREVIOUS_MONTH === '1' ? await checkActivityPeriod(client, context.selectedGym) : undefined;
   const recentActivity = process.env.AIMHARDER_LIVE_RECENT_END ? await checkRecentActivity(client, context.selectedGym) : undefined;
   const activity = process.env.AIMHARDER_LIVE_ACTIVITY_START ? await checkActivity(client, context.selectedGym) : undefined;
   const history = process.env.AIMHARDER_LIVE_HISTORY === '1' ? await checkHistory(client, context.selectedGym) : undefined;
@@ -59,7 +60,7 @@ try {
     accessibleGymCount: context.gyms.length,
     explicitSelection: 'passed', inaccessibleSelection: 'rejected',
     timeZoneStatus: context.selectedGym.timeZoneStatus,
-    serverStderr: 'empty', ...(recentActivity ? { recentActivity } : {}), ...(activity ? { activity } : {}), ...(history ? { history } : {}), ...(classes ? { classes } : {}), ...(bookings ? { bookings } : {}), ...(workouts ? { workouts } : {}), ...(training ? { training } : {}),
+    serverStderr: 'empty', ...(activityPeriod ? { activityPeriod } : {}), ...(recentActivity ? { recentActivity } : {}), ...(activity ? { activity } : {}), ...(history ? { history } : {}), ...(classes ? { classes } : {}), ...(bookings ? { bookings } : {}), ...(workouts ? { workouts } : {}), ...(training ? { training } : {}),
   }, null, 2) + '\n');
 } catch {
   process.stderr.write('Live MCP validation failed. Check configuration, authentication, and supported account contracts. Raw errors and responses are suppressed.\n');
@@ -383,4 +384,51 @@ async function checkRecentActivity(client, gym) {
     }
   }
   return {independentRecentCalendarAndDetailComparison:'passed',searchStatus:result.searchStatus,windows:result.windows.length,daysReturned:result.days.length,latestDaysVerified:result.latestDaysVerified,explicitSessionKeyObserved,trainingSessionGrouping:'unverified'};
+}
+
+async function checkActivityPeriod(client, gym) {
+  const { queryActivityPeriod } = await import('../dist/activity-period-consumer.js');
+  const query = process.env.AIMHARDER_LIVE_PREVIOUS_MONTH === '1'
+    ? { period: 'previous-month', gymId: gym.id }
+    : { startDate: process.env.AIMHARDER_LIVE_PERIOD_START, endDate: process.env.AIMHARDER_LIVE_PERIOD_END, gymId: gym.id };
+  const result = await queryActivityPeriod(client, query);
+  assert.equal(result.coverage, 'complete');
+  assert.equal(result.trainingSessions.status, 'blocked');
+  assert.equal(result.trainingSessions.count, null);
+  const { request, role, accountId } = await openLiveSession(gym);
+  const { calendarDates } = await import('../dist/classes.js');
+  const expected = new Map();
+  const calendars = new Map();
+  let explicitSessionKeyObserved = false;
+  for (const window of result.windows) {
+    const dates = [...calendarDates(window.startDate, window.endDate)];
+    assert.ok(dates.length <= 31);
+    for (const month of new Set(dates.map(date => date.slice(0, 7)))) {
+      if (!calendars.has(month)) calendars.set(month, await request(`https://aimharder.es/api/activityCalendar?${new URLSearchParams({ month: String(Number(month.slice(5))-1), year: month.slice(0,4) })}`));
+      for (const [date, day] of Object.entries(calendars.get(month).workouts)) {
+        if (!dates.includes(date)) continue;
+        for (const id of new Set(day.rates.ids)) {
+          const detail = await request(`https://aimharder.es/api/activity/workout?SEID=${id}`);
+          assert.equal(detail.userId, accountId);
+          if (detail.boxId !== role.boid) continue;
+          const label = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${date}T12:00:00Z`));
+          assert.equal(detail.recordDate.toLocaleLowerCase('es-ES'), label);
+          explicitSessionKeyObserved ||= ['trainingSessionId','sessionId','startTime'].some(key=>detail[key] != null);
+          expected.set(id,{date,detail});
+        }
+      }
+    }
+  }
+  const expectedDays = new Set([...expected.values()].map(row => row.date));
+  assert.equal(result.counts.activityEntries.exact, expected.size);
+  assert.equal(result.counts.daysWithActivity.exact, expectedDays.size);
+  assert.deepEqual(result.completedDates, [...calendarDates(result.startDate, result.endDate)]);
+  assert.deepEqual(result.entries.map(entry => entry.sourceActivityId).sort((a,b)=>a-b), [...expected.keys()].sort((a,b)=>a-b));
+  for (const entry of result.entries) {
+    const row = expected.get(entry.sourceActivityId);
+    assert.equal(entry.date, row.date);
+    assert.equal(entry.timeZone, gym.timeZone);
+    assert.deepEqual(entry.blocks.map(block => block.notes), row.detail.TIPOWODs.map(block => block.deleted ? null : block.notes ?? null));
+  }
+  return { independentPeriodCalendarAndDetailComparison: 'passed', period: query.period ?? 'explicit', coverage: result.coverage, windows: result.windows.length, dateCount: result.completedDates.length, entryCount: expected.size, daysWithActivity: expectedDays.size, explicitSessionKeyObserved, trainingSessionGrouping: 'unverified' };
 }

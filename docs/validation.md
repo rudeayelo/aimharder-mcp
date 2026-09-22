@@ -199,3 +199,22 @@ The official SDK stdio client independently compared actual recent results with 
 The existing activity ADR now records the consuming-client boundary and conservative alternative; no new server tool or upstream operation was added. The glossary, credential policy, account architecture and distribution ADRs retain their existing meanings. README, MVP status and API evidence distinguish the completed alternative from #9's remaining acceptance blocker.
 
 Issue #9 reviews: Standards reported no findings; Spec reported no fixable defects and one known acceptance blocker (distinct training-session grouping). The combined recent/activity targeted run passed 45 tests. Issue #9 remains open.
+
+## Issue #10: period activity frequency alternative (2026-09-22)
+
+Implemented a consuming MCP client and runnable stdio example for previous-month and explicit-period queries. The full previous month is resolved in the selected gym's confirmed zone. Longer periods use explicit nonoverlapping intervals of at most 31 inclusive dates, capped by a configurable 1–12-window budget. Output separates activity-entry counts, days with activity and the blocked training-session total. Recovered counts are explicitly lower bounds on incomplete periods; exact alternative totals require complete coverage. Original entry details, per-window failures/notices and completed dates remain available.
+
+Verification on Node 24:
+
+- Red: the new MCP/HTTP tests initially failed because the period consumer module did not exist.
+- Green: `pnpm test tests/activity-period.test.ts tests/recent-activity.test.ts tests/activity.test.ts` passed **64 tests** (19 period, 11 recent, 34 interval). Fixtures cover 28/29/30/31-day months and year rollover, opposite gym time-zone boundaries, complete empty periods, same-day distinct entries and duplicate references, adjacent windows reading overlapping calendar months, conflicting identity dates, first/later failures, incomplete recovered dates, window budget and zone/input validation. Session scenarios deliberately assert unresolved grouping, not an invented fixture session interpretation.
+- `pnpm typecheck` and `pnpm build` passed. Shared consumer response validation was followed by rerunning the recent and interval regressions.
+- The full suite is deferred to the coordinated final delivery, not claimed as run for this slice.
+
+The official MCP SDK stdio harness separately passed independent raw calendar/detail comparison for the previous month (August 2026: 31 dates, complete, zero entries and zero activity days) and 1–22 September 2026 (22 dates, complete, ten entries on ten activity days). Both runs exited 0, with empty server stderr, verified gym selection and the confirmed Europe/Madrid zone. The harness compared identity/date/notes and the counting basis without printing private content or IDs. No booking or write operation was performed.
+
+Replay after building and injecting credentials and confirmed zones: `AIMHARDER_LIVE_CHECK=1 AIMHARDER_LIVE_PREVIOUS_MONTH=1 pnpm test:live`; for a nonempty alternative use `AIMHARDER_LIVE_CHECK=1 AIMHARDER_LIVE_PERIOD_START=2026-09-01 AIMHARDER_LIVE_PERIOD_END=2026-09-22 pnpm test:live`. These issue explicit read-only queries; fixture tests require no credentials.
+
+**Acceptance blocker:** #10 remains open. Neither source activity identity nor equal record dates establishes distinct training sessions or attendance. Complete entry/day coverage does not satisfy the requested exact training-session total, including for an empty calendar. Broader accounts, live multi-window periods, partial upstream scenarios and any undiscovered session grouping remain unverified. The existing activity ADR is extended for this composition; authentication/security, API separation, server tool schemas, domain vocabulary and distribution decisions are unchanged.
+
+Issue #10 reviews: Standards found no hard violations and one optional duplication cleanup in the consumers; the small discovery/merge blocks remain local while shared response validation is centralized. Spec found no fixable defects and the documented session-grouping acceptance blocker. Issue #10 remains open.

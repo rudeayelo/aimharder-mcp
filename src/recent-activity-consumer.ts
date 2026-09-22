@@ -1,12 +1,11 @@
 /** Consuming MCP client example; no additional API endpoint or server tool. */
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { z } from 'zod';
-import { activityCoverageSchema, activityEntrySchema, type ActivityEntry } from './activity.js';
-import { calendarDates, dateSchema } from './classes.js';
+import type { ActivityEntry } from './activity.js';
+import { gymSchema, validateActivityResponse } from './activity-consumer-contracts.js';
+import { dateSchema } from './classes.js';
 import { gymIdSchema } from './config.js';
 
-const gymSchema = z.object({ id: gymIdSchema, name: z.string(), timeZone: z.string().nullable(), timeZoneStatus: z.enum(['unverified', 'user-confirmed']) });
-const responseSchema = z.object({ gym: gymSchema, startDate: dateSchema, endDate: dateSchema, entries: z.array(activityEntrySchema), coverage: activityCoverageSchema, notices: z.array(z.string()) });
 const inputSchema = z.object({ endDate: dateSchema, count: z.number().int().min(1).max(31).default(5), maxWindows: z.number().int().min(1).max(12).default(3), gymId: gymIdSchema.optional() }).strict();
 export type RecentActivityQuery = z.input<typeof inputSchema>;
 function previousDate(date: string, days: number) {
@@ -33,16 +32,10 @@ export async function queryRecentActivity(client: Pick<Client, 'callTool'>, inpu
   for (let index = 0; index < query.maxWindows; index++) {
     // Calendar counters avoid DST and never exceed 31 inclusive dates.
     const startDate = endDate < '0001-01-31' ? '0001-01-01' : previousDate(endDate, 30);
-    const dates = [...calendarDates(startDate, endDate)];
     try {
       const result = await client.callTool({ name: 'get_personal_activity', arguments: { startDate, endDate, gymId: gym.id } });
       if (result.isError) throw new Error();
-      const data = responseSchema.parse(result.structuredContent);
-      if (data.gym.id !== gym.id || data.gym.timeZone !== gym.timeZone || data.gym.timeZoneStatus !== 'user-confirmed' || data.startDate !== startDate || data.endDate !== endDate
-        || data.entries.some(entry => !dates.includes(entry.date) || entry.timeZone !== gym.timeZone)
-        || data.coverage.completedDates.some(date => !dates.includes(date))
-        || new Set(data.coverage.completedDates).size !== data.coverage.completedDates.length
-        || (data.coverage.status === 'complete' && data.coverage.completedDates.length !== dates.length)) throw new Error();
+      const data = validateActivityResponse(result.structuredContent, gym, startDate, endDate);
       // Validate every repeated identity before accepting this window. A date change is not a new entry.
       const recovered = new Map(entries);
       for (const entry of data.entries) {
