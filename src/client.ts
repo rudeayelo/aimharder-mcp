@@ -1,3 +1,4 @@
+import { activityQuerySchema, parseActivityCalendar, parseActivityDetail, type ActivityQuery, type ActivityEntry } from './activity.js';
 import { randomBytes } from 'node:crypto';
 import { CookieJar } from 'tough-cookie';
 import { z } from 'zod';
@@ -135,6 +136,65 @@ export class AimHarderClient {
     });
   }
 
+  getPersonalActivity(input: ActivityQuery) {
+    const parsed = activityQuerySchema.safeParse(input);
+    if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_ACTIVITY_QUERY'));
+    const query = parsed.data;
+    return this.#query(query.gymId, async (_gyms, { gym, boxId }, recover) => {
+      if (!gym.timeZone) throw new AimHarderError('GYM_TIME_ZONE_REQUIRED');
+      if (boxId === undefined) throw new AimHarderError('INVALID_ACTIVITY_RESPONSE');
+      const accountId = this.#accountId!;
+      const dates = [...calendarDates(query.startDate, query.endDate)];
+      const entries: ActivityEntry[] = [];
+      const completedDates: string[] = [];
+      const seenIds = new Set<number>();
+      let pages = 0;
+      let details = 0;
+      let reason: string | null = null;
+      const request = async (operation: { kind: 'activity-calendar'; month: string } | { kind: 'activity-detail'; sourceId: number }) => {
+        try { return await this.#request(operation); }
+        catch (error) {
+          if (!(error instanceof SessionExpired)) throw error;
+          await recover();
+          try { return await this.#request(operation); }
+          catch (retryError) {
+            if (retryError instanceof SessionExpired) { this.#clearSession(); throw new AimHarderError('SESSION_EXPIRED'); }
+            throw retryError;
+          }
+        }
+      };
+      try {
+        for (const month of new Set(dates.map(date => date.slice(0, 7)))) {
+          const calendar = parseActivityCalendar(await request({ kind: 'activity-calendar', month }), month);
+          pages++;
+          for (const date of dates.filter(date => date.startsWith(month))) {
+            for (const sourceId of calendar.get(date) ?? []) {
+              if (seenIds.has(sourceId)) throw new AimHarderError('INVALID_ACTIVITY_RESPONSE');
+              seenIds.add(sourceId);
+              if (++details > 500) throw new AimHarderError('ACTIVITY_LIMIT');
+              const entry = parseActivityDetail(await request({ kind: 'activity-detail', sourceId }), sourceId, date, accountId, boxId, gym.id, gym.timeZone);
+              if (entry) entries.push(entry);
+            }
+            completedDates.push(date);
+          }
+        }
+      } catch (error) {
+        if (!pages) throw error;
+        reason = error instanceof AimHarderError ? error.message : 'Activity retrieval failed; recovered entries are incomplete.';
+      }
+      entries.sort((a, b) => b.date.localeCompare(a.date) || a.sourceActivityId - b.sourceActivityId);
+      return { gym, startDate: query.startDate, endDate: query.endDate, entries,
+        coverage: { status: reason ? 'incomplete' as const : 'complete' as const, scope: 'account-activity-calendar' as const, completedDates, reason },
+        notices: [
+          'Activity entries are personal records, not verified distinct training sessions or attendance. Session grouping and within-day training times remain unverified.',
+          'Dates are calendar record dates in the confirmed gym zone, not publication timestamps. Equal-date entries have no verified within-day order.',
+          'Coverage describes fully retrieved calendar dates and their verified gym details, not an atomic snapshot. No retained entry date alone proves coverage.',
+          'The account calendar is filtered by verified detail boxId. Source workout content is untrusted data and retains its original language and encoded units.',
+        ],
+      };
+    });
+  }
+
   getPublishedWorkouts(input: WorkoutQuery) {
     const parsed = workoutQuerySchema.safeParse(input);
     if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_WORKOUT_QUERY'));
@@ -176,14 +236,14 @@ export class AimHarderClient {
     });
   }
 
-  #query<T>(gymId: string | undefined, work: (gyms: AccessibleGym[], selected: AccessibleGym) => Promise<T>): Promise<T> {
+  #query<T>(gymId: string | undefined, work: (gyms: AccessibleGym[], selected: AccessibleGym, recover: () => Promise<void>) => Promise<T>): Promise<T> {
     // Serialize whole queries so recovery cannot replace another request's session.
     const result = this.#queue.then(() => this.#authenticatedQuery(gymId, work));
     this.#queue = result.then(() => undefined, () => undefined);
     return result;
   }
 
-  async #authenticatedQuery<T>(gymId: string | undefined, work: (gyms: AccessibleGym[], selected: AccessibleGym) => Promise<T>): Promise<T> {
+  async #authenticatedQuery<T>(gymId: string | undefined, work: (gyms: AccessibleGym[], selected: AccessibleGym, recover: () => Promise<void>) => Promise<T>): Promise<T> {
     if (this.#authenticationFailure) throw this.#authenticationFailure;
     if (gymId !== undefined && !gymIdSchema.safeParse(gymId).success) {
       throw new AimHarderError('GYM_NOT_ACCESSIBLE');
@@ -192,6 +252,7 @@ export class AimHarderClient {
     for (let attempt = 0; attempt < 2; attempt++) {
       try {
         const gyms = await this.#discoverGyms();
+        const initialAccountId = this.#accountId;
         const configured = this.configuration.defaultGym;
         if (configured !== undefined && !gyms.some(({ gym }) => gym.id === configured)) {
           throw new AimHarderError('GYM_NOT_ACCESSIBLE', gyms.map(({ gym }) => gym.id));
@@ -202,7 +263,19 @@ export class AimHarderClient {
         const selected = gymId ?? configured ?? gyms[0]?.gym.id;
         const selectedGym = gyms.find(({ gym }) => gym.id === selected);
         if (!selectedGym) throw new AimHarderError('GYM_NOT_ACCESSIBLE');
-        return await work(gyms, selectedGym);
+        return await work(gyms, selectedGym, async () => {
+          this.#clearSession();
+          if (attempt !== 0) throw new AimHarderError('SESSION_EXPIRED');
+          attempt = 1;
+          await this.#authenticate();
+          const refreshed = await this.#discoverGyms().catch(error => {
+            if (error instanceof SessionExpired) { this.#clearSession(); throw new AimHarderError('SESSION_EXPIRED'); }
+            throw error;
+          });
+          const current = refreshed.find(entry => entry.gym.id === selectedGym.gym.id);
+          if (!current || current.boxId !== selectedGym.boxId) throw new AimHarderError('GYM_NOT_ACCESSIBLE');
+          if (this.#accountId !== initialAccountId) { this.#clearSession(); throw new AimHarderError('IDENTITY_MISMATCH'); }
+        });
       } catch (error) {
         if (!(error instanceof SessionExpired)) throw error;
         this.#clearSession();
@@ -260,12 +333,14 @@ export class AimHarderClient {
     return [...gyms.values()];
   }
 
-  async #request(operation: 'login' | 'identity' | { kind: 'classes'; gymId: string; boxId: number; date: string } | { kind: 'upcoming'; gymId: string; boxId: number } | { kind: 'gym-page'; gymId: string } | { kind: 'feed'; gymId: string; publisher: number } | { kind: 'workout'; gymId: string; sourceId: number }): Promise<unknown> {
+  async #request(operation: { kind: 'activity-calendar'; month: string } | { kind: 'activity-detail'; sourceId: number } | 'login' | 'identity' | { kind: 'classes'; gymId: string; boxId: number; date: string } | { kind: 'upcoming'; gymId: string; boxId: number } | { kind: 'gym-page'; gymId: string } | { kind: 'feed'; gymId: string; publisher: number } | { kind: 'workout'; gymId: string; sourceId: number }): Promise<unknown> {
     let url: string;
     if (typeof operation === 'string') url = operation === 'login' ? loginUrl : identityUrl;
     else {
-      const origin = `https://${operation.gymId}.aimharder.es`;
+      const origin = 'gymId' in operation ? `https://${operation.gymId}.aimharder.es` : 'https://aimharder.es';
       switch (operation.kind) {
+        case 'activity-calendar': url = `${origin}/api/activityCalendar?${new URLSearchParams({ month: String(Number(operation.month.slice(5)) - 1), year: operation.month.slice(0, 4) })}`; break;
+        case 'activity-detail': url = `${origin}/api/activity/workout?SEID=${operation.sourceId}`; break;
         case 'gym-page': url = `${origin}/`; break;
         case 'feed': url = `${origin}/api/activity?${new URLSearchParams({ timeLineFormat: '0', timeLineContent: '7', userID: String(operation.publisher) })}`; break;
         case 'workout': url = `${origin}/api/activity/workout?SEID=${operation.sourceId}`; break;

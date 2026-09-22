@@ -41,3 +41,7 @@ Issue #5 permits the selected gym homepage, its discovered gym-publication feed,
 ## Historical-booking extension
 
 Issue #7 projects the historical array from the already permitted selected-gym `nextBookings` read. The upcoming tool continues to discard it. No new endpoint, family selector or write is added; descriptive/profile fields are discarded. See [the history decision](2026-09-22-booking-history-state-and-coverage.md).
+
+## Personal-activity extension
+
+Issue #8 adds only the account calendar month GET and details for IDs returned by that calendar. It supplies no athlete selector and verifies detail account identity and gym membership before returning content. Incidental profile/leaderboard fields are discarded. The single recovery allowance spans initial discovery and all calendar/detail reads; only the failed activity read is retried after renewed identity/membership verification so recovered entries survive later failure. See [the activity coverage decision](2026-09-22-personal-activity-calendar-coverage.md).

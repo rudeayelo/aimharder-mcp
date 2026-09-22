@@ -23,3 +23,11 @@ _Avoid_: Attendance or completed workout as synonyms for a booking.
 **Activity entry**:
 A record of the account holder's personal activity. It does not by itself establish a booking or verified attendance.
 _Avoid_: Booking or attendance as synonyms for an activity record.
+
+**Training session**:
+A distinct occurrence of personal training. Several activity entries may describe one training session; grouping requires evidence beyond a shared date or similar content.
+_Avoid_: Treating every activity entry, active day, or booking as one verified training session.
+
+**Day with activity**:
+A gym-local calendar date with at least one personal activity entry. It does not state how many distinct training sessions occurred that day.
+_Avoid_: Session count or attendance count when describing days with activity.

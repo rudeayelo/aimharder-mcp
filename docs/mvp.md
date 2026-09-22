@@ -1,6 +1,6 @@
 # AimHarder MCP server MVP
 
-Date: 2026-09-21. Status: scope confirmed by the user; [implementation specification published as GitHub issue #1](https://github.com/rudeayelo/aimharder-mcp/issues/1); account/gym, class-query, upcoming-booking, published-workout, consuming-client composition and booking-history slices implemented; class and upcoming-booking live acceptance passed (see [validation](validation.md)); published future-content live acceptance and remaining MVP slices pending. See [validation results](validation.md).
+Date: 2026-09-21. Status: scope confirmed by the user; [implementation specification published as GitHub issue #1](https://github.com/rudeayelo/aimharder-mcp/issues/1); account/gym, class-query, upcoming-booking, published-workout, consuming-client composition booking-history and personal-activity interval slices implemented; class and upcoming-booking live acceptance passed (see [validation](validation.md)); published future-content live acceptance and remaining MVP slices pending. See [validation results](validation.md).
 
 ## Product and users
 
@@ -110,4 +110,4 @@ Next priority: creating and canceling bookings through explicit requests, with u
 
 ## Technical validation
 
-See [API research](api-research.md) for sources, observed endpoints, user-provided samples, and unresolved validation questions. The account/gym observations distinguish live-verified contracts from unresolved assumptions; upcoming-booking observations and view-only coverage are recorded there; published-workout current-view content is live-verified; exhaustive feed/history coverage and activity families remain unverified. Available history has separate live evidence in the API research and validation records.
+See [API research](api-research.md) for sources, observed endpoints, user-provided samples, and unresolved validation questions. The account/gym observations distinguish live-verified contracts from unresolved assumptions; upcoming-booking observations and view-only coverage are recorded there; published-workout current-view content is live-verified; exhaustive publication-feed/history coverage and training-session grouping remain unverified. Personal activity calendar intervals have separate live validation. Available history has separate live evidence in the API research and validation records.

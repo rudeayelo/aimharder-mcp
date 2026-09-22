@@ -1,4 +1,7 @@
 const messages = {
+  INVALID_ACTIVITY_QUERY: 'Supply valid inclusive gym-local dates spanning at most 31 calendar dates.',
+  INVALID_ACTIVITY_RESPONSE: 'AimHarder returned unsupported or inconsistent personal activity data.',
+  ACTIVITY_LIMIT: 'The activity detail limit of 500 records was reached; coverage is incomplete.',
   INVALID_WORKOUT_QUERY: 'Supply a valid gym-local date and exact className, with optional verified gymId.',
   INVALID_WORKOUT_RESPONSE: 'AimHarder returned an unsupported or incomplete gym feed. Workout retrieval could not be confirmed.',
   INVALID_BOOKING_RESPONSE: 'AimHarder returned an unsupported, restricted, or incomplete upcoming-booking response. Booking status could not be confirmed.',

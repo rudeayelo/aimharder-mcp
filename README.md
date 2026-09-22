@@ -2,7 +2,7 @@
 
 A local MCP server for querying AimHarder from clients that support Model Context Protocol. An independent project, neither affiliated with nor endorsed by AimHarder.
 
-**Status: account discovery (#2), class schedule queries (#3), upcoming bookings (#4), published workouts (#5), consuming-client composition (#6), and booking history (#7) implemented.** Authentication and gym selection have live MCP validation. Class intervals and specific-session occupancy have also passed live MCP comparisons against AimHarder after user confirmation of the gym time zone; see [validation](docs/validation.md). Date queries require a per-gym, user-confirmed IANA zone. Upcoming bookings have also passed live MCP comparison with the upcoming view and daily schedule. Personal activity remains pending; the complete MVP is not delivered yet.
+**Status: account discovery (#2), class schedule queries (#3), upcoming bookings (#4), published workouts (#5), consuming-client composition (#6), booking history (#7), and personal activity intervals (#8) implemented.** Authentication and gym selection have live MCP validation. Class intervals and specific-session occupancy have also passed live MCP comparisons against AimHarder after user confirmation of the gym time zone; see [validation](docs/validation.md). Date queries require a per-gym, user-confirmed IANA zone. Upcoming bookings have also passed live MCP comparison with the upcoming view and daily schedule. Personal activity intervals have passed live MCP comparison; recent-training and frequency experiences remain pending, and the complete MVP is not delivered yet.
 
 ## Install
 
@@ -196,7 +196,7 @@ The harness queries tomorrow's WOD, today's WOD, and an existing reserved date/c
 
 ## Remaining MVP
 
-The combined experience is implemented and live-tested with available current content, unavailable next-day content, and an actual reservation. The first-delivery requirement to demonstrate actual published future content remains pending because it was unavailable in the retrieved view. Personal activity remains a pending MVP requirement. Creating or canceling bookings, automation, per-exercise analysis, a UI, and a remote service remain outside the MVP.
+The combined experience is implemented and live-tested with available current content, unavailable next-day content, and an actual reservation. The first-delivery requirement to demonstrate actual published future content remains pending because it was unavailable in the retrieved view. Recent-training and frequency experiences remain pending MVP requirements. Creating or canceling bookings, automation, per-exercise analysis, a UI, and a remote service remain outside the MVP.
 
 Public npm distribution is now part of MVP acceptance: prepare and verify an installable package, then publish and verify the registry artifact after all functional acceptance criteria pass. The preferred package name is `aimharder-mcp`, subject to publishability. See [the distribution decision](docs/adr/2026-09-22-npm-distribution-for-mvp.md).
 
@@ -228,3 +228,19 @@ Input: `{ "gymId": "optional-verified-gym" }`. Returns the selected gym and avai
 Coverage is always `limited` to `upstream-history-view`, with null interval endpoints: the observed view contained 30 records and has no verified pagination or historical horizon. A successful empty view does not establish empty lifetime history. `retrieval` is `complete` for the returned view or `partial` when valid records were recovered alongside malformed/conflicting records. Identical projected duplicates collapse; conflicting identities are omitted. Invalid envelopes, access failure, or wholly uninterpretable records return errors. See [the history decision](docs/adr/2026-09-22-booking-history-state-and-coverage.md).
 
 For an explicit independent live stdio comparison, run the existing harness with `AIMHARDER_LIVE_CHECK=1 AIMHARDER_LIVE_HISTORY=1`, credentials and confirmed gym zone supplied through the environment.
+
+### Tool: `get_personal_activity`
+
+Input: `{ "startDate": "2026-03-01", "endDate": "2026-03-31", "gymId": "optional-verified-gym" }`. Accepts 1–31 consecutive calendar dates inclusively and requires the selected gym's confirmed IANA zone. Use multiple explicit queries for longer periods.
+
+Returns `entries` sorted by record date newest first, with `sourceActivityId`, original available notes/exercises/prescriptions and the gym zone. Equal-date records have no verified within-day order. `startTime` and `trainingSessionId` are null: activity entries are not automatically distinct training sessions or attendance. Workout titles remain empty where no verified source title exists.
+
+Coverage is `complete` or `incomplete` with `completedDates` and a nullable sanitized `reason`. Only dates with a successfully retrieved calendar partition and all referenced details are complete; a recovered entry alone does not establish date coverage. A failed first partition is an error. Later partition/detail failures preserve recovered entries. Calendar reads cover at most three month partitions; 500 detail reads bound a query, after which results are explicitly incomplete. Empty successful periods have zero entries and complete requested-date coverage. Dates come from the activity calendar and verified detail record dates, never publication chronology. See [the decision](docs/adr/2026-09-22-personal-activity-calendar-coverage.md).
+
+Live read-only comparison with independent raw calendar/detail responses:
+
+```sh
+AIMHARDER_LIVE_CHECK=1 AIMHARDER_LIVE_ACTIVITY_START=2026-03-01 AIMHARDER_LIVE_ACTIVITY_END=2026-03-31 pnpm test:live
+```
+
+Inject credentials and confirmed zones as described above, and build first. The harness prints sanitized pass/coverage results, without activity content or identifiers. Use an interval containing actual activity to validate available details.

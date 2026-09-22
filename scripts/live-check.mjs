@@ -26,7 +26,7 @@ transport.stderr?.on('data', () => { hasStderr = true; });
 try {
   await client.connect(transport);
   const tools = await client.listTools();
-  assert.deepEqual(tools.tools.map((tool) => tool.name), ['get_account_context', 'get_class_sessions', 'get_upcoming_bookings', 'get_booking_history', 'get_published_workouts']);
+  assert.deepEqual(tools.tools.map((tool) => tool.name), ['get_account_context', 'get_class_sessions', 'get_upcoming_bookings', 'get_booking_history', 'get_published_workouts', 'get_personal_activity']);
   const result = await client.callTool({ name: 'get_account_context', arguments: {} });
   assert.notEqual(result.isError, true);
   const context = result.structuredContent;
@@ -48,6 +48,7 @@ try {
     classes = await checkClasses(client, context.selectedGym);
   }
   const bookings = process.env.AIMHARDER_LIVE_BOOKINGS === '1' ? await checkBookings(client, context.selectedGym) : undefined;
+  const activity = process.env.AIMHARDER_LIVE_ACTIVITY_START ? await checkActivity(client, context.selectedGym) : undefined;
   const history = process.env.AIMHARDER_LIVE_HISTORY === '1' ? await checkHistory(client, context.selectedGym) : undefined;
   const workouts = process.env.AIMHARDER_LIVE_WORKOUT_DATE ? await checkWorkouts(client, context.selectedGym) : undefined;
   const training = process.env.AIMHARDER_LIVE_TRAINING === '1' ? await checkTraining(client, context.selectedGym) : undefined;
@@ -57,7 +58,7 @@ try {
     accessibleGymCount: context.gyms.length,
     explicitSelection: 'passed', inaccessibleSelection: 'rejected',
     timeZoneStatus: context.selectedGym.timeZoneStatus,
-    serverStderr: 'empty', ...(history ? { history } : {}), ...(classes ? { classes } : {}), ...(bookings ? { bookings } : {}), ...(workouts ? { workouts } : {}), ...(training ? { training } : {}),
+    serverStderr: 'empty', ...(activity ? { activity } : {}), ...(history ? { history } : {}), ...(classes ? { classes } : {}), ...(bookings ? { bookings } : {}), ...(workouts ? { workouts } : {}), ...(training ? { training } : {}),
   }, null, 2) + '\n');
 } catch {
   process.stderr.write('Live MCP validation failed. Check configuration, authentication, and supported account contracts. Raw errors and responses are suppressed.\n');
@@ -134,7 +135,7 @@ async function openLiveSession(gym) {
   assert.equal(who.data[0].id, login.data.userData.id);
   const role = who.data[0].roles.find((row) => row.role === 'client' && row.centre_url === `${gym.id}.aimharder.es`);
   assert.ok(role && Number.isSafeInteger(role.boid) && role.boid > 0);
-  return { request, role };
+  return { request, role, accountId: who.data[0].id };
 }
 
 async function checkBookings(client, gym) {
@@ -296,4 +297,46 @@ async function checkHistory(client, gym) {
   const timestamps = view.bookings.map(b => `${b.date} ${b.startTime}`);
   assert.deepEqual(timestamps, [...timestamps].sort().reverse());
   return { independentComparison: 'passed', recordCount: view.bookings.length, ordering: 'newest-first', coverage: 'limited upstream history view', attendance: 'unverified', simultaneousFlagsObserved: raw.history.some(r => r.assist === 1 && r.lateCancel === 1) };
+}
+
+async function checkActivity(client, gym) {
+  const startDate = process.env.AIMHARDER_LIVE_ACTIVITY_START;
+  const endDate = process.env.AIMHARDER_LIVE_ACTIVITY_END;
+  const { activityQuerySchema } = await import('../dist/activity.js');
+  const { calendarDates } = await import('../dist/classes.js');
+  assert.equal(activityQuerySchema.safeParse({ startDate, endDate }).success, true);
+  const { request, role, accountId } = await openLiveSession(gym);
+  const dates = [...calendarDates(startDate, endDate)];
+  const expected = [];
+  for (const month of new Set(dates.map(date => date.slice(0, 7)))) {
+    const raw = await request(`https://aimharder.es/api/activityCalendar?${new URLSearchParams({ month: String(Number(month.slice(5)) - 1), year: month.slice(0,4) })}`);
+    assert.deepEqual(Object.keys(raw), ['workouts']);
+    for (const [date, day] of Object.entries(raw.workouts)) {
+      if (!dates.includes(date)) continue;
+      for (const id of new Set(day.rates.ids)) {
+        const detail = await request(`https://aimharder.es/api/activity/workout?SEID=${id}`);
+        assert.equal(detail.userId, accountId);
+        if (detail.boxId !== role.boid) continue;
+        const label = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${date}T12:00:00Z`));
+        assert.equal(detail.recordDate.toLocaleLowerCase('es-ES'), label);
+        expected.push({ id, date, detail });
+      }
+    }
+  }
+  const result = await client.callTool({ name: 'get_personal_activity', arguments: { startDate, endDate, gymId: gym.id } }, undefined, { timeout: 180_000 });
+  assert.notEqual(result.isError, true);
+  const view = result.structuredContent;
+  assert.equal(view.coverage.status, 'complete');
+  assert.deepEqual(view.coverage.completedDates, dates);
+  assert.equal(view.entries.length, expected.length);
+  for (const { id, date, detail } of expected) {
+    const entry = view.entries.find(row => row.sourceActivityId === id);
+    assert.ok(entry); assert.equal(entry.date, date); assert.equal(entry.timeZone, gym.timeZone);
+    assert.equal(entry.startTime, null); assert.equal(entry.trainingSessionId, null);
+    assert.deepEqual(entry.blocks.map(b => b.notes), detail.TIPOWODs.map(b => b.deleted ? null : b.notes ?? null));
+    const exercises = detail.ejerRate.filter(e => e.tipoWOD == null || !detail.TIPOWODs[e.tipoWOD].deleted);
+    assert.deepEqual(entry.exercises.map(e => e.name), exercises.map(e => e.ejerName));
+    for (let i = 0; i < entry.exercises.length; i++) for (const [key, value] of Object.entries(entry.exercises[i].prescription)) assert.deepEqual(value, exercises[i][key]);
+  }
+  return { independentCalendarAndDetailComparison: 'passed', coverage: view.coverage.status, dateCount: dates.length, availableDetailsCompared: expected.length > 0, trainingSessionGrouping: 'unverified' };
 }
