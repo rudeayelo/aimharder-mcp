@@ -37,3 +37,7 @@ Issue #4 adds only the verified gym's `/api/nextBookings` GET with membership `b
 ## Published-workout extension
 
 Issue #5 permits the selected gym homepage, its discovered gym-publication feed, and details for returned workout IDs. Arbitrary account selectors are not exposed; comments, profiles and personal performance information are discarded. See [the applicability decision](2026-09-22-published-workout-applicability.md). Existing origin, identity, retry and secret-handling protections continue to apply.
+
+## Historical-booking extension
+
+Issue #7 projects the historical array from the already permitted selected-gym `nextBookings` read. The upcoming tool continues to discard it. No new endpoint, family selector or write is added; descriptive/profile fields are discarded. See [the history decision](2026-09-22-booking-history-state-and-coverage.md).

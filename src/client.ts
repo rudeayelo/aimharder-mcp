@@ -6,7 +6,7 @@ import { AimHarderError } from './errors.js';
 import { calendarDates, classQuerySchema, parseClassDay, type ClassQuery, type ClassSession } from './classes.js';
 
 import { parseFeed, parseWorkout, workoutQuerySchema, type WorkoutQuery } from './workouts.js';
-import { parseUpcomingBookings } from './bookings.js';
+import { parseUpcomingBookings, parseBookingHistory } from './bookings.js';
 
 const loginUrl = 'https://login.aimharder.es/api/login';
 const identityUrl = 'https://aimharder.es/api/whoami';
@@ -112,6 +112,24 @@ export class AimHarderClient {
           'Bookings are reservations, not attendance. Waitlisted entries are not confirmed reservations; unknown states must not be treated as no booking.',
           'Times are gym-local wall times in the user-confirmed zone, without an inferred UTC instant. Only the verified Spanish date format is supported.',
           'The upcoming source ID is not a verified class-session ID. Match date, time and class type cautiously and retain ambiguous alternatives.',
+        ],
+      };
+    });
+  }
+
+  getBookingHistory(gymId?: string) {
+    return this.#query(gymId, async (_gyms, { gym, boxId }) => {
+      if (!gym.timeZone) throw new AimHarderError('GYM_TIME_ZONE_REQUIRED');
+      if (boxId === undefined) throw new AimHarderError('INVALID_BOOKING_RESPONSE');
+      const { bookings, partial } = parseBookingHistory(await this.#request({ kind: 'upcoming', gymId: gym.id, boxId }), gym.timeZone);
+      return {
+        gym, bookings,
+        coverage: { status: 'limited' as const, retrieval: partial ? 'partial' as const : 'complete' as const, scope: 'upstream-history-view' as const, startDate: null, endDate: null },
+        notices: [
+          'Only the returned history view is available. The observed view contained 30 records; neither an exhaustive date interval nor a pagination contract is verified. Empty does not establish empty lifetime history.',
+          'States follow the official history renderer, including late-cancellation precedence. Attendance remains unverified even when assist is 1; simultaneous assist and lateCancel flags do not establish attendance.',
+          'Dates and times are gym-local in the user-confirmed zone. Results are sorted newest first; source IDs are not verified class-session IDs.',
+          ...(partial ? ['Some malformed or conflicting records were omitted; recovered records are partial and cannot establish absence.'] : []),
         ],
       };
     });

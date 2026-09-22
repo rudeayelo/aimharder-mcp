@@ -1,6 +1,6 @@
 # AimHarder API research
 
-Status: account authentication and gym discovery verified on 2026-09-21 for issue #2; daily class contract investigated on 2026-09-22 for issue #3 (see the class schedule section below). Class and upcoming-booking acceptance are recorded in validation; upcoming-booking research is below; published-workout research is recorded below; history and activity contracts remain preliminary. See [validation results](validation.md). This document records research evidence, not the product scope; see [the MVP](mvp.md) for supported use cases and acceptance criteria.
+Status: account authentication and gym discovery verified on 2026-09-21 for issue #2; daily class contract investigated on 2026-09-22 for issue #3 (see the class schedule section below). Class and upcoming-booking acceptance are recorded in validation; upcoming-booking research is below; published-workout research is recorded below; historical view/state evidence is recorded below; personal activity contracts remain preliminary. See [validation results](validation.md). This document records research evidence, not the product scope; see [the MVP](mvp.md) for supported use cases and acceptance criteria.
 
 ## Verified account/gym contract (2026-09-21)
 
@@ -45,7 +45,7 @@ FitBot uses .com while the gym website uses .es. Cross-domain equivalence remain
 The user provided API responses during definition. They are evidence of those samples, not integration tests performed by this project:
 
 - `/api/bookings?day=YYYYMMDD&box=…`: a sample with 19 sessions, schedules, occupancy, and capacity limits.
-- `/api/nextBookings?box=…`: a sample with one upcoming booking and 30 historical records. One record combines `assist=1` and `lateCancel=1`; interpretation remains pending.
+- `/api/nextBookings?box=…`: a sample with one upcoming booking and 30 historical records. One record combines `assist=1` and `lateCancel=1`; the later historical investigation below verifies renderer precedence while attendance remains unverified.
 - Account `/api/activity`: a sample with 32 entries, exercises, and WOD blocks. The user reports pagination with `loadAfter` set to the previous `lastLoaded`; termination and coverage remain unverified.
 - `/api/activityCalendar`: a sample grouped by date with four days of activity; parameter semantics and coverage remain pending.
 - Gym `/api/activity` with `timeLineContent=7`: mixes workouts and announcements, including pinned announcements with future dates. Do not indiscriminately use the `when` field as the workout date.
@@ -112,3 +112,11 @@ The MCP SDK stdio harness compared available content with independent feed/detai
 ## Combined consuming-client observations (2026-09-22)
 
 Issue #6 uses the existing account, class, workout and upcoming-booking contracts; no new AimHarder operations or state meanings are inferred. The official SDK stdio consumer resolves relative dates in the confirmed gym zone and preserves separate query outcomes. Tomorrow's WOD had five matching sessions but no matching publication or confirmed booking in the retrieved views. Booking status remained unconfirmed, since the upcoming view's calendar horizon is unknown. A separate query for an actual reserved date/class retained the verified booking time despite unavailable workout content. See [the validation record](validation.md) for the combined current-content check and acceptance limitations.
+
+## Historical booking contract (2026-09-22)
+
+Issue #7 independently inspected the official authenticated `/diary` historical renderer and the selected gym's `/api/nextBookings?box=<membership-boid>`. The `history` array contained 30 rows, with no duplicate IDs. No history pagination control, cursor, total or date horizon was observed; 30 is an observed count, not a proven hard limit. The frontend iterates the returned array and supplies an empty-view message. Available history is therefore a limited view; neither complete lifetime history nor a complete date interval is established, even for an empty response.
+
+Historical rows use the same observed Spanish date and time formats but have independent state rendering: `lateCancel=1` displays “Cancelación tardía” before `bookState=0` waitlist or `1` reserved. The renderer does not interpret `assist`. Live combinations included `assist=1, lateCancel=0, bookState=1` and `assist=1, lateCancel=1, bookState=1`. Attendance is never inferred. Unknown late-cancellation flags preserve unknown state; absent flags follow the observed renderer's fallback. Other unknown states remain unknown.
+
+The independent MCP stdio comparison validated all 30 records' dates, times, class names, state/flags, confirmed zone and newest-first output against a fresh raw response. The client imposes chronological ordering rather than promising upstream order. Gym routing uses verified membership `boid`, not source gym labels or postal addresses. Only one account/gym was verified; no all-history retrieval or attendance semantics were established. Duplicate, malformed and partial-view variants are fixture evidence, not observed live variants. See [the decision](adr/2026-09-22-booking-history-state-and-coverage.md).

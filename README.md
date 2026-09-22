@@ -2,7 +2,7 @@
 
 A local MCP server for querying AimHarder from clients that support Model Context Protocol. An independent project, neither affiliated with nor endorsed by AimHarder.
 
-**Status: account discovery (#2), class schedule queries (#3), upcoming bookings (#4), published workouts (#5), and consuming-client composition (#6) implemented.** Authentication and gym selection have live MCP validation. Class intervals and specific-session occupancy have also passed live MCP comparisons against AimHarder after user confirmation of the gym time zone; see [validation](docs/validation.md). Date queries require a per-gym, user-confirmed IANA zone. Upcoming bookings have also passed live MCP comparison with the upcoming view and daily schedule. Booking history and personal activity remain pending; the complete MVP is not delivered yet.
+**Status: account discovery (#2), class schedule queries (#3), upcoming bookings (#4), published workouts (#5), consuming-client composition (#6), and booking history (#7) implemented.** Authentication and gym selection have live MCP validation. Class intervals and specific-session occupancy have also passed live MCP comparisons against AimHarder after user confirmation of the gym time zone; see [validation](docs/validation.md). Date queries require a per-gym, user-confirmed IANA zone. Upcoming bookings have also passed live MCP comparison with the upcoming view and daily schedule. Personal activity remains pending; the complete MVP is not delivered yet.
 
 ## Install
 
@@ -113,7 +113,7 @@ States are `booked` (source 1), `waitlisted` (0), or `unknown` (other/missing va
 
 `coverage` has `status: "complete"`, `scope: "upstream-upcoming-view"`, and null `startDate`/`endDate`. This describes successful retrieval of the current upcoming view, **not a guaranteed date interval or unlimited future horizon**. An empty view or `bookingStatus: "none"` does not prove no relevant booking on an arbitrary date. Clients composing a date-specific answer must preserve that uncertainty.
 
-The verified Spanish full-date format is supported; unsupported locales and malformed/duplicate records fail with `INVALID_BOOKING_RESPONSE`. Unknown envelope fields, including potential pagination or restrictions, also fail without a partial successful result. Errors leave booking status unconfirmed. No history, postal addresses, coach details, booking writes or cancellation tools are exposed. See [API evidence](docs/api-research.md) and [the coverage decision](docs/adr/2026-09-22-upcoming-bookings-and-view-coverage.md).
+The verified Spanish full-date format is supported; unsupported locales and malformed/duplicate records fail with `INVALID_BOOKING_RESPONSE`. Unknown envelope fields, including potential pagination or restrictions, also fail without a partial successful result. Errors leave booking status unconfirmed. This upcoming tool exposes no history, postal addresses, coach details, booking writes or cancellation tools are exposed. See [API evidence](docs/api-research.md) and [the coverage decision](docs/adr/2026-09-22-upcoming-bookings-and-view-coverage.md).
 
 ## Session and errors
 
@@ -196,7 +196,7 @@ The harness queries tomorrow's WOD, today's WOD, and an existing reserved date/c
 
 ## Remaining MVP
 
-The combined experience is implemented and live-tested with available current content, unavailable next-day content, and an actual reservation. The first-delivery requirement to demonstrate actual published future content remains pending because it was unavailable in the retrieved view. Booking history and personal activity remain pending MVP requirements. Creating or canceling bookings, automation, per-exercise analysis, a UI, and a remote service remain outside the MVP.
+The combined experience is implemented and live-tested with available current content, unavailable next-day content, and an actual reservation. The first-delivery requirement to demonstrate actual published future content remains pending because it was unavailable in the retrieved view. Personal activity remains a pending MVP requirement. Creating or canceling bookings, automation, per-exercise analysis, a UI, and a remote service remain outside the MVP.
 
 Public npm distribution is now part of MVP acceptance: prepare and verify an installable package, then publish and verify the registry artifact after all functional acceptance criteria pass. The preferred package name is `aimharder-mcp`, subject to publishability. See [the distribution decision](docs/adr/2026-09-22-npm-distribution-for-mvp.md).
 
@@ -220,3 +220,11 @@ All project content is maintained in English.
 ## License
 
 [MIT](LICENSE).
+
+### Tool: `get_booking_history`
+
+Input: `{ "gymId": "optional-verified-gym" }`. Returns the selected gym and available historical bookings, newest first, with gym-local date/time, original class name, source identifiers and flags. The verified history renderer labels late cancellations before booked/waitlisted states. `attendance` is always `unverified`, including simultaneous `assist=1` and `lateCancel=1`.
+
+Coverage is always `limited` to `upstream-history-view`, with null interval endpoints: the observed view contained 30 records and has no verified pagination or historical horizon. A successful empty view does not establish empty lifetime history. `retrieval` is `complete` for the returned view or `partial` when valid records were recovered alongside malformed/conflicting records. Identical projected duplicates collapse; conflicting identities are omitted. Invalid envelopes, access failure, or wholly uninterpretable records return errors. See [the history decision](docs/adr/2026-09-22-booking-history-state-and-coverage.md).
+
+For an explicit independent live stdio comparison, run the existing harness with `AIMHARDER_LIVE_CHECK=1 AIMHARDER_LIVE_HISTORY=1`, credentials and confirmed gym zone supplied through the environment.

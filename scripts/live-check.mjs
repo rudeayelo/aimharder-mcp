@@ -26,7 +26,7 @@ transport.stderr?.on('data', () => { hasStderr = true; });
 try {
   await client.connect(transport);
   const tools = await client.listTools();
-  assert.deepEqual(tools.tools.map((tool) => tool.name), ['get_account_context', 'get_class_sessions', 'get_upcoming_bookings', 'get_published_workouts']);
+  assert.deepEqual(tools.tools.map((tool) => tool.name), ['get_account_context', 'get_class_sessions', 'get_upcoming_bookings', 'get_booking_history', 'get_published_workouts']);
   const result = await client.callTool({ name: 'get_account_context', arguments: {} });
   assert.notEqual(result.isError, true);
   const context = result.structuredContent;
@@ -48,6 +48,7 @@ try {
     classes = await checkClasses(client, context.selectedGym);
   }
   const bookings = process.env.AIMHARDER_LIVE_BOOKINGS === '1' ? await checkBookings(client, context.selectedGym) : undefined;
+  const history = process.env.AIMHARDER_LIVE_HISTORY === '1' ? await checkHistory(client, context.selectedGym) : undefined;
   const workouts = process.env.AIMHARDER_LIVE_WORKOUT_DATE ? await checkWorkouts(client, context.selectedGym) : undefined;
   const training = process.env.AIMHARDER_LIVE_TRAINING === '1' ? await checkTraining(client, context.selectedGym) : undefined;
   assert.equal(hasStderr, false);
@@ -56,7 +57,7 @@ try {
     accessibleGymCount: context.gyms.length,
     explicitSelection: 'passed', inaccessibleSelection: 'rejected',
     timeZoneStatus: context.selectedGym.timeZoneStatus,
-    serverStderr: 'empty', ...(classes ? { classes } : {}), ...(bookings ? { bookings } : {}), ...(workouts ? { workouts } : {}), ...(training ? { training } : {}),
+    serverStderr: 'empty', ...(history ? { history } : {}), ...(classes ? { classes } : {}), ...(bookings ? { bookings } : {}), ...(workouts ? { workouts } : {}), ...(training ? { training } : {}),
   }, null, 2) + '\n');
 } catch {
   process.stderr.write('Live MCP validation failed. Check configuration, authentication, and supported account contracts. Raw errors and responses are suppressed.\n');
@@ -267,4 +268,32 @@ async function checkTraining(client, gym) {
     independentBookingComparison: independentBookings, bookingDateCoverage: 'unconfirmed',
     firstDeliveryFutureContent: reference.workouts.data.workouts.length ? 'observed' : 'pending: no matching future content in retrieved view',
   };
+}
+
+async function checkHistory(client, gym) {
+  const { request, role } = await openLiveSession(gym);
+  const raw = await request(`https://${role.centre_url}/api/nextBookings?${new URLSearchParams({ box: String(role.boid) })}`);
+  const result = await client.callTool({ name: 'get_booking_history', arguments: { gymId: gym.id } });
+  assert.notEqual(result.isError, true);
+  const view = result.structuredContent;
+  assert.equal(view.coverage.status, 'limited');
+  assert.equal(view.coverage.retrieval, 'complete');
+  assert.equal(view.bookings.length, raw.history.length);
+  for (const row of raw.history) {
+    const booking = view.bookings.find(b => b.sourceBookingId === row.id);
+    assert.ok(booking);
+    assert.equal(booking.dateLabel, row.day);
+    assert.equal(booking.timeLabel, row.time);
+    assert.equal(booking.classType.name, row.className ?? null);
+    assert.equal(booking.sourceState, row.bookState ?? null);
+    assert.deepEqual(booking.sourceFlags, { assist: row.assist ?? null, lateCancel: row.lateCancel ?? null });
+    assert.equal(booking.attendance, 'unverified');
+    assert.equal(booking.state, row.lateCancel === 1 ? 'late-cancelled' : row.lateCancel != null && row.lateCancel !== 0 ? 'unknown' : row.bookState === 1 ? 'booked' : row.bookState === 0 ? 'waitlisted' : 'unknown');
+    assert.equal(booking.timeZone, gym.timeZone);
+    const label = new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${booking.date}T12:00:00Z`));
+    assert.equal(label.toLocaleLowerCase('es-ES'), row.day.toLocaleLowerCase('es-ES'));
+  }
+  const timestamps = view.bookings.map(b => `${b.date} ${b.startTime}`);
+  assert.deepEqual(timestamps, [...timestamps].sort().reverse());
+  return { independentComparison: 'passed', recordCount: view.bookings.length, ordering: 'newest-first', coverage: 'limited upstream history view', attendance: 'unverified', simultaneousFlagsObserved: raw.history.some(r => r.assist === 1 && r.lateCancel === 1) };
 }

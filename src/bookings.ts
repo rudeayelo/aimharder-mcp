@@ -52,3 +52,45 @@ export function parseUpcomingBookings(body: unknown, timeZone: string): Upcoming
     };
   });
 }
+
+export const historicalBookingSchema = upcomingBookingSchema.extend({
+  state: z.enum(['booked', 'waitlisted', 'late-cancelled', 'unknown']),
+  attendance: z.literal('unverified'),
+  sourceFlags: z.object({ assist: z.number().int().safe().nullable(), lateCancel: z.number().int().safe().nullable() }),
+});
+const historyResponseSchema = z.object({ nextClasses: z.array(z.unknown()), history: z.array(z.unknown()) }).strict();
+const historyRowSchema = responseSchema.shape.nextClasses.element.extend({
+  assist: z.number().int().safe().nullish(), lateCancel: z.number().int().safe().nullish(),
+});
+export function parseBookingHistory(body: unknown, timeZone: string) {
+  const parsed = historyResponseSchema.safeParse(body);
+  if (!parsed.success) throw new AimHarderError('INVALID_BOOKING_RESPONSE');
+  const rows = new Map<number, z.infer<typeof historicalBookingSchema>>();
+  const conflicts = new Set<number>();
+  let partial = false;
+  for (const raw of parsed.data.history) {
+    const entry = historyRowSchema.safeParse(raw);
+    if (!entry.success) {
+      partial = true;
+      const identity = z.object({ id: sourceId }).safeParse(raw);
+      if (identity.success) conflicts.add(identity.data.id);
+      continue;
+    }
+    const row = entry.data;
+    try {
+      const base = parseUpcomingBookings({ nextClasses: [row], history: [] }, timeZone)[0]!;
+      const booking: z.infer<typeof historicalBookingSchema> = {
+        ...base, state: row.lateCancel === 1 ? 'late-cancelled'
+          : row.lateCancel != null && row.lateCancel !== 0 ? 'unknown' : base.state,
+        attendance: 'unverified', sourceFlags: { assist: row.assist ?? null, lateCancel: row.lateCancel ?? null },
+      };
+      const previous = rows.get(row.id);
+      if (previous && JSON.stringify(previous) !== JSON.stringify(booking)) { conflicts.add(row.id); partial = true; }
+      rows.set(row.id, booking);
+    } catch { partial = true; conflicts.add(row.id); }
+  }
+  for (const id of conflicts) rows.delete(id);
+  // A response in which nothing can be interpreted is an error, never an empty history.
+  if (partial && rows.size === 0) throw new AimHarderError('INVALID_BOOKING_RESPONSE');
+  return { bookings: [...rows.values()].sort((a, b) => `${b.date} ${b.startTime}`.localeCompare(`${a.date} ${a.startTime}`) || a.sourceBookingId - b.sourceBookingId), partial };
+}
