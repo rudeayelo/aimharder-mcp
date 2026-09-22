@@ -17,3 +17,6 @@ coverage/
 
 # Local system files
 .DS_Store
+
+# Local npm package archives
+*.tgz

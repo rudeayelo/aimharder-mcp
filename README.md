@@ -4,7 +4,33 @@ A local MCP server for querying AimHarder from clients that support Model Contex
 
 **Status: account discovery (#2), class schedule queries (#3), upcoming bookings (#4), published workouts (#5), consuming-client composition (#6), booking history (#7), and personal activity intervals (#8) implemented.** Authentication and gym selection have live MCP validation. Class intervals and specific-session occupancy have also passed live MCP comparisons against AimHarder after user confirmation of the gym time zone; see [validation](docs/validation.md). Date queries require a per-gym, user-confirmed IANA zone. Upcoming bookings have also passed live MCP comparison with the upcoming view and daily schedule. Personal activity intervals have passed live MCP comparison; the recent-day alternative is implemented (#9), with distinct-session grouping blocked; the period-frequency alternative is implemented (#10), with exact training-session totals blocked, and the complete MVP is not delivered yet.
 
-## Install
+## Install a local archive
+
+Node.js **24 LTS** is required. The compiled package is prepared and tested locally; **no npm registry version has been published**. An archive recipient needs npm and Node, with no TypeScript, pnpm, checkout, or compilation:
+
+```sh
+mkdir aimharder-install
+cd aimharder-install
+npm init -y
+npm install --ignore-scripts --omit=dev /absolute/path/to/aimharder-mcp-0.1.0.tgz
+```
+
+After injecting `AIMHARDER_USERNAME` and `AIMHARDER_PASSWORD` into the client process environment, configure its stdio server as follows. Ensure Node 24 is on that process's `PATH` (the executable uses `#!/usr/bin/env node`).
+
+```json
+{
+  "mcpServers": {
+    "aimharder": {
+      "command": "/absolute/path/to/aimharder-install/node_modules/.bin/aimharder-mcp",
+      "args": []
+    }
+  }
+}
+```
+
+The environment variables below also apply to the installed executable. An environment file can instead be loaded by configuring the Node 24 executable as `command` with arguments `--env-file=/absolute/path/to/private.env` and `/absolute/path/to/aimharder-install/node_modules/aimharder-mcp/dist/index.js`. Never commit that file or credentials in client configuration.
+
+## Develop from a checkout
 
 Requirements: Node.js **24 LTS** and pnpm **12.5.1**. The supported Node major is recorded in `.node-version`; use your preferred Node version manager. Install pnpm with `npm install --global pnpm@12.5.1` if necessary.
 
@@ -17,7 +43,7 @@ pnpm test
 pnpm build
 ```
 
-Run `pnpm build` after source updates. Dependencies are locked; the MSW browser-worker postinstall is disabled because this project uses Node tests only. There is no database or service deployment. Setup currently uses the repository; npm packaging and publication are approved but pending in [#11](https://github.com/rudeayelo/aimharder-mcp/issues/11) and [#12](https://github.com/rudeayelo/aimharder-mcp/issues/12).
+Run `pnpm build` after source updates. Dependencies are locked; the MSW browser-worker postinstall is disabled because this project uses Node tests only. There is no database or service deployment. Local archive packaging (#11) is implemented; registry publication and exact-version registry validation remain pending in [#12](https://github.com/rudeayelo/aimharder-mcp/issues/12).
 
 ## Configure and connect
 
@@ -198,7 +224,7 @@ The harness queries tomorrow's WOD, today's WOD, and an existing reserved date/c
 
 The combined experience is implemented and live-tested with available current content, unavailable next-day content, and an actual reservation. The first-delivery requirement to demonstrate actual published future content remains pending because it was unavailable in the retrieved view. The recent-day and period-frequency alternatives below are implemented, but distinct-session grouping and exact training-session totals remain pending MVP requirements. Creating or canceling bookings, automation, per-exercise analysis, a UI, and a remote service remain outside the MVP.
 
-Public npm distribution is now part of MVP acceptance: prepare and verify an installable package, then publish and verify the registry artifact after all functional acceptance criteria pass. The preferred package name is `aimharder-mcp`, subject to publishability. See [the distribution decision](docs/adr/2026-09-22-npm-distribution-for-mvp.md).
+Public npm distribution is part of MVP acceptance. Local compiled-package installation and live account discovery are verified; publish and verify the registry artifact after all functional acceptance criteria pass. The preferred package name is `aimharder-mcp`, subject to publishability. See [the distribution decision](docs/adr/2026-09-22-npm-distribution-for-mvp.md).
 
 ## Documentation
 
@@ -213,7 +239,7 @@ Public npm distribution is now part of MVP acceptance: prepare and verify an ins
 - [API client separation](docs/adr/2026-09-21-api-client-separated-from-interfaces.md).
 - [Credentials and read-only operations](docs/adr/2026-09-21-credential-security-and-read-only-access.md).
 - [Public repository and license](docs/adr/2026-09-21-public-repository-and-mit-license.md).
-- [Agent instructions](AGENTS.md).
+- [Agent instructions](https://github.com/rudeayelo/aimharder-mcp/blob/main/AGENTS.md).
 
 All project content is maintained in English.
 
@@ -264,3 +290,25 @@ After building, run `node scripts/query-activity-period.mjs previous-month` to r
 `counts.activityEntries` and `counts.daysWithActivity` separately expose `observed` and `exact`. Exact alternative counts are available only for complete calendar coverage; otherwise `exact` is null and `counts.interpretation` is `recovered-lower-bound`. A complete empty period has zero available entries/days. Neither alternative counts bookings or establishes attendance. `trainingSessions` always has `status: "blocked"` and `count: null`: **#10 remains open because distinct training-session grouping is unverified**, including when calendar records are empty.
 
 Separate sanitized live checks: after building and injecting credentials/zones, run `AIMHARDER_LIVE_CHECK=1 AIMHARDER_LIVE_PREVIOUS_MONTH=1 pnpm test:live`, or use `AIMHARDER_LIVE_PERIOD_START=2026-09-01 AIMHARDER_LIVE_PERIOD_END=2026-09-22` in place of the previous-month variable. The harness compares available entry identities, dates, notes, day counts and complete coverage against independently fetched AimHarder calendar/details. See [validation](docs/validation.md).
+
+## Package verification and future release
+
+Maintainers run these commands **from a checkout with development dependencies installed**; verification scripts and test fixtures are deliberately absent from the consumer archive:
+
+```sh
+pnpm typecheck
+pnpm test:package
+npm pack
+```
+
+`npm pack` builds via `prepack`. The package allowlist contains compiled JavaScript, README, MIT license, glossary, and public Markdown documentation. It excludes source/tests, harness scripts, evidence, secrets, local configuration, dependencies, source maps, and generated archives. The isolated check creates an archive, validates every path, installs it in a temporary directory outside the checkout with lifecycle scripts disabled and development dependencies omitted, then launches the installed executable using the official MCP SDK over stdio. Both the harness and server resolve dependencies from that isolated install. All child-process HTTP is replaced with anonymized fixtures; unexpected requests fail closed. It checks initialization, six tools, account discovery, gym selection, sanitized access errors, and empty startup stdout on missing credentials. `pnpm test` includes this check. npm dependency downloads require registry access or a populated cache; no real AimHarder credentials or access are used in the automated check. Temporary installations are removed afterward.
+
+For a **separate live read-only installed-package check**, inject account credentials and optional gym configuration, then run:
+
+```sh
+AIMHARDER_LIVE_CHECK=1 pnpm test:package:live
+```
+
+This independently builds and installs an archive, authenticates, and queries account/gym context with the installed binary. It reports only sanitized verification results and archive integrity; no other live query families are exercised. See [recorded evidence and limitations](docs/validation.md).
+
+Registry publication belongs to #12 and requires complete functional MVP acceptance, name/account verification and user-authorized release. The preferred name is not reserved. After publication, document and verify the actual exact version with a pinned client command such as `npx --yes aimharder-mcp@<published-version>` (replace the placeholder; it is not an available release). Local archive verification does not establish registry availability.

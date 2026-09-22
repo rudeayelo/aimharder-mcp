@@ -1,6 +1,6 @@
 # ADR: npm distribution as the final MVP milestone
 
-Status: accepted by the user on 2026-09-22; implementation and publication pending.
+Status: accepted by the user on 2026-09-22; local package implementation and verification complete; registry publication pending.
 
 ## Context
 
@@ -18,4 +18,6 @@ This supersedes only the repository-only distribution decision in [the MVP ADR](
 
 Package acceptance includes an explicitly limited archive, compiled execution without development tools, clean MCP stdout, environment-based credentials, automated packaged-install coverage, and a separate live read-only check. Release acceptance also requires full MVP evidence and verification of the exact version downloaded from npm. Document version-pinned startup and the release procedure.
 
-The approved work adds packaging and release maintenance. Current source-based setup remains valid until implementation; the current private package configuration does not represent a published npm package. This planning delivery creates tickets and updates documentation, without implementing or publishing the package.
+The approved work adds packaging and release maintenance. Source-based setup remains valid for contributors. Issue #11 now provides a `dist/index.js` executable under the `aimharder-mcp` bin name, a Node 24 engine requirement, and a `prepack` build. Consumers install compiled archives with production dependencies and no compilation. The explicit allowlist contains only compiled JavaScript and public Markdown documentation/metadata. Source files, evidence, environment files, tests, scripts and archives are excluded. Package metadata is publishable but no version has been published.
+
+The automated packaging check installs in a temporary directory outside the checkout, disables install scripts, verifies absence of development tools, and resolves both server and SDK harness dependencies from the isolated installation. An HTTP fixture preload in the child intercepts every fetch; no fixture changes or upstream override are shipped in the runtime. A separate opt-in live check verified installed-package account/gym discovery on 2026-09-22. See [validation](../validation.md). This changes distribution and validation mechanics, not authentication, API contracts, or feature scope.

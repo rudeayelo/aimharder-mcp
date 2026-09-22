@@ -1,7 +1,6 @@
 {
   "name": "aimharder-mcp",
   "version": "0.1.0",
-  "private": true,
   "description": "Local read-only AimHarder MCP server",
   "license": "MIT",
   "type": "module",
@@ -14,7 +13,10 @@
     "typecheck": "tsc --noEmit",
     "start": "node dist/index.js",
     "test": "vitest run",
-    "test:live": "node scripts/live-check.mjs"
+    "test:live": "node scripts/live-check.mjs",
+    "prepack": "pnpm build",
+    "test:package": "node scripts/package-check.mjs",
+    "test:package:live": "node scripts/package-check.mjs --live"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.30.0",
@@ -26,5 +28,19 @@
     "msw": "2.15.0",
     "typescript": "7.0.2",
     "vitest": "5.0.1"
+  },
+  "bin": {
+    "aimharder-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist/*.js",
+    "README.md",
+    "LICENSE",
+    "CONTEXT.md",
+    "docs/**/*.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rudeayelo/aimharder-mcp.git"
   }
 }
