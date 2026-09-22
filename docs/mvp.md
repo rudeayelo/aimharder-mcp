@@ -1,6 +1,6 @@
 # AimHarder MCP server MVP
 
-Date: 2026-09-21. Status: scope confirmed by the user; [implementation specification published as GitHub issue #1](https://github.com/rudeayelo/aimharder-mcp/issues/1); account/gym, class-query, upcoming-booking, published-workout, consuming-client composition booking-history and personal-activity interval slices implemented; class and upcoming-booking live acceptance passed (see [validation](validation.md)); published future-content live acceptance and remaining MVP slices pending. See [validation results](validation.md).
+Date: 2026-09-21. Status: scope confirmed by the user; [implementation specification published as GitHub issue #1](https://github.com/rudeayelo/aimharder-mcp/issues/1); account/gym, class-query, upcoming-booking, published-workout, consuming-client composition booking-history and personal-activity interval slices implemented; class and upcoming-booking live acceptance passed (see [validation](validation.md)); published future-content live acceptance and remaining MVP slices pending. A bounded recent-day consuming-client alternative is implemented for #9, but distinct-session grouping remains an acceptance blocker. See [validation results](validation.md).
 
 ## Product and users
 

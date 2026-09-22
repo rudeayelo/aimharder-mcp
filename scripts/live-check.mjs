@@ -48,6 +48,7 @@ try {
     classes = await checkClasses(client, context.selectedGym);
   }
   const bookings = process.env.AIMHARDER_LIVE_BOOKINGS === '1' ? await checkBookings(client, context.selectedGym) : undefined;
+  const recentActivity = process.env.AIMHARDER_LIVE_RECENT_END ? await checkRecentActivity(client, context.selectedGym) : undefined;
   const activity = process.env.AIMHARDER_LIVE_ACTIVITY_START ? await checkActivity(client, context.selectedGym) : undefined;
   const history = process.env.AIMHARDER_LIVE_HISTORY === '1' ? await checkHistory(client, context.selectedGym) : undefined;
   const workouts = process.env.AIMHARDER_LIVE_WORKOUT_DATE ? await checkWorkouts(client, context.selectedGym) : undefined;
@@ -58,7 +59,7 @@ try {
     accessibleGymCount: context.gyms.length,
     explicitSelection: 'passed', inaccessibleSelection: 'rejected',
     timeZoneStatus: context.selectedGym.timeZoneStatus,
-    serverStderr: 'empty', ...(activity ? { activity } : {}), ...(history ? { history } : {}), ...(classes ? { classes } : {}), ...(bookings ? { bookings } : {}), ...(workouts ? { workouts } : {}), ...(training ? { training } : {}),
+    serverStderr: 'empty', ...(recentActivity ? { recentActivity } : {}), ...(activity ? { activity } : {}), ...(history ? { history } : {}), ...(classes ? { classes } : {}), ...(bookings ? { bookings } : {}), ...(workouts ? { workouts } : {}), ...(training ? { training } : {}),
   }, null, 2) + '\n');
 } catch {
   process.stderr.write('Live MCP validation failed. Check configuration, authentication, and supported account contracts. Raw errors and responses are suppressed.\n');
@@ -339,4 +340,47 @@ async function checkActivity(client, gym) {
     for (let i = 0; i < entry.exercises.length; i++) for (const [key, value] of Object.entries(entry.exercises[i].prescription)) assert.deepEqual(value, exercises[i][key]);
   }
   return { independentCalendarAndDetailComparison: 'passed', coverage: view.coverage.status, dateCount: dates.length, availableDetailsCompared: expected.length > 0, trainingSessionGrouping: 'unverified' };
+}
+
+async function checkRecentActivity(client, gym) {
+  const { queryRecentActivity } = await import('../dist/recent-activity-consumer.js');
+  const result = await queryRecentActivity(client, { endDate: process.env.AIMHARDER_LIVE_RECENT_END, maxWindows: 3, gymId: gym.id });
+  assert.notEqual(result.searchStatus, 'incomplete');
+  assert.equal(result.trainingSessions.status, 'blocked');
+  const { request, role, accountId } = await openLiveSession(gym);
+  const { calendarDates } = await import('../dist/classes.js');
+  const expected = new Map();
+  const calendars = new Map();
+  let explicitSessionKeyObserved = false;
+  for (const window of result.windows) {
+    const dates = [...calendarDates(window.startDate, window.endDate)];
+    assert.ok(dates.length <= 31);
+    for (const month of new Set(dates.map(date => date.slice(0, 7)))) {
+      if (!calendars.has(month)) calendars.set(month, await request(`https://aimharder.es/api/activityCalendar?${new URLSearchParams({ month: String(Number(month.slice(5))-1), year: month.slice(0,4) })}`));
+      for (const [date, day] of Object.entries(calendars.get(month).workouts)) {
+        if (!dates.includes(date)) continue;
+        for (const id of new Set(day.rates.ids)) {
+          const detail = await request(`https://aimharder.es/api/activity/workout?SEID=${id}`);
+          assert.equal(detail.userId, accountId);
+          if (detail.boxId !== role.boid) continue;
+          const label = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${date}T12:00:00Z`));
+          assert.equal(detail.recordDate.toLocaleLowerCase('es-ES'), label);
+          explicitSessionKeyObserved ||= ['trainingSessionId','sessionId','startTime'].some(key=>detail[key] != null);
+          expected.set(id,{date,detail});
+        }
+      }
+    }
+  }
+  const selectedDates = [...new Set([...expected.values()].map(row=>row.date))].sort().reverse().slice(0,5);
+  assert.deepEqual(result.days.map(day=>day.date),selectedDates);
+  for (const day of result.days) {
+    assert.deepEqual(day.entries.map(e=>e.sourceActivityId),[...expected].filter(([,row])=>row.date===day.date).map(([id])=>id).sort((a,b)=>a-b));
+    for (const entry of day.entries) {
+      const raw = expected.get(entry.sourceActivityId).detail;
+      assert.equal(entry.startTime,null);assert.equal(entry.trainingSessionId,null);
+      assert.deepEqual(entry.blocks.map(b=>b.notes),raw.TIPOWODs.map(b=>b.deleted?null:b.notes??null));
+      assert.deepEqual(entry.exercises.map(e=>e.name),raw.ejerRate.filter(e=>e.tipoWOD==null||!raw.TIPOWODs[e.tipoWOD].deleted).map(e=>e.ejerName));
+    }
+  }
+  return {independentRecentCalendarAndDetailComparison:'passed',searchStatus:result.searchStatus,windows:result.windows.length,daysReturned:result.days.length,latestDaysVerified:result.latestDaysVerified,explicitSessionKeyObserved,trainingSessionGrouping:'unverified'};
 }

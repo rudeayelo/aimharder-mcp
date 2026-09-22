@@ -2,7 +2,7 @@
 
 A local MCP server for querying AimHarder from clients that support Model Context Protocol. An independent project, neither affiliated with nor endorsed by AimHarder.
 
-**Status: account discovery (#2), class schedule queries (#3), upcoming bookings (#4), published workouts (#5), consuming-client composition (#6), booking history (#7), and personal activity intervals (#8) implemented.** Authentication and gym selection have live MCP validation. Class intervals and specific-session occupancy have also passed live MCP comparisons against AimHarder after user confirmation of the gym time zone; see [validation](docs/validation.md). Date queries require a per-gym, user-confirmed IANA zone. Upcoming bookings have also passed live MCP comparison with the upcoming view and daily schedule. Personal activity intervals have passed live MCP comparison; recent-training and frequency experiences remain pending, and the complete MVP is not delivered yet.
+**Status: account discovery (#2), class schedule queries (#3), upcoming bookings (#4), published workouts (#5), consuming-client composition (#6), booking history (#7), and personal activity intervals (#8) implemented.** Authentication and gym selection have live MCP validation. Class intervals and specific-session occupancy have also passed live MCP comparisons against AimHarder after user confirmation of the gym time zone; see [validation](docs/validation.md). Date queries require a per-gym, user-confirmed IANA zone. Upcoming bookings have also passed live MCP comparison with the upcoming view and daily schedule. Personal activity intervals have passed live MCP comparison; the recent-day alternative is implemented (#9), with distinct-session grouping blocked; training-frequency experience remains pending, and the complete MVP is not delivered yet.
 
 ## Install
 
@@ -196,7 +196,7 @@ The harness queries tomorrow's WOD, today's WOD, and an existing reserved date/c
 
 ## Remaining MVP
 
-The combined experience is implemented and live-tested with available current content, unavailable next-day content, and an actual reservation. The first-delivery requirement to demonstrate actual published future content remains pending because it was unavailable in the retrieved view. Recent-training and frequency experiences remain pending MVP requirements. Creating or canceling bookings, automation, per-exercise analysis, a UI, and a remote service remain outside the MVP.
+The combined experience is implemented and live-tested with available current content, unavailable next-day content, and an actual reservation. The first-delivery requirement to demonstrate actual published future content remains pending because it was unavailable in the retrieved view. The recent-day alternative below is implemented, but distinct-session grouping and training-frequency acceptance remain pending MVP requirements. Creating or canceling bookings, automation, per-exercise analysis, a UI, and a remote service remain outside the MVP.
 
 Public npm distribution is now part of MVP acceptance: prepare and verify an installable package, then publish and verify the registry artifact after all functional acceptance criteria pass. The preferred package name is `aimharder-mcp`, subject to publishability. See [the distribution decision](docs/adr/2026-09-22-npm-distribution-for-mvp.md).
 
@@ -244,3 +244,13 @@ AIMHARDER_LIVE_CHECK=1 AIMHARDER_LIVE_ACTIVITY_START=2026-03-01 AIMHARDER_LIVE_A
 ```
 
 Inject credentials and confirmed zones as described above, and build first. The harness prints sanitized pass/coverage results, without activity content or identifiers. Use an interval containing actual activity to validate available details.
+
+### Recent activity consuming-client example
+
+After building, run `node scripts/query-recent-activity.mjs 2026-09-22 3` with the same credentials and confirmed zones. The arguments are an explicit gym-local end date, an optional maximum number of windows (default 3, maximum 12), and an optional verified gym ID. The end date bounds the search; it is not assumed to mean today. Output contains private account activity, so do not copy it into logs or issues.
+
+`queryRecentActivity` composes `get_account_context` and `get_personal_activity` through MCP. It searches backward in disjoint explicit windows of at most 31 inclusive dates until it finds five **days with activity** or reaches its bound. Programmatic `count` means requested days (1–31), never entries or training sessions. All entries on each selected day remain available, preserving original details. Source IDs deduplicate records; their within-day presentation order is not chronology. Failed or incomplete windows stop the search, retain recovered alternatives and prevent a verified latest claim. Reported windows, completed dates, notices and `searchedStartDate` expose the actual retrieval boundary. Empty or sparse bounded results do not prove exhausted lifetime history.
+
+`trainingSessions.status` is always `blocked`, with `sessions: null`: the API has not established grouping or attendance. `latestDaysVerified` concerns only the requested number of days within calendar coverage ending on the supplied date. **Issue #9 remains open; the latest-five-training-sessions requirement is not complete.** See [the activity decision](docs/adr/2026-09-22-personal-activity-calendar-coverage.md) and [validation](docs/validation.md).
+
+Separate sanitized live verification: build, inject credentials/zones, then run `AIMHARDER_LIVE_CHECK=1 AIMHARDER_LIVE_RECENT_END=2026-09-22 pnpm test:live`. This compares recent-day selection and available content against independently retrieved calendar/detail responses.

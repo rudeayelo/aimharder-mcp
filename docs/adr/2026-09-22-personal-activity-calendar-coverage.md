@@ -17,3 +17,13 @@ Extend the shared query context with one recovery allowance. Activity retries on
 ## Consequences
 
 Month partitions give finite, independently verified interval coverage without guessing a feed's chronological stopping boundary. Date queries can reach older months directly; longer periods require explicit client queries. Calendar coverage concerns the available personal workout records shown by AimHarder, not attendance, unpublished/deleted records or an immutable history. The calendar is account-wide; records from another gym are excluded only after detail identity verification. Within-day training order and distinct training-session grouping remain unknown. Notes/exercises are retained; no workout title was present in the observed detail, so titles remain empty. Broader locales/account variants and upstream rate limits remain unverified. See [API research](../api-research.md) and [validation](../validation.md).
+
+## Recent activity composition (issue #9)
+
+Status: accepted implementation boundary; distinct-training-session acceptance remains blocked.
+
+Compose existing MCP queries in a consuming client, keeping the API client and MCP server unchanged. The requested recent-session experience cannot be claimed from current evidence. Return a separately labelled days-with-activity alternative, with an explicit blocked training-session result. A date may represent several sessions or several records from one session; no grouping is inferred from matching dates, exercises or bookings.
+
+Search backward from an explicit gym-local end date using nonoverlapping intervals of at most 31 inclusive dates, defaulting to three windows and limiting configuration to twelve. Stop when enough distinct days are recovered, a window fails/is incomplete, or the bound is reached. Return every entry on each selected date, deduplicate source identity, reject conflicting repeated identities and make no within-day chronology claim. Retain earlier recovered alternatives after failure, but never verify a latest result over a newer gap. Return window coverage and the searched start date; sparse/empty bounded history does not prove exhaustion. These limits bound client work and are not upstream retention limits.
+
+Consequences: useful recent content is available without silently substituting entries/days for training sessions. Session grouping, attendance and within-day time remain blockers for #9. No new allowed endpoint, authentication policy, persistent cache, natural-language tool or server coupling is introduced. Live comparison validates five recent days, not five training sessions.
