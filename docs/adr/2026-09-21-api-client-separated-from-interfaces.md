@@ -1,6 +1,6 @@
 # ADR: API client separated from interfaces
 
-Status: accepted for the MVP; implemented for account/gym discovery in issue #2. See [the local TypeScript MCP MVP](2026-09-21-local-typescript-mcp-mvp.md).
+Status: accepted for the MVP; implemented for account/gym discovery in issue #2 and extended with consuming-client composition in issue #6. See [the local TypeScript MCP MVP](2026-09-21-local-typescript-mcp-mvp.md).
 
 ## Context
 
@@ -16,4 +16,13 @@ Keep authentication, transport, models, and response validation decoupled from p
 
 ## Uncertainties
 
-FitBot uses .com; the provided gym uses .es. The user believes they are equivalent, but cross-domain equivalence remains unverified. The `.es` authentication and account/gym flow is now verified; see the [implementation ADR](2026-09-21-account-discovery-and-local-runtime.md). WODs require investigating additional operations; per-exercise personal record analysis is outside the MVP.
+FitBot uses .com; the provided gym uses .es. The user believes they are equivalent, but cross-domain equivalence remains unverified. The `.es` authentication and account/gym flow is now verified; see the [implementation ADR](2026-09-21-account-discovery-and-local-runtime.md). Published workout queries now use verified gym-feed/detail operations; per-exercise personal record analysis is outside the MVP.
+
+
+## Consuming-client composition (2026-09-22)
+
+Issue #6 composes the existing public MCP queries in `src/consumer.ts`, with a runnable stdio SDK example. The independent AimHarder API client remains unaware of conversational dates and aggregation. No combined tomorrow-specific server tool or standalone CLI product is introduced.
+
+Discover the selected gym before resolving tomorrow using its user-confirmed zone and calendar arithmetic. Pass that gym explicitly to each independent query and validate response gym, zone, date and class type before presenting them together. A query failure preserves valid results from the others, including bookings when the class schedule fails. Keep every matching reservation time and every workout alternative, without fabricating unique session associations. The tested gym's daily sharing evidence does not establish a universal convention.
+
+An empty or failed upcoming query cannot establish date-specific absence because its calendar horizon remains unknown. The composition therefore reports known positive reservations or unconfirmed status, with completeness unconfirmed even when some bookings are known. Workout results retain first-page coverage and provenance. No authentication, operation allowlist, account scope, distribution, or existing booking/workout interpretation decision changes. Tests exercise composition through the real MCP interface with only upstream HTTP replaced; separate stdio live checks record observed outcomes and pending future-content acceptance.

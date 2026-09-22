@@ -2,7 +2,7 @@
 
 A local MCP server for querying AimHarder from clients that support Model Context Protocol. An independent project, neither affiliated with nor endorsed by AimHarder.
 
-**Status: account discovery (#2), class schedule queries (#3), upcoming bookings (#4), and published workouts (#5) implemented.** Authentication and gym selection have live MCP validation. Class intervals and specific-session occupancy have also passed live MCP comparisons against AimHarder after user confirmation of the gym time zone; see [validation](docs/validation.md). Date queries require a per-gym, user-confirmed IANA zone. Upcoming bookings have also passed live MCP comparison with the upcoming view and daily schedule. Booking history and personal activity remain pending; the complete MVP is not delivered yet.
+**Status: account discovery (#2), class schedule queries (#3), upcoming bookings (#4), published workouts (#5), and consuming-client composition (#6) implemented.** Authentication and gym selection have live MCP validation. Class intervals and specific-session occupancy have also passed live MCP comparisons against AimHarder after user confirmation of the gym time zone; see [validation](docs/validation.md). Date queries require a per-gym, user-confirmed IANA zone. Upcoming bookings have also passed live MCP comparison with the upcoming view and daily schedule. Booking history and personal activity remain pending; the complete MVP is not delivered yet.
 
 ## Install
 
@@ -117,7 +117,7 @@ The verified Spanish full-date format is supported; unsupported locales and malf
 
 ## Session and errors
 
-The API client is separate from MCP. Only the verified login POST, account discovery GET, daily class schedule GET, and upcoming-booking GET at a verified gym are enabled. Cookies stay in memory, redirects are rejected, each HTTP request times out after 15 seconds, and response bodies are limited to 1 MiB. Concurrent tool requests are serialized around the account session.
+The API client is separate from MCP. Only the verified login POST, account discovery GET, daily class schedule GET, upcoming-booking GET, gym homepage/publication-feed GET and workout-detail GET at a verified gym are enabled. Cookies stay in memory, redirects are rejected, each HTTP request times out after 15 seconds, and response bodies are limited to 1 MiB. Concurrent tool requests are serialized around the account session.
 
 An empty identity result or query HTTP 401 permits one reauthentication and one retry of the query. For classes, this allowance covers discovery and the entire interval; recovery rechecks membership and restarts the interval once. Repeated expiration stops with `SESSION_EXPIRED`. HTTP 403/429 stops with `ACCESS_RESTRICTED`, without reauthentication. Malformed responses, transport failures, and identity mismatches are errors, never empty successful results. Login failures, including unsupported additional-authentication responses, stop further login attempts until the server restarts. Upstream messages are not echoed. Specific invalid-password, 2FA, and restriction payloads have not been verified live; see [API research](docs/api-research.md).
 
@@ -169,9 +169,34 @@ AIMHARDER_LIVE_CHECK=1 AIMHARDER_LIVE_WORKOUT_DATE=2026-09-22 AIMHARDER_LIVE_WOR
 
 The harness compares matching publication IDs, original content and prescription values. If the current view has no matching future content, it reports that limitation instead of claiming full future acceptance.
 
+## Combined workout and booking example
+
+After configuration and `pnpm build`, run the included consuming-client example:
+
+```sh
+node --env-file=.env scripts/query-training.mjs tomorrow WOD
+node --env-file=.env scripts/query-training.mjs 2026-09-23 Metcon
+```
+
+An optional gym argument selects another verified gym: `node --env-file=.env scripts/query-training.mjs tomorrow WOD another-gym`. Class names are exact and case-sensitive; quote names containing spaces. This example performs live authentication and read-only queries and prints the requested workout content and your booking details. Treat its output as private account data, not publishable diagnostic logs.
+
+The example uses the official MCP SDK over stdio and reusable `queryTraining` from `src/consumer.ts`. It first calls `get_account_context`, resolves tomorrow in the selected gym's user-confirmed IANA zone, and calls the existing class, workout and upcoming-booking tools with the explicit date and gym. It validates gym/date/class applicability before combining the results. No new server tool is needed; any compatible conversational client can follow the same sequence.
+
+The structured answer preserves independent `classes`, `workouts`, and `bookingView` outcomes. `bookingSummary.bookings` lists every confirmed matching booking and its time; waitlisted, unknown-state and missing-class candidates stay in `otherCandidates`. Positive bookings remain available if schedules or workouts fail. Missing or failed booking lookups retain valid workout content. Titles and provenance distinguish competing workouts; booking times remain separate, without a guessed session join or a selected latest publication.
+
+`bookingSummary.status` is `booked` when at least one exact date/type reservation is confirmed, otherwise `unconfirmed`. Its `completeness` is always `unconfirmed`: the upcoming view has no verified date horizon, so neither empty results nor other-class bookings establish date-specific absence. Workout coverage remains the current feed page, including when an available publication is returned. Queries are sequential independent reads, not an atomic snapshot. Source text remains untrusted data.
+
+For sanitized combined live verification:
+
+```sh
+AIMHARDER_LIVE_CHECK=1 AIMHARDER_LIVE_TRAINING=1 node --env-file=.env scripts/live-check.mjs
+```
+
+The harness queries tomorrow's WOD, today's WOD, and an existing reserved date/class, then compares content and booking data against independent read-only responses. This mode requires an existing confirmed reservation; it never creates one. Available and unavailable outcomes are recorded honestly; absence of future content leaves first-delivery future-content acceptance pending. See [validation](docs/validation.md).
+
 ## Remaining MVP
 
-The combined workout-and-booking experience, booking history, and personal activity queries remain planned. The first combined experience will answer "What are we doing in tomorrow's WOD, and when am I booked?". Creating or canceling bookings, automation, per-exercise analysis, a UI, and a remote service remain outside the MVP.
+The combined experience is implemented and live-tested with available current content, unavailable next-day content, and an actual reservation. The first-delivery requirement to demonstrate actual published future content remains pending because it was unavailable in the retrieved view. Booking history and personal activity remain pending MVP requirements. Creating or canceling bookings, automation, per-exercise analysis, a UI, and a remote service remain outside the MVP.
 
 Public npm distribution is now part of MVP acceptance: prepare and verify an installable package, then publish and verify the registry artifact after all functional acceptance criteria pass. The preferred package name is `aimharder-mcp`, subject to publishability. See [the distribution decision](docs/adr/2026-09-22-npm-distribution-for-mvp.md).
 

@@ -1,6 +1,6 @@
 # AimHarder MCP server MVP
 
-Date: 2026-09-21. Status: scope confirmed by the user; [implementation specification published as GitHub issue #1](https://github.com/rudeayelo/aimharder-mcp/issues/1); account/gym, class-query, upcoming-booking and published-workout slices implemented; class and upcoming-booking live acceptance passed (see [validation](validation.md)); remaining MVP slices pending. See [validation results](validation.md).
+Date: 2026-09-21. Status: scope confirmed by the user; [implementation specification published as GitHub issue #1](https://github.com/rudeayelo/aimharder-mcp/issues/1); account/gym, class-query, upcoming-booking, published-workout and consuming-client composition slices implemented; class and upcoming-booking live acceptance passed (see [validation](validation.md)); published future-content live acceptance and remaining MVP slices pending. See [validation results](validation.md).
 
 ## Product and users
 
@@ -35,7 +35,7 @@ If multiple distinct feed workouts appear to apply to the requested date and cla
 
 The first end-to-end delivery must answer "What are we doing in tomorrow's WOD, and when am I booked?" through an MCP client using the user's actual account. It includes authentication, gym selection, class sessions, published future workout content from the gym feed, and upcoming bookings. It also includes reproducible setup, automated tests, safe authentication errors, and explicit handling of missing, ambiguous, or incomplete information.
 
-Personal activity and booking history follow in later deliveries within the same MVP. This delivery order does not remove either feature from the acceptance scope. The first delivery is verified against AimHarder from at least one MCP-compatible client or harness.
+Personal activity and booking history follow in later deliveries within the same MVP. This delivery order does not remove either feature from the acceptance scope. The first delivery is verified against AimHarder from at least one MCP-compatible client or harness. The implemented consuming-client example combines the existing queries; current available content, next-day unavailable content and an actual reservation have live verification. Actual published future content was unavailable during verification and remains an explicit first-delivery acceptance gap. See [the runnable example](../README.md#combined-workout-and-booking-example) and [validation](validation.md).
 
 ## Implementation tickets
 

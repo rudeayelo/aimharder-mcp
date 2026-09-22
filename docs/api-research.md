@@ -107,3 +107,8 @@ Workout feed entries contain `wodClass`, `day`, `ejerRate` and `TIPOWODs`. The o
 One daily WOD publication and five matching daily WOD class sessions were observed at the tested gym, without a unique session identifier on the workout. This corroborates the reported shared daily prescription for that gym; it does not generalize to every gym. No correction/supersession relationship or universal publication hour was established. Distinct publications remain alternatives.
 
 The MCP SDK stdio harness compared available content with independent feed/detail reads and counted matching daily class sessions. Future-date absence is scoped to the retrieved view, not all publications. Only one account/gym and the observed Spanish date format have live evidence. See [validation](validation.md) and [the applicability decision](adr/2026-09-22-published-workout-applicability.md).
+
+
+## Combined consuming-client observations (2026-09-22)
+
+Issue #6 uses the existing account, class, workout and upcoming-booking contracts; no new AimHarder operations or state meanings are inferred. The official SDK stdio consumer resolves relative dates in the confirmed gym zone and preserves separate query outcomes. Tomorrow's WOD had five matching sessions but no matching publication or confirmed booking in the retrieved views. Booking status remained unconfirmed, since the upcoming view's calendar horizon is unknown. A separate query for an actual reserved date/class retained the verified booking time despite unavailable workout content. See [the validation record](validation.md) for the combined current-content check and acceptance limitations.

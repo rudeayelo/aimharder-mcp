@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { queryTraining } from '../dist/consumer.js';
 import { randomBytes } from 'node:crypto';
 import { CookieJar } from 'tough-cookie';
 import { fileURLToPath } from 'node:url';
@@ -48,13 +49,14 @@ try {
   }
   const bookings = process.env.AIMHARDER_LIVE_BOOKINGS === '1' ? await checkBookings(client, context.selectedGym) : undefined;
   const workouts = process.env.AIMHARDER_LIVE_WORKOUT_DATE ? await checkWorkouts(client, context.selectedGym) : undefined;
+  const training = process.env.AIMHARDER_LIVE_TRAINING === '1' ? await checkTraining(client, context.selectedGym) : undefined;
   assert.equal(hasStderr, false);
   process.stdout.write(JSON.stringify({
     harness: 'MCP SDK client over stdio', authenticated: true,
     accessibleGymCount: context.gyms.length,
     explicitSelection: 'passed', inaccessibleSelection: 'rejected',
     timeZoneStatus: context.selectedGym.timeZoneStatus,
-    serverStderr: 'empty', ...(classes ? { classes } : {}), ...(bookings ? { bookings } : {}), ...(workouts ? { workouts } : {}),
+    serverStderr: 'empty', ...(classes ? { classes } : {}), ...(bookings ? { bookings } : {}), ...(workouts ? { workouts } : {}), ...(training ? { training } : {}),
   }, null, 2) + '\n');
 } catch {
   process.stderr.write('Live MCP validation failed. Check configuration, authentication, and supported account contracts. Raw errors and responses are suppressed.\n');
@@ -177,9 +179,7 @@ async function checkBookings(client, gym) {
   return { upcomingComparison: 'passed', scheduleComparison: 'passed', bookingCount: matched, explicitSelection: 'passed', inaccessibleSelection: 'rejected', timeZoneProvenance: 'user-confirmed' };
 }
 
-async function checkWorkouts(client, gym) {
-  const date = process.env.AIMHARDER_LIVE_WORKOUT_DATE;
-  const className = process.env.AIMHARDER_LIVE_WORKOUT_CLASS ?? 'WOD';
+async function checkWorkouts(client, gym, date = process.env.AIMHARDER_LIVE_WORKOUT_DATE, className = process.env.AIMHARDER_LIVE_WORKOUT_CLASS ?? 'WOD') {
   const { request, role } = await openLiveSession(gym);
   const page = await request(`https://${role.centre_url}/`);
   const publisher = /timeLineContent:\s*7,\s*userID:\s*(\d+)/.exec(page)?.[1];
@@ -223,4 +223,48 @@ async function checkWorkouts(client, gym) {
   }
   const daily = await request(`https://${role.centre_url}/api/bookings?${new URLSearchParams({ box: String(role.boid), day: date.replaceAll('-', '') })}`);
   return { feedAndDetailComparison: compared ? 'passed' : 'no matching content available in retrieved view', status: view.status, comparedWorkoutCount: compared, matchingClassSessionCount: daily.bookings.filter(row => row.className === className).length, coverage: view.coverage.scope, exhaustive: false };
+}
+
+
+async function checkTraining(client, gym) {
+  const reference = await queryTraining(client, { date: 'tomorrow', className: 'WOD', gymId: gym.id });
+  assert.equal(reference.classes.status, 'success');
+  assert.equal(reference.workouts.status, 'success');
+  assert.equal(reference.bookingView.status, 'success');
+  const localDate = new Intl.DateTimeFormat('sv-SE', { timeZone: gym.timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+  const expectedTomorrow = new Date(`${localDate}T12:00:00Z`);
+  expectedTomorrow.setUTCDate(expectedTomorrow.getUTCDate() + 1);
+  assert.equal(reference.date, expectedTomorrow.toISOString().slice(0, 10));
+  const independentWorkout = await checkWorkouts(client, gym, reference.date, 'WOD');
+  const todayCounter = new Date(`${reference.date}T12:00:00Z`);
+  todayCounter.setUTCDate(todayCounter.getUTCDate() - 1);
+  const current = await queryTraining(client, { date: todayCounter.toISOString().slice(0, 10), className: 'WOD', gymId: gym.id });
+  assert.equal(current.classes.status, 'success');
+  assert.equal(current.workouts.status, 'success');
+  assert.equal(current.bookingView.status, 'success');
+  const independentCurrentWorkout = await checkWorkouts(client, gym, current.date, 'WOD');
+  assert.equal(current.workouts.data.workouts.length, independentCurrentWorkout.comparedWorkoutCount);
+  const independentBookings = await checkBookings(client, gym);
+  const { request, role } = await openLiveSession(gym);
+  const raw = await request(`https://${role.centre_url}/api/bookings?${new URLSearchParams({ box: String(role.boid), day: reference.date.replaceAll('-', '') })}`);
+  assert.deepEqual(reference.classes.data.sessions.map(s => s.startTime), raw.bookings.filter(s => s.className === 'WOD').map(s => s.time.slice(0, 5)));
+  const matching = reference.bookingView.data.bookings.filter(b => b.date === reference.date && b.classType.name === 'WOD' && b.state === 'booked');
+  assert.deepEqual(reference.bookingSummary.bookings, matching);
+  assert.equal(reference.bookingSummary.status, matching.length ? 'booked' : 'unconfirmed');
+  // Exercise a real reserved class independently when it differs from tomorrow's WOD.
+  const actual = reference.bookingView.data.bookings.find(b => b.state === 'booked' && b.classType.name);
+  assert.ok(actual, 'Combined live verification requires an existing confirmed reservation.');
+  const reserved = await queryTraining(client, { date: actual.date, className: actual.classType.name, gymId: gym.id });
+  assert.equal(reserved.classes.status, 'success');
+  assert.equal(reserved.workouts.status, 'success');
+  assert.equal(reserved.bookingSummary.status, 'booked');
+  assert.ok(reserved.bookingSummary.bookings.some(b => b.sourceBookingId === actual.sourceBookingId && b.startTime === actual.startTime));
+  return {
+    consumingClient: 'queryTraining via MCP SDK over stdio', relativeDate: 'gym-local tomorrow verified',
+    reference: { date: reference.date, className: 'WOD', sessionCount: reference.classes.data.sessions.length, workoutStatus: reference.workouts.data.status, workoutCount: reference.workouts.data.workouts.length, bookingStatus: reference.bookingSummary.status, bookedTimeCount: matching.length, independentWorkoutComparison: independentWorkout },
+    currentDay: { sessionCount: current.classes.data.sessions.length, workoutStatus: current.workouts.data.status, workoutCount: current.workouts.data.workouts.length, independentWorkoutComparison: independentCurrentWorkout },
+    actualReservation: { comparison: 'passed', workoutStatus: reserved.workouts.data.status, bookedTimeCount: reserved.bookingSummary.bookings.length, sameDateAndClassAsReference: actual.date === reference.date && actual.classType.name === 'WOD' },
+    independentBookingComparison: independentBookings, bookingDateCoverage: 'unconfirmed',
+    firstDeliveryFutureContent: reference.workouts.data.workouts.length ? 'observed' : 'pending: no matching future content in retrieved view',
+  };
 }
