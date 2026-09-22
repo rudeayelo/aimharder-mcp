@@ -2,6 +2,8 @@
 
 Status: accepted by the user on 2026-09-21; validation clarified the same day to require an MCP-compatible client or harness without naming a specific agent.
 
+Distribution status: the repository-only distribution decision below was superseded on 2026-09-22 by [npm distribution as the final MVP milestone](2026-09-22-npm-distribution-for-mvp.md). Other decisions remain in effect. The historical distribution wording describes the initial delivery.
+
 ## Context
 
 Personal exploration evolved into a reusable MCP server. The definition interview settled scope, format, operation, validation, and future development. This supersedes the provisional scope of [the initial pause](2026-09-21-initial-scope-and-project-pause.md); the user subsequently authorized implementation of issue #2. Account/gym discovery is implemented; see the [implementation ADR](2026-09-21-account-discovery-and-local-runtime.md).

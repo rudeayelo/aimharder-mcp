@@ -2,6 +2,8 @@
 
 Status: accepted for issue [#2](https://github.com/rudeayelo/aimharder-mcp/issues/2), under the approved [MVP](../mvp.md) and [security policy](2026-09-21-credential-security-and-read-only-access.md).
 
+Distribution status: the repository-only distribution decision below was superseded on 2026-09-22 by [npm distribution as the final MVP milestone](2026-09-22-npm-distribution-for-mvp.md). Other decisions remain in effect. The historical distribution wording describes the initial delivery.
+
 Class-query status: the fixed two-operation allowlist and unconditional unknown time-zone response below are superseded for issue #3 by [class schedules and confirmed time zones](2026-09-22-class-schedules-and-confirmed-time-zones.md). The runtime and security foundations remain in effect; the original wording records issue #2.
 
 ## Decision

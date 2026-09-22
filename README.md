@@ -17,7 +17,7 @@ pnpm test
 pnpm build
 ```
 
-Run `pnpm build` after source updates. Dependencies are locked; the MSW browser-worker postinstall is disabled because this project uses Node tests only. There is no database, service deployment, or package publication step.
+Run `pnpm build` after source updates. Dependencies are locked; the MSW browser-worker postinstall is disabled because this project uses Node tests only. There is no database or service deployment. Setup currently uses the repository; npm packaging and publication are approved but pending in [#11](https://github.com/rudeayelo/aimharder-mcp/issues/11) and [#12](https://github.com/rudeayelo/aimharder-mcp/issues/12).
 
 ## Configure and connect
 
@@ -158,6 +158,8 @@ This mode requires at least one actual upcoming entry and compares MCP results w
 ## Remaining MVP
 
 Published future workouts, booking history, and personal activity queries remain planned. The first combined experience will answer "What are we doing in tomorrow's WOD, and when am I booked?". Creating or canceling bookings, automation, per-exercise analysis, a UI, and a remote service remain outside the MVP.
+
+Public npm distribution is now part of MVP acceptance: prepare and verify an installable package, then publish and verify the registry artifact after all functional acceptance criteria pass. The preferred package name is `aimharder-mcp`, subject to publishability. See [the distribution decision](docs/adr/2026-09-22-npm-distribution-for-mvp.md).
 
 ## Documentation
 

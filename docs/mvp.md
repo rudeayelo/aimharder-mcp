@@ -6,7 +6,7 @@ Date: 2026-09-21. Status: scope confirmed by the user; [implementation specifica
 
 A local TypeScript MCP server, with one account per instance. The initial use case is personal, with possible later validation by a small group already familiar with connecting an MCP server. The server targets MCP-compatible clients and harnesses without depending on a particular agent or requiring a dedicated integration.
 
-Distribution: a repository with setup and startup instructions. License: [MIT](../LICENSE). A public repository has been created on [GitHub](https://github.com/rudeayelo/aimharder-mcp); see [the publication ADR](adr/2026-09-21-public-repository-and-mit-license.md). All project content is maintained in English. Setup and startup instructions for account/gym discovery are in the [README](../README.md). Potential collaboration with AimHarder will be considered once a useful, viable product exists, without assuming platform interest or endorsement.
+Distribution: a repository with setup and startup instructions, plus a public npm package as the final MVP milestone. Package implementation and publication are pending; see [the npm distribution decision](adr/2026-09-22-npm-distribution-for-mvp.md). License: [MIT](../LICENSE). A public repository has been created on [GitHub](https://github.com/rudeayelo/aimharder-mcp); see [the publication ADR](adr/2026-09-21-public-repository-and-mit-license.md). All project content is maintained in English. Setup and startup instructions for account/gym discovery are in the [README](../README.md). Potential collaboration with AimHarder will be considered once a useful, viable product exists, without assuming platform interest or endorsement.
 
 Domain terms are defined in the root [glossary](../CONTEXT.md).
 
@@ -57,6 +57,17 @@ Prioritize account/gym access, class sessions, upcoming bookings, and published 
 
 Every slice includes behavioral tests at the MCP interface, separate live read-only validation in a compatible client or harness, and updated documentation. Ticket publication does not demonstrate implementation or API validation. Native dependencies and published issue content were verified when this plan was recorded.
 
+## npm distribution tickets
+
+The user approved these additional slices on 2026-09-22. Both are published with `ready-for-agent`; the publication ticket has native GitHub blockers. The functional ticket plan above is unchanged.
+
+| Ticket | Blocked by |
+| --- | --- |
+| [#11: Run the MCP server from an installable package](https://github.com/rudeayelo/aimharder-mcp/issues/11) | None pending; #2 is complete |
+| [#12: Publish and verify the MVP on npm](https://github.com/rudeayelo/aimharder-mcp/issues/12) | #11, #6, #7, #9, #10 |
+
+The terminal functional blockers include their transitive prerequisites. Package preparation can proceed before those features are complete; public release requires complete MVP acceptance. The preferred name is `aimharder-mcp`, subject to publishability and account access. See [the distribution ADR](adr/2026-09-22-npm-distribution-for-mvp.md).
+
 ## Operation
 
 Keep the AimHarder client independent of the MCP layer, with runtime validation of external responses. Supply credentials through environment variables; the user may inject them from 1Password or another manager. Configuration variables and commands for the implemented account/gym slice are documented in the [README](../README.md).
@@ -79,7 +90,8 @@ Select the gym automatically when the account has only one. If there are several
 - Responses distinguish unpublished information, no records, incomplete results, and access failures; they do not invent states or workouts.
 - The reference WOD query returns available future workout content and the account holder's relevant booking times, distinguishing unavailable workout information from unverified booking status.
 - Tests cover inclusive date boundaries, the 31-date activity limit, gym time-zone handling, partial pagination failures, preservation of source content, gym selection, ambiguous workout publications, and workout responses when booking lookup fails.
-- Reproducible setup and startup instructions in the repository.
+- Reproducible setup and startup instructions in the repository, including version-pinned execution of the public npm package.
+- An installable compiled package verified outside the checkout, with explicitly limited contents and automated packaged-install coverage. Publish the first public version after functional acceptance and verify that exact registry version in a compatible MCP client or harness, including a live read-only account/gym query.
 - Validate the supported query experiences in at least one MCP-compatible client or harness. Record the client or harness used and the observed results; no particular agent or product is required.
 
 ## Testing strategy
@@ -92,7 +104,7 @@ Run separate, explicit live read-only checks against AimHarder using the user's 
 
 ## Outside the MVP and future development
 
-Out of scope: creating and canceling bookings, automation, per-exercise or progress analysis, a UI, a remote service, and publishing an installable package.
+Out of scope: creating and canceling bookings, automation, per-exercise or progress analysis, a UI, and a remote service.
 
 Next priority: creating and canceling bookings through explicit requests, with unambiguous validation of the session and outcome. A remote service and other integrations will be decided later.
 

@@ -42,6 +42,10 @@ Final checks passed: `pnpm typecheck`, `pnpm test` (52 tests), and `pnpm build`.
 - Numeric membership identifiers and gym time zones remain unresolved. No date-dependent tool is exposed, and no system-time-zone fallback is used.
 - Class schedules, occupancy, workouts, bookings, activity, and their date/state semantics have not been implemented or live-validated by this slice.
 
+## npm distribution planning
+
+On 2026-09-22 the user approved [packaging #11](https://github.com/rudeayelo/aimharder-mcp/issues/11) and [publication #12](https://github.com/rudeayelo/aimharder-mcp/issues/12) as additional MVP work. The public npm registry returned E404 for `aimharder-mcp`; this does not reserve the name or establish publishing permissions. Packaging, clean-environment installation, and registry release verification remain pending. Existing account/gym validation above covers the source-built server only. See [the distribution ADR](adr/2026-09-22-npm-distribution-for-mvp.md).
+
 ## Class schedules and occupancy (2026-09-22)
 
 Scope: [issue #3](https://github.com/rudeayelo/aimharder-mcp/issues/3), under [specification #1](https://github.com/rudeayelo/aimharder-mcp/issues/1). The server exposes `get_class_sessions` separately from the reusable API client. See the [class-query decision](adr/2026-09-22-class-schedules-and-confirmed-time-zones.md).
