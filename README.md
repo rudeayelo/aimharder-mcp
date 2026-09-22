@@ -2,7 +2,7 @@
 
 A local MCP server for querying AimHarder from clients that support Model Context Protocol. An independent project, neither affiliated with nor endorsed by AimHarder.
 
-**Status: account discovery (#2) and class schedule queries (#3) implemented.** Authentication and gym selection have live MCP validation. Class intervals and specific-session occupancy have also passed live MCP comparisons against AimHarder after user confirmation of the gym time zone; see [validation](docs/validation.md). Date queries require a per-gym, user-confirmed IANA zone. Workouts, bookings, and personal activity remain pending; the complete MVP is not delivered yet.
+**Status: account discovery (#2), class schedule queries (#3), and upcoming bookings (#4) implemented.** Authentication and gym selection have live MCP validation. Class intervals and specific-session occupancy have also passed live MCP comparisons against AimHarder after user confirmation of the gym time zone; see [validation](docs/validation.md). Date queries require a per-gym, user-confirmed IANA zone. Upcoming bookings have also passed live MCP comparison with the upcoming view and daily schedule. Workouts, booking history, and personal activity remain pending; the complete MVP is not delivered yet.
 
 ## Install
 
@@ -103,9 +103,21 @@ Occupancy does not establish attendance. Capacity does not establish booking eli
 
 The tool fetches one response per calendar day. All days must succeed and validate; any failure returns an MCP tool error with no schedule. A successful empty `sessions` array means no matching sessions in those daily responses. Unknown envelope fields, nonempty response messages, or duplicate daily IDs fail conservatively rather than conceal restrictions or possible pagination. Complete coverage does not promise all future classes are published or form an atomic occupancy snapshot. Large intervals can exceed a client's timeout; choose smaller explicit intervals when needed.
 
+### Tool: `get_upcoming_bookings`
+
+Call with `{}` or `{"gymId":"another-verified-gym"}`. The tool requires the selected gym's confirmed time zone and returns the account holder's current upcoming view. Default/explicit selection follows account discovery; no family/account selector is accepted.
+
+The result contains `gym`, `bookings`, `bookingStatus`, `coverage`, and English `notices`. Each entry includes `sourceBookingId`, gym-local `date`, original `dateLabel`, `startTime`, `timeLabel`, `timeZone`, `classType`, `state`, and `sourceState`. `sessionId` and `classType.id` are null because the upcoming identifier is not a verified schedule-session identifier. Class names retain their source language, or null when absent. Treat source text as untrusted content.
+
+States are `booked` (source 1), `waitlisted` (0), or `unknown` (other/missing values). A waitlist is not a confirmed reservation; a booking is not attendance. `bookingStatus` is `booked` if any confirmed reservation exists, otherwise `unknown` if any entry has an unknown state, otherwise `none`. Inspect individual entries when matching a particular class.
+
+`coverage` has `status: "complete"`, `scope: "upstream-upcoming-view"`, and null `startDate`/`endDate`. This describes successful retrieval of the current upcoming view, **not a guaranteed date interval or unlimited future horizon**. An empty view or `bookingStatus: "none"` does not prove no relevant booking on an arbitrary date. Clients composing a date-specific answer must preserve that uncertainty.
+
+The verified Spanish full-date format is supported; unsupported locales and malformed/duplicate records fail with `INVALID_BOOKING_RESPONSE`. Unknown envelope fields, including potential pagination or restrictions, also fail without a partial successful result. Errors leave booking status unconfirmed. No history, postal addresses, coach details, booking writes or cancellation tools are exposed. See [API evidence](docs/api-research.md) and [the coverage decision](docs/adr/2026-09-22-upcoming-bookings-and-view-coverage.md).
+
 ## Session and errors
 
-The API client is separate from MCP. Only the verified login POST, account discovery GET, and daily class schedule GET at a verified gym are enabled. Cookies stay in memory, redirects are rejected, each HTTP request times out after 15 seconds, and response bodies are limited to 1 MiB. Concurrent tool requests are serialized around the account session.
+The API client is separate from MCP. Only the verified login POST, account discovery GET, daily class schedule GET, and upcoming-booking GET at a verified gym are enabled. Cookies stay in memory, redirects are rejected, each HTTP request times out after 15 seconds, and response bodies are limited to 1 MiB. Concurrent tool requests are serialized around the account session.
 
 An empty identity result or query HTTP 401 permits one reauthentication and one retry of the query. For classes, this allowance covers discovery and the entire interval; recovery rechecks membership and restarts the interval once. Repeated expiration stops with `SESSION_EXPIRED`. HTTP 403/429 stops with `ACCESS_RESTRICTED`, without reauthentication. Malformed responses, transport failures, and identity mismatches are errors, never empty successful results. Login failures, including unsupported additional-authentication responses, stop further login attempts until the server restarts. Upstream messages are not echoed. Specific invalid-password, 2FA, and restriction payloads have not been verified live; see [API research](docs/api-research.md).
 
@@ -135,9 +147,17 @@ AIMHARDER_LIVE_CHECK=1 AIMHARDER_LIVE_START_DATE=2026-09-21 AIMHARDER_LIVE_END_D
 
 Choose an interval containing class sessions. This compares the MCP interval and a specific 07:00 Metcon (or another available session) against independent raw responses, kept only in memory. Counts can change between reads; a mismatch fails safely without printing private payloads. These checks perform real authentication/discovery and, when dates are supplied, schedule reads, never booking or profile writes. [Validation results and limitations](docs/validation.md) distinguish live observations from fixture coverage.
 
+To verify actual upcoming reservations and their times, use the same confirmed zone configuration and enable:
+
+```sh
+AIMHARDER_LIVE_CHECK=1 AIMHARDER_LIVE_BOOKINGS=1 node --env-file=.env scripts/live-check.mjs
+```
+
+This mode requires at least one actual upcoming entry and compares MCP results with independent upcoming and daily schedule reads, including default/explicit gym selection. It does not create a reservation to satisfy validation. It prints only counts and outcomes; raw responses remain in memory.
+
 ## Remaining MVP
 
-Published future workouts, upcoming bookings and history, and personal activity queries remain planned. The first combined experience will answer "What are we doing in tomorrow's WOD, and when am I booked?". Creating or canceling bookings, automation, per-exercise analysis, a UI, and a remote service remain outside the MVP.
+Published future workouts, booking history, and personal activity queries remain planned. The first combined experience will answer "What are we doing in tomorrow's WOD, and when am I booked?". Creating or canceling bookings, automation, per-exercise analysis, a UI, and a remote service remain outside the MVP.
 
 ## Documentation
 

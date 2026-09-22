@@ -78,3 +78,41 @@ During implementation, all 48 class tests passed with `TZ=Pacific/Honolulu` and 
 - Complete coverage means successful retrieval of each daily response. Future publication, live occupancy changes, actual attendance, and booking eligibility are not asserted.
 - Unknown response envelopes and nonempty messages fail conservatively. No real restriction/expiry scenario was provoked.
 - Workouts, upcoming bookings/history, and personal activity remain separate pending slices.
+
+## Upcoming bookings (2026-09-22)
+
+Scope: [issue #4](https://github.com/rudeayelo/aimharder-mcp/issues/4), under [specification #1](https://github.com/rudeayelo/aimharder-mcp/issues/1). The reusable API client and public `get_upcoming_bookings` tool are implemented. See [the view-coverage decision](adr/2026-09-22-upcoming-bookings-and-view-coverage.md).
+
+### Live read-only verification
+
+Environment: macOS, Node 24.21.0, pnpm 12.5.1, official MCP TypeScript SDK 1.30.0 client over stdio. Credentials were read from the authorized secrets manager into process memory. The tested gym uses the Europe/Madrid zone previously confirmed by the user, including DST. No credentials, account identifiers, postal addresses or raw account responses are recorded here.
+
+The official authenticated `/diary` frontend verified the `box` parameter against membership `boid`, separate upcoming/history arrays, booked/waitlist rendering, and the empty upcoming view. The actual upcoming response contained one reserved entry and a separate 30-entry history collection; history was not interpreted. No upcoming pagination control or explicit calendar horizon was observed. The upcoming identifier differed from both the matching schedule-session and class-type identifiers, which remain null in the booking projection.
+
+`AIMHARDER_LIVE_BOOKINGS=1` enabled the updated `scripts/live-check.mjs`. It passed:
+
+| Check | Observed result |
+| --- | --- |
+| MCP startup/tool listing | Account context, class sessions and upcoming bookings exposed over stdio. |
+| Actual upcoming comparison | One entry; source identifier, date label, normalized date, time, original class name and state matched an independent raw response. |
+| Independent daily schedule comparison | One unambiguous match by date, time, class name and booked state, without equating source identifiers. |
+| Gym selection | Default and explicit selections matched; an inaccessible selection was rejected. |
+| Zone provenance | User-confirmed IANA zone returned; no automatic discovery claim. |
+| Server stderr | Empty. |
+
+Sanitized result: `upcomingComparison: "passed"`, `scheduleComparison: "passed"`, `bookingCount: 1`, `explicitSelection: "passed"`, `inaccessibleSelection: "rejected"`, `timeZoneProvenance: "user-confirmed"`. Only authentication, membership discovery, the account's upcoming view, daily schedules and official frontend reads were used. No reservations, cancellations, family-account queries or other-member queries were performed.
+
+### Automated checks
+
+The new `tests/bookings.test.ts` contains 36 behavioral tests through the actual MCP interface and API client, substituting only anonymized HTTP responses. Coverage includes zero/one/multiple entries, original content and privacy projection, missing optional details, waitlist/unknown/missing states, invalid/duplicate rows, incomplete/pagination/restriction envelopes, failures, default/explicit multi-gym routing, account/family-selector rejection, identity mismatch, recovery/exhaustion and membership removal after expiry, confirmed zones, DST and leap/year boundaries. Synthetic states and errors do not establish additional live upstream behavior.
+
+The booking tests first failed because the tool was absent, then passed after implementation, including under `TZ=Pacific/Honolulu`. `pnpm typecheck`, the final `pnpm test` (136 tests across three files), `pnpm build`, `node --check scripts/live-check.mjs`, and `git diff --check` passed. All local Markdown links resolved across 16 working-tree files, and the staged documentation links also resolved independently. Initial checks used the shell default Node 26.9.0; typechecking, all 136 tests, build, harness syntax and live MCP verification were then repeated successfully on the supported Node 24.21.0. Separate Standards and Spec reviews of the staged delivery against baseline `86bcd70b` each reported zero findings. The staged diff contained no private account identifiers or secret-store references. The separate live MCP check passed as recorded above.
+
+### Limits and composition boundary
+
+- Only one real account/gym and one actual reserved entry were verified. Multi-gym, empty and unknown states have fixture coverage. Waitlist meaning comes from the official frontend; no live waitlist was manufactured.
+- `coverage.status: "complete"` describes the returned upstream upcoming view only. Its date endpoints are unknown. Absence does not prove no relevant reservation on an arbitrary future date; later composition must preserve that uncertainty or verify sufficient date coverage.
+- Only the observed Spanish full-date format is supported. Unsupported locales, malformed dates and unrecognized envelopes fail without claiming no bookings. Times are gym-local wall values with a named zone, not inferred instants.
+- There is no verified session-ID join; consumers may compare date/time/type but must retain ambiguous alternatives. Missing optional class names remain null.
+- Potential partial/paginated responses return an error without a successful partial result. Historical booking-state semantics and activity pagination are not implemented by this slice.
+- The domain glossary, API/MCP separation, one-account architecture, distribution and license decisions remain unchanged. The allowlist and view-coverage decision are updated in the relevant ADRs. Unrelated npm-planning edits remain outside this delivery.

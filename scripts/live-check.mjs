@@ -25,7 +25,7 @@ transport.stderr?.on('data', () => { hasStderr = true; });
 try {
   await client.connect(transport);
   const tools = await client.listTools();
-  assert.deepEqual(tools.tools.map((tool) => tool.name), ['get_account_context', 'get_class_sessions']);
+  assert.deepEqual(tools.tools.map((tool) => tool.name), ['get_account_context', 'get_class_sessions', 'get_upcoming_bookings']);
   const result = await client.callTool({ name: 'get_account_context', arguments: {} });
   assert.notEqual(result.isError, true);
   const context = result.structuredContent;
@@ -46,13 +46,14 @@ try {
   if (process.env.AIMHARDER_LIVE_START_DATE || process.env.AIMHARDER_LIVE_END_DATE) {
     classes = await checkClasses(client, context.selectedGym);
   }
+  const bookings = process.env.AIMHARDER_LIVE_BOOKINGS === '1' ? await checkBookings(client, context.selectedGym) : undefined;
   assert.equal(hasStderr, false);
   process.stdout.write(JSON.stringify({
     harness: 'MCP SDK client over stdio', authenticated: true,
     accessibleGymCount: context.gyms.length,
     explicitSelection: 'passed', inaccessibleSelection: 'rejected',
     timeZoneStatus: context.selectedGym.timeZoneStatus,
-    serverStderr: 'empty', ...(classes ? { classes } : {}),
+    serverStderr: 'empty', ...(classes ? { classes } : {}), ...(bookings ? { bookings } : {}),
   }, null, 2) + '\n');
 } catch {
   process.stderr.write('Live MCP validation failed. Check configuration, authentication, and supported account contracts. Raw errors and responses are suppressed.\n');
@@ -68,29 +69,7 @@ async function checkClasses(client, gym) {
   const { classQuerySchema, calendarDates } = await import('../dist/classes.js');
   assert.equal(classQuerySchema.safeParse({ startDate, endDate }).success, true);
   assert.equal(gym.timeZoneStatus, 'user-confirmed');
-  const jar = new CookieJar();
-  async function request(url, body) {
-    const headers = { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' };
-    const cookie = await jar.getCookieString(url);
-    if (cookie) headers.Cookie = cookie;
-    if (body) headers['Content-Type'] = 'application/json';
-    const response = await fetch(url, {
-      method: body ? 'POST' : 'GET', headers, redirect: 'error', signal: AbortSignal.timeout(15_000),
-      ...(body ? { body: JSON.stringify(body) } : {}),
-    });
-    assert.equal(response.status, 200);
-    for (const cookie of response.headers.getSetCookie()) await jar.setCookie(cookie, url);
-    return response.json();
-  }
-  const login = await request('https://login.aimharder.es/api/login', {
-    username: env.AIMHARDER_USERNAME, password: env.AIMHARDER_PASSWORD,
-    iniframe: 0, fingerprint: randomBytes(25).toString('hex'),
-  });
-  assert.equal(login.data.auth.authOK, true);
-  const who = await request('https://aimharder.es/api/whoami');
-  assert.equal(who.data[0].id, login.data.userData.id);
-  const role = who.data[0].roles.find((row) => row.role === 'client' && row.centre_url === `${gym.id}.aimharder.es`);
-  assert.ok(role && Number.isSafeInteger(role.boid) && role.boid > 0);
+  const { request, role } = await openLiveSession(gym);
   const dates = [...calendarDates(startDate, endDate)];
   const rawDays = new Map();
   for (const date of dates) {
@@ -125,4 +104,74 @@ async function checkClasses(client, gym) {
     emptyDayCount: [...rawDays.values()].filter((rows) => rows.length === 0).length,
     specificSessionComparison: 'passed', timeZoneProvenance: 'user-confirmed',
   };
+}
+
+async function openLiveSession(gym) {
+  const jar = new CookieJar();
+  async function request(url, body) {
+    const headers = { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' };
+    const cookie = await jar.getCookieString(url);
+    if (cookie) headers.Cookie = cookie;
+    if (body) headers['Content-Type'] = 'application/json';
+    const response = await fetch(url, {
+      method: body ? 'POST' : 'GET', headers, redirect: 'error', signal: AbortSignal.timeout(15_000),
+      ...(body ? { body: JSON.stringify(body) } : {}),
+    });
+    assert.equal(response.status, 200);
+    for (const cookie of response.headers.getSetCookie()) await jar.setCookie(cookie, url);
+    return response.json();
+  }
+  const login = await request('https://login.aimharder.es/api/login', {
+    username: env.AIMHARDER_USERNAME, password: env.AIMHARDER_PASSWORD,
+    iniframe: 0, fingerprint: randomBytes(25).toString('hex'),
+  });
+  assert.equal(login.data.auth.authOK, true);
+  const who = await request('https://aimharder.es/api/whoami');
+  assert.equal(who.data[0].id, login.data.userData.id);
+  const role = who.data[0].roles.find((row) => row.role === 'client' && row.centre_url === `${gym.id}.aimharder.es`);
+  assert.ok(role && Number.isSafeInteger(role.boid) && role.boid > 0);
+  return { request, role };
+}
+
+async function checkBookings(client, gym) {
+  assert.equal(gym.timeZoneStatus, 'user-confirmed');
+  const { request, role } = await openLiveSession(gym);
+  const raw = await request(`https://${role.centre_url}/api/nextBookings?${new URLSearchParams({ box: String(role.boid) })}`);
+  assert.deepEqual(Object.keys(raw).sort(), ['history', 'nextClasses']);
+  assert.ok(Array.isArray(raw.nextClasses) && raw.nextClasses.length > 0, 'Live acceptance requires an actual upcoming booking.');
+  const result = await client.callTool({ name: 'get_upcoming_bookings', arguments: {} });
+  assert.notEqual(result.isError, true);
+  const view = result.structuredContent;
+  assert.equal(view.gym.id, gym.id);
+  assert.equal(view.coverage.scope, 'upstream-upcoming-view');
+  assert.equal(view.coverage.startDate, null);
+  assert.equal(view.coverage.endDate, null);
+  assert.equal(view.bookings.length, raw.nextClasses.length);
+  let matched = 0;
+  for (const row of raw.nextClasses) {
+    const booking = view.bookings.find((entry) => entry.sourceBookingId === row.id);
+    assert.ok(booking);
+    assert.equal(booking.timeLabel, row.time);
+    assert.equal(booking.classType.name, row.className ?? null);
+    assert.equal(booking.dateLabel, row.day);
+    assert.equal(booking.sourceState, row.bookState ?? null);
+    assert.equal(booking.state, row.bookState === 1 ? 'booked' : row.bookState === 0 ? 'waitlisted' : 'unknown');
+    assert.equal(booking.timeZone, gym.timeZone);
+    assert.equal(booking.sessionId, null);
+    assert.equal(booking.classType.id, null);
+    // Independently format the normalized date in the observed source locale.
+    const date = new Date(`${booking.date}T12:00:00Z`);
+    const expectedLabel = new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(date);
+    assert.equal(expectedLabel.toLocaleLowerCase('es-ES'), row.day.toLocaleLowerCase('es-ES'));
+    const daily = await request(`https://${role.centre_url}/api/bookings?${new URLSearchParams({ box: String(role.boid), day: booking.date.replaceAll('-', '') })}`);
+    const candidates = daily.bookings.filter((entry) => entry.time === row.time && entry.className === row.className && entry.bookState === row.bookState);
+    assert.equal(candidates.length, 1, 'Live comparison requires an unambiguous schedule match.');
+    matched++;
+  }
+  const explicit = await client.callTool({ name: 'get_upcoming_bookings', arguments: { gymId: gym.id } });
+  assert.notEqual(explicit.isError, true);
+  assert.deepEqual(explicit.structuredContent.bookings, view.bookings);
+  const rejected = await client.callTool({ name: 'get_upcoming_bookings', arguments: { gymId: 'unverified-live-check-gym' } });
+  assert.equal(rejected.isError, true);
+  return { upcomingComparison: 'passed', scheduleComparison: 'passed', bookingCount: matched, explicitSelection: 'passed', inaccessibleSelection: 'rejected', timeZoneProvenance: 'user-confirmed' };
 }

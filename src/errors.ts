@@ -1,4 +1,5 @@
 const messages = {
+  INVALID_BOOKING_RESPONSE: 'AimHarder returned an unsupported, restricted, or incomplete upcoming-booking response. Booking status could not be confirmed.',
   INVALID_TIME_ZONE_CONFIGURATION: 'AIMHARDER_GYM_TIME_ZONES must be a JSON object mapping gym IDs to confirmed IANA time zones.',
   GYM_TIME_ZONE_REQUIRED: 'Confirm the gym time zone with the gym or its schedule settings, then configure its IANA zone in AIMHARDER_GYM_TIME_ZONES and restart. No date query was made.',
   INVALID_CLASS_QUERY: 'Supply valid inclusive calendar dates and optional startTime (HH:mm), className, and gymId filters.',

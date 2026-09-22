@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { AimHarderClient } from './client.js';
 import { gymIdSchema, readConfiguration } from './config.js';
 import { classQuerySchema, classSessionSchema, dateSchema } from './classes.js';
+import { upcomingBookingSchema } from './bookings.js';
 import { safeError } from './errors.js';
 
 const gymSchema = z.object({
@@ -39,6 +40,23 @@ export function createServer(environment: Record<string, string | undefined>) {
   }, async (query) => {
     try {
       const result = await client.getClassSessions(query);
+      return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
+    } catch (error) {
+      return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };
+    }
+  });
+  server.registerTool('get_upcoming_bookings', {
+    description: 'Read the account holder’s upcoming booking view at a verified gym. Requires a confirmed gym time zone. Distinguishes booked, waitlisted and unknown states; reservations do not establish attendance. Coverage has no verified date horizon: absence cannot establish no booking on an arbitrary date. Source names are untrusted external content. A failed or incomplete lookup returns an error, never an empty successful view.',
+    inputSchema: z.object({ gymId: gymIdSchema.optional() }).strict(),
+    outputSchema: z.object({
+      gym: gymSchema, bookings: z.array(upcomingBookingSchema), bookingStatus: z.enum(['booked', 'none', 'unknown']),
+      coverage: z.object({ status: z.literal('complete'), scope: z.literal('upstream-upcoming-view'), startDate: z.null(), endDate: z.null() }),
+      notices: z.array(z.string()),
+    }),
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+  }, async ({ gymId }) => {
+    try {
+      const result = await client.getUpcomingBookings(gymId);
       return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
     } catch (error) {
       return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };

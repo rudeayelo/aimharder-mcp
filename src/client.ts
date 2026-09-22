@@ -5,6 +5,8 @@ import { gymIdSchema, type Configuration } from './config.js';
 import { AimHarderError } from './errors.js';
 import { calendarDates, classQuerySchema, parseClassDay, type ClassQuery, type ClassSession } from './classes.js';
 
+import { parseUpcomingBookings } from './bookings.js';
+
 const loginUrl = 'https://login.aimharder.es/api/login';
 const identityUrl = 'https://aimharder.es/api/whoami';
 const accountIdSchema = z.number().int().positive().safe();
@@ -94,6 +96,26 @@ export class AimHarderClient {
     });
   }
 
+  getUpcomingBookings(gymId?: string) {
+    return this.#query(gymId, async (_gyms, { gym, boxId }) => {
+      if (!gym.timeZone) throw new AimHarderError('GYM_TIME_ZONE_REQUIRED');
+      if (boxId === undefined) throw new AimHarderError('INVALID_BOOKING_RESPONSE');
+      const bookings = parseUpcomingBookings(await this.#request({ kind: 'upcoming', gymId: gym.id, boxId }), gym.timeZone);
+      const bookingStatus = bookings.some((row) => row.state === 'booked') ? 'booked' as const
+        : bookings.some((row) => row.state === 'unknown') ? 'unknown' as const : 'none' as const;
+      return {
+        gym, bookings, bookingStatus,
+        coverage: { status: 'complete' as const, scope: 'upstream-upcoming-view' as const, startDate: null, endDate: null },
+        notices: [
+          'Coverage is the current AimHarder upcoming view, not a verified calendar interval or unlimited future horizon. Do not infer no booking for an arbitrary date from absence here.',
+          'Bookings are reservations, not attendance. Waitlisted entries are not confirmed reservations; unknown states must not be treated as no booking.',
+          'Times are gym-local wall times in the user-confirmed zone, without an inferred UTC instant. Only the verified Spanish date format is supported.',
+          'The upcoming source ID is not a verified class-session ID. Match date, time and class type cautiously and retain ambiguous alternatives.',
+        ],
+      };
+    });
+  }
+
   #query<T>(gymId: string | undefined, work: (gyms: AccessibleGym[], selected: AccessibleGym) => Promise<T>): Promise<T> {
     // Serialize whole queries so recovery cannot replace another request's session.
     const result = this.#queue.then(() => this.#authenticatedQuery(gymId, work));
@@ -178,9 +200,9 @@ export class AimHarderClient {
     return [...gyms.values()];
   }
 
-  async #request(operation: 'login' | 'identity' | { kind: 'classes'; gymId: string; boxId: number; date: string }): Promise<unknown> {
+  async #request(operation: 'login' | 'identity' | { kind: 'classes'; gymId: string; boxId: number; date: string } | { kind: 'upcoming'; gymId: string; boxId: number }): Promise<unknown> {
     const url = typeof operation === 'object'
-      ? `https://${operation.gymId}.aimharder.es/api/bookings?${new URLSearchParams({ box: String(operation.boxId), day: operation.date.replaceAll('-', '') })}`
+      ? `https://${operation.gymId}.aimharder.es/api/${operation.kind === 'classes' ? 'bookings' : 'nextBookings'}?${new URLSearchParams({ box: String(operation.boxId), ...(operation.kind === 'classes' ? { day: operation.date.replaceAll('-', '') } : {}) })}`
       : operation === 'login' ? loginUrl : identityUrl;
     const headers: Record<string, string> = { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' };
     const cookie = await this.#cookies.getCookieString(url);

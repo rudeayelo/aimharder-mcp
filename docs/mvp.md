@@ -1,6 +1,6 @@
 # AimHarder MCP server MVP
 
-Date: 2026-09-21. Status: scope confirmed by the user; [implementation specification published as GitHub issue #1](https://github.com/rudeayelo/aimharder-mcp/issues/1); account/gym and class-query slices implemented; class live acceptance passed (see [validation](validation.md)); remaining MVP slices pending. See [validation results](validation.md).
+Date: 2026-09-21. Status: scope confirmed by the user; [implementation specification published as GitHub issue #1](https://github.com/rudeayelo/aimharder-mcp/issues/1); account/gym, class-query and upcoming-booking slices implemented; class and upcoming-booking live acceptance passed (see [validation](validation.md)); remaining MVP slices pending. See [validation results](validation.md).
 
 ## Product and users
 
@@ -98,4 +98,4 @@ Next priority: creating and canceling bookings through explicit requests, with u
 
 ## Technical validation
 
-See [API research](api-research.md) for sources, observed endpoints, user-provided samples, and unresolved validation questions. The account/gym observations distinguish live-verified contracts from unresolved assumptions; other query families remain unverified.
+See [API research](api-research.md) for sources, observed endpoints, user-provided samples, and unresolved validation questions. The account/gym observations distinguish live-verified contracts from unresolved assumptions; upcoming-booking observations and view-only coverage are recorded there; workout, history and activity families remain unverified.
