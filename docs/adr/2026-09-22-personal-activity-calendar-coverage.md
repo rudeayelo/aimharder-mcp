@@ -20,7 +20,7 @@ Month partitions give finite, independently verified interval coverage without g
 
 ## Recent activity composition (issue #9)
 
-Status: accepted implementation boundary; distinct-training-session acceptance remains blocked.
+Status: superseded for #9 by [activity-entry query semantics](2026-09-22-activity-entry-query-semantics.md). The following paragraphs preserve the original day-based fallback and its former blocker.
 
 Compose existing MCP queries in a consuming client, keeping the API client and MCP server unchanged. The requested recent-session experience cannot be claimed from current evidence. Return a separately labelled days-with-activity alternative, with an explicit blocked training-session result. A date may represent several sessions or several records from one session; no grouping is inferred from matching dates, exercises or bookings.
 
@@ -30,7 +30,7 @@ Consequences: useful recent content is available without silently substituting e
 
 ## Period frequency composition (issue #10)
 
-Status: accepted implementation boundary; distinct-training-session-total acceptance remains blocked.
+Status: superseded for #10 by [activity-entry query semantics](2026-09-22-activity-entry-query-semantics.md). The following paragraphs preserve the original counting fallback and its former blocker.
 
 Compose the same existing MCP queries in a consuming client. Resolve the previous full calendar month only after establishing the selected gym and confirmed zone. Explicit intervals are partitioned into consecutive windows of at most 31 dates, without overlap; repeated calendar month reads are filtered to each window. Deduplicate source identity and reject conflicting repeated identities without collapsing different IDs with matching content. A shared runtime validator checks gym, zone, requested interval and completed-date coverage for both recent and period consumers.
 

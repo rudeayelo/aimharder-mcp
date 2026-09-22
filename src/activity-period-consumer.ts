@@ -1,4 +1,4 @@
-/** Consuming MCP example: alternative record/day counts, never inferred sessions. */
+/** Consuming MCP example: activity-entry counts with separate day counts. */
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { z } from 'zod';
 import type { ActivityEntry } from './activity.js';
@@ -71,15 +71,14 @@ export async function queryActivityPeriod(client: Pick<Client, 'callTool'>, inpu
   const observedDays = new Set(observedEntries.map(entry => entry.date)).size;
   return {
     gym, startDate, endDate, coverage, completedDates: [...completedDates].sort(), windows, maxWindows: query.maxWindows,
-    basis: 'activity-entry-and-day-alternative' as const,
+    basis: 'activity-entries' as const,
     counts: {
       activityEntries: { observed: entries.size, exact: coverage === 'complete' ? entries.size : null },
       daysWithActivity: { observed: observedDays, exact: coverage === 'complete' ? observedDays : null },
       interpretation: coverage === 'complete' ? 'exact-for-available-calendar-records' as const : 'recovered-lower-bound' as const,
     },
-    trainingSessions: { status: 'blocked' as const, count: null, reason: 'Training-session grouping and attendance are not verified; the requested training-session total remains unmet.' },
     entries: observedEntries,
-    notices: ['Entry counts and days with activity are labelled alternatives, not training-session or booking counts.',
+    notices: ['Frequency counts distinct activity entries. Days with activity are supplementary; neither measure establishes class attendance.',
       'Coverage describes available calendar records and is not an atomic snapshot or proof of attendance.',
       ...(coverage === 'incomplete' ? ['The period is incomplete because retrieval failed, returned incomplete coverage, or reached the configured window limit. Observed counts are recovered lower bounds; exact totals are unavailable.'] : [])],
   };

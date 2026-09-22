@@ -60,7 +60,7 @@ This is a user-reported convention, not an integration result. Whether other gym
 
 ## Activity interpretation for summaries
 
-Recent-training summaries and monthly training counts require verifying whether multiple activity entries describe one training session, how duplicates and pagination overlap are identified, and whether the data establishes attendance. Do not equate activity entries, days with activity, bookings, and completed training sessions. Verify chronology and complete coverage before reporting the latest five sessions or an exact monthly total.
+The user clarified that recent summaries and period frequency count activity entries. Verify source identity, deduplication, chronology and coverage for those queries; physical-session grouping and attendance are not required. Do not equate activity entries, days with activity, bookings, and completed training sessions. Verify chronology and complete coverage before reporting the latest five entries or an exact period entry total.
 
 ## Validation priorities
 
@@ -131,10 +131,14 @@ Independent live detail reads for every returned ID in a nonempty month verified
 
 No verified training-session identifier or within-day training time was found. Source activity identity identifies a record; WOD block IDs and exercise IDs are not proven training-session join keys. The calendar can represent several IDs on one day. Neither an entry nor a day establishes attendance or a distinct training-session count. No workout title was present in observed details; block-type names are not promoted into titles. Account/gym variants, other locales and upstream rate limits remain unverified. The selected-gym filter and error variants are fixture-tested separately from the single-account live evidence. See [the calendar decision](adr/2026-09-22-personal-activity-calendar-coverage.md).
 
-## Recent activity observations (2026-09-22, issue #9)
+## Historical recent-day observations (2026-09-22, original issue #9 interpretation)
 
 The consuming MCP client independently matched the five latest days with activity within a complete 31-date calendar window ending 2026-09-22. Fresh raw month/detail reads matched cutoff-day source IDs, original block notes, exercise names and record dates. All same-day entries were retained. Selected-gym/account filtering and completed calendar coverage, rather than publication order, established this bounded day-level recency. No explicit `trainingSessionId`, `sessionId` or `startTime` was present in the compared details. Absence of those keys does not establish that no other upstream grouping exists: no verified join or attendance contract was discovered, so #9's distinct-session requirement remains blocked. Cross-window, failure and tie variants are fixture-tested; the live recent query needed one window.
 
-## Period frequency observations (2026-09-22, issue #10)
+## Historical period-frequency observations (2026-09-22, original issue #10 interpretation)
 
 The consuming SDK stdio client resolved the previous month as August 2026 in the confirmed Europe/Madrid gym zone and independently matched the complete 31-date empty calendar: zero available activity entries and zero days with activity. A second explicit interval, 1–22 September 2026, matched complete calendar coverage, ten selected-gym entries on ten distinct dates, source identities, record dates and original block notes against fresh raw calendar/detail reads. This establishes available entry/day counts only. No explicit training-session/time join key was observed in those details; no session-grouping or attendance interpretation was verified. Fixture tests cover duplicate references, multiple records on one date, cross-window identity conflicts, partial retrieval, several month lengths and zone boundaries; these are separate from the single-account live evidence.
+
+## Activity-entry scope clarification (2026-09-22)
+
+The user explicitly defined #9 as the last five activity entries and #10 as the number of activity entries in a period. The earlier grouping blockers above are historical and superseded by [the entry semantics decision](adr/2026-09-22-activity-entry-query-semantics.md). This is a product clarification, not new upstream evidence. Calendar/detail identity and coverage still apply; same-date source IDs are presentation tie-breakers, not verified timestamps or physical-session links. Revised live results are recorded in [validation](validation.md).

@@ -21,7 +21,7 @@ The account holder's reservation for a class session. A booking does not establi
 _Avoid_: Attendance or completed workout as synonyms for a booking.
 
 **Activity entry**:
-A record of the account holder's personal activity. It does not by itself establish a booking or verified attendance.
+A distinct record of the account holder's personal activity. Several entries on the same date remain separate entries, even when their content is similar. An entry does not by itself establish a booking or verified attendance.
 _Avoid_: Booking or attendance as synonyms for an activity record.
 
 **Training session**:

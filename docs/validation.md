@@ -1,5 +1,8 @@
 # Validation record
 
+Current interpretation: the user clarified #9 and #10 to retrieve/count activity entries. Historical sections below describe the former session-grouping blockers; those blockers are superseded by [the entry semantics decision](adr/2026-09-22-activity-entry-query-semantics.md). Revised verification is recorded at the end.
+
+
 ## Account and gym discovery (2026-09-21)
 
 Historical issue #2 verification; the class-query update below records subsequent behavior. Scope: [issue #2](https://github.com/rudeayelo/aimharder-mcp/issues/2), part of [specification #1](https://github.com/rudeayelo/aimharder-mcp/issues/1). This validates the account/gym slice, not the complete MVP.
@@ -238,3 +241,17 @@ Separate explicit live SDK checks passed for available booking history, personal
 Final Standards review found no hard violations and one optional duplicated-merge cleanup in the two activity consumers. Final Spec review found no fixable defects or scope creep and two unresolved acceptance blockers: verified distinct training-session grouping for #9 and #10. Those issues remain open; the implemented day/entry alternatives do not fulfill their training-session requirements. Issues #7, #8 and #11 are complete within their documented availability boundaries. The older #6 future-content live gap and #12 registry publication remain outside this delivery.
 
 All changes are committed locally on the existing `main` branch. No push or npm publication was performed. The credential, domain and architecture decisions remain consistent with the affected history/activity/distribution ADR updates; unrelated ADRs required no changes.
+
+## Entry-based acceptance for #9 and #10 (2026-09-22)
+
+The user clarified both conversational requests: recent results mean the latest five activity entries, and period frequency means the number of distinct activity entries. The previous grouping blockers are superseded by [the entry semantics ADR](adr/2026-09-22-activity-entry-query-semantics.md). No new upstream session, attendance or timestamp meaning is asserted.
+
+The recent consumer now counts entries, returns a flat bounded list and removes the blocked physical-session result. Same-date IDs are only deterministic presentation order; a cutoff that splits tied-date entries reports selected/omitted counts and prevents uniquely verified latest membership. The period consumer uses `activity-entries` as its primary basis, retains supplementary day counts, and keeps null exact totals on incomplete coverage. Complete empty periods correctly have zero entries. Interval access, identity deduplication and retry/security behavior are unchanged.
+
+Red/green checks exercised the real MCP/client and anonymized HTTP boundary: the revised recent assertions failed before the change, then all 14 recent tests passed; the period assertions likewise failed first, then all 19 period tests passed. Coverage includes multiple same-date entries, count-based stopping, date order versus ID order, split cutoff ties, incomplete newer results even when enough entries were recovered, cross-window identity conflicts and all existing monthly date/coverage cases.
+
+Separate official SDK stdio live checks passed against independently fetched calendar/detail responses. Recent retrieval returned five entries from one complete 31-date window ending 2026-09-22, with no split cutoff tie, verified selection membership, original detail comparison and explicit unverified within-date order. Period checks passed for the previous month (31 complete dates, zero entries) and 1–22 September (22 complete dates, ten entries). Account/gym selection passed and server stderr was empty. Only sanitized counts/outcomes were recorded. Same-date ambiguity and partial cases remain fixture-tested, not manufactured live.
+
+The glossary, MVP, README, research and GitHub parent/child specifications now use the confirmed entry unit. The earlier composition ADR sections are marked superseded; historical validation records are retained. Unrelated authentication, API separation, distribution, class and workout decisions are unchanged. The remaining first-delivery future-workout check (#6) and registry publication (#12) are unaffected.
+
+Final revised verification passed on Node 24: **251 tests across 10 files**, including isolated package installation, plus typechecking, build, all script syntax checks, local links across 20 Markdown files and `git diff --check`. Separate Standards and Spec reviews against `cb73950` both reported zero findings. Issues #9 and #10 meet the user-clarified entry-based acceptance criteria; the former physical-session grouping blockers no longer apply. Changes are committed locally on `main`, without push or npm publication.

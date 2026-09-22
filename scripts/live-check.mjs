@@ -347,12 +347,13 @@ async function checkRecentActivity(client, gym) {
   const { queryRecentActivity } = await import('../dist/recent-activity-consumer.js');
   const result = await queryRecentActivity(client, { endDate: process.env.AIMHARDER_LIVE_RECENT_END, maxWindows: 3, gymId: gym.id });
   assert.notEqual(result.searchStatus, 'incomplete');
-  assert.equal(result.trainingSessions.status, 'blocked');
+  assert.equal(result.basis, 'activity-entries');
+  assert.equal(result.requestedCount, 5);
+  assert.equal('trainingSessions' in result, false);
   const { request, role, accountId } = await openLiveSession(gym);
   const { calendarDates } = await import('../dist/classes.js');
   const expected = new Map();
   const calendars = new Map();
-  let explicitSessionKeyObserved = false;
   for (const window of result.windows) {
     const dates = [...calendarDates(window.startDate, window.endDate)];
     assert.ok(dates.length <= 31);
@@ -366,24 +367,31 @@ async function checkRecentActivity(client, gym) {
           if (detail.boxId !== role.boid) continue;
           const label = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${date}T12:00:00Z`));
           assert.equal(detail.recordDate.toLocaleLowerCase('es-ES'), label);
-          explicitSessionKeyObserved ||= ['trainingSessionId','sessionId','startTime'].some(key=>detail[key] != null);
           expected.set(id,{date,detail});
         }
       }
     }
   }
-  const selectedDates = [...new Set([...expected.values()].map(row=>row.date))].sort().reverse().slice(0,5);
-  assert.deepEqual(result.days.map(day=>day.date),selectedDates);
-  for (const day of result.days) {
-    assert.deepEqual(day.entries.map(e=>e.sourceActivityId),[...expected].filter(([,row])=>row.date===day.date).map(([id])=>id).sort((a,b)=>a-b));
-    for (const entry of day.entries) {
-      const raw = expected.get(entry.sourceActivityId).detail;
-      assert.equal(entry.startTime,null);assert.equal(entry.trainingSessionId,null);
-      assert.deepEqual(entry.blocks.map(b=>b.notes),raw.TIPOWODs.map(b=>b.deleted?null:b.notes??null));
-      assert.deepEqual(entry.exercises.map(e=>e.name),raw.ejerRate.filter(e=>e.tipoWOD==null||!raw.TIPOWODs[e.tipoWOD].deleted).map(e=>e.ejerName));
-    }
+  const ordered = [...expected].sort(([a, x], [b, y]) => y.date.localeCompare(x.date) || a - b);
+  const selected = ordered.slice(0, result.requestedCount);
+  assert.deepEqual(result.entries.map(entry => entry.sourceActivityId), selected.map(([id]) => id));
+  const cutoff = selected.at(-1)?.[1].date;
+  const omittedCount = ordered.slice(result.requestedCount).filter(([, row]) => row.date === cutoff).length;
+  assert.deepEqual(result.ordering, {
+    withinDate: 'unverified', tieBreak: 'source-activity-id-ascending',
+    boundaryTie: omittedCount ? { date: cutoff, selectedCount: selected.filter(([, row]) => row.date === cutoff).length, omittedCount } : null,
+  });
+  assert.equal(result.latestEntriesVerified, result.searchStatus === 'matched' && omittedCount === 0);
+  for (const entry of result.entries) {
+    const { date, detail: raw } = expected.get(entry.sourceActivityId);
+    assert.equal(entry.date, date); assert.equal(entry.timeZone, gym.timeZone);
+    assert.equal(entry.startTime, null); assert.equal(entry.trainingSessionId, null);
+    assert.deepEqual(entry.blocks.map(b => b.notes), raw.TIPOWODs.map(b => b.deleted ? null : b.notes ?? null));
+    const exercises = raw.ejerRate.filter(e => e.tipoWOD == null || !raw.TIPOWODs[e.tipoWOD].deleted);
+    assert.deepEqual(entry.exercises.map(e => e.name), exercises.map(e => e.ejerName));
+    for (let i = 0; i < entry.exercises.length; i++) for (const [key, value] of Object.entries(entry.exercises[i].prescription)) assert.deepEqual(value, exercises[i][key]);
   }
-  return {independentRecentCalendarAndDetailComparison:'passed',searchStatus:result.searchStatus,windows:result.windows.length,daysReturned:result.days.length,latestDaysVerified:result.latestDaysVerified,explicitSessionKeyObserved,trainingSessionGrouping:'unverified'};
+  return { independentRecentCalendarAndDetailComparison: 'passed', basis: result.basis, searchStatus: result.searchStatus, windows: result.windows.length, requestedCount: result.requestedCount, entriesReturned: result.entries.length, latestEntriesVerified: result.latestEntriesVerified, cutoffDateTied: omittedCount > 0, withinDateOrder: result.ordering.withinDate };
 }
 
 async function checkActivityPeriod(client, gym) {
@@ -393,13 +401,12 @@ async function checkActivityPeriod(client, gym) {
     : { startDate: process.env.AIMHARDER_LIVE_PERIOD_START, endDate: process.env.AIMHARDER_LIVE_PERIOD_END, gymId: gym.id };
   const result = await queryActivityPeriod(client, query);
   assert.equal(result.coverage, 'complete');
-  assert.equal(result.trainingSessions.status, 'blocked');
-  assert.equal(result.trainingSessions.count, null);
+  assert.equal(result.basis, 'activity-entries');
+  assert.equal('trainingSessions' in result, false);
   const { request, role, accountId } = await openLiveSession(gym);
   const { calendarDates } = await import('../dist/classes.js');
   const expected = new Map();
   const calendars = new Map();
-  let explicitSessionKeyObserved = false;
   for (const window of result.windows) {
     const dates = [...calendarDates(window.startDate, window.endDate)];
     assert.ok(dates.length <= 31);
@@ -413,7 +420,6 @@ async function checkActivityPeriod(client, gym) {
           if (detail.boxId !== role.boid) continue;
           const label = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${date}T12:00:00Z`));
           assert.equal(detail.recordDate.toLocaleLowerCase('es-ES'), label);
-          explicitSessionKeyObserved ||= ['trainingSessionId','sessionId','startTime'].some(key=>detail[key] != null);
           expected.set(id,{date,detail});
         }
       }
@@ -430,5 +436,5 @@ async function checkActivityPeriod(client, gym) {
     assert.equal(entry.timeZone, gym.timeZone);
     assert.deepEqual(entry.blocks.map(block => block.notes), row.detail.TIPOWODs.map(block => block.deleted ? null : block.notes ?? null));
   }
-  return { independentPeriodCalendarAndDetailComparison: 'passed', period: query.period ?? 'explicit', coverage: result.coverage, windows: result.windows.length, dateCount: result.completedDates.length, entryCount: expected.size, daysWithActivity: expectedDays.size, explicitSessionKeyObserved, trainingSessionGrouping: 'unverified' };
+  return { independentPeriodCalendarAndDetailComparison: 'passed', period: query.period ?? 'explicit', coverage: result.coverage, windows: result.windows.length, dateCount: result.completedDates.length, entryCount: expected.size, daysWithActivity: expectedDays.size, basis: result.basis };
 }

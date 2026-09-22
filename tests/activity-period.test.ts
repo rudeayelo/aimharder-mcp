@@ -56,7 +56,7 @@ test.each([
  ['2026-01-15T12:00:00Z','2025-12-01','2025-12-31',31],
 ])('resolves the full previous calendar month from %s',async(now,startDate,endDate,count)=>{
  const result=await queryActivityPeriod(await connect(),{period:'previous-month'},new Date(now));
- expect(result).toMatchObject({startDate,endDate,coverage:'complete',counts:{activityEntries:{observed:0,exact:0},daysWithActivity:{observed:0,exact:0}},trainingSessions:{status:'blocked',count:null}});
+ expect(result).toMatchObject({startDate,endDate,coverage:'complete',counts:{activityEntries:{observed:0,exact:0},daysWithActivity:{observed:0,exact:0}},basis:'activity-entries'});
  expect(result.completedDates).toHaveLength(count);
 });
 test.each([
@@ -69,8 +69,8 @@ test.each([
 test('counts entries and dates independently without inventing same-day session grouping',async()=>{
  respond({'2026-03-29':[1,1,2,3]});
  const result=await queryActivityPeriod(await connect(),{startDate:'2026-03-01',endDate:'2026-03-31'});
- expect(result).toMatchObject({coverage:'complete',counts:{activityEntries:{observed:3,exact:3},daysWithActivity:{observed:1,exact:1}},trainingSessions:{status:'blocked',count:null}});
- expect(result.entries).toHaveLength(3);expect(result.entries[0]?.blocks[0]?.notes).toBe('Sentadilla Ñ');
+ expect(result).toMatchObject({coverage:'complete',counts:{activityEntries:{observed:3,exact:3},daysWithActivity:{observed:1,exact:1}},basis:'activity-entries'});
+ expect(result).not.toHaveProperty('trainingSessions');expect(result.entries).toHaveLength(3);expect(result.entries[0]?.blocks[0]?.notes).toBe('Sentadilla Ñ');
 });
 test('partitions a longer range and deduplicates repeated calendar references at overlapping month reads',async()=>{
  upstream.use(http.get('https://aimharder.es/api/activityCalendar',({request})=>HttpResponse.json(calendar(new URL(request.url).searchParams.get('month')==='2'?{'2026-03-29':[1,1]}:{}))),http.get('https://aimharder.es/api/activity/workout',()=>HttpResponse.json(detail())));

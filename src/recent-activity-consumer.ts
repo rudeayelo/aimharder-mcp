@@ -14,7 +14,7 @@ function previousDate(date: string, days: number) {
   return dateSchema.parse(value.toISOString().slice(0, 10));
 }
 
-/** Search by gym-local dates; neither activity IDs nor equal dates establish sessions. */
+/** Search activity entries by gym-local record date; same-day ID order is presentation only. */
 export async function queryRecentActivity(client: Pick<Client, 'callTool'>, input: RecentActivityQuery) {
   const query = inputSchema.parse(input);
   let context;
@@ -50,17 +50,28 @@ export async function queryRecentActivity(client: Pick<Client, 'callTool'>, inpu
       windows.push({ startDate, endDate, status: 'error', completedDates: [], notices: ['Activity retrieval could not be confirmed; newer gaps prevent a verified latest result.'] });
       searchStatus = 'incomplete'; break;
     }
-    if (new Set([...entries.values()].map(entry => entry.date)).size >= query.count) { searchStatus = 'matched'; break; }
+    if (entries.size >= query.count) { searchStatus = 'matched'; break; }
     if (startDate === '0001-01-01') break;
     endDate = previousDate(startDate, 1);
   }
-  const dates = [...new Set([...entries.values()].map(entry => entry.date))].sort().reverse().slice(0, query.count);
+  const ordered = [...entries.values()].sort((a, b) => b.date.localeCompare(a.date) || a.sourceActivityId - b.sourceActivityId);
+  const selected = ordered.slice(0, query.count);
+  const cutoffDate = selected.at(-1)?.date;
+  const omittedCount = ordered.slice(query.count).filter(entry => entry.date === cutoffDate).length;
+  const boundaryTie = cutoffDate && omittedCount > 0
+    ? { date: cutoffDate, selectedCount: selected.filter(entry => entry.date === cutoffDate).length, omittedCount }
+    : null;
   return {
-    gym, endDate: query.endDate, requestedDays: query.count, basis: 'days-with-activity' as const,
-    trainingSessions: { status: 'blocked' as const, sessions: null, reason: 'Training-session grouping, within-day chronology and attendance are not verified.' },
-    searchStatus, latestDaysVerified: searchStatus === 'matched', maxWindows: query.maxWindows,
+    gym, endDate: query.endDate, requestedCount: query.count, basis: 'activity-entries' as const,
+    searchStatus, latestEntriesVerified: searchStatus === 'matched' && boundaryTie === null, maxWindows: query.maxWindows,
     searchedStartDate: windows.at(-1)!.startDate, windows,
-    days: dates.map(date => ({ date, entries: [...entries.values()].filter(entry => entry.date === date).sort((a, b) => a.sourceActivityId - b.sourceActivityId) })),
-    notices: ['This is a days-with-activity alternative, not the requested latest training sessions.', 'All entries on each selected date are retained. ID order within a date is presentation order, not training chronology.', 'Coverage is bounded by the reported windows and end date, and is not an atomic snapshot or complete lifetime history.'],
+    entries: selected,
+    ordering: { withinDate: 'unverified' as const, tieBreak: 'source-activity-id-ascending' as const, boundaryTie },
+    notices: [
+      'Activity entries are ordered by gym-local record date descending. ID order within a date is presentation order, not chronology.',
+      ...(boundaryTie ? ['The requested count splits a date with tied entries. The selected subset on that date is deterministic, but its chronological membership cannot be verified.'] : []),
+      'Latest-entry verification concerns membership by record date, not within-day order. Incomplete results are recovered entries, not a verified latest selection.',
+      'Coverage is bounded by the reported windows and end date, and is not an atomic snapshot or complete lifetime history.',
+    ],
   };
 }
