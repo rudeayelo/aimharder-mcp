@@ -25,7 +25,7 @@ transport.stderr?.on('data', () => { hasStderr = true; });
 try {
   await client.connect(transport);
   const tools = await client.listTools();
-  assert.deepEqual(tools.tools.map((tool) => tool.name), ['get_account_context', 'get_class_sessions', 'get_upcoming_bookings']);
+  assert.deepEqual(tools.tools.map((tool) => tool.name), ['get_account_context', 'get_class_sessions', 'get_upcoming_bookings', 'get_published_workouts']);
   const result = await client.callTool({ name: 'get_account_context', arguments: {} });
   assert.notEqual(result.isError, true);
   const context = result.structuredContent;
@@ -47,13 +47,14 @@ try {
     classes = await checkClasses(client, context.selectedGym);
   }
   const bookings = process.env.AIMHARDER_LIVE_BOOKINGS === '1' ? await checkBookings(client, context.selectedGym) : undefined;
+  const workouts = process.env.AIMHARDER_LIVE_WORKOUT_DATE ? await checkWorkouts(client, context.selectedGym) : undefined;
   assert.equal(hasStderr, false);
   process.stdout.write(JSON.stringify({
     harness: 'MCP SDK client over stdio', authenticated: true,
     accessibleGymCount: context.gyms.length,
     explicitSelection: 'passed', inaccessibleSelection: 'rejected',
     timeZoneStatus: context.selectedGym.timeZoneStatus,
-    serverStderr: 'empty', ...(classes ? { classes } : {}), ...(bookings ? { bookings } : {}),
+    serverStderr: 'empty', ...(classes ? { classes } : {}), ...(bookings ? { bookings } : {}), ...(workouts ? { workouts } : {}),
   }, null, 2) + '\n');
 } catch {
   process.stderr.write('Live MCP validation failed. Check configuration, authentication, and supported account contracts. Raw errors and responses are suppressed.\n');
@@ -119,7 +120,7 @@ async function openLiveSession(gym) {
     });
     assert.equal(response.status, 200);
     for (const cookie of response.headers.getSetCookie()) await jar.setCookie(cookie, url);
-    return response.json();
+    return url.endsWith('/') ? response.text() : response.json();
   }
   const login = await request('https://login.aimharder.es/api/login', {
     username: env.AIMHARDER_USERNAME, password: env.AIMHARDER_PASSWORD,
@@ -174,4 +175,52 @@ async function checkBookings(client, gym) {
   const rejected = await client.callTool({ name: 'get_upcoming_bookings', arguments: { gymId: 'unverified-live-check-gym' } });
   assert.equal(rejected.isError, true);
   return { upcomingComparison: 'passed', scheduleComparison: 'passed', bookingCount: matched, explicitSelection: 'passed', inaccessibleSelection: 'rejected', timeZoneProvenance: 'user-confirmed' };
+}
+
+async function checkWorkouts(client, gym) {
+  const date = process.env.AIMHARDER_LIVE_WORKOUT_DATE;
+  const className = process.env.AIMHARDER_LIVE_WORKOUT_CLASS ?? 'WOD';
+  const { request, role } = await openLiveSession(gym);
+  const page = await request(`https://${role.centre_url}/`);
+  const publisher = /timeLineContent:\s*7,\s*userID:\s*(\d+)/.exec(page)?.[1];
+  assert.ok(publisher);
+  const feed = await request(`https://${role.centre_url}/api/activity?${new URLSearchParams({ timeLineFormat: '0', timeLineContent: '7', userID: publisher })}`);
+  const result = await client.callTool({ name: 'get_published_workouts', arguments: { date, className } });
+  assert.notEqual(result.isError, true);
+  const view = result.structuredContent;
+  const [year, month, day] = date.split('-').map(Number);
+  const expectedDateLabel = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(Date.UTC(year, month - 1, day)));
+  const expectedIds = [];
+  const details = new Map();
+  for (const post of feed.elements.filter(row => row.wodClass === className && Array.isArray(row.ejerRate))) {
+    const detail = await request(`https://${role.centre_url}/api/activity/workout?SEID=${post.id}`);
+    details.set(post.id, detail);
+    if (detail.recordDate.toLocaleLowerCase('es-ES') === expectedDateLabel && (detail.ejerRate.length || detail.TIPOWODs.some(b => !b.deleted && b.notes?.trim()))) expectedIds.push(post.id);
+  }
+  assert.deepEqual(view.workouts.map(w => w.provenance.sourceId), expectedIds);
+  assert.equal(view.status, expectedIds.length ? 'available' : 'unavailable');
+  let compared = 0;
+  for (const workout of view.workouts) {
+    const post = feed.elements.find(row => row.id === workout.provenance.sourceId);
+    assert.equal(post.wodClass, className);
+    const detail = details.get(post.id);
+    assert.equal(workout.provenance.dateLabel, detail.recordDate);
+    assert.equal(workout.provenance.publicationDateLabel, detail.publishDate);
+    const [year, month, day] = date.split('-').map(Number);
+    const expected = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(Date.UTC(year, month - 1, day)));
+    assert.equal(detail.recordDate.toLocaleLowerCase('es-ES'), expected);
+    assert.deepEqual(workout.blocks.map(b => b.notes), detail.TIPOWODs.map(b => b.deleted ? null : b.notes ?? null));
+    assert.deepEqual(workout.exercises.map(e => e.name), detail.ejerRate.filter(e => e.tipoWOD == null || !detail.TIPOWODs[e.tipoWOD].deleted).map(e => e.ejerName));
+    assert.deepEqual(workout.titles, post.TIPOWODs.flatMap(b => b.title ? [b.title] : []));
+    for (let index = 0; index < workout.blocks.length; index++) {
+      for (const [key, value] of Object.entries(workout.blocks[index].prescription)) assert.deepEqual(value, detail.TIPOWODs[index][key]);
+    }
+    const sourceExercises = detail.ejerRate.filter(e => e.tipoWOD == null || !detail.TIPOWODs[e.tipoWOD].deleted);
+    for (let index = 0; index < workout.exercises.length; index++) {
+      for (const [key, value] of Object.entries(workout.exercises[index].prescription)) assert.deepEqual(value, sourceExercises[index][key]);
+    }
+    compared++;
+  }
+  const daily = await request(`https://${role.centre_url}/api/bookings?${new URLSearchParams({ box: String(role.boid), day: date.replaceAll('-', '') })}`);
+  return { feedAndDetailComparison: compared ? 'passed' : 'no matching content available in retrieved view', status: view.status, comparedWorkoutCount: compared, matchingClassSessionCount: daily.bookings.filter(row => row.className === className).length, coverage: view.coverage.scope, exhaustive: false };
 }

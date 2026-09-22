@@ -1,6 +1,6 @@
 # AimHarder API research
 
-Status: account authentication and gym discovery verified on 2026-09-21 for issue #2; daily class contract investigated on 2026-09-22 for issue #3 (see the class schedule section below). Class and upcoming-booking acceptance are recorded in validation; upcoming-booking research is below; workout, history and activity contracts remain preliminary. See [validation results](validation.md). This document records research evidence, not the product scope; see [the MVP](mvp.md) for supported use cases and acceptance criteria.
+Status: account authentication and gym discovery verified on 2026-09-21 for issue #2; daily class contract investigated on 2026-09-22 for issue #3 (see the class schedule section below). Class and upcoming-booking acceptance are recorded in validation; upcoming-booking research is below; published-workout research is recorded below; history and activity contracts remain preliminary. See [validation results](validation.md). This document records research evidence, not the product scope; see [the MVP](mvp.md) for supported use cases and acceptance criteria.
 
 ## Verified account/gym contract (2026-09-21)
 
@@ -95,3 +95,15 @@ The official upcoming renderer explicitly labels `bookState=1` as booked and `0`
 Observed dates use Spanish weekday, day, month and year prose. The parser accepts that precise format, checks weekday/calendar consistency, and fails safely for unverified locales. It returns explicit gym-local dates and the previously user-confirmed IANA zone; no upstream offset or time zone was discovered. The official SDK stdio harness passed comparison with an independent upcoming response and daily schedule, as recorded in [validation](validation.md).
 
 Only one account/gym was live-verified. Multi-gym request routing is fixture-tested, not a live multi-gym contract proof. Unknown envelopes, potential pagination, malformed dates, duplicate IDs and restrictions fail without asserting no bookings. Missing optional class names remain null; missing/unknown states remain unknown. See [the upcoming-view ADR](adr/2026-09-22-upcoming-bookings-and-view-coverage.md) for the exact absence and coverage boundary.
+
+## Published-workout contract (2026-09-22)
+
+Authorized official gym homepage inspection established `GET /api/activity?timeLineFormat=0&timeLineContent=7&userID=<gym-publisher>` and `GET /api/activity/workout?SEID=<feed-workout-id>`. The publisher comes from that gym page's publication loader, not the account membership ID. Omitting it returned an empty feed, while the official publisher returned 32 mixed entries. The implementation never accepts an arbitrary publisher or member ID. Homepage size was approximately 584 KB, within the existing 1 MiB response cap.
+
+The envelope has string `timeLineFormat` and `timeLineContent`, `elements`, `curDate`, and optional numeric `firstLoaded`/`lastLoaded`. Frontend older-page requests use format 2 and `loadAfter`; termination and exhaustive date coverage are not established by this slice. Results therefore explicitly describe only the current page. Three highlighted announcements had `when` dates in 2056; those timestamps do not establish workout applicability.
+
+Workout feed entries contain `wodClass`, `day`, `ejerRate` and `TIPOWODs`. The official renderer labels `wodClass` as the training class. Detail `recordDate` is displayed as the workout date and differs from `publishDate`: the available WOD observed on 22 September had intended date 22 September 2026 and publication date 21 September 2026. The full Spanish date establishes the year without borrowing publication time. The workout had three blocks and nine exercise entries. Source block titles come from the feed; notes and exercise prescriptions come from the detail. Source encodings are retained without invented unit meanings; scaled variants remain outside the current projection.
+
+One daily WOD publication and five matching daily WOD class sessions were observed at the tested gym, without a unique session identifier on the workout. This corroborates the reported shared daily prescription for that gym; it does not generalize to every gym. No correction/supersession relationship or universal publication hour was established. Distinct publications remain alternatives.
+
+The MCP SDK stdio harness compared available content with independent feed/detail reads and counted matching daily class sessions. Future-date absence is scoped to the retrieved view, not all publications. Only one account/gym and the observed Spanish date format have live evidence. See [validation](validation.md) and [the applicability decision](adr/2026-09-22-published-workout-applicability.md).

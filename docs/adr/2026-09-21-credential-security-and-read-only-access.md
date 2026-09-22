@@ -33,3 +33,7 @@ Issue #3 adds only the verified gym's daily schedule GET, using the current acco
 ## Upcoming-booking extension
 
 Issue #4 adds only the verified gym's `/api/nextBookings` GET with membership `boid`. Family/account selectors are not exposed. History included in that response is discarded, and unknown states never establish absence. See the [upcoming-view decision](2026-09-22-upcoming-bookings-and-view-coverage.md); all credential, identity and retry protections remain in effect.
+
+## Published-workout extension
+
+Issue #5 permits the selected gym homepage, its discovered gym-publication feed, and details for returned workout IDs. Arbitrary account selectors are not exposed; comments, profiles and personal performance information are discarded. See [the applicability decision](2026-09-22-published-workout-applicability.md). Existing origin, identity, retry and secret-handling protections continue to apply.

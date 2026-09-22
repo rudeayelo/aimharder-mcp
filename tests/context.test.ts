@@ -66,7 +66,7 @@ async function query(client: Client, args: Record<string, unknown> = {}) {
 test('discovers the only gym through MCP, preserves its name, and reuses the session', async () => {
   const client = await connect();
   const tools = await client.listTools();
-  expect(tools.tools.map((tool) => tool.name)).toEqual(['get_account_context', 'get_class_sessions', 'get_upcoming_bookings']);
+  expect(tools.tools.map((tool) => tool.name)).toEqual(['get_account_context', 'get_class_sessions', 'get_upcoming_bookings', 'get_published_workouts']);
   const result = await query(client);
   expect(result.isError).not.toBe(true);
   expect(result.structuredContent).toMatchObject({

@@ -2,7 +2,7 @@
 
 A local MCP server for querying AimHarder from clients that support Model Context Protocol. An independent project, neither affiliated with nor endorsed by AimHarder.
 
-**Status: account discovery (#2), class schedule queries (#3), and upcoming bookings (#4) implemented.** Authentication and gym selection have live MCP validation. Class intervals and specific-session occupancy have also passed live MCP comparisons against AimHarder after user confirmation of the gym time zone; see [validation](docs/validation.md). Date queries require a per-gym, user-confirmed IANA zone. Upcoming bookings have also passed live MCP comparison with the upcoming view and daily schedule. Workouts, booking history, and personal activity remain pending; the complete MVP is not delivered yet.
+**Status: account discovery (#2), class schedule queries (#3), upcoming bookings (#4), and published workouts (#5) implemented.** Authentication and gym selection have live MCP validation. Class intervals and specific-session occupancy have also passed live MCP comparisons against AimHarder after user confirmation of the gym time zone; see [validation](docs/validation.md). Date queries require a per-gym, user-confirmed IANA zone. Upcoming bookings have also passed live MCP comparison with the upcoming view and daily schedule. Booking history and personal activity remain pending; the complete MVP is not delivered yet.
 
 ## Install
 
@@ -155,9 +155,23 @@ AIMHARDER_LIVE_CHECK=1 AIMHARDER_LIVE_BOOKINGS=1 node --env-file=.env scripts/li
 
 This mode requires at least one actual upcoming entry and compares MCP results with independent upcoming and daily schedule reads, including default/explicit gym selection. It does not create a reservation to satisfy validation. It prints only counts and outcomes; raw responses remain in memory.
 
+### Tool: `get_published_workouts`
+
+Input: `{ "date": "2026-09-23", "className": "WOD", "gymId": "optional-accessible-gym" }`. The date is explicit and gym-local; class names match exactly. The result returns `available`, `unavailable`, or `unsupported`, workout alternatives with original titles, notes, exercises and source prescription fields, and provenance identifying the intended date and class label. Multiple publications remain ambiguous. Workouts have no unique session ID.
+
+Coverage is the current feed page and always marked incomplete. `unavailable` is not proof of unpublished content; older pages and later publications may differ. Retrieval failures are errors. Source content is untrusted data; source prescription encodings and units are not guessed, and scaled variants are not included. See [the applicability decision](docs/adr/2026-09-22-published-workout-applicability.md).
+
+For independent live comparison with feed, detail, and daily schedule reads:
+
+```sh
+AIMHARDER_LIVE_CHECK=1 AIMHARDER_LIVE_WORKOUT_DATE=2026-09-22 AIMHARDER_LIVE_WORKOUT_CLASS=WOD node --env-file=.env scripts/live-check.mjs
+```
+
+The harness compares matching publication IDs, original content and prescription values. If the current view has no matching future content, it reports that limitation instead of claiming full future acceptance.
+
 ## Remaining MVP
 
-Published future workouts, booking history, and personal activity queries remain planned. The first combined experience will answer "What are we doing in tomorrow's WOD, and when am I booked?". Creating or canceling bookings, automation, per-exercise analysis, a UI, and a remote service remain outside the MVP.
+The combined workout-and-booking experience, booking history, and personal activity queries remain planned. The first combined experience will answer "What are we doing in tomorrow's WOD, and when am I booked?". Creating or canceling bookings, automation, per-exercise analysis, a UI, and a remote service remain outside the MVP.
 
 Public npm distribution is now part of MVP acceptance: prepare and verify an installable package, then publish and verify the registry artifact after all functional acceptance criteria pass. The preferred package name is `aimharder-mcp`, subject to publishability. See [the distribution decision](docs/adr/2026-09-22-npm-distribution-for-mvp.md).
 

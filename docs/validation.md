@@ -120,3 +120,23 @@ The booking tests first failed because the tool was absent, then passed after im
 - There is no verified session-ID join; consumers may compare date/time/type but must retain ambiguous alternatives. Missing optional class names remain null.
 - Potential partial/paginated responses return an error without a successful partial result. Historical booking-state semantics and activity pagination are not implemented by this slice.
 - The domain glossary, API/MCP separation, one-account architecture, distribution and license decisions remain unchanged. The allowlist and view-coverage decision are updated in the relevant ADRs. Unrelated npm-planning edits remain outside this delivery.
+
+## Published workouts (issue #5, 2026-09-22)
+
+The independent API client and public `get_published_workouts` tool retrieve the selected gym's current publication view, preserve original workout instructions, and distinguish available alternatives, unsupported interpretation, unavailable content in that view, and retrieval errors. See [the applicability decision](adr/2026-09-22-published-workout-applicability.md).
+
+### Live read-only verification
+
+The official MCP SDK client over stdio passed on Node 24 with the user's account and the previously confirmed Europe/Madrid gym zone. An independent raw session discovered the same gym publisher, scanned same-class feed candidates and their detail `recordDate` values, and compared the expected publication ID set and status with MCP. It compared original titles, notes, exercise names and all projected prescription values. Responses remained in memory; only sanitized counts/outcomes were printed. Server stderr was empty.
+
+- 2026-09-22 WOD: one available matching workout, with three blocks and nine exercise entries; source notes/titles/prescriptions matched. Five daily WOD class sessions matched that class type. No unique session ID was fabricated. The detail's intended date was 22 September; its publication date was 21 September.
+- 2026-09-23 WOD: zero matching workouts in the inspected current feed view, independently verified by scanning candidate detail dates. Five class sessions existed for that date. The result honestly reported `unavailable` with incomplete feed-view coverage. Actual future workout content was unavailable during this check, so future-content live acceptance is not claimed; future-date behavior is fixture-tested.
+- Three future-dated pinned announcements were observed and excluded from workout answers. No live correction/supersession contract was established.
+
+Only one account/gym was live-verified. The observed one-publication/multiple-session arrangement corroborates the reported daily sharing there, not a universal relationship. Pagination exhaustion, exhaustive historical/future coverage, other locales, and scaled variants remain limitations. The server does not interpret encoded prescription units without evidence. No booking, cancellation, publication or profile write was performed.
+
+### Automated verification
+
+Behavioral red/green tests ran through the public MCP interface with the real API client and anonymized HTTP fixtures. Initial future-content, announcement, ambiguity and unsupported-format cases failed before the tool existed. The final targeted suite passed 19 workout tests, covering source-language preservation, record-date/publication-date distinction, future queries, ambiguous/unverified corrections, incomplete coverage, missing workout markers, deleted/empty content, malformed envelopes, conflicting publishers, failures, retry bounds, private-field exclusion, read-only requests, confirmed zones and verified gym override routing.
+
+On supported Node 24, `pnpm typecheck`, `pnpm test tests/workouts.test.ts`, `pnpm build`, harness syntax validation and `git diff --check` passed. A prior combined workout/context run passed 70 tests before the last gym-override case was added. The final full suite passed 155 tests across four files on supported Node 24, together with typechecking and build. All local links resolved across 17 Markdown files. Separate Standards and Spec reviews against baseline `fd48fa6` each reported zero actionable findings; the absence of live published future content remains explicit above. The domain glossary was reviewed and needs no vocabulary change; the security ADR and new applicability ADR reflect the added read-only operations and coverage boundary.
