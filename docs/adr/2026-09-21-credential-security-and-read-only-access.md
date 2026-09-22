@@ -25,3 +25,7 @@ Sanitized evidence consists of the endpoint, HTTP status, structure, and minimal
 ## Account/gym implementation
 
 Issue #2 implements this policy with fixed HTTPS login/discovery endpoints, an in-memory cookie jar, identity comparison, rejected redirects, bounded responses and timeouts, and sanitized errors. Authentication failures stop further login attempts until restart. See the [implementation ADR](2026-09-21-account-discovery-and-local-runtime.md) for the verified `.es` contract and [validation results](../validation.md) for the distinction between live and fixture-tested behavior.
+
+## Class schedule extension
+
+Issue #3 adds only the verified gym's daily schedule GET, using the current account membership's `boid` and an explicit date. It does not request participant lists or family/other-account data. Per-gym user-confirmed time zones gate date queries, and a single retry allowance covers the complete interval. See the [class-query ADR](2026-09-22-class-schedules-and-confirmed-time-zones.md).

@@ -1,6 +1,8 @@
-# Account and gym discovery validation
+# Validation record
 
-Date: 2026-09-21. Scope: [issue #2](https://github.com/rudeayelo/aimharder-mcp/issues/2), part of [specification #1](https://github.com/rudeayelo/aimharder-mcp/issues/1). This validates the account/gym slice, not the complete MVP.
+## Account and gym discovery (2026-09-21)
+
+Historical issue #2 verification; the class-query update below records subsequent behavior. Scope: [issue #2](https://github.com/rudeayelo/aimharder-mcp/issues/2), part of [specification #1](https://github.com/rudeayelo/aimharder-mcp/issues/1). This validates the account/gym slice, not the complete MVP.
 
 ## Live read-only verification
 
@@ -39,3 +41,30 @@ Final checks passed: `pnpm typecheck`, `pnpm test` (52 tests), and `pnpm build`.
 - `.com` cookie equivalence and account variants outside the observed membership format remain unverified and unsupported.
 - Numeric membership identifiers and gym time zones remain unresolved. No date-dependent tool is exposed, and no system-time-zone fallback is used.
 - Class schedules, occupancy, workouts, bookings, activity, and their date/state semantics have not been implemented or live-validated by this slice.
+
+## Class schedules and occupancy (2026-09-22)
+
+Scope: [issue #3](https://github.com/rudeayelo/aimharder-mcp/issues/3), under [specification #1](https://github.com/rudeayelo/aimharder-mcp/issues/1). The server exposes `get_class_sessions` separately from the reusable API client. See the [class-query decision](adr/2026-09-22-class-schedules-and-confirmed-time-zones.md).
+
+### Live investigation and acceptance boundary
+
+Authorized read-only inspection verified the gym frontend's daily request, membership `boid` as `box`, a 19-session day, a successful empty Sunday, the time-label format, and displayed `ocupation/limit` semantics. The Wednesday 07:00 Metcon appeared with available occupancy and capacity. No participant lists, family accounts, bookings, cancellations, or profile writes were requested; account fields were held in memory and omitted from evidence.
+
+**Pending acceptance:** the investigated responses did not establish an authoritative gym time zone. The user has been asked to confirm the real gym's IANA zone, including DST. No such confirmation is claimed here. `AIMHARDER_GYM_TIME_ZONES` allows an operator-confirmed mapping and explicitly reports `user-confirmed` provenance; this configuration mechanism does not itself verify the real gym. Final live MCP interval and specific-session comparisons remain pending that confirmation. Do not close issue #3 as fully accepted until these checks pass.
+
+The extended `scripts/live-check.mjs` is an official MCP SDK client over stdio. Optional explicit date environment variables enable an interval query and exact time/type query, compared with independent raw read-only AimHarder responses in memory. It prints only pass/fail counts and provenance. Without dates it retains the existing account/context check. A changing occupancy between independent reads may cause a comparison failure; passing checks represent the observed run, not an atomic snapshot.
+
+### Automated checks
+
+`tests/classes.test.ts` covers an inclusive week, Wednesday 07:00 Metcon, distinct times/types and ambiguous matches, unchanged source names, missing/null/zero counts, empty results, malformed/unknown/restricted envelopes, duplicate IDs, later-day failure, explicit/default/unknown gyms, numeric gym routing, one shared recovery allowance, session serialization, safe redirect/transport failures, configuration errors, DST and leap/month/year boundaries, and unknown-zone refusal. Only upstream HTTP responses are substituted; the MCP SDK and API client are real. No automated test reads live credentials.
+
+During implementation, all 48 class tests passed with `TZ=Pacific/Honolulu` and all 52 existing context tests passed. Typechecking and the build passed. Final checks passed: `pnpm typecheck`, `pnpm test` (100 tests), `pnpm build`, `node --check scripts/live-check.mjs`, and `git diff --check`. Local Markdown links resolved. The updated live stdio account/context harness passed (one accessible gym, explicit selection accepted, inaccessible selection rejected, unconfigured zone reported unverified, server stderr empty). Standards review found zero issues; Spec review found zero code defects and the one documented live acceptance blocker above. The independent reviews used baseline `aee618b` and excluded unrelated concurrent npm-planning changes.
+
+### Remaining limitations
+
+- Automatic gym time-zone discovery is unresolved. Supplying configuration asserts operator confirmation; it does not change verified gym access.
+- Dates/times are gym-local wall values with a named zone, not absolute instants. The API supplies no offset to disambiguate DST transitions.
+- One real account/gym establishes the observed class contract; multi-gym routing and error variants have fixture coverage only.
+- Complete coverage means successful retrieval of each daily response. Future publication, live occupancy changes, actual attendance, and booking eligibility are not asserted.
+- Unknown response envelopes and nonempty messages fail conservatively. No real restriction/expiry scenario was provoked.
+- Workouts, upcoming bookings/history, and personal activity remain separate pending slices.

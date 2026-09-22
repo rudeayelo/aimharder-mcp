@@ -1,6 +1,6 @@
 # AimHarder API research
 
-Status: account authentication and gym discovery verified on 2026-09-21 for issue #2; other API families remain preliminary. See [validation results](validation.md). This document records research evidence, not the product scope; see [the MVP](mvp.md) for supported use cases and acceptance criteria.
+Status: account authentication and gym discovery verified on 2026-09-21 for issue #2; daily class contract investigated on 2026-09-22 for issue #3 (see the class schedule section below). Final class acceptance is recorded in validation; other API families remain preliminary. See [validation results](validation.md). This document records research evidence, not the product scope; see [the MVP](mvp.md) for supported use cases and acceptance criteria.
 
 ## Verified account/gym contract (2026-09-21)
 
@@ -11,9 +11,9 @@ Authorized read-only verification established:
 - POST `https://login.aimharder.es/api/login` returned HTTP 200 with `data.userData.id` and `data.auth.authOK: true`. A refresh token was present but is not needed or retained by the implementation.
 - The login sets an `amhrdrauth` cookie for `.aimharder.es`, path `/`, with HttpOnly. The observed cookie did not have the Secure attribute; the client nevertheless allows HTTPS requests only. Native fetch needs an explicit cookie jar.
 - GET `https://aimharder.es/api/whoami` returned HTTP 200 with one row in `data`, whose `id` matched the login account. Names, photos, and permission hashes are discarded. The same identity was observed at the gym hostname during investigation.
-- The account row's `roles` contained one `client` membership with `gym` (source name), `centre_url` (a full `<slug>.aimharder.es` hostname), and numeric `id` and `boid`. Those numeric values differ; their domain meaning is not yet established. The MCP gym ID is the verified hostname's subdomain label.
+- The account row's `roles` contained one `client` membership with `gym` (source name), `centre_url` (a full `<slug>.aimharder.es` hostname), and numeric `id` and `boid`. Those numeric values differ; their domain meaning was unresolved in issue #2. Issue #3 subsequently verified `boid` as the schedule `box` parameter, as recorded below. The MCP gym ID is the verified hostname's subdomain label.
 - An unauthenticated GET returned HTTP 200 with `data: []`. The client treats empty identity data as unavailable authentication and permits bounded recovery, not a successful empty gym list.
-- No gym time-zone field was present in these observed responses. Inspection of the gym page did not establish an authoritative time zone. This remains explicitly unresolved; the server returns null plus a notice and exposes no date-dependent queries yet.
+- No gym time-zone field was present in these observed responses. Inspection of the gym page did not establish an authoritative time zone. Automatic time-zone discovery remains unresolved. Issue #3 adds date queries gated by explicit user-confirmed zone configuration, as recorded below.
 
 The final official MCP SDK client over stdio verified automatic and explicit gym selection and rejection of an inaccessible selection. Exact supported schemas and limitations are documented in the [README](../README.md) and [implementation ADR](adr/2026-09-21-account-discovery-and-local-runtime.md). Multiple-gym cases are fixture-tested; only one gym was live-verified. Other roles, `.com` equivalence, real expiry timing, 2FA/error payloads, and rate-limit behavior remain unverified. No invalid-password or restriction scenario was deliberately triggered.
 
@@ -50,7 +50,7 @@ The user provided API responses during definition. They are evidence of those sa
 - `/api/activityCalendar`: a sample grouped by date with four days of activity; parameter semantics and coverage remain pending.
 - Gym `/api/activity` with `timeLineContent=7`: mixes workouts and announcements, including pinned announcements with future dates. Do not indiscriminately use the `when` field as the workout date.
 
-The `.es` account/gym contract is now verified separately above. Time zone, other domains/account variants, states and units, pagination, and the relationship between sessions and published workouts remain unverified. Original responses attached to the conversation have not been copied into the repository; prepare anonymized samples when implementing tests.
+The `.es` account/gym contract is now verified separately above. Automatic time-zone discovery, other domains/account variants, booking/activity states and units, their pagination, and the relationship between sessions and published workouts remain unverified. Class-specific observations are recorded below. Original responses attached to the conversation have not been copied into the repository; prepare anonymized samples when implementing tests.
 
 ## Reported 9NBC workout convention
 
@@ -71,3 +71,15 @@ Recent-training summaries and monthly training counts require verifying whether 
 5. Prepare anonymized fixtures for the automated tests required by the MVP. Record live validation separately from third-party observations and user-provided samples.
 
 Research does not authorize booking creation, cancellations, bulk access to other members' data, or other write operations. The login POST is the authentication exception.
+
+## Class schedule contract (2026-09-22)
+
+Authorized read-only investigation for [issue #3](https://github.com/rudeayelo/aimharder-mcp/issues/3) inspected the authenticated gym `/schedule` frontend and daily `/api/bookings` responses. The frontend issues GET with `day=YYYYMMDD`, `box`, and optional `familyId`; its weekly view issues individual daily queries (`weekView: 1`). The implementation omits family selection and uses the ordinary daily response for the account holder.
+
+The frontend's schedule `box` is the membership `boid`, not membership `id`. A daily query for 2026-09-23 returned 19 sessions; 2026-09-27 returned a valid empty `bookings` array. The observed envelope contains `clasesDisp`, `timetable`, `day`, `bookings`, `seminars`, and, on the empty response, `resmsgs: []`. The frontend iterates all `bookings` for that day without pagination. Nonempty `resmsgs`, unknown envelope fields, and malformed daily rows are not interpreted as complete schedules by the client.
+
+Each observed session includes numeric `id` and `classId`, original `className`, a `time` label such as `07:00 - 08:00`, and numeric `ocupation`, `limit`, and `limitc`. The frontend renders `ocupation/limit` with the label “Plazas ocupadas”; `limitc` also participates in progress/waitlist logic. The client returns `ocupation` as occupancy and `limit` as displayed capacity, without deriving attendance or booking eligibility. Other fields include coach/profile details and booking state; they are discarded. Tests use separately invented rows rather than copied personal data.
+
+The day label is localized prose, not a machine-readable date or time zone. Session dates come from the requested daily partition, matching the frontend's day-by-day behavior. Start times come from the validated source time label; no instant or offset is available. Neither discovery nor these responses established an authoritative IANA zone. Browser `Intl.DateTimeFormat().resolvedOptions().timeZone` appears elsewhere in the frontend but is not evidence of a gym zone. Operators must independently confirm a gym zone and supply it as configuration; the server reports that provenance. Real-gym confirmation and final live MCP interval validation are tracked in [validation](validation.md).
+
+The `boid` mapping and shapes above were observed for one account and gym, not all AimHarder accounts. Optional missing counts, duplicate identities, unknown envelopes, failures, and DST scenarios are fixture-tested conservative behaviors, not live-verified upstream variants. The [class-query ADR](adr/2026-09-22-class-schedules-and-confirmed-time-zones.md) records strict parsing, all-or-error interval behavior, and the time-zone requirement.

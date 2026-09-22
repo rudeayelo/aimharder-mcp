@@ -1,6 +1,6 @@
 # AimHarder MCP server MVP
 
-Date: 2026-09-21. Status: scope confirmed by the user; [implementation specification published as GitHub issue #1](https://github.com/rudeayelo/aimharder-mcp/issues/1); account/gym slice implemented; remaining MVP slices pending. See [validation results](validation.md).
+Date: 2026-09-21. Status: scope confirmed by the user; [implementation specification published as GitHub issue #1](https://github.com/rudeayelo/aimharder-mcp/issues/1); account/gym and class-query slices implemented; class live acceptance is tracked in [validation](validation.md); remaining MVP slices pending. See [validation results](validation.md).
 
 ## Product and users
 
@@ -67,7 +67,7 @@ Select the gym automatically when the account has only one. If there are several
 
 ## Query semantics
 
-- Interpret dates in the gym's time zone, including when the user is traveling. The conversational client resolves relative expressions such as "tomorrow" into explicit dates in that zone. The server returns dates and times with explicit time-zone information. Discovering or confirming that zone remains a technical validation requirement.
+- Interpret dates in the gym's time zone, including when the user is traveling. The conversational client resolves relative expressions such as "tomorrow" into explicit dates in that zone. The server returns dates and times with explicit time-zone information. Class queries require an explicit per-gym, user-confirmed IANA zone in configuration and report that provenance. Automatic discovery remains unresolved; see the [class-query decision](adr/2026-09-22-class-schedules-and-confirmed-time-zones.md).
 - Personal activity queries accept at most 31 consecutive calendar dates, with inclusive start and end dates. Larger periods require multiple explicit queries by the client.
 - If a later activity page fails after earlier pages were retrieved, return the recovered entries marked incomplete, explain the reason, and describe only the coverage that can be established. A failed first page is an error, not an empty result. Do not infer complete coverage from the dates of returned entries alone.
 - Preserve AimHarder content in its original language, including class names and workout instructions. Server field names and messages are in English; the consuming assistant may explain the content in the user's language.

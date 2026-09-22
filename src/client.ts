@@ -3,6 +3,7 @@ import { CookieJar } from 'tough-cookie';
 import { z } from 'zod';
 import { gymIdSchema, type Configuration } from './config.js';
 import { AimHarderError } from './errors.js';
+import { calendarDates, classQuerySchema, parseClassDay, type ClassQuery, type ClassSession } from './classes.js';
 
 const loginUrl = 'https://login.aimharder.es/api/login';
 const identityUrl = 'https://aimharder.es/api/whoami';
@@ -18,6 +19,7 @@ const identitySchema = z.object({
     id: accountIdSchema,
     roles: z.array(z.object({
       role: z.string(),
+      boid: accountIdSchema.optional(),
       gym: z.string().min(1).max(300).refine((name) => name.trim().length > 0),
       centre_url: z.string().regex(/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.aimharder\.es$/).transform((host) => host.slice(0, -'.aimharder.es'.length)),
     })),
@@ -27,13 +29,22 @@ const identitySchema = z.object({
 export interface Gym {
   id: string;
   name: string;
-  timeZone: null;
-  timeZoneStatus: 'unverified';
+  timeZone: string | null;
+  timeZoneStatus: 'unverified' | 'user-confirmed';
 }
 export interface AccountContext {
   account: { authenticated: true };
   gyms: Gym[];
   selectedGym: Gym;
+  notices: string[];
+}
+interface AccessibleGym { gym: Gym; boxId: number | undefined }
+export interface ClassSchedule {
+  gym: Gym;
+  startDate: string;
+  endDate: string;
+  coverage: 'complete';
+  sessions: ClassSession[];
   notices: string[];
 }
 class SessionExpired extends Error {}
@@ -48,13 +59,49 @@ export class AimHarderClient {
   constructor(private readonly configuration: Configuration) {}
 
   getAccountContext(gymId?: string): Promise<AccountContext> {
-    // Serialize requests so recovery cannot replace another request's session.
-    const result = this.#queue.then(() => this.#getAccountContext(gymId));
+    return this.#query(gymId, async (gyms, selected) => ({
+      account: { authenticated: true }, gyms: gyms.map((entry) => entry.gym), selectedGym: selected.gym,
+      notices: gyms.some(({ gym }) => gym.timeZone === null)
+        ? ['Some gym time zones have not been verified. Do not infer gym-local dates from the computer time zone.']
+        : ['Gym time zones come from explicit user-confirmed configuration, not an upstream time-zone field.'],
+    }));
+  }
+
+  getClassSessions(input: ClassQuery): Promise<ClassSchedule> {
+    const parsed = classQuerySchema.safeParse(input);
+    if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_CLASS_QUERY'));
+    const query = parsed.data;
+    return this.#query(query.gymId, async (_gyms, { gym, boxId }) => {
+      if (!gym.timeZone) throw new AimHarderError('GYM_TIME_ZONE_REQUIRED');
+      if (boxId === undefined) throw new AimHarderError('INVALID_CLASS_RESPONSE');
+      const sessions: ClassSession[] = [];
+      for (const date of calendarDates(query.startDate, query.endDate)) {
+        const body = await this.#request({ kind: 'classes', gymId: gym.id, boxId, date });
+        // Validate the entire day before filtering. A malformed nonmatching session
+        // must not turn an incomplete upstream result into a successful query.
+        sessions.push(...parseClassDay(body, gym.id, date, gym.timeZone).filter((session) =>
+          (query.startTime === undefined || session.startTime === query.startTime)
+          && (query.className === undefined || session.classType.name === query.className)));
+      }
+      return {
+        gym, startDate: query.startDate, endDate: query.endDate, coverage: 'complete', sessions,
+        notices: [
+          'Occupancy is the source occupied-place count, not actual attendance. Capacity alone does not establish booking eligibility.',
+          'Times are gym-local wall times in the user-confirmed IANA zone. No UTC instant is inferred, including at daylight-saving transitions.',
+          'Coverage describes successful daily schedule retrieval, not all possible future publications or booking availability.',
+        ],
+      };
+    });
+  }
+
+  #query<T>(gymId: string | undefined, work: (gyms: AccessibleGym[], selected: AccessibleGym) => Promise<T>): Promise<T> {
+    // Serialize whole queries so recovery cannot replace another request's session.
+    const result = this.#queue.then(() => this.#authenticatedQuery(gymId, work));
     this.#queue = result.then(() => undefined, () => undefined);
     return result;
   }
 
-  async #getAccountContext(gymId?: string): Promise<AccountContext> {
+  async #authenticatedQuery<T>(gymId: string | undefined, work: (gyms: AccessibleGym[], selected: AccessibleGym) => Promise<T>): Promise<T> {
     if (this.#authenticationFailure) throw this.#authenticationFailure;
     if (gymId !== undefined && !gymIdSchema.safeParse(gymId).success) {
       throw new AimHarderError('GYM_NOT_ACCESSIBLE');
@@ -64,19 +111,16 @@ export class AimHarderClient {
       try {
         const gyms = await this.#discoverGyms();
         const configured = this.configuration.defaultGym;
-        if (configured !== undefined && !gyms.some((gym) => gym.id === configured)) {
-          throw new AimHarderError('GYM_NOT_ACCESSIBLE', gyms.map((gym) => gym.id));
+        if (configured !== undefined && !gyms.some(({ gym }) => gym.id === configured)) {
+          throw new AimHarderError('GYM_NOT_ACCESSIBLE', gyms.map(({ gym }) => gym.id));
         }
         if (gyms.length > 1 && configured === undefined) {
-          throw new AimHarderError('DEFAULT_GYM_REQUIRED', gyms.map((gym) => gym.id));
+          throw new AimHarderError('DEFAULT_GYM_REQUIRED', gyms.map(({ gym }) => gym.id));
         }
-        const selected = gymId ?? configured ?? gyms[0]?.id;
-        const selectedGym = gyms.find((gym) => gym.id === selected);
+        const selected = gymId ?? configured ?? gyms[0]?.gym.id;
+        const selectedGym = gyms.find(({ gym }) => gym.id === selected);
         if (!selectedGym) throw new AimHarderError('GYM_NOT_ACCESSIBLE');
-        return {
-          account: { authenticated: true }, gyms, selectedGym,
-          notices: ['Gym time zones have not been verified. Do not infer gym-local dates from the computer time zone.'],
-        };
+        return await work(gyms, selectedGym);
       } catch (error) {
         if (!(error instanceof SessionExpired)) throw error;
         this.#clearSession();
@@ -109,7 +153,7 @@ export class AimHarderClient {
     }
   }
 
-  async #discoverGyms(): Promise<Gym[]> {
+  async #discoverGyms(): Promise<AccessibleGym[]> {
     const parsed = identitySchema.safeParse(await this.#request('identity'));
     if (!parsed.success) throw new AimHarderError('INVALID_RESPONSE');
     const account = parsed.data.data[0];
@@ -118,21 +162,26 @@ export class AimHarderClient {
       this.#clearSession();
       throw new AimHarderError('IDENTITY_MISMATCH');
     }
-    const gyms = new Map<string, Gym>();
+    const gyms = new Map<string, AccessibleGym>();
     for (const role of account.roles) {
       if (role.role !== 'client') throw new AimHarderError('UNSUPPORTED_MEMBERSHIP');
       const previous = gyms.get(role.centre_url);
-      if (previous && previous.name !== role.gym) throw new AimHarderError('INVALID_RESPONSE');
+      if (previous && (previous.gym.name !== role.gym || previous.boxId !== role.boid)) throw new AimHarderError('INVALID_RESPONSE');
+      const timeZone = Object.hasOwn(this.configuration.gymTimeZones, role.centre_url)
+        ? this.configuration.gymTimeZones[role.centre_url] ?? null : null;
       gyms.set(role.centre_url, {
-        id: role.centre_url, name: role.gym, timeZone: null, timeZoneStatus: 'unverified',
+        gym: { id: role.centre_url, name: role.gym, timeZone, timeZoneStatus: timeZone ? 'user-confirmed' : 'unverified' },
+        boxId: role.boid,
       });
     }
     if (!gyms.size) throw new AimHarderError('NO_ACCESSIBLE_GYMS');
     return [...gyms.values()];
   }
 
-  async #request(operation: 'login' | 'identity'): Promise<unknown> {
-    const url = operation === 'login' ? loginUrl : identityUrl;
+  async #request(operation: 'login' | 'identity' | { kind: 'classes'; gymId: string; boxId: number; date: string }): Promise<unknown> {
+    const url = typeof operation === 'object'
+      ? `https://${operation.gymId}.aimharder.es/api/bookings?${new URLSearchParams({ box: String(operation.boxId), day: operation.date.replaceAll('-', '') })}`
+      : operation === 'login' ? loginUrl : identityUrl;
     const headers: Record<string, string> = { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' };
     const cookie = await this.#cookies.getCookieString(url);
     if (cookie) headers.Cookie = cookie;
@@ -151,7 +200,7 @@ export class AimHarderClient {
       const response = await fetch(url, init);
       if (response.status === 401) {
         void response.body?.cancel().catch(() => undefined);
-        if (operation === 'identity') throw new SessionExpired();
+        if (operation !== 'login') throw new SessionExpired();
         throw new AimHarderError('AUTHENTICATION_FAILED');
       }
       if (response.status === 403 || response.status === 429) {

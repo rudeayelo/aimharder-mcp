@@ -2,6 +2,8 @@
 
 Status: accepted for issue [#2](https://github.com/rudeayelo/aimharder-mcp/issues/2), under the approved [MVP](../mvp.md) and [security policy](2026-09-21-credential-security-and-read-only-access.md).
 
+Class-query status: the fixed two-operation allowlist and unconditional unknown time-zone response below are superseded for issue #3 by [class schedules and confirmed time zones](2026-09-22-class-schedules-and-confirmed-time-zones.md). The runtime and security foundations remain in effect; the original wording records issue #2.
+
 ## Decision
 
 Use Node.js 24 LTS, pnpm 12.5.1, TypeScript 7.0.2, the official MCP TypeScript SDK 1.30.0 over stdio, and Zod 4.6.5. Use native fetch with tough-cookie 6.0.2 for standards-based cookie domain/path/expiry handling in memory. Use Vitest 5.0.1 and MSW 2.15.0 to test the public MCP interface while replacing only upstream HTTP responses. Record exact dependency resolution in the lockfile. The package is private and distributed from the repository, not published to a registry.
