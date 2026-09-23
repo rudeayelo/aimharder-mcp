@@ -93,6 +93,58 @@ test('preserves block prescriptions and excludes unrelated private details', asy
  expect(result.structuredContent).toMatchObject({ workouts: [{ blocks: [{ notes: 'Completa 5 rondas', prescription: { timecap: 1200, rondas: 5, rx: true } }] }] });
  expect(JSON.stringify(result)).not.toMatch(/private-name|private-comment/);
 });
+test.each(['WOD', 'Metcon'])('returns complete source-labeled %s difficulty variants', async className => {
+ respond([post({ wodClass: className })]);
+ const labels = ['SCALED', 'INTERMEDIO', 'RX'];
+ upstream.use(http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({
+  TIPOWODs: [
+   { notes: 'Warm up', deleted: false },
+   { notes: '15 min AMRAP', deleted: false, scaledops: labels, scaledver: labels.map(() => ({ notes: '15 min AMRAP', deleted: false })) },
+  ],
+  ejerRate: [
+   { ejerName: '5 pull-ups', tipoWOD: 0, valor1: ['5'] },
+   { ejerName: 'Double unders', tipoWOD: 1, valor1: ['80'], scaledver: [
+    { ejerName: 'Single unders', tipoWOD: 1, valor1: ['160'], privateProfile: 'exclude-me' },
+    { ejerName: 'Double unders', tipoWOD: 1, valor1: ['40'] },
+    { ejerName: 'Double unders', tipoWOD: 1, valor1: ['80'] },
+   ] },
+  ],
+ }))));
+ const result = await query(await connect(), { className });
+ expect(result.isError).not.toBe(true);
+ const workout = (result.structuredContent as { workouts: { exercises: unknown[]; variants: { label: string; blocks: { notes: string }[]; exercises: { name: string; prescription: Record<string, unknown> }[] }[] }[] }).workouts[0]!;
+ expect(workout.variants.map(variant => variant.label)).toEqual(labels);
+ expect(workout.variants.map(variant => variant.exercises.map(exercise => [exercise.name, exercise.prescription.valor1]))).toEqual([
+  [['5 pull-ups', ['5']], ['Single unders', ['160']]],
+  [['5 pull-ups', ['5']], ['Double unders', ['40']]],
+  [['5 pull-ups', ['5']], ['Double unders', ['80']]],
+ ]);
+ expect(workout.variants.every(variant => variant.blocks[0]?.notes === 'Warm up')).toBe(true);
+ expect(JSON.stringify(result)).not.toContain('exclude-me');
+});
+test('falls back to shared blocks while retaining the source prescription separately', async () => {
+ upstream.use(http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({
+  TIPOWODs: [{ notes: 'Shared', deleted: false, scaledops: ['SCALED', 'RX'], scaledver: [null, { notes: 'RX note', deleted: false }] }],
+  ejerRate: [{ ejerName: 'Shared move', tipoWOD: 0, scaledver: [
+   { ejerName: 'Scaled move', tipoWOD: 0 }, { ejerName: 'RX move', tipoWOD: 0 },
+  ] }],
+ }))));
+ const result = await query(await connect());
+ expect(result.structuredContent).toMatchObject({ workouts: [{
+  blocks: [{ notes: 'Shared' }], exercises: [{ name: 'Shared move' }],
+  variants: [
+   { label: 'SCALED', blocks: [{ notes: 'Shared' }], exercises: [{ name: 'Scaled move' }] },
+   { label: 'RX', blocks: [{ notes: 'RX note' }], exercises: [{ name: 'RX move' }] },
+  ],
+ }] });
+});
+test('malformed variant exercise does not produce a misleading partial level', async () => {
+ upstream.use(http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({
+  TIPOWODs: [{ notes: 'Workout', deleted: false, scaledops: ['SCALED'], scaledver: [null] }],
+  ejerRate: [{ ejerName: 'Move', tipoWOD: 0, scaledver: [] }],
+ }))));
+ expect((await query(await connect())).structuredContent).toMatchObject({ status: 'unsupported', workouts: [] });
+});
 test('publication date cannot replace a different intended workout date', async () => {
  upstream.use(http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ recordDate: '24 de Septiembre de 2026', publishDate: '23 de Septiembre de 2026' }))));
  expect((await query(await connect())).structuredContent).toMatchObject({ status: 'unavailable', workouts: [] });

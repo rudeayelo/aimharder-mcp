@@ -204,6 +204,7 @@ async function checkWorkouts(client, gym, date = process.env.AIMHARDER_LIVE_WORK
   assert.deepEqual(view.workouts.map(w => w.provenance.sourceId), expectedIds);
   assert.equal(view.status, expectedIds.length ? 'available' : 'unavailable');
   let compared = 0;
+  let comparedVariants = 0;
   for (const workout of view.workouts) {
     const post = feed.elements.find(row => row.id === workout.provenance.sourceId);
     assert.equal(post.wodClass, className);
@@ -223,10 +224,32 @@ async function checkWorkouts(client, gym, date = process.env.AIMHARDER_LIVE_WORK
     for (let index = 0; index < workout.exercises.length; index++) {
       for (const [key, value] of Object.entries(workout.exercises[index].prescription)) assert.deepEqual(value, sourceExercises[index][key]);
     }
+    const labels = [...new Set(detail.TIPOWODs.flatMap(block => Array.isArray(block.scaledops) ? block.scaledops : []))];
+    assert.deepEqual(workout.variants.map(variant => variant.label), labels);
+    for (const variant of workout.variants) {
+      const selectedBlocks = detail.TIPOWODs.map(block => {
+        const index = Array.isArray(block.scaledops) ? block.scaledops.indexOf(variant.label) : -1;
+        return index < 0 || block.scaledver?.[index] == null ? block : block.scaledver[index];
+      });
+      const selectedExercises = detail.ejerRate.filter(exercise => exercise.tipoWOD != null).map(exercise => {
+        const block = detail.TIPOWODs[exercise.tipoWOD];
+        const index = Array.isArray(block.scaledops) ? block.scaledops.indexOf(variant.label) : -1;
+        return index < 0 ? exercise : exercise.scaledver[index];
+      }).filter(exercise => !selectedBlocks[exercise.tipoWOD].deleted);
+      assert.deepEqual(variant.blocks.map(block => block.notes), selectedBlocks.map(block => block.deleted ? null : block.notes ?? null));
+      assert.deepEqual(variant.exercises.map(exercise => exercise.name), selectedExercises.map(exercise => exercise.ejerName));
+      for (let index = 0; index < variant.blocks.length; index++) {
+        for (const [key, value] of Object.entries(variant.blocks[index].prescription)) assert.deepEqual(value, selectedBlocks[index][key]);
+      }
+      for (let index = 0; index < variant.exercises.length; index++) {
+        for (const [key, value] of Object.entries(variant.exercises[index].prescription)) assert.deepEqual(value, selectedExercises[index][key]);
+      }
+      comparedVariants++;
+    }
     compared++;
   }
   const daily = await request(`https://${role.centre_url}/api/bookings?${new URLSearchParams({ box: String(role.boid), day: date.replaceAll('-', '') })}`);
-  return { feedAndDetailComparison: compared ? 'passed' : 'no matching content available in retrieved view', status: view.status, comparedWorkoutCount: compared, matchingClassSessionCount: daily.bookings.filter(row => row.className === className).length, coverage: view.coverage.scope, exhaustive: false };
+  return { feedAndDetailComparison: compared ? 'passed' : 'no matching content available in retrieved view', status: view.status, comparedWorkoutCount: compared, comparedVariants, matchingClassSessionCount: daily.bookings.filter(row => row.className === className).length, coverage: view.coverage.scope, exhaustive: false };
 }
 
 
@@ -336,6 +359,14 @@ async function checkActivity(client, gym) {
     assert.ok(entry); assert.equal(entry.date, date); assert.equal(entry.timeZone, gym.timeZone);
     assert.equal(entry.startTime, null); assert.equal(entry.trainingSessionId, null);
     assert.deepEqual(entry.blocks.map(b => b.notes), detail.TIPOWODs.map(b => b.deleted ? null : b.notes ?? null));
+    assert.deepEqual(entry.blocks.map(block => block.result), detail.TIPOWODs.map(block => {
+      if (block.deleted) return {};
+      const expectedResult = Object.fromEntries(['res', 'reps', 'time', 'rondas', 'rx', 'rxstr'].filter(key => Object.hasOwn(block, key)).map(key => [key, block[key]]));
+      const descriptions = (detail.chartData?.[block.id] ?? []).filter(row => row.idAction === entry.sourceActivityId).map(row => row.desc);
+      assert.ok(new Set(descriptions).size <= 1);
+      if (descriptions.length && descriptions[0] !== undefined) expectedResult.desc = descriptions[0];
+      return expectedResult;
+    }));
     const exercises = detail.ejerRate.filter(e => e.tipoWOD == null || !detail.TIPOWODs[e.tipoWOD].deleted);
     assert.deepEqual(entry.exercises.map(e => e.name), exercises.map(e => e.ejerName));
     for (let i = 0; i < entry.exercises.length; i++) for (const [key, value] of Object.entries(entry.exercises[i].prescription)) assert.deepEqual(value, exercises[i][key]);

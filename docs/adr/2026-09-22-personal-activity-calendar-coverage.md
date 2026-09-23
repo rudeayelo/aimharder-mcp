@@ -37,3 +37,17 @@ Compose the same existing MCP queries in a consuming client. Resolve the previou
 Expose separate observed activity-entry and day counts, with exact alternative totals only when every requested date has complete coverage. Stop on a failed/incomplete window and preserve earlier/recovered entries. A configurable 1–12-window budget (default 12) also stops retrieval with incomplete coverage when needed. This is a consuming-client work bound, not an upstream access/history limit. Incomplete counts are labelled recovered lower bounds, never exact period totals. Return entries, individual window coverage and completed dates so another compatible client can explain the alternative accurately.
 
 Consequences: calendar coverage can establish available entry/day counts, including zero for complete empty periods, but cannot establish a distinct training-session total or attendance. Always return an explicitly blocked training-session result with a null count. No new endpoint, account scope, authentication, server tool, or persistence decision is introduced. Issue #10 remains open until grouping/counting semantics can be verified. The separate live check verifies previous-month empty coverage and an additional nonempty period's record/day basis; it does not substitute either for the unmet training-session requirement.
+
+## Recorded block results (2026-09-23)
+
+Status: accepted following the user's request and supplied detail response.
+
+Extend personal activity blocks with an allowlisted `result` object containing available `res`, `reps`, `time`, `rondas`, `rx` and `rxstr`. Keep source field names and null/zero/absent distinctions. The user confirmed `time` as seconds; preserve other numeric encodings without guessing score meanings. Preserve `rxstr` as the source label; a false `rx` by itself does not establish scaling. Deleted blocks expose no results. Validate results after account/gym verification and apply the existing incomplete-coverage behavior to malformed details.
+
+Consequences: interval and consuming-client outputs retain recorded results without adding requests or exercise-performance analysis. Existing prescription fields remain for compatibility, while result fields are explicitly grouped on personal activity only. Published-workout projection, endpoint allowlist, authentication and privacy policy remain unchanged. Source-data evidence and unit confirmation are separate from live acceptance; see [research](../api-research.md) and [validation](../validation.md). No glossary change is needed.
+
+### Current-result description refinement (2026-09-23)
+
+Preserve `result.desc` from the existing detail's `chartData[block.id]` only for rows whose `idAction` equals the current source activity ID, after the established account/gym checks. Retain literal labels, including null/empty values; never derive a universal rounds count from gym-specific notation. The user confirmed `7R` as seven completed complex rounds for the supplied class only. Missing matches yield no description; conflicting or invalid matching descriptions produce incomplete coverage. Deleted blocks remain empty.
+
+This narrows the previous chart-discard policy: chart history and every field except the linked current-result description remain excluded. No extra request, history analysis, identity scope or published-workout change is introduced. The recorded join evidence is one supplied response; broader live variants remain unverified.

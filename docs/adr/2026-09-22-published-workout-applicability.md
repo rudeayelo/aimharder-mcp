@@ -1,6 +1,6 @@
 # ADR: published workout applicability and feed coverage
 
-Status: accepted for [issue #5](https://github.com/rudeayelo/aimharder-mcp/issues/5).
+Status: accepted for [issue #5](https://github.com/rudeayelo/aimharder-mcp/issues/5); difficulty-variant projection amended on 2026-09-23.
 
 ## Decision
 
@@ -14,4 +14,12 @@ Coverage is explicitly incomplete and limited to the first upstream gym feed vie
 
 ## Consequences
 
-This provides verified available prescriptions without inventing dates, publication rules or session associations. Older publications outside the current page require additional pagination research. The exact Spanish `recordDate` format is supported; other locales remain unsupported. Scaled variants are not projected, and encoded prescription units remain source data. Unknown feed envelopes fail safely. These limitations remain explicit in the query result and validation rather than being concealed as exhaustive availability. Existing account, schedule, upcoming-booking and credential decisions remain in force; this ADR extends their read-only allowlist only.
+This provides verified available prescriptions without inventing dates, publication rules or session associations. Older publications outside the current page require additional pagination research. The exact Spanish `recordDate` format is supported; other locales remain unsupported. Encoded prescription units remain source data. Unknown feed envelopes fail safely. These limitations remain explicit in the query result and validation rather than being concealed as exhaustive availability. Existing account, schedule, upcoming-booking and credential decisions remain in force; this ADR extends their read-only allowlist only.
+
+## Difficulty-variant amendment (2026-09-23)
+
+The original delivery omitted scaled variants. Authenticated read-only inspection of a published future WOD and Metcon, the official gym renderer, and the user's screenshots established that `TIPOWODs[].scaledops` supplies ordered display labels. For a labeled block, the matching index in its `scaledver` supplies the block replacement when present; each exercise in that block uses the same index in its own `scaledver`. Blocks without the label retain their base content. Do not infer that the unselected base prescription is RX or that every workout uses three levels.
+
+Expose `workouts[].variants` as ordered, source-labeled, complete block/exercise projections. Keep the existing top-level blocks/exercises as the unselected source prescription for compatibility. Apply this to any class type with verified source labels, including WOD and Metcon, without class-specific rules. Project only the existing allowlisted notes and prescription fields; discard nested media, profiles and other source fields. Malformed label/index relationships make that publication unsupported instead of silently returning an incomplete difficulty level. Empty variants mean no source-labeled options were supplied.
+
+Consequences: clients can answer with each level's actual exercises and loads while shared warm-ups remain visible in every complete variant. Output size increases when variants exist. No new endpoint, selector, authentication scope or unit interpretation is introduced. The first-page coverage and publication ambiguity rules above still apply.

@@ -8,10 +8,12 @@ export type WorkoutQuery = z.infer<typeof workoutQuerySchema>;
 const text = z.string().max(100_000);
 const scalar = z.union([text, z.number().finite(), z.boolean(), z.null()]);
 const prescriptionSchema = z.record(z.string(), z.union([scalar, z.array(scalar)]));
+const blockSchema = z.object({ notes: text.nullable(), prescription: prescriptionSchema });
+const exerciseSchema = z.object({ name: text, blockIndex: z.number().int().nonnegative().nullable(), prescription: prescriptionSchema });
 export const workoutSchema = z.object({
   date: dateSchema, className: z.string(), timeZone: z.string(), sessionId: z.null(),
-  titles: z.array(text), blocks: z.array(z.object({ notes: text.nullable(), prescription: prescriptionSchema })),
-  exercises: z.array(z.object({ name: text, blockIndex: z.number().int().nonnegative().nullable(), prescription: prescriptionSchema })),
+  titles: z.array(text), blocks: z.array(blockSchema), exercises: z.array(exerciseSchema),
+  variants: z.array(z.object({ label: text, blocks: z.array(blockSchema), exercises: z.array(exerciseSchema) })),
   provenance: z.object({ sourceId: z.number().int().positive(), url: z.string(), dateField: z.literal('recordDate'), dateLabel: text, publicationDateLabel: text.nullable(), classField: z.literal('wodClass') }),
 });
 const postSchema = z.object({ id: z.number().int().positive().safe(), wodClass: text.nullish(), ejerRate: z.array(z.unknown()).optional(), TIPOWODs: z.array(z.object({ title: text.nullish() })).optional() });
@@ -21,13 +23,24 @@ export function parseFeed(body: unknown) {
   if (!parsed.success || new Set(parsed.data.elements.map(p => p.id)).size !== parsed.data.elements.length) throw new AimHarderError('INVALID_WORKOUT_RESPONSE');
   return parsed.data.elements;
 }
+const blockDetailSchema = z.object({
+  notes: text.nullish(), deleted: z.boolean(), type: scalar.optional(), timecap: scalar.optional(), timecaptype: scalar.optional(), time: scalar.optional(), rx: scalar.optional(), rondas: scalar.optional(), sstipo: scalar.optional(),
+  scaledops: z.union([z.array(text).max(20), z.literal(-1)]).nullish(), scaledver: z.array(z.unknown()).max(20).nullish(),
+});
+const exerciseDetailSchema = z.object({ ejerName: text, tipoWOD: z.number().int().nonnegative().nullish(),
+    valor1: z.array(scalar).nullish(), valor2: scalar.nullish(), formaReg: scalar.optional(), tipoud: scalar.optional(), tipoud2: scalar.optional(), round: scalar.optional(), roundrepeat: scalar.optional(),
+    scaledver: z.array(z.unknown()).max(20).nullish(),
+});
 const detailSchema = z.object({
   recordDate: text, publishDate: text.nullish(),
-  TIPOWODs: z.array(z.object({ notes: text.nullish(), deleted: z.boolean(), type: scalar.optional(), timecap: scalar.optional(), timecaptype: scalar.optional(), time: scalar.optional(), rx: scalar.optional(), rondas: scalar.optional(), sstipo: scalar.optional() })),
-  ejerRate: z.array(z.object({ ejerName: text, tipoWOD: z.number().int().nonnegative().nullish(),
-    valor1: z.array(scalar).nullish(), valor2: scalar.nullish(), formaReg: scalar.optional(), tipoud: scalar.optional(), tipoud2: scalar.optional(), round: scalar.optional(), roundrepeat: scalar.optional(),
-  })),
+  TIPOWODs: z.array(blockDetailSchema), ejerRate: z.array(exerciseDetailSchema),
 });
+function projectBlock({ notes, deleted, scaledops: _scaledops, scaledver: _scaledver, ...prescription }: z.infer<typeof blockDetailSchema>) {
+  return { notes: deleted ? null : notes ?? null, prescription: deleted ? {} : Object.fromEntries(Object.entries(prescription).filter(([, value]) => value !== undefined)) };
+}
+function projectExercise({ ejerName, tipoWOD, scaledver: _scaledver, ...prescription }: z.infer<typeof exerciseDetailSchema>) {
+  return { name: ejerName, blockIndex: tipoWOD ?? null, prescription: Object.fromEntries(Object.entries(prescription).filter(([, value]) => value !== undefined)) };
+}
 const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 export function parseWorkout(body: unknown, post: ReturnType<typeof parseFeed>[number], gymId: string, timeZone: string) {
   const parsed = detailSchema.safeParse(body);
@@ -39,14 +52,41 @@ export function parseWorkout(body: unknown, post: ReturnType<typeof parseFeed>[n
   const date = `${match[3]}-${String(month + 1).padStart(2, '0')}-${match[1]!.padStart(2, '0')}`;
   if (month < 0 || !dateSchema.safeParse(date).success || !post.wodClass) return null;
   if (row.ejerRate.some(e => e.tipoWOD != null && !row.TIPOWODs[e.tipoWOD])) return null;
+  const labels: string[] = [];
+  for (const block of row.TIPOWODs) {
+    if (!Array.isArray(block.scaledops)) continue;
+    if (new Set(block.scaledops).size !== block.scaledops.length || block.scaledops.some(label => !label.trim())) return null;
+    for (const label of block.scaledops) if (!labels.includes(label)) labels.push(label);
+  }
+  const variants = [];
+  for (const label of labels) {
+    const blocks = [];
+    const deletedBlocks = [];
+    for (const block of row.TIPOWODs) {
+      const index = Array.isArray(block.scaledops) ? block.scaledops.indexOf(label) : -1;
+      const source = index < 0 || block.scaledver?.[index] == null ? block : blockDetailSchema.safeParse(block.scaledver[index]).data;
+      if (!source) return null;
+      blocks.push(projectBlock(source));
+      deletedBlocks.push(source.deleted);
+    }
+    const exercises = [];
+    for (const exercise of row.ejerRate) {
+      if (exercise.tipoWOD == null) continue;
+      const parent = row.TIPOWODs[exercise.tipoWOD]!;
+      const index = Array.isArray(parent.scaledops) ? parent.scaledops.indexOf(label) : -1;
+      const source = index < 0 ? exercise : exerciseDetailSchema.safeParse(exercise.scaledver?.[index]).data;
+      if (!source || source.tipoWOD !== exercise.tipoWOD) return null;
+      if (deletedBlocks[exercise.tipoWOD]) continue;
+      exercises.push(projectExercise(source));
+    }
+    variants.push({ label, blocks, exercises });
+  }
   return {
     date, className: post.wodClass, timeZone, sessionId: null,
     titles: (post.TIPOWODs ?? []).flatMap(block => block.title ? [block.title] : []),
-    blocks: row.TIPOWODs.map(({ notes, deleted, ...prescription }) => ({ notes: deleted ? null : notes ?? null, prescription: deleted ? {} : Object.fromEntries(Object.entries(prescription).filter(([, value]) => value !== undefined)) })),
-    exercises: row.ejerRate.filter(e => e.tipoWOD == null || !row.TIPOWODs[e.tipoWOD]?.deleted).map(({ ejerName, tipoWOD, ...prescription }) => ({
-      name: ejerName, blockIndex: tipoWOD ?? null,
-      prescription: Object.fromEntries(Object.entries(prescription).filter(([, value]) => value !== undefined)),
-    })),
+    blocks: row.TIPOWODs.map(projectBlock),
+    exercises: row.ejerRate.filter(e => e.tipoWOD == null || !row.TIPOWODs[e.tipoWOD]?.deleted).map(projectExercise),
+    variants,
     provenance: { sourceId: post.id, url: `https://${gymId}.aimharder.es/api/activity/workout?SEID=${post.id}`, dateField: 'recordDate' as const, dateLabel: row.recordDate, publicationDateLabel: row.publishDate ?? null, classField: 'wodClass' as const },
   };
 }

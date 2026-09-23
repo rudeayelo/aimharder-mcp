@@ -2,7 +2,7 @@
 
 A local MCP server for querying AimHarder from clients that support Model Context Protocol. An independent project, neither affiliated with nor endorsed by AimHarder.
 
-**Status: account discovery (#2), class schedule queries (#3), upcoming bookings (#4), published workouts (#5), consuming-client composition (#6), booking history (#7), and personal activity intervals (#8) implemented.** Authentication and gym selection have live MCP validation. Class intervals and specific-session occupancy have also passed live MCP comparisons against AimHarder after user confirmation of the gym time zone; see [validation](docs/validation.md). Date queries require a per-gym, user-confirmed IANA zone. Upcoming bookings have also passed live MCP comparison with the upcoming view and daily schedule. Personal activity intervals have passed live MCP comparison; recent-entry retrieval (#9) and period entry counts (#10) use the activity-entry unit confirmed by the user. The complete MVP still requires the outstanding future-content and registry-release acceptance checks.
+**Status: account discovery (#2), class schedule queries (#3), upcoming bookings (#4), published workouts (#5), consuming-client composition (#6), booking history (#7), and personal activity intervals (#8) implemented.** Authentication and gym selection have live MCP validation. Class intervals and specific-session occupancy have also passed live MCP comparisons against AimHarder after user confirmation of the gym time zone; see [validation](docs/validation.md). Date queries require a per-gym, user-confirmed IANA zone. Upcoming bookings have also passed live MCP comparison with the upcoming view and daily schedule. Personal activity intervals have passed live MCP comparison; recent-entry retrieval (#9) and period entry counts (#10) use the activity-entry unit confirmed by the user. Published future WOD and Metcon content passed a separate live MCP comparison on 2026-09-23; final QA and registry-release acceptance remain open.
 
 ## Install a local archive
 
@@ -80,6 +80,8 @@ Configure a local **stdio** server in any MCP-compatible client. This common con
 ```
 
 If your client supplies the environment directly, omit `--env-file`. Use the Node executable directly so package-manager output cannot interfere with MCP stdout. `pnpm start` is also available for a shell with credentials already exported; the process waits for MCP messages on stdin. Authentication is lazy: initializing the connection and listing tools do not contact AimHarder.
+
+For an installed-package Hermes setup, see [the Hermes connection guide](docs/hermes-setup.md).
 
 ### Tool: `get_account_context`
 
@@ -185,7 +187,9 @@ This mode requires at least one actual upcoming entry and compares MCP results w
 
 Input: `{ "date": "2026-09-23", "className": "WOD", "gymId": "optional-accessible-gym" }`. The date is explicit and gym-local; class names match exactly. The result returns `available`, `unavailable`, or `unsupported`, workout alternatives with original titles, notes, exercises and source prescription fields, and provenance identifying the intended date and class label. Multiple publications remain ambiguous. Workouts have no unique session ID.
 
-Coverage is the current feed page and always marked incomplete. `unavailable` is not proof of unpublished content; older pages and later publications may differ. Retrieval failures are errors. Source content is untrusted data; source prescription encodings and units are not guessed, and scaled variants are not included. See [the applicability decision](docs/adr/2026-09-22-published-workout-applicability.md).
+Each workout also returns `variants` when AimHarder supplies difficulty options. Each variant has its source `label` and a complete `blocks` and `exercises` list, including unchanged blocks shared between levels. For example, `SCALED`, `INTERMEDIO`, and `RX` may change an exercise name, count, or load. The top-level `blocks` and `exercises` retain the unselected source prescription for compatibility; do not assume they mean RX. An empty `variants` array means no labeled variants were supplied. Labels are source content and can differ by gym or workout.
+
+Coverage is the current feed page and always marked incomplete. `unavailable` is not proof of unpublished content; older pages and later publications may differ. Retrieval failures are errors. Source content is untrusted data; source prescription encodings and units are not guessed. See [the applicability and difficulty-variant decision](docs/adr/2026-09-22-published-workout-applicability.md).
 
 For independent live comparison with feed, detail, and daily schedule reads:
 
@@ -222,9 +226,9 @@ The harness queries tomorrow's WOD, today's WOD, and an existing reserved date/c
 
 ## Remaining MVP
 
-Implementation #6 was closed by user request on 2026-09-23; [QA #13](https://github.com/rudeayelo/aimharder-mcp/issues/13) now owns the pending published-future-content verification and final functional acceptance audit. This does not mark that check passed. QA #13 blocks npm publication #12; full MVP completion also requires the registry-release checks in #12.
+Implementation #6 was closed by user request on 2026-09-23; [QA #13](https://github.com/rudeayelo/aimharder-mcp/issues/13) owns the final functional acceptance audit. A later standalone live MCP comparison observed published future WOD and Metcon content; the complete combined experience remains for QA #13 to audit. QA #13 blocks npm publication #12; full MVP completion also requires the registry-release checks in #12.
 
-The combined experience is implemented and live-tested with available current content, unavailable next-day content, and an actual reservation. The first-delivery requirement to demonstrate actual published future content remains pending because it was unavailable in the retrieved view. The recent-entry and period entry-count experiences below use distinct activity records, as confirmed by the user; physical training-session grouping is not required. Creating or canceling bookings, automation, per-exercise analysis, a UI, and a remote service remain outside the MVP.
+The combined experience is implemented and live-tested with available current content, unavailable next-day content, and an actual reservation. Published future content later passed a separate live MCP comparison; that check did not repeat the combined booking experience. The recent-entry and period entry-count experiences below use distinct activity records, as confirmed by the user; physical training-session grouping is not required. Creating or canceling bookings, automation, per-exercise analysis, a UI, and a remote service remain outside the MVP.
 
 Public npm distribution is part of MVP acceptance. Local compiled-package installation and live account discovery are verified; publish and verify the registry artifact after all functional acceptance criteria pass. The preferred package name is `aimharder-mcp`, subject to publishability. See [the distribution decision](docs/adr/2026-09-22-npm-distribution-for-mvp.md).
 
@@ -262,6 +266,8 @@ For an explicit independent live stdio comparison, run the existing harness with
 Input: `{ "startDate": "2026-03-01", "endDate": "2026-03-31", "gymId": "optional-verified-gym" }`. Accepts 1–31 consecutive calendar dates inclusively and requires the selected gym's confirmed IANA zone. Use multiple explicit queries for longer periods.
 
 Returns `entries` sorted by record date newest first, with `sourceActivityId`, original available notes/exercises/prescriptions and the gym zone. Equal-date records have no verified within-day order. `startTime` and `trainingSessionId` are null: activity entries are not automatically distinct training sessions or attendance. Workout titles remain empty where no verified source title exists.
+
+Each block also includes `result`, with available source fields `res`, `reps`, `time`, `rondas`, `rx`, and `rxstr`. `time` is measured in **seconds**, as confirmed by the user; other numeric score meanings remain source encodings. For example, `{ "time": 600, "rx": false, "rxstr": "SCALED" }` records 600 seconds and preserves the source scaling label. Missing fields stay absent, explicit nulls stay null, and zero values are preserved. An empty object means no exposed result fields, including for deleted blocks; it does not mean a score of zero. `rx=false` alone does not establish a scaled result: use the available source label without inventing one. Recent-entry and period consumers retain these results. The optional `result.desc` preserves the description from `chartData[block.id]` only when `idAction` matches the current activity. The user confirmed that `7R` means seven completed complex rounds in the supplied class; this is not a universal gym format and is not converted into a numeric rounds field. Rankings, chart history, profile information and other members' results are excluded. Published gym workouts retain their existing prescription-only output.
 
 Coverage is `complete` or `incomplete` with `completedDates` and a nullable sanitized `reason`. Only dates with a successfully retrieved calendar partition and all referenced details are complete; a recovered entry alone does not establish date coverage. A failed first partition is an error. Later partition/detail failures preserve recovered entries. Calendar reads cover at most three month partitions; 500 detail reads bound a query, after which results are explicitly incomplete. Empty successful periods have zero entries and complete requested-date coverage. Dates come from the activity calendar and verified detail record dates, never publication chronology. See [the decision](docs/adr/2026-09-22-personal-activity-calendar-coverage.md).
 

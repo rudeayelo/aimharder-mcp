@@ -3,6 +3,8 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
+import { queryRecentActivity } from '../src/recent-activity-consumer.js';
+import { queryActivityPeriod } from '../src/activity-period-consumer.js';
 import { createServer } from '../src/server.js';
 
 const upstream = setupServer();
@@ -159,4 +161,98 @@ test('conflicting identity across month partitions stops without duplicate recor
  respond({'2026-03-29':[1]});
  upstream.use(http.get('https://aimharder.es/api/activityCalendar',({request})=>HttpResponse.json(calendar(new URL(request.url).searchParams.get('month')==='2'?{'2026-03-29':[1]}:{'2026-04-01':[1]}))));
  expect((await query(await connect(),{startDate:'2026-03-29',endDate:'2026-04-01'})).structuredContent).toMatchObject({entries:[{sourceActivityId:1}],coverage:{status:'incomplete',completedDates:['2026-03-29','2026-03-30','2026-03-31']}});
+});
+
+test('returns allowlisted block results without leaking rankings or guessing units', async () => {
+ respond({ '2026-03-29': [1] });
+ upstream.use(http.get('https://aimharder.es/api/activity/workout', () => HttpResponse.json(detail(1, {
+  TIPOWODs: [
+   { notes: 'Texto libre', deleted: false, res: null, reps: null, time: null, rx: false, rxstr: '' },
+   { notes: 'Rounds For Time', deleted: false, res: null, reps: 4, time: 1234, rondas: null, rx: false, rxstr: 'SCALED', pwid: 999 },
+   { notes: 'Removed', deleted: true, res: 99, reps: 99, time: 99, rx: true, rxstr: 'private-deleted-result' },
+  ],
+  userName: 'private-profile', PRs: { private: 'private-ranking' }, chartData: { private: 'private-chart' },
+ }))));
+ const result = await query(await connect());
+ expect(result.isError).not.toBe(true);
+ expect(result.structuredContent).toMatchObject({ entries: [{ blocks: [
+  { result: { res: null, reps: null, time: null, rx: false, rxstr: '' } },
+  { result: { res: null, reps: 4, time: 1234, rondas: null, rx: false, rxstr: 'SCALED' } },
+  { notes: null, prescription: {}, result: {} },
+ ] }], coverage: { status: 'complete' } });
+ const serialized = JSON.stringify(result);
+ for (const value of ['private-profile', 'private-ranking', 'private-chart', 'private-deleted-result', 'pwid']) expect(serialized).not.toContain(value);
+});
+
+test.each([{}, { res: 0, reps: 0, time: 0, rondas: 0, rx: false, rxstr: '' }, { rx: true, rxstr: 'RX' }])('preserves missing, zero and RX result fields %o', async fields => {
+ respond({ '2026-03-29': [1] });
+ upstream.use(http.get('https://aimharder.es/api/activity/workout', () => HttpResponse.json(detail(1, { TIPOWODs: [{ notes: '', deleted: false, ...fields }] }))));
+ const result = await query(await connect());
+ const entries = (result.structuredContent as { entries: { blocks: { result: unknown }[] }[] }).entries;
+ expect(entries[0]!.blocks[0]!.result).toEqual(fields);
+});
+
+test.each([{ res: {} }, { reps: 'unknown' }, { rxstr: [] }])('invalid result data preserves earlier entries with incomplete coverage %o', async fields => {
+ respond({ '2026-03-29': [1, 2] });
+ upstream.use(http.get('https://aimharder.es/api/activity/workout', ({ request }) => HttpResponse.json(detail(1,
+  new URL(request.url).searchParams.get('SEID') === '2' ? { TIPOWODs: [{ notes: '', deleted: false, ...fields }] } : {},
+ ))));
+ expect((await query(await connect(), { startDate: '2026-03-29', endDate: '2026-03-29' })).structuredContent).toMatchObject({
+  entries: [{ sourceActivityId: 1 }], coverage: { status: 'incomplete', completedDates: [] },
+ });
+});
+
+
+test('recent and period consumers preserve recorded block results through MCP', async () => {
+ respond({ '2026-03-29': [1] });
+ upstream.use(http.get('https://aimharder.es/api/activity/workout', () => HttpResponse.json(detail(1, {
+  TIPOWODs: [{ notes: '', deleted: false, time: 600, reps: 4, rx: true, rxstr: 'RX' }],
+ }))));
+ const client = await connect();
+ const recent = await queryRecentActivity(client, { endDate: '2026-03-31', count: 1, maxWindows: 1 });
+ const period = await queryActivityPeriod(client, { startDate: '2026-03-01', endDate: '2026-03-31' });
+ for (const result of [recent, period]) expect(result.entries[0]!.blocks[0]!.result).toEqual({ time: 600, reps: 4, rx: true, rxstr: 'RX' });
+});
+
+test('joins result descriptions by block ID and activity ID, excluding unrelated history', async () => {
+ respond({ '2026-03-29': [1] });
+ upstream.use(http.get('https://aimharder.es/api/activity/workout', () => HttpResponse.json(detail(1, {
+  TIPOWODs: [{ id: 81, deleted: false }, { id: 82, deleted: false }, { id: 83, deleted: true }],
+  chartData: {
+   81: [{ idAction: 2, desc: 'private-history' }, { idAction: 1, desc: '7R', unrelated: 'private-extra' }],
+   82: [{ idAction: 1, desc: 'custom gym notation' }],
+   83: [{ idAction: 1, desc: 'private-deleted' }],
+   84: [{ idAction: 1, desc: 'private-other-block' }],
+  },
+ }))));
+ const client = await connect();
+ const result = await query(client);
+ expect(result.structuredContent).toMatchObject({ entries: [{ blocks: [{ result: { desc: '7R' } }, { result: { desc: 'custom gym notation' } }, { result: {} }] }], coverage: { status: 'complete' } });
+ expect(JSON.stringify(result)).not.toContain('private-');
+ const recent = await queryRecentActivity(client, { endDate: '2026-03-31', count: 1, maxWindows: 1 });
+ const period = await queryActivityPeriod(client, { startDate: '2026-03-01', endDate: '2026-03-31' });
+ for (const output of [recent, period]) expect(output.entries[0]!.blocks[0]!.result?.desc).toBe('7R');
+});
+
+test.each([
+ [[], {}],
+ [[{ idAction: 2, desc: 'other activity' }], {}],
+ [[{ idAction: 1, desc: null }], { desc: null }],
+ [[{ idAction: 1, desc: '' }], { desc: '' }],
+ [[{ idAction: 1, desc: '7R' }, { idAction: 1, desc: '7R' }], { desc: '7R' }],
+])('preserves absent, null, empty and duplicate matching descriptions', async (rows, expected) => {
+ respond({ '2026-03-29': [1] });
+ upstream.use(http.get('https://aimharder.es/api/activity/workout', () => HttpResponse.json(detail(1, {
+  TIPOWODs: [{ id: 81, deleted: false }], chartData: { 81: rows },
+ }))));
+ const result = await query(await connect());
+ expect((result.structuredContent as { entries: { blocks: { result: unknown }[] }[] }).entries[0]!.blocks[0]!.result).toEqual(expected);
+});
+
+test.each([{ rows: [{ idAction: 1, desc: 7 }] }, { rows: [{ idAction: 1, desc: '7R' }, { idAction: 1, desc: '8R' }] }])('invalid or conflicting current descriptions cause incomplete coverage', async ({ rows }) => {
+ respond({ '2026-03-29': [1] });
+ upstream.use(http.get('https://aimharder.es/api/activity/workout', () => HttpResponse.json(detail(1, {
+  TIPOWODs: [{ id: 81, deleted: false }], chartData: { 81: rows },
+ }))));
+ expect((await query(await connect())).structuredContent).toMatchObject({ entries: [], coverage: { status: 'incomplete' } });
 });
