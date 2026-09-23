@@ -8,8 +8,11 @@ export type WorkoutQuery = z.infer<typeof workoutQuerySchema>;
 const text = z.string().max(100_000);
 const scalar = z.union([text, z.number().finite(), z.boolean(), z.null()]);
 const prescriptionSchema = z.record(z.string(), z.union([scalar, z.array(scalar)]));
+// The gym renderer uses these labels for a load's tipoud (formaReg 4) or tipoud2 (formaReg 6).
+const loadUnits = ['kg', 'lbs', 'pood', '%BW', '%RM', 'RIR', 'RPE'] as const;
+const distanceUnits = ['m', 'mi', 'yd', 'ft', 'steps', 'km'] as const;
 const blockSchema = z.object({ notes: text.nullable(), prescription: prescriptionSchema });
-const exerciseSchema = z.object({ name: text, blockIndex: z.number().int().nonnegative().nullable(), prescription: prescriptionSchema });
+const exerciseSchema = z.object({ name: text, blockIndex: z.number().int().nonnegative().nullable(), prescription: prescriptionSchema.describe('Raw exercise values: valueUnit labels valor1; loadUnit labels valor2/valor2h/valor2m when verified. s means seconds and %RM is relative, not kilograms.') });
 export const workoutSchema = z.object({
   date: dateSchema, className: z.string(), timeZone: z.string(), sessionId: z.null(),
   titles: z.array(text), blocks: z.array(blockSchema), exercises: z.array(exerciseSchema),
@@ -28,18 +31,40 @@ const blockDetailSchema = z.object({
   scaledops: z.union([z.array(text).max(20), z.literal(-1)]).nullish(), scaledver: z.array(z.unknown()).max(20).nullish(),
 });
 const exerciseDetailSchema = z.object({ ejerName: text, tipoWOD: z.number().int().nonnegative().nullish(),
-    valor1: z.array(scalar).nullish(), valor2: scalar.nullish(), formaReg: scalar.optional(), tipoud: scalar.optional(), tipoud2: scalar.optional(), round: scalar.optional(), roundrepeat: scalar.optional(),
+    valor1: z.array(scalar).nullish(), valor2: scalar.nullish(), valor2h: scalar.nullish(), valor2m: scalar.nullish(), formaReg: scalar.optional(), tipoud: scalar.optional(), tipoud2: scalar.optional(), round: scalar.optional(), roundrepeat: scalar.optional(),
     scaledver: z.array(z.unknown()).max(20).nullish(),
 });
 const detailSchema = z.object({
   recordDate: text, publishDate: text.nullish(),
   TIPOWODs: z.array(blockDetailSchema), ejerRate: z.array(exerciseDetailSchema),
 });
+function unitIndex(value: unknown) {
+  return typeof value === 'number' && Number.isInteger(value) ? value
+    : typeof value === 'string' && /^(0|[1-9]\d*)$/.test(value) ? Number(value) : -1;
+}
 function projectBlock({ notes, deleted, scaledops: _scaledops, scaledver: _scaledver, ...prescription }: z.infer<typeof blockDetailSchema>) {
   return { notes: deleted ? null : notes ?? null, prescription: deleted ? {} : Object.fromEntries(Object.entries(prescription).filter(([, value]) => value !== undefined)) };
 }
 function projectExercise({ ejerName, tipoWOD, scaledver: _scaledver, ...prescription }: z.infer<typeof exerciseDetailSchema>) {
-  return { name: ejerName, blockIndex: tipoWOD ?? null, prescription: Object.fromEntries(Object.entries(prescription).filter(([, value]) => value !== undefined)) };
+  const form = prescription.formaReg;
+  const format = typeof form === 'number' && Number.isInteger(form) ? form : typeof form === 'string' && /^[1-6]$/.test(form) ? Number(form) : -1;
+  const rawUnit = format === 4 ? prescription.tipoud : format === 6 ? prescription.tipoud2 : undefined;
+  const hasValue = (value: unknown) => value !== undefined && value !== null && value !== '';
+  const hasPrimaryValue = prescription.valor1?.some(hasValue) ?? false;
+  const hasLoadValue = [prescription.valor2, prescription.valor2h, prescription.valor2m].some(hasValue);
+  const loadUnit = hasLoadValue ? loadUnits[unitIndex(rawUnit)] : undefined;
+  let valueUnit: string | undefined;
+  if (hasPrimaryValue) {
+    if (format === 1) valueUnit = 's';
+    else if (format === 2 || format === 6) valueUnit = distanceUnits[unitIndex(prescription.tipoud)];
+    else if (format === 3 || format === 4) valueUnit = 'reps';
+    else if (format === 5) valueUnit = 'cal';
+  }
+  return { name: ejerName, blockIndex: tipoWOD ?? null, prescription: {
+    ...Object.fromEntries(Object.entries(prescription).filter(([, value]) => value !== undefined)),
+    ...(valueUnit ? { valueUnit } : {}),
+    ...(loadUnit ? { loadUnit } : {}),
+  } };
 }
 const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 export function parseWorkout(body: unknown, post: ReturnType<typeof parseFeed>[number], gymId: string, timeZone: string) {

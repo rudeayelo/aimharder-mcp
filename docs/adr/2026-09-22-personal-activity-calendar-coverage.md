@@ -51,3 +51,7 @@ Consequences: interval and consuming-client outputs retain recorded results with
 Preserve `result.desc` from the existing detail's `chartData[block.id]` only for rows whose `idAction` equals the current source activity ID, after the established account/gym checks. Retain literal labels, including null/empty values; never derive a universal rounds count from gym-specific notation. The user confirmed `7R` as seven completed complex rounds for the supplied class only. Missing matches yield no description; conflicting or invalid matching descriptions produce incomplete coverage. Deleted blocks remain empty.
 
 This narrows the previous chart-discard policy: chart history and every field except the linked current-result description remain excluded. No extra request, history analysis, identity scope or published-workout change is introduced. The recorded join evidence is one supplied response; broader live variants remain unverified.
+
+## Shared exercise-unit projection (2026-09-24)
+
+Personal activity and published workouts use the same allowlisted exercise parser. The [published-workout unit amendment](2026-09-22-published-workout-applicability.md#exercise-unit-amendment-2026-09-24) adds source-derived `valueUnit` and `loadUnit` labels to available exercise prescriptions and preserves `valor2h`/`valor2m` when present. These labels describe prescribed values, not the account holder's recorded performance. Calendar coverage, account/gym verification, recorded block results and the existing read-only operation set remain unchanged.

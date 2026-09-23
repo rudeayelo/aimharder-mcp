@@ -140,6 +140,27 @@ async function openLiveSession(gym) {
   return { request, role, accountId: who.data[0].id };
 }
 
+function assertExercisePrescription(projected, source) {
+  for (const [key, value] of Object.entries(projected)) {
+    if (key !== 'loadUnit' && key !== 'valueUnit') assert.deepEqual(value, source[key]);
+  }
+  const loadLabels = ['kg', 'lbs', 'pood', '%BW', '%RM', 'RIR', 'RPE'];
+  const distanceLabels = ['m', 'mi', 'yd', 'ft', 'steps', 'km'];
+  const index = value => typeof value === 'number' && Number.isInteger(value) ? value : typeof value === 'string' && /^(0|[1-9]\d*)$/.test(value) ? Number(value) : -1;
+  const hasValue = value => value != null && value !== '';
+  const form = source.formaReg;
+  const hasLoad = [source.valor2, source.valor2h, source.valor2m].some(hasValue);
+  const loadCode = form === 4 || form === '4' ? source.tipoud : form === 6 || form === '6' ? source.tipoud2 : undefined;
+  assert.equal(projected.loadUnit, hasLoad ? loadLabels[index(loadCode)] : undefined);
+  const hasPrimary = Array.isArray(source.valor1) && source.valor1.some(hasValue);
+  const expectedValueUnit = !hasPrimary ? undefined
+    : form === 1 || form === '1' ? 's'
+    : form === 2 || form === '2' || form === 6 || form === '6' ? distanceLabels[index(source.tipoud)]
+    : form === 3 || form === '3' || form === 4 || form === '4' ? 'reps'
+    : form === 5 || form === '5' ? 'cal' : undefined;
+  assert.equal(projected.valueUnit, expectedValueUnit);
+}
+
 async function checkBookings(client, gym) {
   assert.equal(gym.timeZoneStatus, 'user-confirmed');
   const { request, role } = await openLiveSession(gym);
@@ -222,7 +243,7 @@ async function checkWorkouts(client, gym, date = process.env.AIMHARDER_LIVE_WORK
     }
     const sourceExercises = detail.ejerRate.filter(e => e.tipoWOD == null || !detail.TIPOWODs[e.tipoWOD].deleted);
     for (let index = 0; index < workout.exercises.length; index++) {
-      for (const [key, value] of Object.entries(workout.exercises[index].prescription)) assert.deepEqual(value, sourceExercises[index][key]);
+      assertExercisePrescription(workout.exercises[index].prescription, sourceExercises[index]);
     }
     const labels = [...new Set(detail.TIPOWODs.flatMap(block => Array.isArray(block.scaledops) ? block.scaledops : []))];
     assert.deepEqual(workout.variants.map(variant => variant.label), labels);
@@ -242,7 +263,7 @@ async function checkWorkouts(client, gym, date = process.env.AIMHARDER_LIVE_WORK
         for (const [key, value] of Object.entries(variant.blocks[index].prescription)) assert.deepEqual(value, selectedBlocks[index][key]);
       }
       for (let index = 0; index < variant.exercises.length; index++) {
-        for (const [key, value] of Object.entries(variant.exercises[index].prescription)) assert.deepEqual(value, selectedExercises[index][key]);
+        assertExercisePrescription(variant.exercises[index].prescription, selectedExercises[index]);
       }
       comparedVariants++;
     }
@@ -369,7 +390,7 @@ async function checkActivity(client, gym) {
     }));
     const exercises = detail.ejerRate.filter(e => e.tipoWOD == null || !detail.TIPOWODs[e.tipoWOD].deleted);
     assert.deepEqual(entry.exercises.map(e => e.name), exercises.map(e => e.ejerName));
-    for (let i = 0; i < entry.exercises.length; i++) for (const [key, value] of Object.entries(entry.exercises[i].prescription)) assert.deepEqual(value, exercises[i][key]);
+    for (let i = 0; i < entry.exercises.length; i++) assertExercisePrescription(entry.exercises[i].prescription, exercises[i]);
   }
   return { independentCalendarAndDetailComparison: 'passed', coverage: view.coverage.status, dateCount: dates.length, availableDetailsCompared: expected.length > 0, trainingSessionGrouping: 'unverified' };
 }
@@ -420,7 +441,7 @@ async function checkRecentActivity(client, gym) {
     assert.deepEqual(entry.blocks.map(b => b.notes), raw.TIPOWODs.map(b => b.deleted ? null : b.notes ?? null));
     const exercises = raw.ejerRate.filter(e => e.tipoWOD == null || !raw.TIPOWODs[e.tipoWOD].deleted);
     assert.deepEqual(entry.exercises.map(e => e.name), exercises.map(e => e.ejerName));
-    for (let i = 0; i < entry.exercises.length; i++) for (const [key, value] of Object.entries(entry.exercises[i].prescription)) assert.deepEqual(value, exercises[i][key]);
+    for (let i = 0; i < entry.exercises.length; i++) assertExercisePrescription(entry.exercises[i].prescription, exercises[i]);
   }
   return { independentRecentCalendarAndDetailComparison: 'passed', basis: result.basis, searchStatus: result.searchStatus, windows: result.windows.length, requestedCount: result.requestedCount, entriesReturned: result.entries.length, latestEntriesVerified: result.latestEntriesVerified, cutoffDateTied: omittedCount > 0, withinDateOrder: result.ordering.withinDate };
 }

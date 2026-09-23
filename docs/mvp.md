@@ -13,9 +13,9 @@ Domain terms are defined in the root [glossary](../CONTEXT.md).
 ## Features
 
 - Query the gym's classes by date: schedules, type, occupancy, capacity, and other relevant information available to the account.
-- Retrieve published workout details, including future workouts and source-labeled difficulty variants when available. A workout may apply to several class sessions on the same day rather than one uniquely linked session. If unavailable, say so. Publication from 21:00 onward is the user's observation about 9NBC, not a validated global rule.
+- Retrieve published workout details, including future workouts, source-labeled difficulty variants, and verified exercise value/load units when available. A workout may apply to several class sessions on the same day rather than one uniquely linked session. If unavailable, say so. Publication from 21:00 onward is the user's observation about 9NBC, not a validated global rule.
 - Query upcoming bookings and available history, distinguishing states only once their meaning has been verified.
-- Query personal activity by date, including available workout details and recorded block results (time in user-confirmed seconds, source scores and RX labels). Support any period AimHarder allows retrieving, with a maximum of 31 consecutive calendar dates per query, counting both endpoints, and clear notices for partial results. Searching or analyzing specific exercises is excluded.
+- Query personal activity by date, including available workout details with verified exercise units and recorded block results (time in user-confirmed seconds, source scores and RX labels). Support any period AimHarder allows retrieving, with a maximum of 31 consecutive calendar dates per query, counting both endpoints, and clear notices for partial results. Searching or analyzing specific exercises is excluded.
 
 Example questions: “What does tomorrow's WOD look like?”, “What classes are available this week?”, “How many people are booked for Wednesday's 07:00 Metcon?”, “What were my last five activity entries like?”, “How many activity entries did I record last month?”, and “What bookings do I have?”. Distinguish times when multiple sessions exist. Occupancy does not equal actual attendance.
 

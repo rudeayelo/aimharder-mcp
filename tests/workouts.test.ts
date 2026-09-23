@@ -93,6 +93,42 @@ test('preserves block prescriptions and excludes unrelated private details', asy
  expect(result.structuredContent).toMatchObject({ workouts: [{ blocks: [{ notes: 'Completa 5 rondas', prescription: { timecap: 1200, rondas: 5, rx: true } }] }] });
  expect(JSON.stringify(result)).not.toMatch(/private-name|private-comment/);
 });
+test('labels load values using the source exercise format and unit code', async () => {
+ upstream.use(http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({
+  ejerRate: [
+   { ejerName: 'Barbell lift', tipoWOD: 0, formaReg: 4, valor1: ['3', '3', '3'], valor2: '85/85', tipoud: 4 },
+   { ejerName: 'Dumbbell lift', tipoWOD: 0, formaReg: 4, valor1: ['20'], valor2: '15/10', valor2h: '15', valor2m: '10', tipoud: 0 },
+   { ejerName: 'Carry', tipoWOD: 0, formaReg: 6, valor1: ['50'], valor2: '30', tipoud: 0, tipoud2: 1 },
+   { ejerName: 'Rest', tipoWOD: 0, formaReg: 1, valor1: ['30', '30', '30'] },
+   { ejerName: 'Minute rest', tipoWOD: 0, formaReg: 1, valor1: ['60'] },
+   { ejerName: 'Unspecified rest', tipoWOD: 0, formaReg: 1, valor1: [''] },
+   { ejerName: 'Unweighted lunge', tipoWOD: 0, formaReg: 4, valor1: ['10', '10', '10'], valor2: null, tipoud: 1 },
+   { ejerName: 'Unweighted carry', tipoWOD: 0, formaReg: 6, valor1: ['30', '30', '30'], valor2: null, tipoud: 0, tipoud2: 0 },
+   { ejerName: 'Unrecognized unit', tipoWOD: 0, formaReg: 4, valor2: '8', tipoud: 99 },
+   { ejerName: 'Ordinary repetitions', tipoWOD: 0, formaReg: 3, valor1: ['10'], tipoud: 0 },
+  ],
+ }))));
+ const result = await query(await connect());
+ expect(result.isError).not.toBe(true);
+ expect(result.structuredContent).toMatchObject({ workouts: [{ exercises: [
+  { prescription: { valor1: ['3', '3', '3'], valueUnit: 'reps', valor2: '85/85', tipoud: 4, loadUnit: '%RM' } },
+  { prescription: { valor2: '15/10', valor2h: '15', valor2m: '10', tipoud: 0, valueUnit: 'reps', loadUnit: 'kg' } },
+  { prescription: { valor2: '30', tipoud: 0, tipoud2: 1, valueUnit: 'm', loadUnit: 'lbs' } },
+  { prescription: { valor1: ['30', '30', '30'], valueUnit: 's' } },
+  { prescription: { valor1: ['60'], valueUnit: 's' } },
+  { prescription: { valor1: [''] } },
+  { prescription: { valor1: ['10', '10', '10'], valueUnit: 'reps', valor2: null, tipoud: 1 } },
+  { prescription: { valor1: ['30', '30', '30'], valueUnit: 'm', valor2: null, tipoud: 0, tipoud2: 0 } },
+  { prescription: { valor2: '8', tipoud: 99 } },
+  { prescription: { valor1: ['10'], tipoud: 0, valueUnit: 'reps' } },
+ ] }] });
+ const exercises = (result.structuredContent as { workouts: { exercises: { prescription: Record<string, unknown> }[] }[] }).workouts[0]!.exercises;
+ expect(exercises[5]!.prescription).not.toHaveProperty('valueUnit');
+ expect(exercises[6]!.prescription).not.toHaveProperty('loadUnit');
+ expect(exercises[7]!.prescription).not.toHaveProperty('loadUnit');
+ expect(exercises[8]!.prescription).not.toHaveProperty('loadUnit');
+ expect(exercises[9]!.prescription).not.toHaveProperty('loadUnit');
+});
 test.each(['WOD', 'Metcon'])('returns complete source-labeled %s difficulty variants', async className => {
  respond([post({ wodClass: className })]);
  const labels = ['SCALED', 'INTERMEDIO', 'RX'];
@@ -103,10 +139,10 @@ test.each(['WOD', 'Metcon'])('returns complete source-labeled %s difficulty vari
   ],
   ejerRate: [
    { ejerName: '5 pull-ups', tipoWOD: 0, valor1: ['5'] },
-   { ejerName: 'Double unders', tipoWOD: 1, valor1: ['80'], scaledver: [
-    { ejerName: 'Single unders', tipoWOD: 1, valor1: ['160'], privateProfile: 'exclude-me' },
-    { ejerName: 'Double unders', tipoWOD: 1, valor1: ['40'] },
-    { ejerName: 'Double unders', tipoWOD: 1, valor1: ['80'] },
+   { ejerName: 'Dumbbell lift', tipoWOD: 1, formaReg: 4, valor1: ['20'], valor2: '10', tipoud: 0, scaledver: [
+    { ejerName: 'Dumbbell lift', tipoWOD: 1, formaReg: 4, valor1: ['20'], valor2: '10', tipoud: 0, privateProfile: 'exclude-me' },
+    { ejerName: 'Dumbbell lift', tipoWOD: 1, formaReg: 4, valor1: ['20'], valor2: '12', tipoud: 0 },
+    { ejerName: 'Dumbbell lift', tipoWOD: 1, formaReg: 4, valor1: ['20'], valor2: '15', tipoud: 0 },
    ] },
   ],
  }))));
@@ -114,10 +150,10 @@ test.each(['WOD', 'Metcon'])('returns complete source-labeled %s difficulty vari
  expect(result.isError).not.toBe(true);
  const workout = (result.structuredContent as { workouts: { exercises: unknown[]; variants: { label: string; blocks: { notes: string }[]; exercises: { name: string; prescription: Record<string, unknown> }[] }[] }[] }).workouts[0]!;
  expect(workout.variants.map(variant => variant.label)).toEqual(labels);
- expect(workout.variants.map(variant => variant.exercises.map(exercise => [exercise.name, exercise.prescription.valor1]))).toEqual([
-  [['5 pull-ups', ['5']], ['Single unders', ['160']]],
-  [['5 pull-ups', ['5']], ['Double unders', ['40']]],
-  [['5 pull-ups', ['5']], ['Double unders', ['80']]],
+ expect(workout.variants.map(variant => variant.exercises.map(exercise => [exercise.name, exercise.prescription.valor2, exercise.prescription.valueUnit, exercise.prescription.loadUnit]))).toEqual([
+  [['5 pull-ups', undefined, undefined, undefined], ['Dumbbell lift', '10', 'reps', 'kg']],
+  [['5 pull-ups', undefined, undefined, undefined], ['Dumbbell lift', '12', 'reps', 'kg']],
+  [['5 pull-ups', undefined, undefined, undefined], ['Dumbbell lift', '15', 'reps', 'kg']],
  ]);
  expect(workout.variants.every(variant => variant.blocks[0]?.notes === 'Warm up')).toBe(true);
  expect(JSON.stringify(result)).not.toContain('exclude-me');

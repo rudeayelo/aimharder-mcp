@@ -1,6 +1,6 @@
 # ADR: published workout applicability and feed coverage
 
-Status: accepted for [issue #5](https://github.com/rudeayelo/aimharder-mcp/issues/5); difficulty-variant projection amended on 2026-09-23.
+Status: accepted for [issue #5](https://github.com/rudeayelo/aimharder-mcp/issues/5); difficulty-variant projection amended on 2026-09-23 and exercise-unit projection amended on 2026-09-24.
 
 ## Decision
 
@@ -23,3 +23,11 @@ The original delivery omitted scaled variants. Authenticated read-only inspectio
 Expose `workouts[].variants` as ordered, source-labeled, complete block/exercise projections. Keep the existing top-level blocks/exercises as the unselected source prescription for compatibility. Apply this to any class type with verified source labels, including WOD and Metcon, without class-specific rules. Project only the existing allowlisted notes and prescription fields; discard nested media, profiles and other source fields. Malformed label/index relationships make that publication unsupported instead of silently returning an incomplete difficulty level. Empty variants mean no source-labeled options were supplied.
 
 Consequences: clients can answer with each level's actual exercises and loads while shared warm-ups remain visible in every complete variant. Output size increases when variants exist. No new endpoint, selector, authentication scope or unit interpretation is introduced. The first-page coverage and publication ambiguity rules above still apply.
+
+## Exercise-unit amendment (2026-09-24)
+
+The previous projection preserved numeric `formaReg`, `tipoud` and `tipoud2` codes without labeling their associated values. Authenticated detail reads for WOD, GAP and Mobility on 23 September and WOD on 24 September, together with the official gym renderer, establish the following mapping for the observed source format. `formaReg=1` treats `valor1` as seconds (the UI displays 60 seconds as `1'`); `3` and `4` treat it as repetitions; `5` as calories; `2` and `6` use `tipoud` to choose a distance unit. `formaReg=4` uses `tipoud` for the load in `valor2`/`valor2h`/`valor2m`; `6` uses `tipoud2`. The renderer's load labels are `kg`, `lbs`, `pood`, `%BW`, `%RM`, `RIR` and `RPE`; distance labels are `m`, `mi`, `yd`, `ft`, `steps` and `km`.
+
+Preserve raw prescription values and source codes. Add `valueUnit` for a nonempty `valor1` and `loadUnit` for a nonempty load only when the format and unit code resolve through that observed mapping. Also allowlist source `valor2h` and `valor2m` so variant loads are not silently discarded. Unknown codes and absent values stay unlabeled. Never convert `%RM` into kilograms or infer a personal maximum. A `formaReg=4` exercise with reps but null `valor2` returns `reps` without a load label; a `formaReg=6` carry with distance but null load returns its distance unit only.
+
+Consequences: MCP clients can distinguish a weight, a relative maximum, a timed rest, repetitions and distance without parsing exercise names. Published workouts and personal activity reuse the same exercise projection. No request, account scope, performance calculation or authentication behavior changes. Broader gym/locale variants of the renderer's code table remain unverified; the source values remain available if a label cannot be assigned.
