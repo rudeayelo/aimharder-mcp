@@ -222,6 +222,8 @@ The harness queries tomorrow's WOD, today's WOD, and an existing reserved date/c
 
 ## Remaining MVP
 
+Implementation #6 was closed by user request on 2026-09-23; [QA #13](https://github.com/rudeayelo/aimharder-mcp/issues/13) now owns the pending published-future-content verification and final functional acceptance audit. This does not mark that check passed. QA #13 blocks npm publication #12; full MVP completion also requires the registry-release checks in #12.
+
 The combined experience is implemented and live-tested with available current content, unavailable next-day content, and an actual reservation. The first-delivery requirement to demonstrate actual published future content remains pending because it was unavailable in the retrieved view. The recent-entry and period entry-count experiences below use distinct activity records, as confirmed by the user; physical training-session grouping is not required. Creating or canceling bookings, automation, per-exercise analysis, a UI, and a remote service remain outside the MVP.
 
 Public npm distribution is part of MVP acceptance. Local compiled-package installation and live account discovery are verified; publish and verify the registry artifact after all functional acceptance criteria pass. The preferred package name is `aimharder-mcp`, subject to publishability. See [the distribution decision](docs/adr/2026-09-22-npm-distribution-for-mvp.md).

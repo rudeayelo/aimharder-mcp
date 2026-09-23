@@ -57,6 +57,10 @@ Prioritize account/gym access, class sessions, upcoming bookings, and published 
 
 Every slice includes behavioral tests at the MCP interface, separate live read-only validation in a compatible client or harness, and updated documentation. Ticket publication does not demonstrate implementation or API validation. Native dependencies and published issue content were verified when this plan was recorded.
 
+## Final functional QA
+
+On 2026-09-23 the user approved closing implementation #6 and transferring its outstanding actual published-future-workout live validation to [QA #13](https://github.com/rudeayelo/aimharder-mcp/issues/13). This check remains required and unverified. The QA ticket consolidates the functional acceptance matrix and local-package evidence for #2–#11 and blocks npm publication #12. The intended evening verification is manual and uses the actual gym-local date; no publication-hour guarantee or automation is implied. Full MVP closure still requires both QA #13 and #12's exact registry-release verification.
+
 ## npm distribution tickets
 
 The user approved these additional slices on 2026-09-22. Both are published with `ready-for-agent`; the publication ticket has native GitHub blockers. The functional ticket plan above is unchanged.
@@ -64,7 +68,7 @@ The user approved these additional slices on 2026-09-22. Both are published with
 | Ticket | Blocked by |
 | --- | --- |
 | [#11: Run the MCP server from an installable package](https://github.com/rudeayelo/aimharder-mcp/issues/11) | None pending; #2 is complete |
-| [#12: Publish and verify the MVP on npm](https://github.com/rudeayelo/aimharder-mcp/issues/12) | #11, #6, #7, #9, #10 |
+| [#12: Publish and verify the MVP on npm](https://github.com/rudeayelo/aimharder-mcp/issues/12) | #13, #11, #6, #7, #9, #10 |
 
 The terminal functional blockers include their transitive prerequisites. Package preparation can proceed before those features are complete; public release requires complete MVP acceptance. The preferred name is `aimharder-mcp`, subject to publishability and account access. See [the distribution ADR](adr/2026-09-22-npm-distribution-for-mvp.md).
 
