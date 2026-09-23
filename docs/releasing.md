@@ -1,0 +1,19 @@
+# Publishing an npm release
+
+The local server stays read-only and uses one AimHarder account per process. Public publication requires the functional verdict in [validation](validation.md) and [QA #13](https://github.com/rudeayelo/aimharder-mcp/issues/13). A local archive check does not satisfy the registry check.
+
+## Prepare a release candidate
+
+1. Use a clean checkout on the intended release commit, Node 24 and pnpm 12.5.1. Confirm that the public registry has no conflicting version, and that `npm whoami --registry=https://registry.npmjs.org/` returns the authorized publishing account. Do not put npm or AimHarder credentials in the repository or command arguments.
+2. Choose the next exact semantic version in `package.json`. Update the lockfile when the manifest changes, document behavior and decisions, and commit the candidate. Record the full `git rev-parse HEAD` value. The first intended version is `0.1.0`; subsequent versions must be new because npm versions cannot be republished.
+3. Run `pnpm install --frozen-lockfile`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm test:package`, and the authorized live checks required by the functional gate. Inspect `git diff --check` and confirm the tree is clean after the candidate commit.
+4. Build the exact archive with `npm pack --ignore-scripts --json --pack-destination <temporary-directory>`. `pnpm build` must already have passed. Inspect its file list against the package allowlist: compiled JavaScript, README, license, glossary, public docs and package metadata only. The archive must contain no source, tests, evidence, environment files, credentials, maps or nested archives. Keep the archive outside the checkout or remove it after verification.
+
+## Publish and verify
+
+1. Publish that inspected archive to the public registry with `npm publish <absolute-archive-path> --access public --registry=https://registry.npmjs.org/`. Complete the npm account's interactive authentication or approved publishing flow. Do this only after QA #13 has passed.
+2. Check `npm view aimharder-mcp@<exact-version> version dist.tarball --json --registry=https://registry.npmjs.org/` and the public package page. Record the returned version and registry tarball URL, not only the local `npm publish` output.
+3. From the source checkout, inject AimHarder credentials securely and run `AIMHARDER_LIVE_CHECK=1 node scripts/registry-check.mjs <exact-version>`. This script creates a clean temporary directory and npm cache, reads metadata from the public registry, downloads and installs the exact published version with production dependencies and no lifecycle scripts, and starts its installed executable with the official MCP SDK over stdio. It checks initialization, six tools, a live read-only account/gym query, explicit selection, inaccessible-gym rejection, sanitized errors and empty server stderr. Only the MCP child receives AimHarder credentials; the script removes the installation and cache afterward. A failure is a release defect, not evidence of success.
+4. Record the candidate source revision, exact published version, registry URL, timestamp, Node and pnpm versions, live harness result and limitations in [validation](validation.md). Update the [README](../README.md), [MVP status](mvp.md), and [distribution ADR](adr/2026-09-22-npm-distribution-for-mvp.md). Publish the matching source revision to GitHub, then record the release result on issue #12 and the parent specification.
+
+For the client, pin the version in the executable request: `npx --yes aimharder-mcp@<exact-version>`. Supply `AIMHARDER_USERNAME` and `AIMHARDER_PASSWORD` through the local client environment; date queries also require confirmed `AIMHARDER_GYM_TIME_ZONES`. Use Node 24 on the client host. The package does not load an environment file automatically.
