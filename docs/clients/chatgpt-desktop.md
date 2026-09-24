@@ -8,7 +8,7 @@ First set up [Node 24+ and your account environment](../configuration.md).
 
 1. Open **Settings → Plugins → MCPs → Add server**. Set **Name** to `aimharder` and **Type** to **STDIO**.
 2. Set **Command to launch** to `npx`.
-3. Add two separate **Arguments**: `--yes` and `aimharder-mcp@0.1.1`, in that order.
+3. Add two separate **Arguments**: `--yes` and `aimharder-mcp@0.1.2`, in that order.
 4. Under **Environment variable passthrough**, add the names `AIMHARDER_USERNAME` and `AIMHARDER_PASSWORD`. The app must already receive their values. Also pass `AIMHARDER_GYM_TIME_ZONES` or `AIMHARDER_DEFAULT_GYM` if configured. Keep credential values out of the form's **Environment variables** fields.
 5. Leave **Working directory** empty unless your desktop build requires one. Save the server.
 
