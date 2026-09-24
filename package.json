@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit",
     "start": "node dist/index.js",
     "test": "vitest run",
+    "release:version": "node scripts/version-release.mjs",
     "test:live": "node scripts/live-check.mjs",
     "prepack": "pnpm build",
     "test:package": "node scripts/package-check.mjs",
@@ -24,6 +25,7 @@
     "zod": "4.6.5"
   },
   "devDependencies": {
+    "@changesets/cli": "3.0.3",
     "@types/node": "^24.13.6",
     "msw": "2.15.0",
     "typescript": "7.0.2",

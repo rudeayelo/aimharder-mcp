@@ -6,7 +6,13 @@ This page records what was checked against AimHarder, what was checked only with
 
 The user accepted first-release functional QA on 2026-09-24 using the combined evidence below and [QA #13](https://github.com/rudeayelo/aimharder-mcp/issues/13). The exact single-run future-workout-plus-booking harness check was **not performed**; the user accepted separate live comparisons and a Hermes future-WOD check instead. See the [QA evidence decision](adr/2026-09-24-functional-qa-evidence-for-first-release.md).
 
-`aimharder-mcp` is public on npm. Version `0.1.0` passed exact registry-artifact verification, and version `0.1.1` updates the published consumer documentation and is the current recommended pin. The registry and client results are recorded below, separately from the functional QA verdict.
+`aimharder-mcp` is public on npm. Versions `0.1.0` and `0.1.1` passed exact registry-artifact verification. Version `0.1.1` updated the published consumer documentation and was the recommended pin at that release. The registry and client results are recorded below, separately from the functional QA verdict. Consult the [README](../README.md) for the consumer version pin of later releases.
+
+## Release automation preparation (2026-09-24)
+
+The [automation ADR](adr/2026-09-24-github-actions-npm-release-automation.md) records the agreed Changesets, CI, GitHub App, and npm OIDC workflow. On Node 24.14.0 and pnpm 12.5.1, the checkout passed a frozen install, typecheck, all 272 fixture tests, build, and the isolated 24-file package check. Changesets reported a patch release, and a temporary-copy run of `scripts/version-release.mjs` produced `0.1.2`, an updated changelog and six matching consumer-documentation pins; the resulting lockfile passed a frozen check. `actionlint` accepted both new workflows.
+
+These are local preparation results. The `verify` check passed on [implementation PR #16](https://github.com/rudeayelo/aimharder-mcp/pull/16) in [Actions run 36022019846](https://github.com/rudeayelo/aimharder-mcp/actions/runs/36022019846). Repository Actions may create pull requests, and `main` now requires a pull request plus the `verify` check, including for administrators. The `aimharder-mcp-release` GitHub App was installed only on this repository with Contents and Pull requests write access; its App ID and private key are in the repository Actions variable and secret. npm displayed the successful OIDC trusted-publisher connection for `rudeayelo/aimharder-mcp` and `release.yml`, with `npm publish` allowed. The automated publish and exact-version live MCP verification for a new release have not yet been completed. Version `0.1.1` remains the current verified public release.
 
 ## Public npm and client checks (2026-09-24)
 
