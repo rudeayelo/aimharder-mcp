@@ -112,7 +112,8 @@ test('a configured window limit preserves lower bounds and exposes uncovered dat
 test.each([0,13])('rejects invalid window limit %s before HTTP',async maxWindows=>{
  await expect(queryActivityPeriod(await connect(),{period:'previous-month',maxWindows})).rejects.toThrow();expect(requests).toHaveLength(0);
 });
-test('requires a confirmed gym zone even for explicit periods',async()=>{
- await expect(queryActivityPeriod(await connect({AIMHARDER_GYM_TIME_ZONES:undefined}),{startDate:'2026-03-01',endDate:'2026-03-31'})).rejects.toThrow('confirmed time zone');
- expect(requests.filter(r=>r.url.pathname.includes('activity'))).toHaveLength(0);
+test('uses the assumed gym zone for explicit periods',async()=>{
+ const result=await queryActivityPeriod(await connect({AIMHARDER_GYM_TIME_ZONES:undefined}),{startDate:'2026-03-01',endDate:'2026-03-31'});
+ expect(result.gym).toMatchObject({timeZone:'Europe/Madrid',timeZoneStatus:'assumed'});
+ expect(requests.filter(r=>r.url.pathname.includes('activity')).length).toBeGreaterThan(0);
 });

@@ -101,9 +101,9 @@ test.each([403, 429, 500])('lookup failure is not no bookings: %s', async (statu
   upstream.use(http.get('https://sample-gym.aimharder.es/api/nextBookings', () => new HttpResponse(null, { status })));
   const result = await query(await connect());expect(result.isError).toBe(true);expect(result.structuredContent).toBeUndefined();
 });
-test('requires a confirmed gym zone', async () => {
-  expect((await query(await connect({ AIMHARDER_GYM_TIME_ZONES: undefined }))).isError).toBe(true);
-  expect(bookingRequests()).toHaveLength(0);
+test('uses the assumed gym zone when no override is configured', async () => {
+  expect((await query(await connect({ AIMHARDER_GYM_TIME_ZONES: undefined }))).structuredContent).toMatchObject({ gym: { timeZone: 'Europe/Madrid', timeZoneStatus: 'assumed' } });
+  expect(bookingRequests()).toHaveLength(1);
 });
 test('rejects unknown gyms and account selectors', async () => {
   const client = await connect();

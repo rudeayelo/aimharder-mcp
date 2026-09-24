@@ -6,7 +6,7 @@ import { upcomingBookingSchema } from './bookings.js';
 import { workoutSchema } from './workouts.js';
 import { gymIdSchema } from './config.js';
 
-const gymSchema = z.object({ id: gymIdSchema, name: z.string(), timeZone: z.string().nullable(), timeZoneStatus: z.enum(['unverified', 'user-confirmed']) });
+const gymSchema = z.object({ id: gymIdSchema, name: z.string(), timeZone: z.string().nullable(), timeZoneStatus: z.enum(['assumed', 'user-confirmed']) });
 const notices = z.array(z.string());
 const classesSchema = z.object({ gym: gymSchema, startDate: dateSchema, endDate: dateSchema, coverage: z.literal('complete'), sessions: z.array(classSessionSchema), notices });
 const workoutsSchema = z.object({ gym: gymSchema, date: dateSchema, className: z.string(), status: z.enum(['available', 'unavailable', 'unsupported']), ambiguous: z.boolean(), workouts: z.array(workoutSchema), coverage: z.object({ status: z.literal('incomplete'), scope: z.literal('upstream-feed-view'), interpretation: z.enum(['verified', 'unsupported']) }), notices });
@@ -15,7 +15,7 @@ const inputSchema = z.object({ date: z.union([dateSchema, z.literal('tomorrow')]
 export type TrainingQuery = z.input<typeof inputSchema>;
 type Outcome<T> = { status: 'success'; data: T } | { status: 'error'; message: string };
 
-/** Resolve a relative date only after discovering the selected gym's confirmed zone. */
+/** Resolve a relative date in the selected gym's reported zone, preserving its provenance. */
 export async function queryTraining(client: Pick<Client, 'callTool'>, input: TrainingQuery) {
   const query = inputSchema.parse(input);
   let contextResult;
@@ -24,7 +24,7 @@ export async function queryTraining(client: Pick<Client, 'callTool'>, input: Tra
   const context = z.object({ selectedGym: gymSchema }).safeParse(contextResult.structuredContent);
   if (contextResult.isError || !context.success || (query.gymId && context.data.selectedGym.id !== query.gymId)) throw new Error('The selected gym context could not be confirmed.');
   const gym = context.data.selectedGym;
-  if (gym.timeZoneStatus !== 'user-confirmed' || !gym.timeZone) throw new Error('A user-confirmed gym time zone is required.');
+  if (!gym.timeZone) throw new Error('A gym time zone is required.');
   let date = query.date;
   if (date === 'tomorrow') {
     const parts = new Intl.DateTimeFormat('en', { timeZone: gym.timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(query.now ?? new Date());
@@ -34,7 +34,7 @@ export async function queryTraining(client: Pick<Client, 'callTool'>, input: Tra
     next.setUTCDate(next.getUTCDate() + 1);
     date = dateSchema.parse(next.toISOString().slice(0, 10));
   }
-  const sameGym = (value: z.infer<typeof gymSchema>) => value.id === gym.id && value.timeZone === gym.timeZone && value.timeZoneStatus === 'user-confirmed';
+  const sameGym = (value: z.infer<typeof gymSchema>) => value.id === gym.id && value.timeZone === gym.timeZone && value.timeZoneStatus === gym.timeZoneStatus;
   async function read<T extends { gym: z.infer<typeof gymSchema> }>(name: string, args: Record<string, unknown>, schema: z.ZodType<T>, applicable: (data: T) => boolean): Promise<Outcome<T>> {
     try {
       const response = await client.callTool({ name, arguments: { ...args, gymId: gym.id } });

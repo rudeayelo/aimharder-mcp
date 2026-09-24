@@ -34,7 +34,7 @@ export interface Gym {
   id: string;
   name: string;
   timeZone: string | null;
-  timeZoneStatus: 'unverified' | 'user-confirmed';
+  timeZoneStatus: 'assumed' | 'user-confirmed';
 }
 export interface AccountContext {
   account: { authenticated: true };
@@ -65,9 +65,9 @@ export class AimHarderClient {
   getAccountContext(gymId?: string): Promise<AccountContext> {
     return this.#query(gymId, async (gyms, selected) => ({
       account: { authenticated: true }, gyms: gyms.map((entry) => entry.gym), selectedGym: selected.gym,
-      notices: gyms.some(({ gym }) => gym.timeZone === null)
-        ? ['Some gym time zones have not been verified. Do not infer gym-local dates from the computer time zone.']
-        : ['Gym time zones come from explicit user-confirmed configuration, not an upstream time-zone field.'],
+      notices: gyms.some(({ gym }) => gym.timeZoneStatus === 'assumed')
+        ? ['Europe/Madrid is assumed for gyms without an explicit time-zone mapping. Confirm the gym zone for reliable date queries; AimHarder has not supplied an authoritative zone.']
+        : ['Gym time zones come from explicit user configuration, not an upstream time-zone field.'],
     }));
   }
 
@@ -91,7 +91,7 @@ export class AimHarderClient {
         gym, startDate: query.startDate, endDate: query.endDate, coverage: 'complete', sessions,
         notices: [
           'Occupancy is the source occupied-place count, not actual attendance. Capacity alone does not establish booking eligibility.',
-          'Times are gym-local wall times in the user-confirmed IANA zone. No UTC instant is inferred, including at daylight-saving transitions.',
+          'Times are gym-local wall times in the reported IANA zone. The zone may be assumed; no UTC instant is inferred, including at daylight-saving transitions.',
           'Coverage describes successful daily schedule retrieval, not all possible future publications or booking availability.',
         ],
       };
@@ -111,7 +111,7 @@ export class AimHarderClient {
         notices: [
           'Coverage is the current AimHarder upcoming view, not a verified calendar interval or unlimited future horizon. Do not infer no booking for an arbitrary date from absence here.',
           'Bookings are reservations, not attendance. Waitlisted entries are not confirmed reservations; unknown states must not be treated as no booking.',
-          'Times are gym-local wall times in the user-confirmed zone, without an inferred UTC instant. Only the verified Spanish date format is supported.',
+          'Times are gym-local wall times in the reported zone, which may be assumed, without an inferred UTC instant. Only the verified Spanish date format is supported.',
           'The upcoming source ID is not a verified class-session ID. Match date, time and class type cautiously and retain ambiguous alternatives.',
         ],
       };
@@ -129,7 +129,7 @@ export class AimHarderClient {
         notices: [
           'Only the returned history view is available. The observed view contained 30 records; neither an exhaustive date interval nor a pagination contract is verified. Empty does not establish empty lifetime history.',
           'States follow the official history renderer, including late-cancellation precedence. Attendance remains unverified even when assist is 1; simultaneous assist and lateCancel flags do not establish attendance.',
-          'Dates and times are gym-local in the user-confirmed zone. Results are sorted newest first; source IDs are not verified class-session IDs.',
+          'Dates and times are gym-local in the reported zone, which may be assumed. Results are sorted newest first; source IDs are not verified class-session IDs.',
           ...(partial ? ['Some malformed or conflicting records were omitted; recovered records are partial and cannot establish absence.'] : []),
         ],
       };
@@ -187,7 +187,7 @@ export class AimHarderClient {
         coverage: { status: reason ? 'incomplete' as const : 'complete' as const, scope: 'account-activity-calendar' as const, completedDates, reason },
         notices: [
           'Activity entries are personal records, not verified distinct training sessions or attendance. Session grouping and within-day training times remain unverified.',
-          'Dates are calendar record dates in the confirmed gym zone, not publication timestamps. Equal-date entries have no verified within-day order.',
+          'Dates are calendar record dates in the reported gym zone, which may be assumed, not publication timestamps. Equal-date entries have no verified within-day order.',
           'Coverage describes fully retrieved calendar dates and their verified gym details, not an atomic snapshot. No retained entry date alone proves coverage.',
           'Block result.time is measured in seconds (user-confirmed). result.desc preserves the matching activity/block source description; its format and round notation are not assumed universal across gyms. Other result fields retain source encodings without inferred score meanings. Missing or null values do not establish zero; rxstr is the source label and rx=false alone does not establish a scaled result.',
           'Exercise prescription.valueUnit labels valor1 and loadUnit labels valor2/valor2h/valor2m only for verified source format and unit codes. Time values remain in seconds; %RM is a relative load label, not kilograms. Unknown codes and absent values are not assigned a unit.',
@@ -325,10 +325,11 @@ export class AimHarderClient {
       if (role.role !== 'client') throw new AimHarderError('UNSUPPORTED_MEMBERSHIP');
       const previous = gyms.get(role.centre_url);
       if (previous && (previous.gym.name !== role.gym || previous.boxId !== role.boid)) throw new AimHarderError('INVALID_RESPONSE');
-      const timeZone = Object.hasOwn(this.configuration.gymTimeZones, role.centre_url)
-        ? this.configuration.gymTimeZones[role.centre_url] ?? null : null;
+      const configuredTimeZone = Object.hasOwn(this.configuration.gymTimeZones, role.centre_url)
+        ? this.configuration.gymTimeZones[role.centre_url] : undefined;
+      const timeZone = configuredTimeZone ?? 'Europe/Madrid';
       gyms.set(role.centre_url, {
-        gym: { id: role.centre_url, name: role.gym, timeZone, timeZoneStatus: timeZone ? 'user-confirmed' : 'unverified' },
+        gym: { id: role.centre_url, name: role.gym, timeZone, timeZoneStatus: configuredTimeZone ? 'user-confirmed' : 'assumed' },
         boxId: role.boid,
       });
     }

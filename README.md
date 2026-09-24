@@ -8,23 +8,23 @@ A local, read-only [Model Context Protocol (MCP)](https://modelcontextprotocol.i
 
 ## Get started
 
-1. Install **Node.js 24** on the computer that will run the MCP server. This package supports Node `>=24 <25`.
-2. Arrange for that desktop client to receive `AIMHARDER_USERNAME` and `AIMHARDER_PASSWORD` from its process environment or a secrets manager. Do not paste credentials into a shared config file. Date queries also need a confirmed gym time zone; see [configuration](docs/configuration.md).
+1. Install **Node.js 24 or newer** on the computer that will run the MCP server. This package supports Node `>=24`.
+2. Arrange for that desktop client to receive `AIMHARDER_USERNAME` and `AIMHARDER_PASSWORD` from its process environment or a secrets manager. Do not paste credentials into a shared config file. The server assumes `Europe/Madrid` for gyms without a configured time zone; check the assumption before relying on date-based answers. See [configuration](docs/configuration.md).
 3. Add a local **stdio** MCP server to your client. A generic client configuration looks like this when its process already receives the required environment variables:
 
    ```json
    {
      "mcpServers": {
        "aimharder": {
-         "command": "/absolute/path/to/node24/bin/npx",
+         "command": "npx",
          "args": ["--yes", "aimharder-mcp@0.1.0"]
        }
      }
    }
    ```
 
-   Replace the command with the absolute path to the `npx` installed alongside Node 24, and ensure the client process also has that Node 24 directory on `PATH`. Client configuration formats and environment handling differ; use the matching guide below. The server does not read `.env` files automatically.
-4. Once connected, ask the client to call `get_account_context` with `{}`. Initialization and tool discovery alone do not authenticate with AimHarder. Use the returned gym ID to configure its confirmed IANA time zone before asking date-based questions.
+   Ensure the client can find Node 24 or newer and `npx` on its `PATH`. Client configuration formats and environment handling differ; use the matching guide below. The server does not read `.env` files automatically.
+4. Once connected, ask the client to call `get_account_context` with `{}`. Initialization and tool discovery alone do not authenticate with AimHarder. Check the returned `timeZoneStatus`: `assumed` means the server used `Europe/Madrid`; configure the gym's actual IANA zone if that assumption is wrong.
 
 If you prefer a private environment file or a local install, follow [the complete configuration guide](docs/configuration.md#private-file-and-local-installation). The desktop client launches the server locally; no hosted project service or project-specific API key is required.
 
@@ -43,7 +43,7 @@ The [generic JSON example](#get-started) is illustrative: copy a client's own sc
 
 ## Tools and example questions
 
-The server exposes six read-only MCP tools. Class names and workout instructions retain AimHarder's source language; the client can explain them in yours. [Inputs, outputs, and coverage details](docs/tools.md)
+The server exposes a set of MCP tools. Class names and workout instructions retain AimHarder's source language; the client can explain them in yours. [Inputs, outputs, and coverage details](docs/tools.md)
 
 | Tool | What it helps answer |
 | --- | --- |

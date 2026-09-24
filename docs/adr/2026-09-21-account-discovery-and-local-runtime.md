@@ -2,9 +2,11 @@
 
 Status: accepted for issue [#2](https://github.com/rudeayelo/aimharder-mcp/issues/2), under the approved [MVP](../mvp.md) and [security policy](2026-09-21-credential-security-and-read-only-access.md).
 
+Runtime status: the Node 24-only support decision below was superseded on 2026-09-24 by the [Node 24 minimum decision](2026-09-24-node-24-minimum.md). Node 24 remains the repository development baseline.
+
 Distribution status: the repository-only distribution decision below was superseded on 2026-09-22 by [npm distribution as the final MVP milestone](2026-09-22-npm-distribution-for-mvp.md). Other decisions remain in effect. The historical distribution wording describes the initial delivery.
 
-Class-query status: the fixed two-operation allowlist and unconditional unknown time-zone response below are superseded for issue #3 by [class schedules and confirmed time zones](2026-09-22-class-schedules-and-confirmed-time-zones.md). The runtime and security foundations remain in effect; the original wording records issue #2.
+Class-query status: the fixed two-operation allowlist and unconditional unknown time-zone response below were superseded for issue #3 by [class schedules and confirmed time zones](2026-09-22-class-schedules-and-confirmed-time-zones.md). The explicit zone-mapping requirement in that decision was later superseded by the [default gym time-zone decision](2026-09-24-default-gym-time-zone.md). The runtime and security foundations remain in effect; the original wording records issue #2.
 
 ## Decision
 

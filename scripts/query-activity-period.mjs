@@ -17,6 +17,6 @@ try {
   const result = await queryActivityPeriod(client, query);
   process.stdout.write(JSON.stringify(result, null, 2) + '\n');
 } catch {
-  process.stderr.write('Activity period query could not be confirmed. Check the date interval, account configuration and confirmed gym time zone.\n');
+  process.stderr.write('Activity period query could not be confirmed. Check the date interval, account configuration and gym time zone.\n');
   process.exitCode = 1;
 } finally { await client.close(); }

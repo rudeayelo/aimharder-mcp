@@ -2,6 +2,8 @@
 
 Status: accepted for issue #7; available-view live validation passed on 2026-09-22.
 
+Time-zone amendment: the explicit confirmed-zone gate described below was superseded by the [2026-09-24 default-zone decision](2026-09-24-default-gym-time-zone.md). Other decisions and historical validation evidence remain unchanged.
+
 ## Decision
 
 Expose history separately through `get_booking_history`, using the already allowed selected-gym `nextBookings` GET and verified membership `boid`. Reuse account identity, session retry and confirmed gym-zone protections. Upcoming history discarding remains specific to the upcoming tool; this decision extends the [upcoming-view decision](2026-09-22-upcoming-bookings-and-view-coverage.md).

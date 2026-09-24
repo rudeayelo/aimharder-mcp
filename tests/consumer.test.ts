@@ -72,8 +72,8 @@ test.each([[], [booking({ bookState: 0 })], [booking({ bookState: 99 })], [booki
   expect(result.bookingSummary.otherCandidates).toHaveLength(rows.length);
   expect(result.workouts.status).toBe('success');
 });
-test('requires a user-confirmed zone and verified gym', async () => {
-  await expect(queryTraining(await connect({ AIMHARDER_GYM_TIME_ZONES: undefined }), { date: 'tomorrow', className: 'WOD' })).rejects.toThrow('confirmed');
+test('uses an assumed zone but still requires a verified gym', async () => {
+  expect((await queryTraining(await connect({ AIMHARDER_GYM_TIME_ZONES: undefined }), { date: 'tomorrow', className: 'WOD' })).gym).toMatchObject({ timeZone: 'Europe/Madrid', timeZoneStatus: 'assumed' });
   await expect(query({ gymId: 'inaccessible' })).rejects.toThrow('context');
 });
 

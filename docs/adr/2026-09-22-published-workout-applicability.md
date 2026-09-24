@@ -2,6 +2,8 @@
 
 Status: accepted for [issue #5](https://github.com/rudeayelo/aimharder-mcp/issues/5); difficulty-variant projection amended on 2026-09-23 and exercise-unit projection amended on 2026-09-24.
 
+Time-zone amendment: the explicit confirmed-zone gate described below was superseded by the [2026-09-24 default-zone decision](2026-09-24-default-gym-time-zone.md). Other decisions and historical validation evidence remain unchanged.
+
 ## Decision
 
 Extend the read-only operation allowlist with the verified gym homepage, its gym-publication feed (`/api/activity`, `timeLineContent=7`, `timeLineFormat=0`), and details for workout IDs returned by that feed (`/api/activity/workout?SEID=...`). Discover the publisher parameter from the official selected gym page; reject missing or conflicting publisher values. No arbitrary account selector is exposed. Sending no publisher returned an empty response in live research, so that response cannot establish absence. Reuse verified membership routing, the in-memory session, response size/time limits and one reauthentication allowance for the entire query.

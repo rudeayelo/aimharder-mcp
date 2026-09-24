@@ -2,6 +2,8 @@
 
 Status: accepted for the MVP; implemented for account/gym discovery in issue #2 and extended with consuming-client composition in issue #6. See [the local TypeScript MCP MVP](2026-09-21-local-typescript-mcp-mvp.md).
 
+Time-zone amendment: the explicit confirmed-zone gate described below was superseded by the [2026-09-24 default-zone decision](2026-09-24-default-gym-time-zone.md). Other decisions and historical validation evidence remain unchanged.
+
 ## Context
 
 FitBot serves as a reference for accessing AimHarder but focuses on automated bookings. Sources and observations are recorded in [API research](../api-research.md). This project aims to support conversational queries and potentially a custom UI.

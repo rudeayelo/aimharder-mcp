@@ -115,11 +115,11 @@ test.each([
   expect(requests).toHaveLength(0);
 });
 
-test('does not query dates without a confirmed time zone', async () => {
+test('uses an explicit assumed Europe/Madrid zone when none is configured', async () => {
   const result = await query(await connect({ AIMHARDER_GYM_TIME_ZONES: undefined }));
-  expect(result.isError).toBe(true);
-  expect(JSON.stringify(result)).toContain('GYM_TIME_ZONE_REQUIRED');
-  expect(classRequests()).toHaveLength(0);
+  expect(result.isError).not.toBe(true);
+  expect(result.structuredContent).toMatchObject({ gym: { timeZone: 'Europe/Madrid', timeZoneStatus: 'assumed' }, sessions: [{ timeZone: 'Europe/Madrid' }] });
+  expect(classRequests()).toHaveLength(1);
 });
 
 test('returns successful empty schedules only after a valid response', async () => {
@@ -254,9 +254,10 @@ test('does not infer an instant for repeated or nonexistent DST wall times', asy
   }
 });
 
-test('a legitimate gym ID matching an object property does not inherit a configured time zone', async () => {
+test('a legitimate gym ID matching an object property uses the default rather than inheriting a mapping', async () => {
   upstream.use(http.get('https://aimharder.es/api/whoami', () => HttpResponse.json({ data: [{ id: 42, roles: [membership('constructor')] }] })));
+  upstream.use(http.get('https://constructor.aimharder.es/api/bookings', () => HttpResponse.json(daily())));
   const result = await query(await connect({ AIMHARDER_GYM_TIME_ZONES: '{}' }));
-  expect(JSON.stringify(result)).toContain('GYM_TIME_ZONE_REQUIRED');
-  expect(classRequests()).toHaveLength(0);
+  expect(result.structuredContent).toMatchObject({ gym: { id: 'constructor', timeZone: 'Europe/Madrid', timeZoneStatus: 'assumed' } });
+  expect(classRequests()).toHaveLength(1);
 });

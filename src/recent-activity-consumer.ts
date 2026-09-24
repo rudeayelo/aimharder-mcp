@@ -22,8 +22,8 @@ export async function queryRecentActivity(client: Pick<Client, 'callTool'>, inpu
     const result = await client.callTool({ name: 'get_account_context', arguments: query.gymId ? { gymId: query.gymId } : {} });
     if (result.isError) throw new Error();
     context = z.object({ selectedGym: gymSchema }).parse(result.structuredContent).selectedGym;
-    if ((query.gymId && context.id !== query.gymId) || context.timeZoneStatus !== 'user-confirmed' || !context.timeZone) throw new Error();
-  } catch { throw new Error('The selected gym and its confirmed time zone could not be established.'); }
+    if ((query.gymId && context.id !== query.gymId) || !context.timeZone) throw new Error();
+  } catch { throw new Error('The selected gym and its time zone could not be established.'); }
   const gym = context;
   const entries = new Map<number, ActivityEntry>();
   const windows: { startDate: string; endDate: string; status: 'complete' | 'incomplete' | 'error'; completedDates: string[]; notices: string[] }[] = [];

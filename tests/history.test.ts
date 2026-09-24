@@ -85,12 +85,12 @@ test.each([403, 429, 500])('access failure %s is an error', async status => {
 test('rejects unknown pagination instead of asserting coverage', async () => {
   respond([], { nextPage: 2 }); expect((await query(await connect())).isError).toBe(true);
 });
-test('requires confirmed timezone and rejects foreign gym and family selectors', async () => {
-  expect((await query(await connect({ AIMHARDER_GYM_TIME_ZONES: undefined }))).isError).toBe(true);
+test('uses an assumed timezone and rejects foreign gym and family selectors', async () => {
+  expect((await query(await connect({ AIMHARDER_GYM_TIME_ZONES: undefined }))).structuredContent).toMatchObject({ gym: { timeZone: 'Europe/Madrid', timeZoneStatus: 'assumed' } });
   const client = await connect();
   expect((await query(client, { gymId: 'foreign' })).isError).toBe(true);
   expect((await query(client, { familyId: 2 })).isError).toBe(true);
-  expect(bookingRequests()).toHaveLength(0);
+  expect(bookingRequests()).toHaveLength(1);
 });
 
 test('does not retain a valid identity when another row with that identity is malformed', async () => {

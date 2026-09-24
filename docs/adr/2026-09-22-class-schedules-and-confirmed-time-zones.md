@@ -1,6 +1,6 @@
 # ADR: class schedules and confirmed gym time zones
 
-Status: accepted implementation decision for [issue #3](https://github.com/rudeayelo/aimharder-mcp/issues/3). Live acceptance completed on 2026-09-22 after the user confirmed Europe/Madrid, including DST, and the MCP interval and specific-session comparisons passed; see [validation](../validation.md).
+Status: partially superseded by the [default gym time-zone decision](2026-09-24-default-gym-time-zone.md) on 2026-09-24. Its explicit-mapping requirement and rejection of unconfigured date queries are historical; the class query and coverage decisions remain current. Live acceptance completed on 2026-09-22 after the user confirmed Europe/Madrid, including DST, and the MCP interval and specific-session comparisons passed; see [validation](../validation.md).
 
 ## Context
 

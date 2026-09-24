@@ -6,7 +6,7 @@ const messages = {
   INVALID_WORKOUT_RESPONSE: 'AimHarder returned an unsupported or incomplete gym feed. Workout retrieval could not be confirmed.',
   INVALID_BOOKING_RESPONSE: 'AimHarder returned an unsupported, restricted, or incomplete upcoming-booking response. Booking status could not be confirmed.',
   INVALID_TIME_ZONE_CONFIGURATION: 'AIMHARDER_GYM_TIME_ZONES must be a JSON object mapping gym IDs to confirmed IANA time zones.',
-  GYM_TIME_ZONE_REQUIRED: 'Confirm the gym time zone with the gym or its schedule settings, then configure its IANA zone in AIMHARDER_GYM_TIME_ZONES and restart. No date query was made.',
+  GYM_TIME_ZONE_REQUIRED: 'A valid IANA zone could not be established for the selected gym. Check AIMHARDER_GYM_TIME_ZONES and restart. No date query was made.',
   INVALID_CLASS_QUERY: 'Supply valid inclusive calendar dates and optional startTime (HH:mm), className, and gymId filters.',
   INVALID_CLASS_RESPONSE: 'AimHarder returned an unsupported, restricted, or incomplete class response. No schedule is returned for this interval.',
   INVALID_CONFIGURATION: 'Set AIMHARDER_USERNAME and AIMHARDER_PASSWORD to non-empty values, and use a gym slug for AIMHARDER_DEFAULT_GYM if supplied.',

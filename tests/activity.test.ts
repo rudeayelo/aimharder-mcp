@@ -110,11 +110,11 @@ test('rejects record-date mismatch instead of using publication timing',async()=
  respond({'2026-03-30':[1]});
  expect((await query(await connect())).structuredContent).toMatchObject({entries:[],coverage:{status:'incomplete'}});
 });
-test('requires gym zone and verified gym, disallows arbitrary selectors',async()=>{
- expect((await query(await connect({AIMHARDER_GYM_TIME_ZONES:undefined}))).isError).toBe(true);
+test('uses an assumed gym zone and disallows arbitrary selectors',async()=>{
+ expect((await query(await connect({AIMHARDER_GYM_TIME_ZONES:undefined}))).structuredContent).toMatchObject({gym:{timeZone:'Europe/Madrid',timeZoneStatus:'assumed'}});
  expect((await query(await connect(),{gymId:'foreign'})).isError).toBe(true);
  expect((await query(await connect(),{userID:4})).isError).toBe(true);
- expect(requests.filter(r=>r.url.pathname==='/api/activityCalendar')).toHaveLength(0);
+ expect(requests.filter(r=>r.url.pathname==='/api/activityCalendar')).toHaveLength(1);
 });
 test('retries only the expired detail once while preserving earlier entries',async()=>{
  respond({'2026-03-29':[1,2]});let second=0;

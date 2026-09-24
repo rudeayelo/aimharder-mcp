@@ -4,7 +4,7 @@ Claude Desktop supports local stdio servers through a `mcpServers` JSON configur
 
 ## Install and configure
 
-1. Install Node 24 and follow the [private-file and local-installation instructions](../configuration.md#private-file-and-local-installation). This lets Claude start the server without storing password values in its JSON configuration.
+1. Install Node 24 or newer and follow the [private-file and local-installation instructions](../configuration.md#private-file-and-local-installation). This lets Claude start the server without storing password values in its JSON configuration.
 2. In Claude Desktop, open **Settings → Developer → Edit Config**. The file is normally `~/Library/Application Support/Claude/claude_desktop_config.json` on macOS or `%APPDATA%\Claude\claude_desktop_config.json` on Windows.
 3. Add the `aimharder` entry under `mcpServers`, preserving any other servers already present:
 
@@ -12,7 +12,7 @@ Claude Desktop supports local stdio servers through a `mcpServers` JSON configur
    {
      "mcpServers": {
        "aimharder": {
-         "command": "/absolute/path/to/node24/bin/node",
+         "command": "/absolute/path/to/node/bin/node",
          "args": [
            "--env-file=/absolute/path/to/private.env",
            "/absolute/path/to/installation/node_modules/aimharder-mcp/dist/index.js"
@@ -23,6 +23,6 @@ Claude Desktop supports local stdio servers through a `mcpServers` JSON configur
    ```
 
    Replace every example path with a real absolute path on your computer. Windows paths in JSON need escaped backslashes or forward slashes. The private file holds `AIMHARDER_USERNAME` and `AIMHARDER_PASSWORD`; its path, not its contents, appears in this config.
-4. Fully quit and restart Claude Desktop. Check that the server's tools appear, then ask Claude to call `get_account_context` with `{}`. Tool listing alone does not authenticate. Add a confirmed `AIMHARDER_GYM_TIME_ZONES` mapping to the private file and restart before making date queries.
+4. Fully quit and restart Claude Desktop. Check that the server's tools appear, then ask Claude to call `get_account_context` with `{}`. Tool listing alone does not authenticate. Check the returned zone provenance before interpreting date queries; add a confirmed `AIMHARDER_GYM_TIME_ZONES` mapping and restart if the assumed `Europe/Madrid` zone is wrong.
 
 Claude's web custom connectors use a different remote-server setup. This guide is for the local desktop application and the project's stdio transport.

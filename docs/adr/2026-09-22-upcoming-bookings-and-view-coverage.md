@@ -2,6 +2,8 @@
 
 Status: accepted implementation decision for [issue #4](https://github.com/rudeayelo/aimharder-mcp/issues/4); live MCP acceptance passed on 2026-09-22.
 
+Time-zone amendment: the explicit confirmed-zone gate described below was superseded by the [2026-09-24 default-zone decision](2026-09-24-default-gym-time-zone.md). Other decisions and historical validation evidence remain unchanged.
+
 ## Context
 
 The official gym `/diary` frontend requests `/api/nextBookings` with membership `boid` as `box`. It renders `nextClasses` as upcoming reservations, labels state 1 as booked and 0 as waitlisted, and treats an empty collection as no pending classes. Its separate `history` collection is not the upcoming view. No upcoming pagination control or calendar horizon was observed. The live upcoming identifier did not equal the matching daily schedule's session or class-type identifier.

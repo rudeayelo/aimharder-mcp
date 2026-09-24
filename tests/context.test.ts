@@ -71,7 +71,7 @@ test('discovers the only gym through MCP, preserves its name, and reuses the ses
   expect(result.isError).not.toBe(true);
   expect(result.structuredContent).toMatchObject({
     account: { authenticated: true },
-    selectedGym: { id: 'sample-gym', name: 'Gimnasio de prueba', timeZone: null, timeZoneStatus: 'unverified' },
+    selectedGym: { id: 'sample-gym', name: 'Gimnasio de prueba', timeZone: 'Europe/Madrid', timeZoneStatus: 'assumed' },
     gyms: [{ id: 'sample-gym' }],
   });
   for (const privateValue of [username, password, cookie, 'Private Fixture Name', 'private-photo', 'synthetic-refresh-token', 'synthetic-permission-token']) {

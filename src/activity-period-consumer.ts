@@ -26,8 +26,8 @@ export async function queryActivityPeriod(client: Pick<Client, 'callTool'>, inpu
     const result = await client.callTool({ name: 'get_account_context', arguments: query.gymId ? { gymId: query.gymId } : {} });
     if (result.isError) throw new Error();
     gym = z.object({ selectedGym: gymSchema }).parse(result.structuredContent).selectedGym;
-    if ((query.gymId && gym.id !== query.gymId) || gym.timeZoneStatus !== 'user-confirmed' || !gym.timeZone) throw new Error();
-  } catch { throw new Error('The selected gym and its confirmed time zone could not be established.'); }
+    if ((query.gymId && gym.id !== query.gymId) || !gym.timeZone) throw new Error();
+  } catch { throw new Error('The selected gym and its time zone could not be established.'); }
   let startDate: string;
   let endDate: string;
   if ('period' in query) {

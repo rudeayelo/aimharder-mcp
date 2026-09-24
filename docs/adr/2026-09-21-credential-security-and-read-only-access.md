@@ -2,6 +2,8 @@
 
 Status: accepted; updated for the local MVP on 2026-09-21.
 
+Time-zone amendment: the explicit confirmed-zone gate described below was superseded by the [2026-09-24 default-zone decision](2026-09-24-default-gym-time-zone.md). Other decisions and historical validation evidence remain unchanged.
+
 ## Decision
 
 The server receives credentials through environment variables and keeps the session in memory, without persistence in the MVP. The user may load credentials from 1Password or another manager; 1Password is not a required dependency. Never include secrets in code, Git, documentation, or logs. When using 1Password, discover the item through metadata and read only the necessary fields.

@@ -17,6 +17,6 @@ try {
   });
   process.stdout.write(JSON.stringify(result, null, 2) + '\n');
 } catch {
-  process.stderr.write('Recent activity query could not be confirmed. Check the end date, window limit, account configuration and confirmed gym time zone.\n');
+  process.stderr.write('Recent activity query could not be confirmed. Check the end date, window limit, account configuration and gym time zone.\n');
   process.exitCode = 1;
 } finally { await client.close(); }

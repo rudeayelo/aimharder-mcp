@@ -1,12 +1,12 @@
 # Tools and results
 
-All six tools read the configured account's AimHarder data. They accept an optional `gymId` from `get_account_context`; with one accessible gym, selection is automatic, while several require `AIMHARDER_DEFAULT_GYM`. Except for account discovery, date-based tools require that gym's user-confirmed IANA zone. Inputs and structured outputs use English field names, while AimHarder class names and workout content retain their source language.
+All six tools read the configured account's AimHarder data. They accept an optional `gymId` from `get_account_context`; with one accessible gym, selection is automatic, while several require `AIMHARDER_DEFAULT_GYM`. Date-based tools use the selected gym's reported IANA zone, which defaults to an explicitly assumed `Europe/Madrid` when no override is configured. Inputs and structured outputs use English field names, while AimHarder class names and workout content retain their source language.
 
 ## `get_account_context`
 
-Input: `{}` or `{"gymId":"another-accessible-gym"}`. Authenticates the configured account, discovers accessible gyms and selects one. The response includes `account.authenticated`, `gyms`, `selectedGym` and `notices`. Each gym has an `id`, source `name`, `timeZone` and `timeZoneStatus` (`user-confirmed` or `unverified`). An override applies to that query; later omitted selections still use the configured default. Multiple gyms require a default even when using an override.
+Input: `{}` or `{"gymId":"another-accessible-gym"}`. Authenticates the configured account, discovers accessible gyms and selects one. The response includes `account.authenticated`, `gyms`, `selectedGym` and `notices`. Each gym has an `id`, source `name`, `timeZone` and `timeZoneStatus` (`user-confirmed` or `assumed`). An override applies to that query; later omitted selections still use the configured default. Multiple gyms require a default even when using an override.
 
-Use this first to learn the gym ID, then [confirm and configure its time zone](configuration.md#discover-your-gym-and-confirm-its-time-zone). The server does not expose account names, account IDs, credentials, cookies or tokens. Unsupported membership formats return errors instead of silently disappearing.
+Use this first to learn the gym ID, then [check its reported time zone](configuration.md#discover-your-gym-and-check-its-time-zone). The server does not expose account names, account IDs, credentials, cookies or tokens. Unsupported membership formats return errors instead of silently disappearing.
 
 ## `get_class_sessions`
 
@@ -56,9 +56,9 @@ Each entry includes available original workout notes, exercises, prescriptions a
 
 ## Questions that combine tools
 
-- **“What is tomorrow's WOD, and when am I booked?”** Resolve “tomorrow” in the selected gym's confirmed zone, then query the date's classes, published workout and upcoming bookings. Keep workout publications and booking times separate; a matching booking can be confirmed, but absence cannot be established from the upcoming view's unknown date horizon. This is a client composition, not a seventh server tool.
+- **“What is tomorrow's WOD, and when am I booked?”** Resolve “tomorrow” in the selected gym's reported zone, then query the date's classes, published workout and upcoming bookings. Keep workout publications and booking times separate; a matching booking can be confirmed, but absence cannot be established from the upcoming view's unknown date horizon. This is a client composition, not a seventh server tool.
 - **“What were my last five activity entries?”** Query successive intervals of at most 31 dates backwards until five distinct entries are recovered or a declared search bound is reached. Several same-day entries count separately. If the fifth entry splits a same-day tie, the exact latest-five set is unverified because within-day order is unknown.
-- **“How many activity entries did I record last month?”** Resolve the month in the confirmed gym zone, then query consecutive intervals of at most 31 dates and count distinct source IDs. A total is exact only when every requested date is complete; otherwise report the recovered count as a lower bound. Days with activity are a separate supplementary measure, not the requested count.
+- **“How many activity entries did I record last month?”** Resolve the month in the reported gym zone, then query consecutive intervals of at most 31 dates and count distinct source IDs. A total is exact only when every requested date is complete; otherwise report the recovered count as a lower bound. Days with activity are a separate supplementary measure, not the requested count.
 
 ## Coverage and interpretation
 

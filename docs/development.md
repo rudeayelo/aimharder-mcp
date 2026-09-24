@@ -19,7 +19,7 @@ pnpm build
 
 ## Run and inspect locally
 
-Configure credentials and the gym's user-confirmed zone through the process environment or a private file, as described in [configuration](configuration.md). To run the compiled stdio server from a shell with variables already injected, use `pnpm start`. The process waits for MCP messages on stdin. If using a private file, start Node explicitly: `node --env-file=/absolute/path/to/private.env dist/index.js`.
+Configure credentials and, if needed, an override for the assumed gym zone through the process environment or a private file, as described in [configuration](configuration.md). To run the compiled stdio server from a shell with variables already injected, use `pnpm start`. The process waits for MCP messages on stdin. If using a private file, start Node explicitly: `node --env-file=/absolute/path/to/private.env dist/index.js`.
 
 The repository includes consuming-client examples built with the official MCP SDK. After building, run them with a securely injected environment or `node --env-file=/absolute/path/to/private.env`:
 

@@ -2,6 +2,8 @@
 
 Status: accepted for issue #8; live interval and detail comparison passed on 2026-09-22.
 
+Time-zone amendment: the explicit confirmed-zone gate described below was superseded by the [2026-09-24 default-zone decision](2026-09-24-default-gym-time-zone.md). Other decisions and historical validation evidence remain unchanged.
+
 ## Decision
 
 Use the authenticated account's `GET https://aimharder.es/api/activityCalendar?month=<zero-based>&year=<year>` and `GET /api/activity/workout?SEID=<returned-id>` to query personal activity. The official month renderer supplies a finite date partition with `rates.ids` linking to workout details. This deliberately replaces a publication-feed scan for this feature: feed continuation is observed, but publication ordering cannot establish exhaustive record-date coverage. No arbitrary athlete, account, membership, date-filter or URL selector is forwarded.

@@ -73,10 +73,10 @@ test('detail failure is failed retrieval, not unpublished', async () => {
  upstream.use(http.get('https://sample-gym.aimharder.es/api/activity/workout', () => new HttpResponse(null, { status: 500 })));
  expect((await query(await connect())).isError).toBe(true);
 });
-test('requires confirmed zone and rejects arbitrary publisher selection', async () => {
- expect((await query(await connect({ AIMHARDER_GYM_TIME_ZONES: undefined }))).isError).toBe(true);
+test('uses an assumed zone and rejects arbitrary publisher selection', async () => {
+ expect((await query(await connect({ AIMHARDER_GYM_TIME_ZONES: undefined }))).structuredContent).toMatchObject({ gym: { timeZone: 'Europe/Madrid', timeZoneStatus: 'assumed' } });
  expect((await query(await connect(), { userID: 77 })).isError).toBe(true);
- expect(requests.filter(r => r.url.pathname === '/api/activity')).toHaveLength(0);
+ expect(requests.filter(r => r.url.pathname === '/api/activity')).toHaveLength(1);
 });
 
 test('empty and deleted content is unavailable in the retrieved view', async () => {
