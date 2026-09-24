@@ -16,4 +16,4 @@ Availability of the passthrough variables depends on how the desktop app was lau
 
 ## Check the connection
 
-After the version is published, confirm that the app lists the six [AimHarder tools](../tools.md), then ask it to call `get_account_context` with `{}`. Tool discovery alone does not authenticate. Check the returned zone provenance before interpreting date queries; unmapped gyms use an assumed `Europe/Madrid` zone. Do not claim this client integration is verified until a real installed-package call succeeds and the result is compared with AimHarder.
+After the version is published, confirm that the app lists the [AimHarder tools](../tools.md), then ask an AimHarder question. A valid tool call authenticates on first use; tool discovery alone does not. You can optionally call `get_account_context` with `{}` to inspect the gym and zone provenance; unmapped gyms use an assumed `Europe/Madrid` zone. Do not claim this client integration is verified until a real installed-package call succeeds and the result is compared with AimHarder.

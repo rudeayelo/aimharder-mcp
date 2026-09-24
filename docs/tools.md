@@ -6,7 +6,7 @@ All six tools read the configured account's AimHarder data. They accept an optio
 
 Input: `{}` or `{"gymId":"another-accessible-gym"}`. Authenticates the configured account, discovers accessible gyms and selects one. The response includes `account.authenticated`, `gyms`, `selectedGym` and `notices`. Each gym has an `id`, source `name`, `timeZone` and `timeZoneStatus` (`user-confirmed` or `assumed`). An override applies to that query; later omitted selections still use the configured default. Multiple gyms require a default even when using an override.
 
-Use this first to learn the gym ID, then [check its reported time zone](configuration.md#discover-your-gym-and-check-its-time-zone). The server does not expose account names, account IDs, credentials, cookies or tokens. Unsupported membership formats return errors instead of silently disappearing.
+Use this when you need the gym ID or want to [check its reported time zone](configuration.md#discover-your-gym-and-check-its-time-zone). Other valid tool calls also authenticate on first use. The server does not expose account names, account IDs, credentials, cookies or tokens. Unsupported membership formats return errors instead of silently disappearing.
 
 ## `get_class_sessions`
 

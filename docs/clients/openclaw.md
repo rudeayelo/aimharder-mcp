@@ -29,4 +29,4 @@ Keep the outer single quotes so the shell does not expand `${VAR}` into a litera
 
 ## Check the connection
 
-Run `openclaw mcp doctor aimharder --probe`. Plain `doctor` performs static checks; `--probe` connects and lists tools. A successful probe does not authenticate with AimHarder. Ask an eligible OpenClaw runtime to call `get_account_context` with `{}` for the live account check. OpenClaw adapters decide which saved servers are available in each runtime, so a saved definition or probe alone does not establish that every OpenClaw agent can use the tool.
+Run `openclaw mcp doctor aimharder --probe`. Plain `doctor` performs static checks; `--probe` connects and lists tools. A successful probe does not authenticate with AimHarder. Ask an eligible OpenClaw runtime an AimHarder question to make the first authenticated call. `get_account_context` with `{}` is an optional account and gym check. OpenClaw adapters decide which saved servers are available in each runtime, so a saved definition or probe alone does not establish that every OpenClaw agent can use the tool.

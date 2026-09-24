@@ -27,6 +27,6 @@ Do not put literal credential values in YAML. Confirm that both referenced varia
 
 ## Verify and reload
 
-Run `hermes mcp test aimharder` in the selected profile to verify initialization and tool discovery; it does not authenticate with AimHarder. Use `hermes -p <profile> mcp test aimharder` to name a profile explicitly. Reload MCP connections in Hermes with `/reload-mcp`, then ask it to call `get_account_context` with `{}` for a live account check.
+Run `hermes mcp test aimharder` in the selected profile to verify initialization and tool discovery; it does not authenticate with AimHarder. Use `hermes -p <profile> mcp test aimharder` to name a profile explicitly. Reload MCP connections in Hermes with `/reload-mcp`, then ask an AimHarder question. A valid tool call authenticates on first use; `get_account_context` with `{}` is an optional account and gym check.
 
 `/reload-mcp` restarts the configured server; it does not rebuild or reinstall a package. When updating a private local installation, reinstall the exact archive or published version first, then reload. The [repository validation record](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/validation.md) separates local archive checks from the still-pending public npm version.

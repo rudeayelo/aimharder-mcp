@@ -23,6 +23,6 @@ Claude Desktop supports local stdio servers through a `mcpServers` JSON configur
    ```
 
    Replace every example path with a real absolute path on your computer. Windows paths in JSON need escaped backslashes or forward slashes. The private file holds `AIMHARDER_USERNAME` and `AIMHARDER_PASSWORD`; its path, not its contents, appears in this config.
-4. Fully quit and restart Claude Desktop. Check that the server's tools appear, then ask Claude to call `get_account_context` with `{}`. Tool listing alone does not authenticate. Check the returned zone provenance before interpreting date queries; add a confirmed `AIMHARDER_GYM_TIME_ZONES` mapping and restart if the assumed `Europe/Madrid` zone is wrong.
+4. Fully quit and restart Claude Desktop. Check that the server's tools appear, then ask an AimHarder question. A valid tool call authenticates on first use; tool listing alone does not. You can optionally call `get_account_context` with `{}` to inspect the gym and zone provenance; add a confirmed `AIMHARDER_GYM_TIME_ZONES` mapping and restart if the assumed `Europe/Madrid` zone is wrong.
 
 Claude's web custom connectors use a different remote-server setup. This guide is for the local desktop application and the project's stdio transport.

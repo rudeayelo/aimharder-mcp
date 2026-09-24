@@ -15,7 +15,7 @@ Inject credentials through the client process environment or a secrets manager. 
 
 ## Discover your gym and check its time zone
 
-1. Connect the MCP server with the two required credentials. Call `get_account_context` with `{}`. Initializing the connection or listing tools does not log in; this call does.
+1. Connect the MCP server with the two required credentials. A valid tool call authenticates on first use. Call `get_account_context` with `{}` when you need to inspect your gym ID or time zone; initialization and tool listing alone do not log in.
 2. Copy the returned gym `id`. It is a verified membership's subdomain label, not its numeric AimHarder identifier or display name.
 3. Check the returned `timeZone` and `timeZoneStatus`. Without a mapping, the server assumes `Europe/Madrid` and reports `assumed`; this may be wrong, including for a gym in another Spanish time zone. Confirm the gym's IANA zone with the gym or its schedule settings when you need reliable date-based answers. Set `AIMHARDER_GYM_TIME_ZONES` to a JSON object keyed by the returned ID to override the assumption; that reports `user-confirmed`. The server does not discover a zone from AimHarder. Fixed offsets and your computer's zone are not substitutes.
 4. If more than one gym is accessible, set `AIMHARDER_DEFAULT_GYM` to one returned ID and restart the server. An individual query may override it with another accessible `gymId`.
@@ -63,7 +63,7 @@ The arguments contain file paths, not credential values. Avoid placing passwords
 
 ## First check and common errors
 
-Ask the client to call `get_account_context` with `{}`. A successful result has `account.authenticated: true`, accessible `gyms`, and a `selectedGym`; it does not expose account names, IDs, credentials, cookies, or tokens. Check the zone provenance before interpreting a date query.
+For an explicit connection check, ask the client to call `get_account_context` with `{}`. A successful result has `account.authenticated: true`, accessible `gyms`, and a `selectedGym`; it does not expose account names, IDs, credentials, cookies, or tokens. Another valid tool call also authenticates on first use. Check the zone provenance before interpreting a date query.
 
 - `INVALID_CONFIGURATION`: check credential variable presence and values in the **server process**, then restart. Never include their values in a bug report.
 - `INVALID_TIME_ZONE_CONFIGURATION`: check that the optional mapping is valid JSON with IANA zone values. `GYM_TIME_ZONE_REQUIRED` means the server could not establish any zone and made no date query.
