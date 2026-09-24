@@ -1,6 +1,6 @@
 # ADR: Automate npm versioning and publishing with GitHub Actions
 
-Status: accepted by the user on 2026-09-24; repository implementation is in progress and external setup remains pending.
+Status: accepted by the user on 2026-09-24; implementation is in PR #16, with external setup complete and first automated publication pending.
 
 ## Context
 
@@ -24,7 +24,7 @@ The user confirmed these release-policy choices on 2026-09-24:
 - If publication succeeds but the local registry-artifact MCP check fails, record the version as published but unverified or verification-failed, investigate, and publish a corrected version. Consider deprecating the defective npm version if it affects users; do not try to replace the immutable version.
 - After the first successful and verified OIDC publication, configure npm publishing access to disallow traditional publish tokens. Do not disable the existing publication path before the replacement has been proven.
 
-These choices specify the target workflow, not an existing or tested release mechanism. The exact workflow implementation and external GitHub/npm setup are still pending.
+The workflow implementation is proposed in [PR #16](https://github.com/rudeayelo/aimharder-mcp/pull/16). Its CI passed, `main` branch protection is active, and the limited GitHub App and npm OIDC trusted publisher are configured. The first automated publication is still pending.
 
 ## Planned workflow
 
