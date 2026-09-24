@@ -35,7 +35,7 @@ try {
   const installed = join(work, 'node_modules/aimharder-mcp');
   const metadata = JSON.parse(await readFile(join(installed, 'package.json'), 'utf8'));
   assert.equal(metadata.bin['aimharder-mcp'], 'dist/index.js');
-  assert.equal(metadata.engines.node, '>=24 <25');
+  assert.equal(metadata.engines.node, '>=24');
   for (const name of ['typescript', 'vitest', 'msw', '@types/node']) {
     await assert.rejects(access(join(work, 'node_modules', name)));
   }
