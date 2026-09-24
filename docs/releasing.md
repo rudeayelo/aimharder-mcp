@@ -1,8 +1,8 @@
 # Publishing an npm release
 
-The first two public packages, `aimharder-mcp@0.1.0` and `aimharder-mcp@0.1.1`, passed exact-registry-artifact live MCP checks in [validation](validation.md#public-npm-and-client-checks-2026-09-24). The first-release functional QA verdict and its limits are also recorded there. The [README](../README.md) carries the consumer version pin. This page describes the Changesets and GitHub Actions release path agreed in the [automation ADR](adr/2026-09-24-github-actions-npm-release-automation.md).
+The first two public versions, `aimharder-mcp@0.1.0` and `aimharder-mcp@0.1.1`, passed exact-registry-artifact live MCP checks in [validation](validation.md#public-npm-and-client-checks-2026-09-24). The first-release functional QA verdict and its limits are also recorded there. The [README](../README.md) carries the consumer version pin. This page describes the Changesets and GitHub Actions release path agreed in the [automation ADR](adr/2026-09-24-github-actions-npm-release-automation.md).
 
-**Activation status:** the GitHub App, repository protection, and npm trusted publisher were configured on 2026-09-24. The workflows are proposed in [PR #16](https://github.com/rudeayelo/aimharder-mcp/pull/16); automatic publication is not active until they reach `main` and a first Actions release succeeds. Do not describe an unrun publish workflow as verified.
+**Activation status:** Changesets and GitHub Actions published `0.1.2` on 2026-09-24 through the configured GitHub App and npm OIDC trusted publisher. The exact public artifact is recorded in [validation](validation.md#automated-npm-release-012-2026-09-24). Its authenticated local MCP check is pending, so publication and live verification remain separate claims.
 
 ## One-time activation
 
@@ -22,7 +22,7 @@ Before the one-time setup is complete, use a clean Node 24 checkout and pnpm 12.
 
 1. For a change to the distributed package, including README or packaged client guides, run `pnpm changeset` and commit its file with the change. Choose `patch` for compatible fixes and packaged-documentation corrections; choose `minor` for new capabilities or clearly announced incompatible changes while in `0.x`. A `1.0.0` release needs an explicit decision. Internal-only changes need no changeset.
 2. Open a pull request to `main`. CI must pass. For authentication or AimHarder API-interpretation changes, run the applicable authorized read-only live checks locally before merging and record sanitized evidence. Documentation-only changes do not need those live checks.
-3. Merge the change. The release workflow collects pending changesets into a release pull request, updating the package version, lockfile, changelog, and pinned consumer commands. Review that pull request and its CI results.
+3. Merge the change. The release workflow collects pending changesets into a release pull request, updating the package version, changelog, and pinned consumer commands and reconciling the lockfile if needed. Review that pull request and its CI results.
 4. Merge the release pull request. GitHub Actions reruns the pre-publication checks, packs the release, publishes through npm OIDC, then creates the version tag and GitHub Release. No separate publish approval is required. Ordinary merges with no unpublished version do not publish.
 5. Read the exact version from the successful workflow or `package.json` in the merged release commit. Confirm `npm view aimharder-mcp@<exact-version> version dist.tarball dist.integrity --json --registry=https://registry.npmjs.org/`. A successful publish does **not** establish live MCP verification.
 
@@ -44,3 +44,4 @@ Clients should pin `npx --yes aimharder-mcp@<exact-version>` on Node 24+, supply
 
 - `0.1.0` was the first public version from `b0ca938ba130a61a6840a9803bffe601a585fb26`. Its public tarball passed live read-only MCP verification. Its bundled README still said publication was pending.
 - `0.1.1` corrected consumer documentation, added the Codex guide, and retained the same MCP behavior. Its exact public artifact passed the live MCP registry check in [validation](validation.md#public-npm-and-client-checks-2026-09-24).
+- `0.1.2` was the first automated release. The [version PR #17](https://github.com/rudeayelo/aimharder-mcp/pull/17) passed CI; the [release workflow](https://github.com/rudeayelo/aimharder-mcp/actions/runs/36023101635) published through npm OIDC and created [tag and GitHub Release `v0.1.2`](https://github.com/rudeayelo/aimharder-mcp/releases/tag/v0.1.2). Its authenticated exact-registry MCP check is pending in [validation](validation.md#automated-npm-release-012-2026-09-24).

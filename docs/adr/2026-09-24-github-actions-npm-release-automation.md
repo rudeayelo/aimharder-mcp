@@ -1,6 +1,6 @@
 # ADR: Automate npm versioning and publishing with GitHub Actions
 
-Status: accepted by the user on 2026-09-24; implementation is in PR #16, with external setup complete and first automated publication pending.
+Status: accepted and implemented on 2026-09-24; first automated publication passed, local authenticated registry check pending.
 
 ## Context
 
@@ -24,12 +24,12 @@ The user confirmed these release-policy choices on 2026-09-24:
 - If publication succeeds but the local registry-artifact MCP check fails, record the version as published but unverified or verification-failed, investigate, and publish a corrected version. Consider deprecating the defective npm version if it affects users; do not try to replace the immutable version.
 - After the first successful and verified OIDC publication, configure npm publishing access to disallow traditional publish tokens. Do not disable the existing publication path before the replacement has been proven.
 
-The workflow implementation is proposed in [PR #16](https://github.com/rudeayelo/aimharder-mcp/pull/16). Its CI passed, `main` branch protection is active, and the limited GitHub App and npm OIDC trusted publisher are configured. The first automated publication is still pending.
+The workflow implementation merged through [PR #16](https://github.com/rudeayelo/aimharder-mcp/pull/16). Its CI passed, `main` branch protection is active, and the limited GitHub App and npm OIDC trusted publisher are configured. Actions created and checked [version PR #17](https://github.com/rudeayelo/aimharder-mcp/pull/17), then [published `0.1.2`](https://github.com/rudeayelo/aimharder-mcp/actions/runs/36023101635) after its merge. The local authenticated check of that exact registry version is still pending.
 
 ## Planned workflow
 
 1. A contributor adds a changeset when a pull request changes the distributed package. PR CI checks type safety, fixtures, build, and the isolated package archive. Applicable authenticated API checks are run locally and recorded before merging.
-2. A merge to `main` with pending changesets makes the version job create or update a release pull request. Its commit updates `package.json`, the lockfile, changelog, and version-pinned consumer documentation. The GitHub App token lets the PR's CI run without manual activation.
+2. A merge to `main` with pending changesets makes the version job create or update a release pull request. Its commit updates `package.json`, the changelog, version-pinned consumer documentation, and the lockfile when required. The GitHub App token lets the PR's CI run without manual activation.
 3. Merging the release pull request starts the publish path. Its own CI checks the release commit and package archive before the OIDC-enabled publish job sends the checked version to npm. Successful publication creates the matching tag and GitHub Release.
 4. The maintainer runs `scripts/registry-check.mjs` locally against that exact npm version with authorized AimHarder credentials, records its result and source revision in [validation.md](../validation.md), and leaves failures explicitly visible until corrected.
 
@@ -53,4 +53,4 @@ Repository settings must permit GitHub Actions to create pull requests and must 
 
 When an authenticated live check is needed before merging a feature pull request, its result must be recorded with the change. The CI workflow must not receive AimHarder account credentials. After an automated publish, the release record must leave the live verification state explicit until the local registry check is completed. Failure to create a tag or GitHub Release after npm accepts a version must be repaired against that same published version; it must not trigger a second publish attempt for the same version.
 
-Release documentation must distinguish published versions from versions that have passed the local live registry check. The current manual procedure remains authoritative until the automation is implemented and verified. No authentication, MCP-tool, or AimHarder API behavior changes are decided here.
+Release documentation must distinguish published versions from versions that have passed the local live registry check. The manual procedure remains a fallback. No authentication, MCP-tool, or AimHarder API behavior changes are decided here.
