@@ -4,7 +4,7 @@ Ask about your AimHarder classes, workouts, bookings and activity from a desktop
 
 **Release status:** `aimharder-mcp@0.1.0` is not on npm yet. The `npx` example below will work after publication. A [local package archive has been tested](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/validation.md).
 
-**Data limits:** Live checks used one account at 9NBC. Other gyms may differ. Workout and booking views can be incomplete, so an empty result may not mean there is nothing to show. [Details](docs/tools.md#coverage-and-interpretation)
+**Data limits:** Live checks used one account at one location (9NBC). Other gyms may differ. Workout and booking views can be incomplete, so an empty result may not mean there is nothing to show. [Details](docs/tools.md#coverage-and-interpretation)
 
 ## Get started
 
