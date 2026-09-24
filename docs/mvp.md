@@ -1,12 +1,12 @@
 # AimHarder MCP server MVP
 
-Scope confirmed 2026-09-21 in [issue #1](https://github.com/rudeayelo/aimharder-mcp/issues/1). All planned query features are implemented. The user accepted first-release functional QA on 2026-09-24 using the evidence in [validation](validation.md); npm publication and exact registry verification remain pending. Recent and period summaries count **activity entries**, as the user clarified.
+Scope confirmed 2026-09-21 in [issue #1](https://github.com/rudeayelo/aimharder-mcp/issues/1). All planned query features are implemented. The user accepted first-release functional QA on 2026-09-24 using the evidence in [validation](validation.md). The package is published on npm and the exact registry artifact passed a live MCP check. Recent and period summaries count **activity entries**, as the user clarified.
 
 ## Product and users
 
 A local TypeScript MCP server for one AimHarder account per instance. It works through compatible MCP clients without a dedicated app integration.
 
-Distribution: [GitHub](https://github.com/rudeayelo/aimharder-mcp) under [MIT](../LICENSE), then npm after registry checks. Local archive checks passed; npm publication has not. See the [distribution ADR](adr/2026-09-22-npm-distribution-for-mvp.md) and [README](../README.md).
+Distribution: [GitHub](https://github.com/rudeayelo/aimharder-mcp) under [MIT](../LICENSE) and the public [`aimharder-mcp`](https://www.npmjs.com/package/aimharder-mcp) npm package. See the [distribution ADR](adr/2026-09-22-npm-distribution-for-mvp.md) and [README](../README.md).
 
 Domain terms are defined in the root [glossary](../CONTEXT.md).
 
@@ -57,7 +57,7 @@ Each slice requires MCP-level behavior tests, separate read-only live validation
 
 ## Final functional QA
 
-The user moved #6's remaining future-workout check to [QA #13](https://github.com/rudeayelo/aimharder-mcp/issues/13) on 2026-09-23. A separate MCP query then verified future WOD and Metcon content. On 2026-09-24 the user accepted the aggregate evidence in place of one combined run; see the [QA decision](adr/2026-09-24-functional-qa-evidence-for-first-release.md). Exact npm release verification remains pending.
+The user moved #6's remaining future-workout check to [QA #13](https://github.com/rudeayelo/aimharder-mcp/issues/13) on 2026-09-23. A separate MCP query then verified future WOD and Metcon content. On 2026-09-24 the user accepted the aggregate evidence in place of one combined run; see the [QA decision](adr/2026-09-24-functional-qa-evidence-for-first-release.md). The subsequent exact npm release check is recorded in [validation](validation.md).
 
 ## npm distribution tickets
 
@@ -68,7 +68,7 @@ The user approved packaging and release tickets on 2026-09-22:
 | [#11: Run the MCP server from an installable package](https://github.com/rudeayelo/aimharder-mcp/issues/11) | None pending; #2 is complete |
 | [#12: Publish and verify the MVP on npm](https://github.com/rudeayelo/aimharder-mcp/issues/12) | #13, #11, #6, #7, #9, #10 |
 
-Local packaging is verified. Public release requires exact registry checks; see the [distribution ADR](adr/2026-09-22-npm-distribution-for-mvp.md).
+Local packaging and the public registry artifact were verified. See the [distribution ADR](adr/2026-09-22-npm-distribution-for-mvp.md).
 
 ## Operation
 

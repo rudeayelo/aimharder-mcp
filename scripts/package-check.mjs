@@ -24,6 +24,7 @@ try {
   const consumerDocs = new Set([
     'docs/configuration.md', 'docs/tools.md',
     'docs/clients/chatgpt-desktop.md', 'docs/clients/claude-desktop.md',
+    'docs/clients/codex.md',
     'docs/clients/hermes.md', 'docs/clients/openclaw.md',
   ]);
   for (const path of paths) {

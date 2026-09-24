@@ -6,7 +6,17 @@ This page records what was checked against AimHarder, what was checked only with
 
 The user accepted first-release functional QA on 2026-09-24 using the combined evidence below and [QA #13](https://github.com/rudeayelo/aimharder-mcp/issues/13). The exact single-run future-workout-plus-booking harness check was **not performed**; the user accepted separate live comparisons and a Hermes future-WOD check instead. See the [QA evidence decision](adr/2026-09-24-functional-qa-evidence-for-first-release.md).
 
-`aimharder-mcp@0.1.0` has **not been published to npm**. Local archives and an installed Hermes copy were checked, but the exact registry-version check in [#12](https://github.com/rudeayelo/aimharder-mcp/issues/12) remains pending.
+`aimharder-mcp` is public on npm. Version `0.1.0` passed exact registry-artifact verification, and version `0.1.1` updates the published consumer documentation and is the current recommended pin. The registry and client results are recorded below, separately from the functional QA verdict.
+
+## Public npm and client checks (2026-09-24)
+
+The first published version, [`aimharder-mcp@0.1.0`](https://www.npmjs.com/package/aimharder-mcp/v/0.1.0), came from source revision `b0ca938ba130a61a6840a9803bffe601a585fb26`. Node 24.14.0 and pnpm 12.5.1 passed frozen installation, typecheck, build, 272 tests and isolated package verification. `npm pack --ignore-scripts` produced 23 allowlisted files with integrity `sha512-cZEfrJbcwyaSs8OyAEfQPHTZy1OCPq6rDudnR2ST1lvikHtXZ1ha6vPhWNo3z0YXu1RQo+uAGJlb10ZrttoB7Q==`. A read-only account/gym check from that local archive passed before publication.
+
+The public registry returned version `0.1.0`, [the exact tarball](https://registry.npmjs.org/aimharder-mcp/-/aimharder-mcp-0.1.0.tgz) and the same integrity. `scripts/registry-check.mjs` installed that version into a clean temporary directory with a separate npm cache, then passed SDK stdio initialization, six-tool listing, a live account/gym query, explicit selection, rejection of an inaccessible gym, sanitized errors and empty server stderr on Node 24.14.0. This verifies the registry artifact, rather than only the checkout archive.
+
+Hermes profile `ona` ran that pinned public version through the `npx` CLI under Node 24.21.0 with a private environment file outside the repository. `hermes -p ona mcp test aimharder` connected and listed six tools; a one-shot Hermes tool call returned authenticated account context without publishing identity details. Codex CLI had the same version-pinned local MCP command registered. An isolated `codex exec` session called `get_account_context` and returned authenticated account context. The first Codex CLI attempt timed out negotiating with its own code-mode host; after making its existing host executable available on `PATH`, the tool call passed. That timeout was a Codex client setup issue, not a registry artifact failure. The currently running Codex desktop task did not separately reload or call the newly registered server.
+
+The `0.1.0` tarball bundled text saying npm publication was pending. Version `0.1.1` corrects the consumer docs and adds a Codex guide without changing MCP behavior. Its exact archive and client checks are recorded below after the patch release.
 
 ## How checks were performed
 
@@ -111,7 +121,7 @@ The audited source baseline was `2d0ab1666cb98861b38e4fd4eefe79f1c7bc4de5`. On N
 
 The user accepted the independent future-WOD, class, booking, activity and installed-Hermes evidence together. The Hermes excerpt showed future WOD content and correctly said an empty schedule did not confirm a reservable class. It did not show matching booking times or a structured booking coverage result. The original one-run combined future-content criterion was replaced by this aggregate evidence; it must not be reported as a command that passed. The `queryTraining` consumer keeps booking status `unconfirmed` when no matching reservation is visible.
 
-Before publication, `npm whoami --registry=https://registry.npmjs.org/` returned the authorized `rude` account and `npm view aimharder-mcp@0.1.0` returned E404. This establishes login and an absent package record at that time, not name ownership or a release. [#12](https://github.com/rudeayelo/aimharder-mcp/issues/12) still requires publishing and testing the exact public version.
+Before publication, `npm whoami --registry=https://registry.npmjs.org/` returned the authorized `rude` account and `npm view aimharder-mcp@0.1.0` returned E404. This established login and an absent package record at that time, not name ownership or a release. The subsequent registry result is recorded [above](#public-npm-and-client-checks-2026-09-24).
 
 ## Consumer documentation and narrowed archive (2026-09-24, issue #14)
 
@@ -123,4 +133,4 @@ The ChatGPT desktop STDIO form was observed in a user screenshot, but no package
 
 The user requested `npx` as the generic command, Node `>=24`, and an optional gym-zone override. Unmapped gyms now use an explicitly reported **assumed** `Europe/Madrid`; configured zones report `user-confirmed`. This is a product assumption, not an upstream time-zone discovery. Prior live date checks used a confirmed zone and do not validate the fallback for another gym. See the [default-zone ADR](adr/2026-09-24-default-gym-time-zone.md).
 
-On Node 24.14.0, typecheck, build, 272 tests and the 23-file isolated package check passed. On Node 26.9.0, typecheck, the same fixture suite and package check passed; test workers emitted experimental `localStorage` warnings without failed assertions. These checks cover those tested versions and fixtures, not future Node versions or real use of the assumed zone. The npm version remains unpublished.
+On Node 24.14.0, typecheck, build, 272 tests and the 23-file isolated package check passed. On Node 26.9.0, typecheck, the same fixture suite and package check passed; test workers emitted experimental `localStorage` warnings without failed assertions. These checks cover those tested versions and fixtures, not future Node versions or real use of the assumed zone. npm publication occurred after this local setup check.

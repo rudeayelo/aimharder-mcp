@@ -1,6 +1,6 @@
 # Connect Claude Desktop
 
-Claude Desktop configures local stdio servers in `mcpServers` JSON. Its [official guide](https://modelcontextprotocol.io/docs/develop/connect-local-servers) uses `npx`. This package has **not been tested** in Claude Desktop, and `aimharder-mcp@0.1.0` is not yet published.
+Claude Desktop configures local stdio servers in `mcpServers` JSON. Its [official guide](https://modelcontextprotocol.io/docs/develop/connect-local-servers) uses `npx`. This package has **not been tested** in Claude Desktop.
 
 ## Run the published package with `npx`
 
@@ -13,7 +13,7 @@ Claude Desktop configures local stdio servers in `mcpServers` JSON. Its [officia
      "mcpServers": {
        "aimharder": {
          "command": "npx",
-         "args": ["--yes", "aimharder-mcp@0.1.0"]
+         "args": ["--yes", "aimharder-mcp@0.1.1"]
        }
      }
    }

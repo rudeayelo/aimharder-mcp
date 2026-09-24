@@ -1,6 +1,6 @@
 # Configure a local AimHarder MCP server
 
-Your MCP client runs the server locally over stdio, using one AimHarder account per process. Install Node.js 24 or newer. **`aimharder-mcp@0.1.0` is not yet published to npm.**
+Your MCP client runs the server locally over stdio, using one AimHarder account per process. Install Node.js 24 or newer. The current verified npm version is `aimharder-mcp@0.1.1`.
 
 ## Environment variables
 
@@ -11,7 +11,7 @@ Your MCP client runs the server locally over stdio, using one AimHarder account 
 | `AIMHARDER_GYM_TIME_ZONES` | Optional JSON object from discovered gym IDs to IANA zones, such as `{"sample-gym":"Atlantic/Canary"}`. Unmapped gyms use an explicitly assumed `Europe/Madrid` zone. Configure the actual zone when the assumption is wrong. |
 | `AIMHARDER_DEFAULT_GYM` | Optional for one accessible gym; required when the account has several. Use a discovered gym ID, not a URL. |
 
-Supply credentials through the client process environment or a secrets manager; forwarding rules differ by [client](../README.md#desktop-clients). Keep values out of shared config, issues and logs. The server holds its session in memory.
+Supply credentials through the client process environment or a secrets manager; forwarding rules differ by [client](../README.md#desktop-and-cli-clients). Keep values out of shared config, issues and logs. The server holds its session in memory.
 
 ## Discover your gym and check its time zone
 
@@ -23,11 +23,11 @@ Date inputs use `YYYY-MM-DD` in the reported gym zone. An assumed zone can make 
 
 ## Version-pinned startup
 
-After npm publication, a client that forwards the required variables can start the pinned release with:
+A client that forwards the required variables can start the pinned release with:
 
 ```text
 command: npx
-arguments: --yes, aimharder-mcp@0.1.0
+arguments: --yes, aimharder-mcp@0.1.1
 ```
 
 If `npx` cannot start, check the app's access to Node and npm; GUI apps may have a different `PATH` from your terminal. The [private-file setup](#private-file-and-local-installation) runs Node directly. The server queries AimHarder on demand, without a persistent cache.
@@ -43,10 +43,10 @@ AIMHARDER_PASSWORD=your-account-password
 
 If needed, add `AIMHARDER_GYM_TIME_ZONES={"sample-gym":"Atlantic/Canary"}`, replacing the ID and zone. Restrict file and directory access with `chmod 600 /absolute/path/to/private.env` and `chmod 700 /absolute/path/to/private-directory`, or use a secrets-manager mount. The server does **not** load the file automatically.
 
-Once `0.1.0` is published, install the exact package into a private local directory:
+Alternatively, install the exact package into a private local directory:
 
 ```sh
-npm install --prefix /absolute/path/to/installation --ignore-scripts --omit=dev aimharder-mcp@0.1.0
+npm install --prefix /absolute/path/to/installation --ignore-scripts --omit=dev aimharder-mcp@0.1.1
 ```
 
 Point a stdio client at Node 24 or newer with these arguments, in this order:

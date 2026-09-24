@@ -1,8 +1,6 @@
 # aimharder-mcp
 
-Ask about your AimHarder classes, workouts, bookings and activity from a desktop AI client. This is a local, read-only [MCP server](https://modelcontextprotocol.io/) and an independent project, neither affiliated with nor endorsed by AimHarder.
-
-**Release status:** `aimharder-mcp@0.1.0` is not on npm yet. The `npx` example below will work after publication. A [local package archive has been tested](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/validation.md).
+Ask about your AimHarder classes, workouts, bookings and activity from an AI client. This is a local, read-only [MCP server](https://modelcontextprotocol.io/) and an independent project, neither affiliated with nor endorsed by AimHarder.
 
 **Data limits:** Live checks used one account at one location (9NBC). Other gyms may differ. Workout and booking views can be incomplete, so an empty result may not mean there is nothing to show. [Details](docs/tools.md#coverage-and-interpretation)
 
@@ -17,7 +15,7 @@ Ask about your AimHarder classes, workouts, bookings and activity from a desktop
      "mcpServers": {
        "aimharder": {
          "command": "npx",
-         "args": ["--yes", "aimharder-mcp@0.1.0"]
+         "args": ["--yes", "aimharder-mcp@0.1.1"]
        }
      }
    }
@@ -25,14 +23,15 @@ Ask about your AimHarder classes, workouts, bookings and activity from a desktop
 
 4. Ask your client an AimHarder question, such as “What is tomorrow's WOD?” The first valid tool call signs in. See the guide for your client below for its configuration format and credential options.
 
-## Desktop clients
+## Desktop and CLI clients
 
 - [ChatGPT desktop](docs/clients/chatgpt-desktop.md)
+- [Codex](docs/clients/codex.md)
 - [Claude Desktop](docs/clients/claude-desktop.md)
 - [Hermes](docs/clients/hermes.md)
 - [OpenClaw](docs/clients/openclaw.md)
 
-Hermes has been tested with a local package archive. The ChatGPT desktop STDIO form has been observed; package connections in ChatGPT, Claude Desktop and OpenClaw have not been verified. Mobile apps are outside the current setup guides.
+Hermes and Codex CLI have called the account tool through the published package. The ChatGPT desktop STDIO form has been observed; package connections in ChatGPT desktop, Claude Desktop and OpenClaw have not been verified. Mobile apps are outside the current setup guides.
 
 ## Tools
 
