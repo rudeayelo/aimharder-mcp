@@ -20,6 +20,8 @@ After [implementation PR #16](https://github.com/rudeayelo/aimharder-mcp/pull/16
 
 The [release run](https://github.com/rudeayelo/aimharder-mcp/actions/runs/36023101635) passed the same pre-publication checks, packed the package, and reported `Successfully published: aimharder-mcp@0.1.2` through the OIDC-enabled publish job. It created [tag and GitHub Release `v0.1.2`](https://github.com/rudeayelo/aimharder-mcp/releases/tag/v0.1.2) at that source revision. The public npm registry returned the exact version, [tarball](https://registry.npmjs.org/aimharder-mcp/-/aimharder-mcp-0.1.2.tgz), integrity `sha512-XGrOg0fAPtXvT6mD8Cw4jq4VVS2HkH9J0fc7AxHpTTqjlRkBgIn5mguCS58FbabqPbS6iI1W3aaOvZD8IHdy8w==`, and a provenance attestation entry. The registry initially returned 404 shortly after the workflow finished and then served the version; that first 404 was publication propagation, not a failed release.
 
+A later [documentation-only merge](https://github.com/rudeayelo/aimharder-mcp/pull/18) passed CI. Its [release run](https://github.com/rudeayelo/aimharder-mcp/actions/runs/36023803717) completed the mode selector and skipped the version, pack, and publish jobs, confirming that an ordinary merge with no unpublished version does not publish.
+
 The local authenticated `scripts/registry-check.mjs 0.1.2` has **not run** in this delivery: this shell does not have `AIMHARDER_USERNAME` or `AIMHARDER_PASSWORD`, and the local 1Password MCP tools are unavailable. The public package is published, but its live MCP behavior is not yet verified. Do not switch npm publishing access to disallow traditional tokens until this check passes, as decided in the [automation ADR](adr/2026-09-24-github-actions-npm-release-automation.md).
 
 ## Public npm and client checks (2026-09-24)
