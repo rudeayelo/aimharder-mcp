@@ -35,7 +35,7 @@ If multiple distinct feed workouts appear to apply to the requested date and cla
 
 The first end-to-end delivery must answer "What are we doing in tomorrow's WOD, and when am I booked?" through an MCP client using the user's actual account. It includes authentication, gym selection, class sessions, published future workout content from the gym feed, and upcoming bookings. It also includes reproducible setup, automated tests, safe authentication errors, and explicit handling of missing, ambiguous, or incomplete information.
 
-Personal activity and booking history follow in later deliveries within the same MVP. This delivery order does not remove either feature from the acceptance scope. The first delivery is verified against AimHarder from at least one MCP-compatible client or harness. The implemented consuming-client example combines the existing queries; current available content, next-day unavailable content and an actual reservation have live verification. A later separate MCP comparison confirmed published future WOD and Metcon content with source-labeled variants. The user accepted these results together with manual installed-package Hermes QA for [QA #13](https://github.com/rudeayelo/aimharder-mcp/issues/13); the exact combined future-content harness run remains unperformed. See [the runnable example](../README.md#combined-workout-and-booking-example), [validation](validation.md), and [the evidence decision](adr/2026-09-24-functional-qa-evidence-for-first-release.md).
+Personal activity and booking history follow in later deliveries within the same MVP. This delivery order does not remove either feature from the acceptance scope. The first delivery is verified against AimHarder from at least one MCP-compatible client or harness. The implemented consuming-client example combines the existing queries; current available content, next-day unavailable content and an actual reservation have live verification. A later separate MCP comparison confirmed published future WOD and Metcon content with source-labeled variants. The user accepted these results together with manual installed-package Hermes QA for [QA #13](https://github.com/rudeayelo/aimharder-mcp/issues/13); the exact combined future-content harness run remains unperformed. See [the combined-query guide](tools.md#questions-that-combine-tools), [runnable examples](development.md#run-and-inspect-locally), [validation](validation.md), and [the evidence decision](adr/2026-09-24-functional-qa-evidence-for-first-release.md).
 
 ## Implementation tickets
 
@@ -110,7 +110,7 @@ Run separate, explicit live read-only checks against AimHarder using the user's 
 
 Out of scope: creating and canceling bookings, automation, per-exercise or progress analysis, a UI, and a remote service.
 
-Next priority: creating and canceling bookings through explicit requests, with unambiguous validation of the session and outcome. A remote service and other integrations will be decided later.
+Next priority: creating and canceling bookings through explicit requests, with unambiguous validation of the session and outcome. The public [roadmap](../README.md#roadmap) also lists personal exercise RM lookup with optional calculated loads alongside source `%RM` prescriptions, recording activity results, broader gym compatibility and mobile-client investigation as future ideas without dates or version commitments. None is part of the current read-only MVP. A remote service and other integrations will be decided later.
 
 ## Technical validation
 
