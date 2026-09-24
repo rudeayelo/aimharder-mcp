@@ -11,7 +11,7 @@ Set `mcp.servers.aimharder` to this definition:
 ```json
 {
   "command": "npx",
-  "args": ["--yes", "aimharder-mcp@0.1.1"],
+  "args": ["--yes", "aimharder-mcp@0.1.2"],
   "env": {
     "AIMHARDER_USERNAME": "${AIMHARDER_USERNAME}",
     "AIMHARDER_PASSWORD": "${AIMHARDER_PASSWORD}"
@@ -22,7 +22,7 @@ Set `mcp.servers.aimharder` to this definition:
 Save the definition with the CLI:
 
 ```sh
-openclaw mcp set aimharder '{"command":"npx","args":["--yes","aimharder-mcp@0.1.1"],"env":{"AIMHARDER_USERNAME":"${AIMHARDER_USERNAME}","AIMHARDER_PASSWORD":"${AIMHARDER_PASSWORD}"}}'
+openclaw mcp set aimharder '{"command":"npx","args":["--yes","aimharder-mcp@0.1.2"],"env":{"AIMHARDER_USERNAME":"${AIMHARDER_USERNAME}","AIMHARDER_PASSWORD":"${AIMHARDER_PASSWORD}"}}'
 ```
 
 Keep the outer single quotes: they prevent the shell from inserting secret values into saved config. You can also edit `mcp.servers.aimharder` directly. If `Europe/Madrid` is wrong, confirm the gym zone, define `AIMHARDER_GYM_TIME_ZONES`, and add `"AIMHARDER_GYM_TIME_ZONES": "${AIMHARDER_GYM_TIME_ZONES}"` under `env`. Add a default gym only if configured.
