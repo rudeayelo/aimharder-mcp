@@ -8,6 +8,8 @@ A local TypeScript MCP server for one AimHarder account per instance. It works t
 
 Distribution: [GitHub](https://github.com/rudeayelo/aimharder-mcp) under [MIT](../LICENSE) and the public [`aimharder-mcp`](https://www.npmjs.com/package/aimharder-mcp) npm package. See the [distribution ADR](adr/2026-09-22-npm-distribution-for-mvp.md) and [README](../README.md).
 
+A later [release automation decision](adr/2026-09-24-github-actions-npm-release-automation.md) prepares Changesets and GitHub Actions for future npm versions; it does not change the MVP feature scope or the requirement to verify the exact public artifact.
+
 Domain terms are defined in the root [glossary](../CONTEXT.md).
 
 ## Features

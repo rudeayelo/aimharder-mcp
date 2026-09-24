@@ -26,6 +26,8 @@ The automated packaging check installs in a temporary directory outside the chec
 
 For #12, a separate [release procedure](../releasing.md) and `scripts/registry-check.mjs` verify the exact public-registry version after publication. The registry check resolves metadata from npm, downloads the version into an isolated temporary npm cache outside the checkout, and runs the installed executable through the SDK over stdio with an authorized live read-only account/gym query. The npm subprocess receives no AimHarder credentials. This check passed for the first public version after #13's accepted functional verdict; see [validation](../validation.md).
 
+The later [GitHub Actions release automation decision](2026-09-24-github-actions-npm-release-automation.md) changes version preparation and npm authentication/publication mechanics for future releases. It retains this decision's exact-registry-artifact verification requirement and keeps authenticated live verification local.
+
 ## Consumer documentation subset (2026-09-24)
 
 The user confirmed that the npm-facing README should serve account holders connecting desktop clients, with only a brief contribution path. The archive therefore includes the README, license, domain glossary, shared configuration and tool guides, and client guides for ChatGPT desktop, Codex, Claude Desktop, Hermes and OpenClaw. It excludes the MVP specification, API research, validation history, ADRs, release procedure, agent instructions and development guide. Those remain public in GitHub and are linked with repository URLs from packaged documentation. This narrows the former `docs/**/*.md` allowlist without changing runtime behavior.

@@ -1,26 +1,46 @@
 # Publishing an npm release
 
-First-release functional QA was accepted on 2026-09-24, with the limits in [validation](validation.md) and [QA #13](https://github.com/rudeayelo/aimharder-mcp/issues/13). The public npm package was subsequently published and checked from the registry under [#12](https://github.com/rudeayelo/aimharder-mcp/issues/12). The current consumer pin is `aimharder-mcp@0.1.1`.
+The first two public packages, `aimharder-mcp@0.1.0` and `aimharder-mcp@0.1.1`, passed exact-registry-artifact live MCP checks in [validation](validation.md#public-npm-and-client-checks-2026-09-24). The first-release functional QA verdict and its limits are also recorded there. The [README](../README.md) carries the consumer version pin. This page describes the Changesets and GitHub Actions release path agreed in the [automation ADR](adr/2026-09-24-github-actions-npm-release-automation.md).
 
-## Prepare a release candidate
+**Activation status:** the workflows are prepared in this repository, but automatic publication is not active until the GitHub App, repository protection, and npm trusted publisher below are configured and a first Actions release has passed. Until then, follow the existing manual checks and do not describe an unrun workflow as verified.
 
-1. Use a clean release checkout, Node 24 and pnpm 12.5.1. Check the target registry version and authorized account with `npm whoami --registry=https://registry.npmjs.org/`. Keep credentials out of the repo and command arguments.
-2. Set the exact version in `package.json`, update the lockfile if needed, document changes and commit. Record `git rev-parse HEAD`. npm versions cannot be republished.
-3. Run `pnpm install --frozen-lockfile`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm test:package` and required authorized live checks. Run `git diff --check`; the candidate tree must be clean.
-4. Run `npm pack --ignore-scripts --json --pack-destination <temporary-directory>` after building. Inspect the allowlist: compiled JavaScript, README, license, glossary, `docs/configuration.md`, `docs/tools.md`, five `docs/clients/*.md` guides and package metadata. Exclude source, tests, evidence, environment files, maps, archives and internal docs. Check packaged Markdown links and keep the archive outside the checkout.
+## One-time activation
 
-## Publish and verify
+1. Create a private GitHub App for release pull requests. Give it repository **Contents: read and write** and **Pull requests: read and write**, then install it only on `rudeayelo/aimharder-mcp`. Generate a private key. Store its numeric App ID as the repository Actions variable `RELEASE_APP_ID` and the private key as the Actions secret `RELEASE_APP_PRIVATE_KEY`. Do not put the private key in Git, issues, logs, or chat.
+2. In repository **Settings → Actions → General**, enable **Allow GitHub Actions to create and approve pull requests**. The current setting is disabled. The release workflow uses the App token to create version pull requests, allowing their CI checks to start automatically.
+3. After the `CI / verify` check has appeared on a pull request, protect `main`: require a pull request and that check to pass before merging, and prevent direct pushes from bypassing those requirements. The [CI workflow](../.github/workflows/ci.yml) runs on Node 24 and checks type safety, fixtures, build, and the isolated package archive.
+4. In the npm settings for `aimharder-mcp`, add a **GitHub Actions trusted publisher** with owner `rudeayelo`, repository `aimharder-mcp`, and workflow filename `release.yml`. Allow direct `npm publish`; leave the environment name empty because this workflow has no approval environment. The [release workflow](../.github/workflows/release.yml) grants `id-token: write` only to its publish job. It uses a GitHub-hosted runner and an npm CLI version supporting OIDC. No npm publish token belongs in GitHub secrets.
+5. Confirm that the first new version published through Actions appears on npm and passes the exact-version local MCP check below. Only after that, set npm publishing access to **Require two-factor authentication and disallow tokens** and remove any obsolete publish token. Trusted publishing continues to work with this setting.
 
-1. Confirm QA #13 evidence applies to the candidate. Publish the inspected archive with `npm publish <absolute-archive-path> --access public --registry=https://registry.npmjs.org/`, completing npm authentication.
-2. Check the public page and `npm view aimharder-mcp@<exact-version> version dist.tarball --json --registry=https://registry.npmjs.org/`. Record the registry's version and tarball URL.
-3. Inject AimHarder credentials securely and run `AIMHARDER_LIVE_CHECK=1 node scripts/registry-check.mjs <exact-version>`. It installs that registry version in a clean temporary directory/cache and checks the installed server over stdio: initialization, six tools, read-only account/gym access, gym selection, sanitized errors and empty stderr. Only the MCP child receives account credentials. A failure is a release defect.
-4. Record the source revision, exact version, registry URL, time, runtime versions, live result and limits in [validation](validation.md). Update the [README](../README.md), [MVP status](mvp.md) and [distribution ADR](adr/2026-09-22-npm-distribution-for-mvp.md). Publish the matching source revision to GitHub and update #12 and its parent issue.
+The GitHub App private key is a GitHub automation credential, separate from npm OIDC and from AimHarder account credentials. AimHarder credentials stay local.
 
-Clients should pin `npx --yes aimharder-mcp@<exact-version>` on Node 24+, supply credentials in the process environment, and override the assumed `Europe/Madrid` zone when needed. The package does not load `.env` automatically.
+## Manual fallback before activation
 
-If a client starts inside this repository, `npx` may select the local package manifest instead of downloading the public binary. Use an empty directory as `--prefix` or set the client's working directory outside the checkout. The Hermes and Codex guides show the private-file form with an explicit prefix.
+Before the one-time setup is complete, use a clean Node 24 checkout and pnpm 12.5.1. Update the version and pinned consumer instructions in a reviewed change, then run `pnpm install --frozen-lockfile`, `pnpm typecheck`, `pnpm test`, `pnpm build`, and `pnpm test:package`. Inspect `npm pack --ignore-scripts --json` for the explicit archive allowlist. Check any applicable authorized local live evidence before publishing. Publish the inspected archive with the authorized npm account, then use the exact-version registry check below. Record source revision, archive integrity, public registry metadata, and live result in [validation](validation.md). This fallback does not establish that the Actions path works.
+
+## Prepare and publish a version
+
+1. For a change to the distributed package, including README or packaged client guides, run `pnpm changeset` and commit its file with the change. Choose `patch` for compatible fixes and packaged-documentation corrections; choose `minor` for new capabilities or clearly announced incompatible changes while in `0.x`. A `1.0.0` release needs an explicit decision. Internal-only changes need no changeset.
+2. Open a pull request to `main`. CI must pass. For authentication or AimHarder API-interpretation changes, run the applicable authorized read-only live checks locally before merging and record sanitized evidence. Documentation-only changes do not need those live checks.
+3. Merge the change. The release workflow collects pending changesets into a release pull request, updating the package version, lockfile, changelog, and pinned consumer commands. Review that pull request and its CI results.
+4. Merge the release pull request. GitHub Actions reruns the pre-publication checks, packs the release, publishes through npm OIDC, then creates the version tag and GitHub Release. No separate publish approval is required. Ordinary merges with no unpublished version do not publish.
+5. Read the exact version from the successful workflow or `package.json` in the merged release commit. Confirm `npm view aimharder-mcp@<exact-version> version dist.tarball dist.integrity --json --registry=https://registry.npmjs.org/`. A successful publish does **not** establish live MCP verification.
+
+## Verify the exact npm artifact locally
+
+With AimHarder credentials securely injected into the local environment, run:
+
+```sh
+AIMHARDER_LIVE_CHECK=1 node scripts/registry-check.mjs <exact-version>
+```
+
+The script installs that version from npm in a clean temporary directory/cache and checks the server over MCP stdio: initialization, six tools, read-only account/gym access, gym selection, sanitized errors, and empty stderr. The npm subprocess receives no AimHarder credentials. Record the source revision, exact version, registry URL/integrity, UTC time, runtime, result, and limitations in [validation](validation.md). Mark the release as live-verified only after this check passes.
+
+If npm publication fails before accepting the version, fix the failure and retry the workflow. If npm accepted the version but a tag or GitHub Release failed, inspect npm first and repair the metadata for that version without attempting a second publication. If the local MCP check fails, record the version as published but not live-verified, investigate, and release a corrected version; consider npm deprecation if users are affected. npm versions cannot be republished with different contents.
+
+Clients should pin `npx --yes aimharder-mcp@<exact-version>` on Node 24+, supply credentials in the process environment, and override the assumed `Europe/Madrid` zone when needed. The package does not load `.env` automatically. If a client starts inside this repository, `npx` may select the local package manifest instead of downloading the public binary. Use an empty directory as `--prefix` or set the client's working directory outside the checkout; the Hermes and Codex guides show this form.
 
 ## Release history
 
 - `0.1.0` was the first public version from `b0ca938ba130a61a6840a9803bffe601a585fb26`. Its public tarball passed live read-only MCP verification. Its bundled README still said publication was pending.
-- `0.1.1` updates consumer documentation and the verified version pin, adds the Codex guide, and retains the same MCP behavior. See [validation](validation.md) for the exact source revision and registry check.
+- `0.1.1` corrected consumer documentation, added the Codex guide, and retained the same MCP behavior. Its exact public artifact passed the live MCP registry check in [validation](validation.md#public-npm-and-client-checks-2026-09-24).

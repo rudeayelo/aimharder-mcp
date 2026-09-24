@@ -37,4 +37,4 @@ Output contains private account data; keep it out of issues and logs. These exam
 
 For other live comparisons, build and run `AIMHARDER_LIVE_CHECK=1 node scripts/live-check.mjs` with credentials injected. Optional flags in that script select queries. Record sanitized results and limits in [validation](validation.md); fixture passes do not establish upstream behavior.
 
-Follow the separate [release procedure](releasing.md) for npm publication and exact-version verification.
+Add a changeset with `pnpm changeset` when a pull request changes the distributed package or its packaged consumer documentation. Internal-only changes need no changeset. The [release procedure](releasing.md) describes version pull requests, CI, npm OIDC setup, and the local live check of each published artifact.
