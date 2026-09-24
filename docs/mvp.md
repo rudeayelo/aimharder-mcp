@@ -1,45 +1,45 @@
 # AimHarder MCP server MVP
 
-Date: 2026-09-21. Status: scope confirmed by the user; [implementation specification published as GitHub issue #1](https://github.com/rudeayelo/aimharder-mcp/issues/1); account/gym, class-query, upcoming-booking, published-workout, consuming-client composition, booking-history and personal-activity interval slices implemented. Class, upcoming-booking and published future-content live comparisons passed separately (see [validation](validation.md)); functional QA for the first release was accepted by the user on 2026-09-24 from aggregate evidence, while registry publication remains pending. The user clarified #9 and #10 to use activity entries as the retrieval/counting unit; physical training-session grouping is no longer an acceptance requirement for these experiences. Both entry-based experiences are implemented and have passed revised live MCP acceptance; see the validation record.
+Scope confirmed 2026-09-21 in [issue #1](https://github.com/rudeayelo/aimharder-mcp/issues/1). All planned query features are implemented. The user accepted first-release functional QA on 2026-09-24 using the evidence in [validation](validation.md); npm publication and exact registry verification remain pending. Recent and period summaries count **activity entries**, as the user clarified.
 
 ## Product and users
 
-A local TypeScript MCP server, with one account per instance. The initial use case is personal, with possible later validation by a small group already familiar with connecting an MCP server. The server targets MCP-compatible clients and harnesses without depending on a particular agent or requiring a dedicated integration.
+A local TypeScript MCP server for one AimHarder account per instance. It works through compatible MCP clients without a dedicated app integration.
 
-Distribution: a repository with setup and startup instructions, plus a public npm package as the final MVP milestone. Local compiled-package implementation and isolated/live account-context verification are complete; registry publication remains pending; see [the npm distribution decision](adr/2026-09-22-npm-distribution-for-mvp.md). License: [MIT](../LICENSE). A public repository has been created on [GitHub](https://github.com/rudeayelo/aimharder-mcp); see [the publication ADR](adr/2026-09-21-public-repository-and-mit-license.md). All project content is maintained in English. Setup and startup instructions for account/gym discovery are in the [README](../README.md). Potential collaboration with AimHarder will be considered once a useful, viable product exists, without assuming platform interest or endorsement.
+Distribution: [GitHub](https://github.com/rudeayelo/aimharder-mcp) under [MIT](../LICENSE), then npm after registry checks. Local archive checks passed; npm publication has not. See the [distribution ADR](adr/2026-09-22-npm-distribution-for-mvp.md) and [README](../README.md).
 
 Domain terms are defined in the root [glossary](../CONTEXT.md).
 
 ## Features
 
-- Query the gym's classes by date: schedules, type, occupancy, capacity, and other relevant information available to the account.
-- Retrieve published workout details, including future workouts, source-labeled difficulty variants, and verified exercise value/load units when available. A workout may apply to several class sessions on the same day rather than one uniquely linked session. If unavailable, say so. Publication from 21:00 onward is the user's observation about 9NBC, not a validated global rule.
-- Query upcoming bookings and available history, distinguishing states only once their meaning has been verified.
-- Query personal activity by date, including available workout details with verified exercise units and recorded block results (time in user-confirmed seconds, source scores and RX labels). Support any period AimHarder allows retrieving, with a maximum of 31 consecutive calendar dates per query, counting both endpoints, and clear notices for partial results. Searching or analyzing specific exercises is excluded.
+- Query class schedules, occupancy and capacity by date.
+- Retrieve published workouts, difficulty variants and verified prescription units. A workout may cover several sessions; publication time does not establish its intended date. The reported 21:00 publication pattern at 9NBC is not a general rule.
+- Query upcoming bookings and available booking history, preserving state and coverage limits.
+- Query personal activity with recorded block results and source prescriptions. Each call covers at most 31 inclusive dates; clients can compose longer periods. Exercise-specific analysis is outside scope.
 
-Example questions: “What does tomorrow's WOD look like?”, “What classes are available this week?”, “How many people are booked for Wednesday's 07:00 Metcon?”, “What were my last five activity entries like?”, “How many activity entries did I record last month?”, and “What bookings do I have?”. Distinguish times when multiple sessions exist. Occupancy does not equal actual attendance.
+Example questions include tomorrow's WOD, this week's classes, Wednesday's 07:00 Metcon occupancy, upcoming bookings, the last five activity entries and last month's entry count. Occupancy is not attendance.
 
-The MVP provides reusable query capabilities across all these examples, not a single hard-coded WOD answer. Recent-training summaries and activity counts are in scope; exercise-specific performance analysis remains excluded. For the recent and frequency experiences, the user confirmed that ambiguous references to training mean activity entries: retrieve the latest five entries and count distinct entries in the requested period. Several entries on one date count separately. Days with activity are supplementary, not the counting unit. This does not assert distinct physical training sessions or attendance. Disclose incomplete coverage and unresolved within-date ordering; deterministic source-ID presentation must not be described as chronology. Clients may make multiple explicit activity queries to search older history without exceeding the per-query date limit.
+The user defined recent/frequency questions as queries over distinct **activity entries**. Several entries on one day count separately; days with activity are supplementary. Entries do not prove physical training sessions or attendance. Expose incomplete coverage and unknown within-day order.
 
 ## Reference experience: tomorrow's WOD
 
-When the user asks "What are we doing in tomorrow's WOD?", return the exercises and training instructions from the gym feed when a workout is published for that date and can be identified as the requested class type. Also report whether the account holder has a booking for the relevant sessions and at what time or times.
+For tomorrow's WOD, return applicable published instructions and any confirmed relevant booking times.
 
-The user reports that, at 9NBC, the daily WOD published in the gym feed is repeated across the day's WOD class sessions. This does not require a unique workout-to-session link. Treat it as a reported gym-specific convention to verify during integration, not a universal AimHarder rule. A post's publication timestamp alone does not establish the workout date.
+At 9NBC, the user reports one daily WOD shared across class sessions. Do not infer a unique workout-to-session link or apply that convention to every gym. Use the workout's intended date, not its publication timestamp.
 
-Only report that the user has no relevant booking when a successful query provides sufficient coverage and verified booking-state meaning. If booking lookup fails or is incomplete, preserve available workout information and clearly state that booking status could not be confirmed.
+The upcoming-booking view has no verified date horizon, so an absent match cannot prove no booking on a given date. If booking lookup fails, retain available workout content and mark booking status unconfirmed.
 
-If multiple distinct feed workouts appear to apply to the requested date and class type, return the alternatives with their titles and provenance and explain the ambiguity. Do not select the latest post as a replacement unless it can be verified as a correction. Report relevant booking times separately without assigning an ambiguous workout to a booked session.
+If several workouts match, show each with provenance; do not guess that the newest corrects another. Keep booking times separate from ambiguous workouts.
 
 ## First functional delivery
 
-The first end-to-end delivery must answer "What are we doing in tomorrow's WOD, and when am I booked?" through an MCP client using the user's actual account. It includes authentication, gym selection, class sessions, published future workout content from the gym feed, and upcoming bookings. It also includes reproducible setup, automated tests, safe authentication errors, and explicit handling of missing, ambiguous, or incomplete information.
+The first delivery covers authentication, gym selection, classes, future workout content, upcoming bookings, safe errors, setup and tests. A client composes “What is tomorrow's WOD, and when am I booked?” from those tools.
 
-Personal activity and booking history follow in later deliveries within the same MVP. This delivery order does not remove either feature from the acceptance scope. The first delivery is verified against AimHarder from at least one MCP-compatible client or harness. The implemented consuming-client example combines the existing queries; current available content, next-day unavailable content and an actual reservation have live verification. A later separate MCP comparison confirmed published future WOD and Metcon content with source-labeled variants. The user accepted these results together with manual installed-package Hermes QA for [QA #13](https://github.com/rudeayelo/aimharder-mcp/issues/13); the exact combined future-content harness run remains unperformed. See [the combined-query guide](tools.md#questions-that-combine-tools), [runnable examples](development.md#run-and-inspect-locally), [validation](validation.md), and [the evidence decision](adr/2026-09-24-functional-qa-evidence-for-first-release.md).
+Booking history and personal activity followed within the same MVP. Separate live checks covered current and future publications, an actual booking and the combined client's uncertainty handling. The user accepted aggregate evidence and manual Hermes QA for [QA #13](https://github.com/rudeayelo/aimharder-mcp/issues/13). The exact single-run combined future-content check was **not performed**. See [examples](development.md#run-and-inspect-locally), [validation](validation.md) and the [QA decision](adr/2026-09-24-functional-qa-evidence-for-first-release.md).
 
 ## Implementation tickets
 
-The approved slices are published in GitHub Issues with the `ready-for-agent` label and native blocking relationships. A ticket can start when all its blockers are complete. The specification remains the parent reference; this table records the approved dependency plan rather than live issue status.
+This is the approved dependency plan in GitHub Issues, not a live status table.
 
 | Ticket | Blocked by |
 | --- | --- |
@@ -53,39 +53,37 @@ The approved slices are published in GitHub Issues with the `ready-for-agent` la
 | [#9: Retrieve the latest activity entries](https://github.com/rudeayelo/aimharder-mcp/issues/9) | [#8](https://github.com/rudeayelo/aimharder-mcp/issues/8) |
 | [#10: Summarize training frequency for a period](https://github.com/rudeayelo/aimharder-mcp/issues/10) | [#8](https://github.com/rudeayelo/aimharder-mcp/issues/8) |
 
-Prioritize account/gym access, class sessions, upcoming bookings, and published workouts before the combined WOD experience. Booking history and personal activity complete the remaining MVP; their independent dependency branches do not impose an artificial dependency on the combined experience.
-
-Every slice includes behavioral tests at the MCP interface, separate live read-only validation in a compatible client or harness, and updated documentation. Ticket publication does not demonstrate implementation or API validation. Native dependencies and published issue content were verified when this plan was recorded.
+Each slice requires MCP-level behavior tests, separate read-only live validation and documentation. Issue creation alone is not validation.
 
 ## Final functional QA
 
-On 2026-09-23 the user approved closing implementation #6 and transferring its then-outstanding actual published-future-workout live validation to [QA #13](https://github.com/rudeayelo/aimharder-mcp/issues/13). A later separate MCP query verified future WOD and Metcon content on that date. On 2026-09-24 the user accepted aggregate manual and independent evidence for QA #13 instead of its exact single-run combined future-content requirement; see [the evidence decision](adr/2026-09-24-functional-qa-evidence-for-first-release.md). No publication-hour guarantee or automation is implied. Full MVP closure still requires #12's exact registry-release verification.
+The user moved #6's remaining future-workout check to [QA #13](https://github.com/rudeayelo/aimharder-mcp/issues/13) on 2026-09-23. A separate MCP query then verified future WOD and Metcon content. On 2026-09-24 the user accepted the aggregate evidence in place of one combined run; see the [QA decision](adr/2026-09-24-functional-qa-evidence-for-first-release.md). Exact npm release verification remains pending.
 
 ## npm distribution tickets
 
-The user approved these additional slices on 2026-09-22. Both are published with `ready-for-agent`; the publication ticket has native GitHub blockers. The functional ticket plan above is unchanged.
+The user approved packaging and release tickets on 2026-09-22:
 
 | Ticket | Blocked by |
 | --- | --- |
 | [#11: Run the MCP server from an installable package](https://github.com/rudeayelo/aimharder-mcp/issues/11) | None pending; #2 is complete |
 | [#12: Publish and verify the MVP on npm](https://github.com/rudeayelo/aimharder-mcp/issues/12) | #13, #11, #6, #7, #9, #10 |
 
-The terminal functional blockers include their transitive prerequisites. Package preparation can proceed before those features are complete; public release requires complete MVP acceptance. The preferred name is `aimharder-mcp`, subject to publishability and account access. See [the distribution ADR](adr/2026-09-22-npm-distribution-for-mvp.md).
+Local packaging is verified. Public release requires exact registry checks; see the [distribution ADR](adr/2026-09-22-npm-distribution-for-mvp.md).
 
 ## Operation
 
-Keep the AimHarder client independent of the MCP layer, with runtime validation of external responses. Supply credentials through environment variables; the user may inject them from 1Password or another manager. Configuration variables and commands for the implemented account/gym slice are documented in the [README](../README.md).
+Keep the API client separate from MCP and validate external responses. Supply credentials through environment variables; see [configuration](configuration.md).
 
-Query AimHarder on demand, without a database or persistent cache; reuse the session in memory. On session expiration, allow one automatic reauthentication per request and a single query retry. On invalid credentials, 2FA, or restrictions, return a clear error and stop retrying. Rate limits have not been verified.
+Query on demand without persistent storage. Reuse the in-memory session; allow one reauthentication and query retry after expiry. Stop on invalid credentials, unsupported challenges or restrictions. Rate limits remain unverified.
 
-Select the gym automatically when the account has only one. If there are several, require a default gym in configuration. Each query may optionally select another gym without restarting the server; use the default when omitted and accept only gyms whose accessibility for the account has been verified. The `.es` client membership discovery contract has live validation for one account and gym; broader account variants remain unverified.
+Select the sole gym automatically. Multiple gyms require a configured default; queries may override it with a verified accessible gym. Live membership discovery was checked with one account/location.
 
 ## Query semantics
 
-- Interpret dates in the gym's time zone, including when the user is traveling. The conversational client resolves relative expressions such as "tomorrow" into explicit dates in that zone. The server returns dates and times with explicit time-zone information. Date queries use `Europe/Madrid` when no per-gym IANA zone is configured, marking that zone as assumed; explicit mappings are marked user-confirmed. Automatic discovery remains unresolved; see the [zone default decision](adr/2026-09-24-default-gym-time-zone.md).
+- Resolve relative dates in the reported gym zone, even when traveling. Unmapped gyms assume `Europe/Madrid` and report `assumed`; configured IANA zones report `user-confirmed`. AimHarder zone discovery remains unresolved; see the [zone decision](adr/2026-09-24-default-gym-time-zone.md).
 - Personal activity queries accept at most 31 consecutive calendar dates, with inclusive start and end dates. Larger periods require multiple explicit queries by the client.
-- If a later activity page fails after earlier pages were retrieved, return the recovered entries marked incomplete, explain the reason, and describe only the coverage that can be established. A failed first page is an error, not an empty result. Do not infer complete coverage from the dates of returned entries alone.
-- Preserve AimHarder content in its original language, including class names and workout instructions. Server field names and messages are in English; the consuming assistant may explain the content in the user's language.
+- On later activity retrieval failure, preserve recovered entries with incomplete coverage. A first-partition failure is an error; entry dates alone do not establish coverage.
+- Preserve AimHarder class names and instructions in their source language; field names and server messages are English.
 
 ## Acceptance criteria
 
@@ -100,18 +98,18 @@ Select the gym automatically when the account has only one. If there are several
 
 ## Testing strategy
 
-Exercise the public MCP interface with the real API client and replace only AimHarder's HTTP responses with anonymized fixtures. Assert observable query results, errors, coverage, and security-relevant outbound behavior rather than private implementation details. The account/gym slice establishes this test boundary in `tests/context.test.ts`; extend it for subsequent slices.
+Test the public MCP interface and real API client with anonymized HTTP fixtures. Check results, errors, coverage and outbound safety rather than implementation details.
 
-Include weekly schedules, specific-session occupancy, recent-training summaries, monthly counts with a verified counting basis, and the WOD-plus-booking experience. Test ambiguous publications, pagination and duplicate records, date boundaries, gym selection, authentication retry limits, and incomplete results. Fixture-based tests do not establish the real upstream contract.
+Cover schedules, occupancy, workouts and bookings, entry summaries/counts, ambiguity, duplicates, date boundaries, gym selection, retry limits and partial results. Fixtures do not establish live upstream behavior.
 
-Run separate, explicit live read-only checks against AimHarder using the user's account, with sanitized results. Automated tests must not depend on real credentials. The user confirmed this testing strategy during specification preparation.
+Run separate, authorized read-only live comparisons and record sanitized outcomes. Automated tests use no real credentials.
 
 ## Outside the MVP and future development
 
-Out of scope: creating and canceling bookings, automation, per-exercise or progress analysis, a UI, and a remote service.
+Current scope excludes booking writes, automation, exercise/progress analysis, a UI and a remote service.
 
-Next priority: creating and canceling bookings through explicit requests, with unambiguous validation of the session and outcome. The public [roadmap](../README.md#roadmap) also lists personal exercise RM lookup with optional calculated loads alongside source `%RM` prescriptions, recording activity results, broader gym compatibility and mobile-client investigation as future ideas without dates or version commitments. None is part of the current read-only MVP. A remote service and other integrations will be decided later.
+The [roadmap](../README.md#roadmap) lists booking writes, personal RM lookups with optional calculated loads beside original `%RM`, recording results, broader gym support and mobile exploration. No dates or versions are promised.
 
 ## Technical validation
 
-See [API research](api-research.md) for sources, observed endpoints, user-provided samples, and unresolved validation questions. The account/gym observations distinguish live-verified contracts from unresolved assumptions; upcoming-booking observations and view-only coverage are recorded there; published-workout current-view content is live-verified; exhaustive publication-feed/history coverage and physical training-session grouping remain unverified; the latter is outside #9/#10 acceptance after the entry-based clarification. Personal activity calendar intervals have separate live validation. Available history has separate live evidence in the API research and validation records.
+See [API research](api-research.md) for observed contracts and [validation](validation.md) for live results and their limits. Feed/history horizons and physical-session grouping remain unverified; grouping is outside the clarified entry-based #9/#10 acceptance.

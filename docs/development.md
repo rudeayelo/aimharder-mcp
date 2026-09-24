@@ -1,6 +1,6 @@
 # Develop and verify the server
 
-This page is for contributors working from the source repository. End users should start with the [README](../README.md) and [configuration guide](configuration.md). The package published to npm contains compiled JavaScript and consumer documentation, not this development guide, source files, tests or harness scripts.
+For contributor setup. End users should use the [README](../README.md) and [configuration guide](configuration.md). The npm archive includes compiled code and consumer docs, not these development files.
 
 ## Checkout and local checks
 
@@ -15,13 +15,13 @@ pnpm test
 pnpm build
 ```
 
-`pnpm test` runs anonymized HTTP-fixture tests through the public MCP interface and includes the isolated packaged-install check. Tests reject unexpected network requests. Run `pnpm build` after source edits. No database or remote service deployment is required.
+`pnpm test` uses anonymized HTTP fixtures through MCP, rejects unexpected requests and checks an isolated package install. Build after source edits.
 
 ## Run and inspect locally
 
-Configure credentials and, if needed, an override for the assumed gym zone through the process environment or a private file, as described in [configuration](configuration.md). To run the compiled stdio server from a shell with variables already injected, use `pnpm start`. The process waits for MCP messages on stdin. If using a private file, start Node explicitly: `node --env-file=/absolute/path/to/private.env dist/index.js`.
+Supply credentials and any gym-zone override as in [configuration](configuration.md). Run `pnpm start` with variables injected, or `node --env-file=/absolute/path/to/private.env dist/index.js`. The server waits for MCP messages on stdin.
 
-The repository includes consuming-client examples built with the official MCP SDK. After building, run them with a securely injected environment or `node --env-file=/absolute/path/to/private.env`:
+After building, run these MCP SDK client examples with an injected environment or Node's `--env-file`:
 
 | Example | Command arguments | Purpose |
 | --- | --- | --- |
@@ -29,12 +29,12 @@ The repository includes consuming-client examples built with the official MCP SD
 | `scripts/query-recent-activity.mjs` | `YYYY-MM-DD [maxWindows] [gymId]` | Search backwards for five distinct activity entries. |
 | `scripts/query-activity-period.mjs` | `previous-month [gymId]` or `YYYY-MM-DD YYYY-MM-DD [gymId]` | Count activity entries and days with activity over a period. |
 
-Their output contains private account data. Do not paste it into issues or publish it as test evidence. These are client examples, not additional server tools. The [tool guide](tools.md#questions-that-combine-tools) explains the answer semantics.
+Output contains private account data; keep it out of issues and logs. These examples are clients, not server tools. See [combined questions](tools.md#questions-that-combine-tools).
 
 ## Isolated package check
 
-Run `pnpm test:package`. It builds an archive, checks the explicit file allowlist, installs it outside the checkout with production dependencies and lifecycle scripts disabled, then launches the installed executable through the MCP SDK with anonymized fixtures. This is a local archive check, not a public-registry check. `pnpm test:package:live` additionally performs an opt-in read-only account/gym query when `AIMHARDER_LIVE_CHECK=1` and credentials are injected securely.
+`pnpm test:package` checks the archive allowlist, installs production dependencies outside the checkout with lifecycle scripts disabled, and launches the installed executable over MCP with anonymized fixtures. It does not check npm publication. With securely injected credentials, `AIMHARDER_LIVE_CHECK=1 pnpm test:package:live` adds a read-only account/gym check.
 
-For other explicit live comparisons, build first and run `AIMHARDER_LIVE_CHECK=1 node scripts/live-check.mjs` with securely injected credentials. Optional environment flags in `scripts/live-check.mjs` select class, workout, booking, activity and composed checks. Live checks use the actual account and must remain read-only. Record sanitized results and limitations in [validation](validation.md); fixture passes alone do not establish a broader upstream contract.
+For other live comparisons, build and run `AIMHARDER_LIVE_CHECK=1 node scripts/live-check.mjs` with credentials injected. Optional flags in that script select queries. Record sanitized results and limits in [validation](validation.md); fixture passes do not establish upstream behavior.
 
-The [release procedure](releasing.md) describes the separately gated npm publication and exact registry-version verification. Do not treat a local archive, tool listing, or a successful GitHub push as evidence of registry availability.
+Follow the separate [release procedure](releasing.md) for npm publication and exact-version verification.

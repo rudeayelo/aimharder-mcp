@@ -1,8 +1,8 @@
 # Connect OpenClaw
 
-OpenClaw stores outbound MCP servers under `mcp.servers` and supports local stdio commands. Its [registry guide](https://docs.openclaw.ai/cli/mcp/registry) distinguishes saved definitions from a live connection; [environment references](https://docs.openclaw.ai/gateway/config-secrets-env) can resolve `${VAR}` in configuration strings. An end-to-end OpenClaw check with this package has not yet been recorded. The first npm version, `aimharder-mcp@0.1.0`, is not yet published.
+OpenClaw stores local stdio servers under `mcp.servers`; see its [MCP guide](https://docs.openclaw.ai/cli/mcp/registry) and [environment references](https://docs.openclaw.ai/gateway/config-secrets-env). This package has **not been tested** in OpenClaw, and `aimharder-mcp@0.1.0` is not yet published.
 
-Install Node 24 or newer and arrange for `AIMHARDER_USERNAME` and `AIMHARDER_PASSWORD` to be available in OpenClaw's configuration environment or approved secret source. Do not place literal credential values in a command or saved MCP definition. See [shared configuration](../configuration.md).
+Install Node 24+ and make `AIMHARDER_USERNAME` and `AIMHARDER_PASSWORD` available through OpenClaw's environment or secrets source. Keep literal values out of commands and saved definitions. See [configuration](../configuration.md).
 
 ## Save a local stdio server
 
@@ -19,14 +19,14 @@ Set `mcp.servers.aimharder` to this definition:
 }
 ```
 
-For example, save that definition with the CLI:
+Save the definition with the CLI:
 
 ```sh
 openclaw mcp set aimharder '{"command":"npx","args":["--yes","aimharder-mcp@0.1.0"],"env":{"AIMHARDER_USERNAME":"${AIMHARDER_USERNAME}","AIMHARDER_PASSWORD":"${AIMHARDER_PASSWORD}"}}'
 ```
 
-Keep the outer single quotes so the shell does not expand `${VAR}` into a literal secret while saving. Alternatively, edit the matching `mcp.servers.aimharder` object in your OpenClaw configuration. If the assumed `Europe/Madrid` zone is wrong, confirm the gym zone, define `AIMHARDER_GYM_TIME_ZONES` in OpenClaw's environment and add `"AIMHARDER_GYM_TIME_ZONES": "${AIMHARDER_GYM_TIME_ZONES}"` under `env`. Add a default gym mapping only if configured.
+Keep the outer single quotes: they prevent the shell from inserting secret values into saved config. You can also edit `mcp.servers.aimharder` directly. If `Europe/Madrid` is wrong, confirm the gym zone, define `AIMHARDER_GYM_TIME_ZONES`, and add `"AIMHARDER_GYM_TIME_ZONES": "${AIMHARDER_GYM_TIME_ZONES}"` under `env`. Add a default gym only if configured.
 
 ## Check the connection
 
-Run `openclaw mcp doctor aimharder --probe`. Plain `doctor` performs static checks; `--probe` connects and lists tools. A successful probe does not authenticate with AimHarder. Ask an eligible OpenClaw runtime an AimHarder question to make the first authenticated call. `get_account_context` with `{}` is an optional account and gym check. OpenClaw adapters decide which saved servers are available in each runtime, so a saved definition or probe alone does not establish that every OpenClaw agent can use the tool.
+Run `openclaw mcp doctor aimharder --probe` to connect and list tools. The probe does not authenticate with AimHarder. Ask an AimHarder question in a runtime that exposes the server; `get_account_context` with `{}` is an optional gym check. Runtime adapters control which saved servers are available.
