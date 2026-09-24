@@ -1,16 +1,16 @@
 # aimharder-mcp
 
-A local, read-only [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server for your AimHarder account. Ask a compatible desktop client about class schedules, published workouts, bookings, and your recorded activity. This is an independent project, neither affiliated with nor endorsed by AimHarder.
+Ask about your AimHarder classes, workouts, bookings and activity from a desktop AI client. This is a local, read-only [MCP server](https://modelcontextprotocol.io/) and an independent project, neither affiliated with nor endorsed by AimHarder.
 
-**Release status:** `aimharder-mcp@0.1.0` has **not yet been published to npm**. The version-pinned commands below become usable after publication and verification of that version. A [local archive has been tested](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/validation.md); that is not a registry release.
+**Release status:** `aimharder-mcp@0.1.0` is not on npm yet. The `npx` example below will work after publication. A [local package archive has been tested](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/validation.md).
 
-> **Compatibility and data limits:** Live behavior has been checked with one account at 9NBC. Other AimHarder gyms may use different data or response formats. Published workouts come from a limited feed view, upcoming bookings have no verified future-date horizon, and booking history has no verified complete-history horizon. An empty result may therefore be less conclusive than it looks. Check important details in AimHarder, especially before acting on a schedule or booking. [How to interpret results](docs/tools.md#coverage-and-interpretation)
+**Data limits:** Live checks used one account at 9NBC. Other gyms may differ. Workout and booking views can be incomplete, so an empty result may not mean there is nothing to show. [Details](docs/tools.md#coverage-and-interpretation)
 
 ## Get started
 
-1. Install **Node.js 24 or newer** on the computer that will run the MCP server. This package supports Node `>=24`.
-2. Arrange for that desktop client to receive `AIMHARDER_USERNAME` and `AIMHARDER_PASSWORD` from its process environment or a secrets manager. Do not paste credentials into a shared config file. The server assumes `Europe/Madrid` for gyms without a configured time zone; check the assumption before relying on date-based answers. See [configuration](docs/configuration.md).
-3. Add a local **stdio** MCP server to your client. A generic client configuration looks like this when its process already receives the required environment variables:
+1. Install Node.js **24 or newer**.
+2. Supply `AIMHARDER_USERNAME` and `AIMHARDER_PASSWORD` to the server process through your client or a secrets manager. Keep them out of shared configuration. The server assumes `Europe/Madrid` unless you [configure your gym's time zone](docs/configuration.md).
+3. Add a local stdio server to your client. This generic JSON example assumes the client passes the required environment variables:
 
    ```json
    {
@@ -23,42 +23,33 @@ A local, read-only [Model Context Protocol (MCP)](https://modelcontextprotocol.i
    }
    ```
 
-   Client configuration formats and environment handling differ; use the matching guide below. The server does not read `.env` files automatically.
-4. Ask your client an AimHarder question, such as “What is tomorrow's WOD?” The first valid tool call authenticates with AimHarder. To inspect your gym ID or the assumed time zone, optionally call `get_account_context` with `{}`; configure the gym's actual IANA zone if `Europe/Madrid` is wrong.
-
-If you prefer a private environment file or a local install, follow [the complete configuration guide](docs/configuration.md#private-file-and-local-installation). The desktop client launches the server locally; no hosted project service or project-specific API key is required.
+4. Ask your client an AimHarder question, such as “What is tomorrow's WOD?” The first valid tool call signs in. See the guide for your client below for its configuration format and credential options.
 
 ## Desktop clients
 
-These guides are for desktop or locally running clients. Mobile-app compatibility has not been investigated for this release.
+- [ChatGPT desktop](docs/clients/chatgpt-desktop.md)
+- [Claude Desktop](docs/clients/claude-desktop.md)
+- [Hermes](docs/clients/hermes.md)
+- [OpenClaw](docs/clients/openclaw.md)
 
-| Client | Setup guide | Verification with this package |
-| --- | --- | --- |
-| ChatGPT desktop with a local STDIO option | [ChatGPT desktop](docs/clients/chatgpt-desktop.md) | STDIO setup form observed; package connection not yet checked. |
-| Claude Desktop | [Claude Desktop](docs/clients/claude-desktop.md) | Setup documented from the client guide; package connection not yet checked. |
-| Hermes | [Hermes](docs/clients/hermes.md) | Locally installed package initialized, listed six tools, and answered a future-WOD question; see [validation](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/validation.md). |
-| OpenClaw | [OpenClaw](docs/clients/openclaw.md) | Setup documented from the client guide; package connection not yet checked. |
+Hermes has been tested with a local package archive. The ChatGPT desktop STDIO form has been observed; package connections in ChatGPT, Claude Desktop and OpenClaw have not been verified. Mobile apps are outside the current setup guides.
 
-The [generic JSON example](#get-started) is illustrative: copy a client's own schema and secret-passing rules rather than assuming all clients accept the same object.
+## Tools
 
-## Tools and example questions
-
-The server exposes a set of MCP tools. Class names and workout instructions retain AimHarder's source language; the client can explain them in yours. [Inputs, outputs, and coverage details](docs/tools.md)
-
-| Tool | What it helps answer |
+| Tool | Example question |
 | --- | --- |
-| `get_account_context` | “Which of my gyms can I query?” and “Which gym is selected?” |
-| `get_class_sessions` | “What classes are available this week?” and “How many places are occupied in Wednesday's 07:00 Metcon?” |
-| `get_published_workouts` | “What is the WOD for tomorrow?” and “What exercises are in each published level?” |
-| `get_upcoming_bookings` | “What upcoming bookings can AimHarder show for me?” |
-| `get_booking_history` | “What booking history is currently available?” |
-| `get_personal_activity` | “What did I record in this date range?” |
+| `get_account_context` | Which gyms can I query? |
+| `get_class_sessions` | What classes are available this week? |
+| `get_published_workouts` | What is tomorrow's WOD? |
+| `get_upcoming_bookings` | When am I booked? |
+| `get_booking_history` | Which past bookings are available? |
+| `get_personal_activity` | What activity did I record this month? |
 
-A client can combine these tools to answer “What is tomorrow's WOD, and when am I booked?” or query successive activity ranges for the last five **activity entries** and a previous-month entry count. An activity entry is a record, not proof of class attendance or one distinct physical training session. Several entries on one day count separately. [Examples and boundaries](docs/tools.md#questions-that-combine-tools)
+Clients can combine tools for questions about workouts and bookings, or count recent **activity entries**. An activity entry does not establish attendance or one distinct training session. See [tool inputs and coverage](docs/tools.md).
 
 ## Roadmap
 
-These are proposed future capabilities, not features of the current read-only server. There are no committed dates or versions; issues will be linked when available.
+Planned capabilities, without committed dates or versions:
 
 - [ ] Create and cancel bookings.
 - [ ] Look up personal exercise RMs and show calculated loads alongside the original `%RM` prescription in future activities.
@@ -68,7 +59,7 @@ These are proposed future capabilities, not features of the current read-only se
 
 ## Contributing
 
-Bug reports and contributions are welcome in [GitHub Issues](https://github.com/rudeayelo/aimharder-mcp/issues). Please describe the affected gym or client without posting passwords, cookies, private activity, or other people's data. The [MVP specification](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/mvp.md), [validation record](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/validation.md), and [development guide](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/development.md) are available in the repository.
+Report bugs or propose changes in [GitHub Issues](https://github.com/rudeayelo/aimharder-mcp/issues). Keep credentials and private activity out of reports. See the [development guide](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/development.md) to contribute code.
 
 ## License
 
