@@ -7,7 +7,7 @@ The first npm version, `aimharder-mcp@0.1.0`, has not yet been published. Prepar
 ## Add the server
 
 1. If your desktop build offers **Settings → Plugins → MCPs**, choose **Add server** to open **Connect to a custom MCP**. Set **Name** to `aimharder` and **Type** to **STDIO**.
-2. Set **Command to launch** to `npx`. Ensure the app can find `npx` and Node 24 or newer on its `PATH`.
+2. Set **Command to launch** to `npx`.
 3. Add two separate **Arguments**: `--yes` and `aimharder-mcp@0.1.0`, in that order.
 4. Under **Environment variable passthrough**, add `AIMHARDER_USERNAME` and `AIMHARDER_PASSWORD` as names, with no values. They must already be available to the desktop app through your own environment or secrets manager. If you configure a gym zone override, also pass `AIMHARDER_GYM_TIME_ZONES`; pass `AIMHARDER_DEFAULT_GYM` only when configured. Do not paste credential values into the form's **Environment variables** key/value fields.
 5. Leave **Working directory** empty unless your desktop build requires one. Save the server.

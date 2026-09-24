@@ -6,7 +6,7 @@ Follow the shared [Node 24 or newer and credential setup](../configuration.md). 
 
 ## Configure the server
 
-Add this entry under the existing `mcp_servers` mapping in the selected Hermes profile's `config.yaml` (normally `~/.hermes/config.yaml`), preserving other settings. Ensure Hermes can resolve Node 24 or newer and `npx` from its `PATH`:
+Add this entry under the existing `mcp_servers` mapping in the selected Hermes profile's `config.yaml` (normally `~/.hermes/config.yaml`), preserving other settings:
 
 ```yaml
 mcp_servers:

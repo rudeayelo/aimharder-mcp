@@ -31,7 +31,7 @@ command: npx
 arguments: --yes, aimharder-mcp@0.1.0
 ```
 
-Ensure the client can find `npx` and Node 24 or newer on its `PATH`. A GUI client's environment may differ from your terminal. If you cannot provide that environment reliably, use the direct Node executable in the [private-file setup](#private-file-and-local-installation). The MCP protocol uses stdout, so avoid a wrapper such as `pnpm start` that might print nonprotocol output. The server fetches current AimHarder data on demand, without a persistent cache.
+If the client reports that it cannot launch `npx`, check whether its process can find the installed Node and npm commands; a GUI app's environment can differ from your terminal. The direct Node executable in the [private-file setup](#private-file-and-local-installation) is another option. The MCP protocol uses stdout, so avoid a wrapper such as `pnpm start` that might print nonprotocol output. The server fetches current AimHarder data on demand, without a persistent cache.
 
 ## Private file and local installation
 

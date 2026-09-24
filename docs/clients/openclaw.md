@@ -6,7 +6,7 @@ Install Node 24 or newer and arrange for `AIMHARDER_USERNAME` and `AIMHARDER_PAS
 
 ## Save a local stdio server
 
-Set `mcp.servers.aimharder` to this definition, ensuring OpenClaw can find `npx` and Node 24 or newer on its `PATH`:
+Set `mcp.servers.aimharder` to this definition:
 
 ```json
 {
