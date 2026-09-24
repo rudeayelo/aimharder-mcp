@@ -1,10 +1,10 @@
 # ADR: Automate npm versioning and publishing with GitHub Actions
 
-Status: accepted and implemented on 2026-09-24; first automated publication passed, local authenticated registry check pending.
+Status: accepted, implemented, and first OIDC release verified on 2026-09-24.
 
 ## Context
 
-The public `aimharder-mcp` package is currently versioned, published, and verified through the manual procedure in [releasing.md](../releasing.md). The repository has no GitHub Actions workflows. The [npm distribution decision](2026-09-22-npm-distribution-for-mvp.md) requires verification of the exact public registry artifact through a live, read-only MCP check.
+At the time of this decision, the public `aimharder-mcp` package was versioned, published, and verified through the manual procedure in [releasing.md](../releasing.md), and the repository had no GitHub Actions workflows. The [npm distribution decision](2026-09-22-npm-distribution-for-mvp.md) requires verification of the exact public registry artifact through a live, read-only MCP check.
 
 ## Decision
 
@@ -22,11 +22,11 @@ The user confirmed these release-policy choices on 2026-09-24:
 - Before merging changes to authentication or AimHarder API interpretation, perform the applicable authorized live checks locally. Changes confined to documentation do not require those live checks. GitHub CI remains the automated pre-publication gate.
 - Require pull requests and passing CI checks for changes to `main`; direct pushes must not bypass the release pull request review path.
 - If publication succeeds but the local registry-artifact MCP check fails, record the version as published but unverified or verification-failed, investigate, and publish a corrected version. Consider deprecating the defective npm version if it affects users; do not try to replace the immutable version.
-- After the first successful and verified OIDC publication, configure npm publishing access to disallow traditional publish tokens. Do not disable the existing publication path before the replacement has been proven.
+- After the first successful and verified OIDC publication, configure npm publishing access to disallow bypass-2FA publish tokens. Do not disable the existing publication path before the replacement has been proven.
 
-The workflow implementation merged through [PR #16](https://github.com/rudeayelo/aimharder-mcp/pull/16). Its CI passed, `main` branch protection is active, and the limited GitHub App and npm OIDC trusted publisher are configured. Actions created and checked [version PR #17](https://github.com/rudeayelo/aimharder-mcp/pull/17), then [published `0.1.2`](https://github.com/rudeayelo/aimharder-mcp/actions/runs/36023101635) after its merge. The local authenticated check of that exact registry version is still pending.
+The workflow implementation merged through [PR #16](https://github.com/rudeayelo/aimharder-mcp/pull/16). Its CI passed, `main` branch protection is active, and the limited GitHub App and npm OIDC trusted publisher are configured. Actions created and checked [version PR #17](https://github.com/rudeayelo/aimharder-mcp/pull/17), then [published `0.1.2`](https://github.com/rudeayelo/aimharder-mcp/actions/runs/36023101635) after its merge. The local authenticated check of that exact registry version passed as recorded in [validation](../validation.md#automated-npm-release-012-2026-09-24). npm publishing access now disallows bypass-2FA tokens while retaining the trusted publisher.
 
-## Planned workflow
+## Workflow
 
 1. A contributor adds a changeset when a pull request changes the distributed package. PR CI checks type safety, fixtures, build, and the isolated package archive. Applicable authenticated API checks are run locally and recorded before merging.
 2. A merge to `main` with pending changesets makes the version job create or update a release pull request. Its commit updates `package.json`, the changelog, version-pinned consumer documentation, and the lockfile when required. The GitHub App token lets the PR's CI run without manual activation.
@@ -49,7 +49,7 @@ Creating the release pull request with the repository `GITHUB_TOKEN` would requi
 
 The workflow must use a GitHub-hosted runner and grant `id-token: write` only to the publishing job. npm package settings must authorize the exact GitHub repository and workflow file for direct `npm publish`. Publication remains irrevocable for a version, so offline tests and archive checks must pass before the publish step.
 
-Repository settings must permit GitHub Actions to create pull requests and must enforce the selected CI checks on `main`. The GitHub App needs the narrow permissions required to write the release branch and pull request. The release workflow must update the lockfile and all pinned consumer examples together with the package version.
+Repository settings must permit GitHub Actions to create pull requests and must enforce the selected CI checks on `main`. The GitHub App needs the narrow permissions required to write the release branch and pull request. The release workflow must reconcile the lockfile and update all pinned consumer examples together with the package version.
 
 When an authenticated live check is needed before merging a feature pull request, its result must be recorded with the change. The CI workflow must not receive AimHarder account credentials. After an automated publish, the release record must leave the live verification state explicit until the local registry check is completed. Failure to create a tag or GitHub Release after npm accepts a version must be repaired against that same published version; it must not trigger a second publish attempt for the same version.
 
