@@ -1,6 +1,6 @@
 # ADR: npm distribution as the final MVP milestone
 
-Status: accepted by the user on 2026-09-22; local package implementation and verification complete; registry publication pending.
+Status: accepted by the user on 2026-09-22; functional QA accepted on 2026-09-24; registry publication pending.
 
 ## Context
 
@@ -11,6 +11,8 @@ Repository setup requires a checkout and a local build. The user approved two di
 Include public npm distribution in MVP acceptance. Prefer the unscoped name `aimharder-mcp`; confirm publishability and the publishing account before release. An npm registry lookup returned E404 on 2026-09-22, which establishes no current package record, not a reservation or guaranteed publication rights.
 
 [Issue #11](https://github.com/rudeayelo/aimharder-mcp/issues/11) delivers a compiled, installable package verified outside the checkout through an MCP client or harness, including account/gym discovery. It can start immediately because account/gym discovery is complete. [Issue #12](https://github.com/rudeayelo/aimharder-mcp/issues/12) publishes and verifies the public registry artifact after #11 and the terminal functional branches #6, #7, #9, and #10. Native blocking relationships are recorded in GitHub. On 2026-09-23 the user approved a separate [QA #13](https://github.com/rudeayelo/aimharder-mcp/issues/13) functional acceptance gate before #12, transferring the unverified future-workout live check from closed implementation #6. QA closure requires the evidence, not merely closed implementation tickets. #12 retains publication and exact registry-version verification; full MVP closure requires both tickets.
+
+On 2026-09-24 the user accepted the aggregated manual Hermes and independent live evidence for the first release in place of #13's exact single-run future-content harness criterion; see the [functional QA evidence decision](2026-09-24-functional-qa-evidence-for-first-release.md). The original run remains unperformed and is not reported as passed.
 
 This supersedes only the repository-only distribution decision in [the MVP ADR](2026-09-21-local-typescript-mcp-mvp.md) and [the runtime ADR](2026-09-21-account-discovery-and-local-runtime.md). The [public repository and MIT license decision](2026-09-21-public-repository-and-mit-license.md) remains valid. The server remains local, read-only, and configured for one account per instance.
 
