@@ -21,7 +21,15 @@ try {
   const [archive] = JSON.parse(packed.stdout);
   const paths = archive.files.map(file => file.path);
   assert.ok(paths.includes('dist/index.js'));
-  for (const path of paths) assert.match(path, /^(?:dist\/[a-z-]+\.js|README\.md|LICENSE|CONTEXT\.md|package\.json|docs\/[a-z0-9/.-]+\.md)$/, `Unexpected archive path: ${path}`);
+  const consumerDocs = new Set([
+    'docs/configuration.md', 'docs/tools.md',
+    'docs/clients/chatgpt-desktop.md', 'docs/clients/claude-desktop.md',
+    'docs/clients/hermes.md', 'docs/clients/openclaw.md',
+  ]);
+  for (const path of paths) {
+    assert.ok(/^(?:dist\/[a-z-]+\.js|README\.md|LICENSE|CONTEXT\.md|package\.json)$/.test(path) || consumerDocs.has(path), `Unexpected archive path: ${path}`);
+  }
+  for (const path of consumerDocs) assert.ok(paths.includes(path), `Missing consumer documentation: ${path}`);
   await writeFile(join(work, 'package.json'), JSON.stringify({ private: true, type: 'module' }));
   await run('npm', ['install', '--ignore-scripts', '--omit=dev', '--no-audit', '--no-fund', join(work, archive.filename)], { cwd: work, env: baseEnv, timeout: 120_000 });
   const installed = join(work, 'node_modules/aimharder-mcp');

@@ -37,7 +37,9 @@
     "README.md",
     "LICENSE",
     "CONTEXT.md",
-    "docs/**/*.md"
+    "docs/configuration.md",
+    "docs/tools.md",
+    "docs/clients/*.md"
   ],
   "repository": {
     "type": "git",
