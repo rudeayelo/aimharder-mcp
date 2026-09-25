@@ -1,6 +1,6 @@
 # ADR: read-only cancellation preparation from a daily reservation
 
-Status: accepted for issue #24 on 2026-09-25; amended after read-only live evidence for #27 on 2026-09-25. Standard execution is described in [the cancellation execution decision](2026-09-25-booking-cancellation-execution.md); live contract validation remains pending in #27.
+Status: accepted for issue #24 on 2026-09-25; amended after live evidence for #27 on 2026-09-25. Standard execution is described in [the cancellation execution decision](2026-09-25-booking-cancellation-execution.md).
 
 ## Decision
 
@@ -10,4 +10,4 @@ The preview shows the gym, class, local times, current booked state, possible cr
 
 ## Consequences
 
-Issue #24 itself added no cancellation POST or late attempt. Fixtures establish public MCP behavior but do not verify live `idres` shape, eligibility, credit balance, or cancellation response semantics. The published npm package remains read-only; the checkout's cancellation preview is a later feature phase. The execution decision requires a fresh recheck and explicit action-time confirmation before a write.
+Issue #24 itself added no cancellation POST or late attempt. The later #27 cycle observed a positive account-scoped `idres` before a standard cancellation; AimHarder removed it from the row after cancellation. This one observation does not establish every eligibility or credit effect. The published npm package remains read-only; the checkout's cancellation preview is a later feature phase. The execution decision requires a fresh recheck and explicit action-time confirmation before a write.

@@ -1,6 +1,6 @@
 # ADR: manual booking writes for the next feature phase
 
-Status: accepted for feature scope on 2026-09-24; the checkout's creation and cancellation flows are implemented under the [creation preparation decision](2026-09-25-booking-creation-preparation.md), [creation execution decision](2026-09-25-booking-creation-execution.md), [cancellation preparation decision](2026-09-25-booking-cancellation-preparation.md), [standard cancellation decision](2026-09-25-booking-cancellation-execution.md), and [late confirmation decision](2026-09-25-late-cancellation-confirmation.md). Upstream write contracts remain unverified live.
+Status: accepted for feature scope on 2026-09-24; the checkout's creation and cancellation flows are implemented under the [creation preparation decision](2026-09-25-booking-creation-preparation.md), [creation execution decision](2026-09-25-booking-creation-execution.md), [cancellation preparation decision](2026-09-25-booking-cancellation-preparation.md), [standard cancellation decision](2026-09-25-booking-cancellation-execution.md), and [late confirmation decision](2026-09-25-late-cancellation-confirmation.md). One standard creation/cancellation cycle at 9NBC was observed live on 2026-09-25; late and other branches remain unverified upstream.
 
 ## Decision
 

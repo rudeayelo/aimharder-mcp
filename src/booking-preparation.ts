@@ -38,7 +38,7 @@ export type CancellationCandidate = {
   currentState: 'booked' | 'waitlisted' | 'cancelled' | 'unbooked' | 'unknown';
   eligibility: 'offered' | 'unsupported';
 };
-export type InternalCancellationCandidate = CancellationCandidate & { reservationId: number | null };
+export type InternalCancellationCandidate = CancellationCandidate & { sourceId: number; reservationId: number | null };
 
 export function cancellationCandidates(body: unknown, gymId: string, date: string, timeZone: string, query: BookingCancellationQuery): InternalCancellationCandidate[] {
   const sessions = parseClassDay(body, gymId, date, timeZone);
@@ -54,7 +54,7 @@ export function cancellationCandidates(body: unknown, gymId: string, date: strin
     // Waitlist leaves belong to a later feature, even if the frontend offers them.
     const offered = flags.success && state === 'booked' && flags.data.idres !== null && flags.data.enabled === 1
       && flags.data.resadmin === 0 && (flags.data.hidden === undefined || flags.data.hidden === 0);
-    return [{ reservationId: flags.success ? flags.data.idres : null, className: session.classType.name, date,
+    return [{ sourceId: session.sourceId, reservationId: flags.success ? flags.data.idres : null, className: session.classType.name, date,
       startTime: session.startTime, endTime, currentState: state,
       eligibility: offered ? 'offered' as const : 'unsupported' as const }];
   });

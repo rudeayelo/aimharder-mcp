@@ -120,7 +120,7 @@ export class AimHarderClient {
         : candidate.currentState === 'waitlisted' ? 'waitlisted' as const
           : candidate.eligibility === 'offered' ? 'ready' as const : 'unsupported' as const;
       const notices = [
-        'This is a read-only schedule snapshot. Preparation does not reserve a place; the write contract and final eligibility remain unverified.',
+        'This is a read-only schedule snapshot. Preparation does not reserve a place or prove final eligibility.',
         'A booking may use a credit. No verified available balance or entitlement period is available.',
         ...(status === 'ready' && gym.id === 'noubarriscrosstraining' && nearReportedBookingCutoff(query.date, query.startTime, gym.timeZone)
           ? ['This class is near 9NBC’s reported one-hour booking cutoff by gym-local wall time. The actual eligibility is decided by AimHarder; this warning does not reject the request.'] : []),
@@ -195,7 +195,7 @@ export class AimHarderClient {
         : scheduleState === 'waitlisted' ? 'waitlisted' as const
           : scheduleState === 'unbooked' && denied ? 'rejected' as const : 'uncertain' as const;
       return { ...base, status, observedState: scheduleState, notices: [
-        'One standard booking request was attempted. Its response contract has not been verified with a live booking.',
+        'One standard booking request was attempted. Fresh booking reads, not the HTTP response alone, determine the reported state.',
         status === 'confirmed' ? 'A fresh schedule read reported a confirmed booking.'
           : status === 'waitlisted' ? 'A fresh schedule read reported a waitlist state; no further write was sent.'
             : status === 'rejected' ? 'The source returned a denial indication and the fresh schedule remains unbooked. Denial semantics remain unverified live.'
@@ -216,7 +216,7 @@ export class AimHarderClient {
       // This account-scoped daily schedule supplies idres; upcoming IDs are not a verified join.
       const body = await this.#request({ kind: 'classes', gymId: gym.id, boxId, date: query.date });
       const candidates = cancellationCandidates(body, gym.id, query.date, gym.timeZone, query);
-      const alternatives = candidates.map(({ reservationId: _reservationId, ...candidate }) => candidate);
+      const alternatives = candidates.map(({ reservationId: _reservationId, sourceId: _sourceId, ...candidate }) => candidate);
       const base = { action: 'cancel' as const, gym, target: {
         className: query.className, date: query.date, startTime: query.startTime, endTime: query.endTime,
       }, alternatives };
@@ -288,6 +288,7 @@ export class AimHarderClient {
       let conflicting = false;
       let reconciliationIssue = false;
       let sameActionableReservation = false;
+      let releasedSameSession = false;
       try {
         const read = async (operation: { kind: 'classes'; gymId: string; boxId: number; date: string } | { kind: 'upcoming'; gymId: string; boxId: number }) => {
           try { return await this.#request(operation); }
@@ -298,9 +299,12 @@ export class AimHarderClient {
           }
         };
         const after = cancellationCandidates(await read({ kind: 'classes', gymId: gym.id, boxId, date: target.date }), gym.id, target.date, gym.timeZone!, target);
-        if (after.length === 1 && after[0]!.reservationId === entry.reservationId) observedState = after[0]!.currentState;
+        const sameSourceSession = after.length === 1 && after[0]!.sourceId === before[0]!.sourceId;
+        const sameReservation = sameSourceSession && after[0]!.reservationId === entry.reservationId;
+        releasedSameSession = sameSourceSession && after[0]!.reservationId === null && after[0]!.currentState === 'unbooked';
+        if (sameReservation || releasedSameSession) observedState = after[0]!.currentState;
         else conflicting = true;
-        sameActionableReservation = after.length === 1 && after[0]!.reservationId === entry.reservationId && after[0]!.eligibility === 'offered';
+        sameActionableReservation = sameReservation && after[0]!.eligibility === 'offered';
         const upcoming = parseUpcomingBookings(await read({ kind: 'upcoming', gymId: gym.id, boxId }), gym.timeZone!);
         const matches = upcoming.filter(item => item.date === target.date && item.startTime === target.startTime
           && item.timeLabel.endsWith(target.endTime) && (item.classType.name === target.className || item.classType.name === null));
@@ -309,14 +313,14 @@ export class AimHarderClient {
       const parsedResponse = z.object({ cancelState: z.number().int() }).safeParse(response);
       const result = parsedResponse.success ? parsedResponse.data.cancelState : null;
       const status = conflicting || reconciliationIssue || writeIssue ? 'uncertain' as const
-        : result === 1 && observedState === 'cancelled' ? 'confirmed' as const
+        : result === 1 && (observedState === 'cancelled' || releasedSameSession) ? 'confirmed' as const
           : !late && result === 2 && observedState === 'booked' && sameActionableReservation ? 'pending-credit-loss' as const
             : result === 3 && observedState === 'booked' ? 'rejected' as const : 'uncertain' as const;
       const lateReference = status === 'pending-credit-loss'
         ? this.#bookingPreparations.issueLateCancellation(this.#accountId!, boxId, entry.reservationId, preview) : {};
       return { ...base, status, observedState, notices: [
-        `One ${late ? 'late' : 'standard'} cancellation request was attempted. Its response contract has not been verified with a live cancellation.`,
-        status === 'confirmed' ? 'A fresh schedule read supports a cancelled reservation. No credit balance or refund was verified.'
+        `One ${late ? 'late' : 'standard'} cancellation request was attempted. Fresh booking reads, not the HTTP response alone, determine the reported state.`,
+        status === 'confirmed' ? 'Fresh schedule and upcoming reads support no active booking for the target. No credit balance or refund was verified.'
           : status === 'pending-credit-loss' ? 'AimHarder indicated possible late credit loss. The reservation remains booked. No second cancellation request was sent. Show the exact class, current state, and possible loss, then obtain a separate explicit account-holder confirmation before a late attempt.'
             : status === 'rejected' ? 'AimHarder indicated a denial and the reservation remains booked.'
               : 'The cancellation outcome is uncertain. Inspect the reservation directly before preparing another action; no automatic retry was sent.',

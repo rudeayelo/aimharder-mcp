@@ -8,6 +8,7 @@ import { createServer } from '../src/server.js';
 const upstream = setupServer();
 const connections: { client: Client; server: ReturnType<typeof createServer> }[] = [];
 let reservationId: number | null;
+let sourceSessionId: number;
 let bookState: number | null;
 let cancelledId: number | null;
 let duplicate = false;
@@ -17,7 +18,7 @@ let writes: string[];
 let response: () => Response;
 let scheduleReads: number;
 
-const row = (id = 501, idres = reservationId) => ({ id, idres, classId: 10, className: 'Open Box', time: '10:00 - 11:00',
+const row = (id = sourceSessionId, idres = reservationId) => ({ id, idres, classId: 10, className: 'Open Box', time: '10:00 - 11:00',
   ocupation: 8, limit: 20, enabled: 1, bookState, cancelledId, resadmin: 0 });
 const day = () => ({ clasesDisp: 'Classes', day: 'Source label', bookings: missing ? [] : duplicate ? [row(), row(502, 901)] : [row()], timetable: [], seminars: [] });
 const upcoming = () => ({ nextClasses: upcomingState === null ? [] : [{ id: 777, day: 'Sábado, 26 de Septiembre de 2026',
@@ -25,7 +26,7 @@ const upcoming = () => ({ nextClasses: upcomingState === null ? [] : [{ id: 777,
 
 beforeAll(() => upstream.listen({ onUnhandledRequest: 'error' }));
 beforeEach(() => {
-  reservationId = 900; bookState = 1; cancelledId = null; duplicate = false; missing = false; upcomingState = 1; writes = []; scheduleReads = 0;
+  reservationId = 900; sourceSessionId = 501; bookState = 1; cancelledId = null; duplicate = false; missing = false; upcomingState = 1; writes = []; scheduleReads = 0;
   response = () => { bookState = null; cancelledId = 900; upcomingState = null; return HttpResponse.json({ cancelState: 1 }); };
   upstream.use(
     http.post('https://login.aimharder.es/api/login', () => HttpResponse.json({ data: { userData: { id: 42 }, auth: { authOK: true } } },
@@ -130,6 +131,24 @@ test('a cancelled row for another reservation cannot confirm the attempted cance
   const result = await execute(client, await prepare(client));
   expect(result.structuredContent).toMatchObject({ status: 'uncertain', observedState: 'unknown' });
   expect(writes).toHaveLength(1);
+});
+
+test('a successful response and the same released session confirm when the source removes the reservation ID', async () => {
+  response = () => { reservationId = null; bookState = null; cancelledId = null; upcomingState = null; return HttpResponse.json({ cancelState: 1 }); };
+  const client = await connect();
+  const result = await execute(client, await prepare(client));
+  expect(result.structuredContent).toMatchObject({ status: 'confirmed', observedState: 'unbooked' });
+  expect(writes).toHaveLength(1);
+});
+
+test('a different session or an upcoming booking cannot confirm a released reservation', async () => {
+  const client = await connect();
+  response = () => { sourceSessionId = 502; reservationId = null; bookState = null; upcomingState = null; return HttpResponse.json({ cancelState: 1 }); };
+  expect((await execute(client, await prepare(client))).structuredContent).toMatchObject({ status: 'uncertain' });
+  sourceSessionId = 501; reservationId = 900; bookState = 1; upcomingState = 1;
+  response = () => { reservationId = null; bookState = null; return HttpResponse.json({ cancelState: 1 }); };
+  expect((await execute(client, await prepare(client))).structuredContent).toMatchObject({ status: 'uncertain' });
+  expect(writes).toHaveLength(2);
 });
 
 test('crossing the 9NBC credit-loss boundary after preparation requires a new warning', async () => {

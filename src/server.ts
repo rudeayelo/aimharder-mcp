@@ -68,7 +68,7 @@ export function createServer(environment: Record<string, string | undefined>) {
     }
   });
   server.registerTool('execute_booking_creation', {
-    description: 'Create exactly one booking from a fresh prepare_booking_creation reference. The MCP client MUST show the exact gym, class, local date/time and credit uncertainty from that preview and obtain explicit account-holder confirmation before calling with confirmed: true. A reference alone does not prove consent. Rechecks the target and sends at most one standard write, then reconciles with fresh reads. The upstream write response contract has not been verified live. An uncertain result requires manual inspection before a new action.',
+    description: 'Create exactly one booking from a fresh prepare_booking_creation reference. The MCP client MUST show the exact gym, class, local date/time and credit uncertainty from that preview and obtain explicit account-holder confirmation before calling with confirmed: true. A reference alone does not prove consent. Rechecks the target and sends at most one standard write, then reconciles with fresh reads. One standard creation was observed at 9NBC; other response branches remain unverified live. An uncertain result requires manual inspection before a new action.',
     inputSchema: bookingExecutionSchema,
     outputSchema: z.object({ action: z.literal('create'), status: z.enum(['confirmed', 'rejected', 'waitlisted', 'uncertain', 'stale']),
       gym: gymSchema, target: z.object({ className: z.string(), date: dateSchema, startTime: z.string(), endTime: z.string() }),
@@ -105,7 +105,7 @@ export function createServer(environment: Record<string, string | undefined>) {
     }
   });
   server.registerTool('execute_booking_cancellation', {
-    description: 'Cancel one exact prepared booking. The MCP client MUST show the gym, class, local date/time, current booked state and possible credit loss from the preview, then obtain explicit account-holder confirmation before calling with confirmed: true. A reference alone does not prove consent. Rechecks the reservation, sends at most one standard cancellation request, then reconciles with fresh reads. A late-credit-loss warning remains pending; never retry automatically. The upstream write contract is not verified live.',
+    description: 'Cancel one exact prepared booking. The MCP client MUST show the gym, class, local date/time, current booked state and possible credit loss from the preview, then obtain explicit account-holder confirmation before calling with confirmed: true. A reference alone does not prove consent. Rechecks the reservation, sends at most one standard cancellation request, then reconciles with fresh reads. A late-credit-loss warning remains pending; never retry automatically. One standard cancellation was observed at 9NBC; late and other response branches remain unverified live.',
     inputSchema: bookingExecutionSchema,
     outputSchema: z.object({ action: z.literal('cancel'), status: z.enum(['confirmed', 'rejected', 'pending-credit-loss', 'uncertain', 'stale']),
       gym: gymSchema, target: z.object({ className: z.string(), date: dateSchema, startTime: z.string(), endTime: z.string() }),
