@@ -46,9 +46,9 @@ afterEach(async () => {
 });
 afterAll(() => upstream.close());
 
-async function connect() {
+async function connect(gymId = 'sample-gym') {
   const server = createServer({ AIMHARDER_USERNAME: 'account@example.invalid', AIMHARDER_PASSWORD: 'synthetic',
-    AIMHARDER_GYM_TIME_ZONES: '{"sample-gym":"Europe/Madrid"}' });
+    AIMHARDER_GYM_TIME_ZONES: JSON.stringify({ [gymId]: 'Europe/Madrid' }) });
   const client = new Client({ name: 'cancellation-execution-test', version: '1.0.0' });
   const [a, b] = InMemoryTransport.createLinkedPair();
   connections.push({ client, server });
@@ -122,6 +122,37 @@ test('denial with unchanged reservation is rejected; conflicting views remain un
   response = () => { bookState = null; cancelledId = 900; return HttpResponse.json({ cancelState: 1 }); };
   expect((await execute(client, await prepare(client))).structuredContent).toMatchObject({ status: 'uncertain' });
   expect(writes).toHaveLength(2);
+});
+
+test('a cancelled row for another reservation cannot confirm the attempted cancellation', async () => {
+  response = () => { reservationId = 901; bookState = null; cancelledId = 901; upcomingState = null; return HttpResponse.json({ cancelState: 1 }); };
+  const client = await connect();
+  const result = await execute(client, await prepare(client));
+  expect(result.structuredContent).toMatchObject({ status: 'uncertain', observedState: 'unknown' });
+  expect(writes).toHaveLength(1);
+});
+
+test('crossing the 9NBC credit-loss boundary after preparation requires a new warning', async () => {
+  upstream.use(
+    http.get('https://aimharder.es/api/whoami', () => HttpResponse.json({ data: [{ id: 42, roles: [
+      { role: 'client', boid: 200, gym: 'Sample Gym', centre_url: 'noubarriscrosstraining.aimharder.es' },
+    ] }] })),
+    http.get('https://noubarriscrosstraining.aimharder.es/api/bookings', () => HttpResponse.json(day())),
+    http.post('https://noubarriscrosstraining.aimharder.es/api/cancelBook', async ({ request }) => {
+      writes.push(await request.text()); return response();
+    }),
+  );
+  vi.useFakeTimers({ toFake: ['Date'] });
+  vi.setSystemTime(new Date('2026-09-26T06:29:00Z'));
+  const client = await connect('noubarriscrosstraining');
+  const reference = await prepare(client);
+  vi.setSystemTime(new Date('2026-09-26T06:30:00Z'));
+  expect((await execute(client, reference)).structuredContent).toMatchObject({ status: 'stale', observedState: 'booked' });
+  expect(writes).toHaveLength(0);
+  const newPreview = await client.callTool({ name: 'prepare_booking_cancellation', arguments: {
+    date: '2026-09-26', className: 'Open Box', startTime: '10:00', endTime: '11:00',
+  } });
+  expect(JSON.stringify(newPreview.structuredContent)).toContain('90-minute cancellation boundary');
 });
 
 test.each(['unsupported', 'transport', 'authentication'] as const)('%s write outcome is uncertain with no replay', async (mode) => {
@@ -201,5 +232,15 @@ test.each(['denied', 'timeout'] as const)('a %s late attempt is reconciled witho
   const warned = await execute(client, await prepare(client));
   const result = await executeLate(client, (warned.structuredContent as { actionReference: string }).actionReference);
   expect(result.structuredContent).toMatchObject({ status: mode === 'denied' ? 'rejected' : 'uncertain' });
+  expect(writes).toHaveLength(2);
+});
+
+test('a repeated late warning remains uncertain rather than being called a denial', async () => {
+  response = () => HttpResponse.json({ cancelState: 2 });
+  const client = await connect();
+  const warned = await execute(client, await prepare(client));
+  const result = await executeLate(client, (warned.structuredContent as { actionReference: string }).actionReference);
+  expect(result.structuredContent).toMatchObject({ status: 'uncertain', observedState: 'booked' });
+  expect(result.structuredContent).not.toHaveProperty('actionReference');
   expect(writes).toHaveLength(2);
 });

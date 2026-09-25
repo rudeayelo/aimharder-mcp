@@ -275,6 +275,11 @@ export class AimHarderClient {
         return { ...base, status: 'stale' as const, observedState: before.length === 1 ? before[0]!.currentState : 'unknown' as const,
           notices: ['The exact reservation or its cancellation eligibility changed. No cancellation request was sent.'] };
       }
+      if (!late && gym.id === 'noubarriscrosstraining' && atPublishedCancellationBoundary(target.date, target.startTime, gym.timeZone!)
+        && !preview.notices.some(notice => notice.includes('90-minute cancellation boundary'))) {
+        return { ...base, status: 'stale' as const, observedState: 'booked' as const,
+          notices: ['The 9NBC 90-minute credit-loss boundary was reached after preparation. Prepare a new preview and confirm the possible credit loss before a cancellation request.'] };
+      }
       let response: unknown;
       let writeIssue = false;
       try { response = await this.#request({ kind: 'book-cancel', gymId: gym.id, reservationId: entry.reservationId, late }); }
@@ -293,7 +298,7 @@ export class AimHarderClient {
           }
         };
         const after = cancellationCandidates(await read({ kind: 'classes', gymId: gym.id, boxId, date: target.date }), gym.id, target.date, gym.timeZone!, target);
-        if (after.length === 1 && (after[0]!.reservationId === entry.reservationId || after[0]!.currentState === 'cancelled')) observedState = after[0]!.currentState;
+        if (after.length === 1 && after[0]!.reservationId === entry.reservationId) observedState = after[0]!.currentState;
         else conflicting = true;
         sameActionableReservation = after.length === 1 && after[0]!.reservationId === entry.reservationId && after[0]!.eligibility === 'offered';
         const upcoming = parseUpcomingBookings(await read({ kind: 'upcoming', gymId: gym.id, boxId }), gym.timeZone!);
@@ -306,7 +311,7 @@ export class AimHarderClient {
       const status = conflicting || reconciliationIssue || writeIssue ? 'uncertain' as const
         : result === 1 && observedState === 'cancelled' ? 'confirmed' as const
           : !late && result === 2 && observedState === 'booked' && sameActionableReservation ? 'pending-credit-loss' as const
-            : (result === 3 || (late && result === 2)) && observedState === 'booked' ? 'rejected' as const : 'uncertain' as const;
+            : result === 3 && observedState === 'booked' ? 'rejected' as const : 'uncertain' as const;
       const lateReference = status === 'pending-credit-loss'
         ? this.#bookingPreparations.issueLateCancellation(this.#accountId!, boxId, entry.reservationId, preview) : {};
       return { ...base, status, observedState, notices: [
