@@ -7,7 +7,7 @@ import { classQuerySchema, classSessionSchema, dateSchema } from './classes.js';
 import { upcomingBookingSchema, historicalBookingSchema } from './bookings.js';
 import { workoutQuerySchema, workoutSchema } from './workouts.js';
 import { safeError } from './errors.js';
-import { bookingCreationQuerySchema, bookingCancellationQuerySchema, bookingExecutionSchema } from './booking-preparation.js';
+import { bookingCreationQuerySchema, bookingCancellationQuerySchema, bookingExecutionSchema, lateCancellationExecutionSchema } from './booking-preparation.js';
 
 const gymSchema = z.object({
   id: gymIdSchema, name: z.string(), timeZone: z.string().nullable(), timeZoneStatus: z.enum(['assumed', 'user-confirmed']),
@@ -111,11 +111,29 @@ export function createServer(environment: Record<string, string | undefined>) {
       gym: gymSchema, target: z.object({ className: z.string(), date: dateSchema, startTime: z.string(), endTime: z.string() }),
       observedState: z.enum(['booked', 'waitlisted', 'cancelled', 'unbooked', 'unknown']),
       credit: z.object({ possibleLoss: z.string(), balance: z.null(), entitlementPeriod: z.null() }), notices: z.array(z.string()),
+      actionReference: z.string().optional(), expiresAt: z.string().optional(),
     }),
     annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
   }, async (query) => {
     try {
       const result = await client.executeBookingCancellation(query);
+      return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
+    } catch (error) {
+      return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };
+    }
+  });
+  server.registerTool('execute_late_booking_cancellation', {
+    description: 'After execute_booking_cancellation reports pending-credit-loss, the MCP client MUST show its exact gym, class, local date/time, still-booked state and possible lost credit, then obtain a SEPARATE explicit account-holder confirmation of that consequence. Only then call with the NEW actionReference and confirmedCreditLoss: true. Rechecks the same reservation, sends at most one late request, and reconciles by reading. Never retry automatically. No refund or balance is verified.',
+    inputSchema: lateCancellationExecutionSchema,
+    outputSchema: z.object({ action: z.literal('cancel'), status: z.enum(['confirmed', 'rejected', 'uncertain', 'stale']),
+      gym: gymSchema, target: z.object({ className: z.string(), date: dateSchema, startTime: z.string(), endTime: z.string() }),
+      observedState: z.enum(['booked', 'waitlisted', 'cancelled', 'unbooked', 'unknown']),
+      credit: z.object({ possibleLoss: z.string(), balance: z.null(), entitlementPeriod: z.null() }), notices: z.array(z.string()),
+    }),
+    annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
+  }, async (query) => {
+    try {
+      const result = await client.executeLateBookingCancellation(query);
       return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
     } catch (error) {
       return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };

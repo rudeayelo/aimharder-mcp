@@ -1,6 +1,6 @@
 # ADR: confirmed standard cancellation and read reconciliation
 
-Status: accepted for issue #25 on 2026-09-25. The second confirmation for a late credit-loss attempt belongs to #26; live validation belongs to #27.
+Status: accepted for issue #25 on 2026-09-25. The separate late confirmation is described in [the late cancellation decision](2026-09-25-late-cancellation-confirmation.md); live validation belongs to #27.
 
 ## Decision
 
@@ -10,4 +10,4 @@ Send at most one form `POST /api/cancelBook` with the verified schedule reservat
 
 ## Consequences
 
-The checkout can execute a standard cancellation against fixtures; no live cancellation or credit effect has been verified. The published npm package remains read-only. A pending warning requires separate action-specific confirmation under #26. The historical credential security ADR's read-only retry policy never authorizes replaying a write.
+The checkout can execute a standard cancellation against fixtures; no live cancellation or credit effect has been verified. The published npm package remains read-only. A pending warning follows the separate action-specific confirmation decision. The historical credential security ADR's read-only retry policy never authorizes replaying a write.

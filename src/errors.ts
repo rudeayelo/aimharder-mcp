@@ -1,4 +1,5 @@
 const messages = {
+  INVALID_LATE_CANCELLATION_QUERY: 'Supply a fresh late-cancellation reference and confirmedCreditLoss: true only after a separate account-holder confirmation of possible credit loss. Other selectors are not accepted.',
   INVALID_BOOKING_EXECUTION_QUERY: 'Supply a fresh action reference and confirmed: true after account-holder confirmation of the exact preview. Other selectors are not accepted.',
   BOOKING_REFERENCE_INVALID: 'The booking action reference is expired, already used, or does not match this account and gym. Prepare a fresh action.',
   INVALID_CANCELLATION_PREPARATION_QUERY: 'Supply one exact booked class name, gym-local date, start and end time, with an optional accessible gym ID. Reservation and family IDs are not accepted.',

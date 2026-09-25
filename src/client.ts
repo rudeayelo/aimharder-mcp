@@ -8,7 +8,7 @@ import { calendarDates, classQuerySchema, parseClassDay, type ClassQuery, type C
 
 import { parseFeed, parseWorkout, workoutQuerySchema, type WorkoutQuery } from './workouts.js';
 import { parseUpcomingBookings, parseBookingHistory } from './bookings.js';
-import { atPublishedCancellationBoundary, bookingCandidates, bookingCreationQuerySchema, bookingCancellationQuerySchema, bookingExecutionSchema, cancellationCandidates, BookingPreparationStore, nearReportedBookingCutoff, type BookingCreationQuery, type BookingCreationPreview, type BookingCancellationQuery, type BookingCancellationPreview, type BookingExecution } from './booking-preparation.js';
+import { atPublishedCancellationBoundary, bookingCandidates, bookingCreationQuerySchema, bookingCancellationQuerySchema, bookingExecutionSchema, lateCancellationExecutionSchema, cancellationCandidates, BookingPreparationStore, nearReportedBookingCutoff, type BookingCreationQuery, type BookingCreationPreview, type BookingCancellationQuery, type BookingCancellationPreview, type BookingExecution, type LateCancellationExecution } from './booking-preparation.js';
 
 const loginUrl = 'https://login.aimharder.es/api/login';
 const identityUrl = 'https://aimharder.es/api/whoami';
@@ -248,9 +248,20 @@ export class AimHarderClient {
   executeBookingCancellation(input: BookingExecution) {
     const parsed = bookingExecutionSchema.safeParse(input);
     if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_BOOKING_EXECUTION_QUERY'));
-    const query = parsed.data;
+    return this.#executeCancellation(parsed.data, false);
+  }
+
+  executeLateBookingCancellation(input: LateCancellationExecution) {
+    const parsed = lateCancellationExecutionSchema.safeParse(input);
+    if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_LATE_CANCELLATION_QUERY'));
+    return this.#executeCancellation(parsed.data, true);
+  }
+
+  #executeCancellation(query: { gymId?: string | undefined; actionReference: string }, late: boolean) {
     return this.#query(query.gymId, async (_gyms, { gym, boxId }, recover) => {
-      const entry = this.#bookingPreparations.take(query.actionReference, 'cancel', this.#accountId!, gym.id);
+      const entry = late
+        ? this.#bookingPreparations.take(query.actionReference, 'cancel-late', this.#accountId!, gym.id)
+        : this.#bookingPreparations.take(query.actionReference, 'cancel', this.#accountId!, gym.id);
       if (!entry) throw new AimHarderError('BOOKING_REFERENCE_INVALID');
       const { preview } = entry;
       const target = preview.target;
@@ -266,11 +277,12 @@ export class AimHarderClient {
       }
       let response: unknown;
       let writeIssue = false;
-      try { response = await this.#request({ kind: 'book-cancel', gymId: gym.id, reservationId: entry.reservationId, late: false }); }
+      try { response = await this.#request({ kind: 'book-cancel', gymId: gym.id, reservationId: entry.reservationId, late }); }
       catch { writeIssue = true; }
       let observedState: 'booked' | 'waitlisted' | 'cancelled' | 'unbooked' | 'unknown' = 'unknown';
       let conflicting = false;
       let reconciliationIssue = false;
+      let sameActionableReservation = false;
       try {
         const read = async (operation: { kind: 'classes'; gymId: string; boxId: number; date: string } | { kind: 'upcoming'; gymId: string; boxId: number }) => {
           try { return await this.#request(operation); }
@@ -283,6 +295,7 @@ export class AimHarderClient {
         const after = cancellationCandidates(await read({ kind: 'classes', gymId: gym.id, boxId, date: target.date }), gym.id, target.date, gym.timeZone!, target);
         if (after.length === 1 && (after[0]!.reservationId === entry.reservationId || after[0]!.currentState === 'cancelled')) observedState = after[0]!.currentState;
         else conflicting = true;
+        sameActionableReservation = after.length === 1 && after[0]!.reservationId === entry.reservationId && after[0]!.eligibility === 'offered';
         const upcoming = parseUpcomingBookings(await read({ kind: 'upcoming', gymId: gym.id, boxId }), gym.timeZone!);
         const matches = upcoming.filter(item => item.date === target.date && item.startTime === target.startTime
           && item.timeLabel.endsWith(target.endTime) && (item.classType.name === target.className || item.classType.name === null));
@@ -292,15 +305,17 @@ export class AimHarderClient {
       const result = parsedResponse.success ? parsedResponse.data.cancelState : null;
       const status = conflicting || reconciliationIssue || writeIssue ? 'uncertain' as const
         : result === 1 && observedState === 'cancelled' ? 'confirmed' as const
-          : result === 2 && observedState === 'booked' ? 'pending-credit-loss' as const
-            : result === 3 && observedState === 'booked' ? 'rejected' as const : 'uncertain' as const;
+          : !late && result === 2 && observedState === 'booked' && sameActionableReservation ? 'pending-credit-loss' as const
+            : (result === 3 || (late && result === 2)) && observedState === 'booked' ? 'rejected' as const : 'uncertain' as const;
+      const lateReference = status === 'pending-credit-loss'
+        ? this.#bookingPreparations.issueLateCancellation(this.#accountId!, boxId, entry.reservationId, preview) : {};
       return { ...base, status, observedState, notices: [
-        'One standard cancellation request was attempted. Its response contract has not been verified with a live cancellation.',
+        `One ${late ? 'late' : 'standard'} cancellation request was attempted. Its response contract has not been verified with a live cancellation.`,
         status === 'confirmed' ? 'A fresh schedule read supports a cancelled reservation. No credit balance or refund was verified.'
-          : status === 'pending-credit-loss' ? 'AimHarder indicated possible late credit loss. The reservation remains booked. No second cancellation request was sent.'
+          : status === 'pending-credit-loss' ? 'AimHarder indicated possible late credit loss. The reservation remains booked. No second cancellation request was sent. Show the exact class, current state, and possible loss, then obtain a separate explicit account-holder confirmation before a late attempt.'
             : status === 'rejected' ? 'AimHarder indicated a denial and the reservation remains booked.'
               : 'The cancellation outcome is uncertain. Inspect the reservation directly before preparing another action; no automatic retry was sent.',
-      ] };
+      ], ...lateReference };
     });
   }
 

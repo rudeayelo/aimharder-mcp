@@ -33,7 +33,7 @@ The currently available booking credits for a specific subscription or session p
 _Avoid_: A single monthly total across credit sources with different expiry rules.
 
 **Action reference**:
-A short-lived, single-use server token bound to one prepared booking creation or cancellation preview. It identifies a proposed action, not a completed write or proof that the account holder confirmed it.
+A short-lived, single-use server token bound to one prepared booking creation or cancellation preview. A late-credit-loss warning can issue a separate reference only after a fresh check of the same still booked reservation. A reference identifies a proposed action, not a completed write or proof that the account holder confirmed it.
 _Avoid_: Booking confirmation or reservation ID as synonyms for an action reference.
 
 **Activity entry**:

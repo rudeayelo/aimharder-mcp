@@ -1,6 +1,6 @@
 # aimharder-mcp
 
-Ask about your AimHarder classes, workouts, bookings and activity from an AI client. The published package is a local, read-only [MCP server](https://modelcontextprotocol.io/) and an independent project, neither affiliated with nor endorsed by AimHarder. The checkout also supports booking creation and standard cancellation, each with a preview and confirmed execution. Its write contracts have fixture coverage but no live acceptance.
+Ask about your AimHarder classes, workouts, bookings and activity from an AI client. The published package is a local, read-only [MCP server](https://modelcontextprotocol.io/) and an independent project, neither affiliated with nor endorsed by AimHarder. The checkout also supports booking creation and cancellation, including a separate confirmation if a late cancellation may lose a credit. Its write contracts have fixture coverage but no live acceptance.
 
 **Data limits:** Live checks used one account at one location (9NBC). Other gyms may differ. Workout and booking views can be incomplete, so an empty result may not mean there is nothing to show. [Details](docs/tools.md#coverage-and-interpretation)
 
@@ -43,6 +43,7 @@ Hermes and Codex CLI have called the account tool through the published package.
 | `execute_booking_creation` (checkout) | Book the exact preview after explicit account-holder confirmation. |
 | `prepare_booking_cancellation` (checkout) | Preview cancelling one existing booking without changing it. |
 | `execute_booking_cancellation` (checkout) | Cancel the exact preview after explicit account-holder confirmation. |
+| `execute_late_booking_cancellation` (checkout) | After a warning, attempt late cancellation only with separate confirmation of possible credit loss. |
 | `get_published_workouts` | What is tomorrow's WOD? |
 | `get_upcoming_bookings` | When am I booked? |
 | `get_booking_history` | Which past bookings are available? |
@@ -54,7 +55,7 @@ Clients can combine tools for questions about workouts and bookings, or count re
 
 Planned capabilities, without committed dates or versions:
 
-- [ ] Complete live validation of booking creation and cancellation. The checkout's write contracts remain unverified upstream; late credit-loss confirmation is pending.
+- [ ] Complete live validation of booking creation and cancellation. The checkout's standard and late write contracts remain unverified upstream.
 - [ ] Look up personal exercise RMs and show calculated loads alongside the original `%RM` prescription in future activities.
 - [ ] Record activity results.
 - [ ] Expand compatibility to more AimHarder gyms.

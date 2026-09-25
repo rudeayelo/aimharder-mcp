@@ -11,6 +11,7 @@ let reservationId: number | null;
 let bookState: number | null;
 let cancelledId: number | null;
 let duplicate = false;
+let missing = false;
 let upcomingState: number | null;
 let writes: string[];
 let response: () => Response;
@@ -18,13 +19,13 @@ let scheduleReads: number;
 
 const row = (id = 501, idres = reservationId) => ({ id, idres, classId: 10, className: 'Open Box', time: '10:00 - 11:00',
   ocupation: 8, limit: 20, enabled: 1, bookState, cancelledId, resadmin: 0, hidden: 0 });
-const day = () => ({ clasesDisp: 'Classes', day: 'Source label', bookings: duplicate ? [row(), row(502, 901)] : [row()], timetable: [], seminars: [] });
+const day = () => ({ clasesDisp: 'Classes', day: 'Source label', bookings: missing ? [] : duplicate ? [row(), row(502, 901)] : [row()], timetable: [], seminars: [] });
 const upcoming = () => ({ nextClasses: upcomingState === null ? [] : [{ id: 777, day: 'Sábado, 26 de Septiembre de 2026',
   time: '10:00 - 11:00', className: 'Open Box', bookState: upcomingState }], history: [] });
 
 beforeAll(() => upstream.listen({ onUnhandledRequest: 'error' }));
 beforeEach(() => {
-  reservationId = 900; bookState = 1; cancelledId = null; duplicate = false; upcomingState = 1; writes = []; scheduleReads = 0;
+  reservationId = 900; bookState = 1; cancelledId = null; duplicate = false; missing = false; upcomingState = 1; writes = []; scheduleReads = 0;
   response = () => { bookState = null; cancelledId = 900; upcomingState = null; return HttpResponse.json({ cancelState: 1 }); };
   upstream.use(
     http.post('https://login.aimharder.es/api/login', () => HttpResponse.json({ data: { userData: { id: 42 }, auth: { authOK: true } } },
@@ -62,6 +63,9 @@ async function prepare(client: Client) {
 }
 async function execute(client: Client, actionReference: string, extra: Record<string, unknown> = {}) {
   return client.callTool({ name: 'execute_booking_cancellation', arguments: { actionReference, confirmed: true, ...extra } });
+}
+async function executeLate(client: Client, actionReference: string, extra: Record<string, unknown> = {}) {
+  return client.callTool({ name: 'execute_late_booking_cancellation', arguments: { actionReference, confirmedCreditLoss: true, ...extra } });
 }
 
 test('one confirmed cancellation uses the schedule reservation and fresh reads', async () => {
@@ -128,4 +132,74 @@ test.each(['unsupported', 'transport', 'authentication'] as const)('%s write out
   expect(result.structuredContent).toMatchObject({ status: 'uncertain' });
   expect(JSON.stringify(result)).not.toContain('private value');
   expect(writes).toHaveLength(1);
+});
+
+test('a fresh warning offers a separate late reference; refusing it sends no late write', async () => {
+  response = () => HttpResponse.json({ cancelState: 2 });
+  const client = await connect();
+  const result = await execute(client, await prepare(client));
+  expect(result.structuredContent).toMatchObject({ status: 'pending-credit-loss', observedState: 'booked',
+    actionReference: expect.any(String), expiresAt: expect.any(String), target: { className: 'Open Box' } });
+  expect(JSON.stringify(result)).toMatch(/credit loss/i);
+  const reference = (result.structuredContent as { actionReference: string }).actionReference;
+  expect((await executeLate(client, reference, { confirmedCreditLoss: false })).isError).toBe(true);
+  expect((await executeLate(client, reference, { familyId: 42 })).isError).toBe(true);
+  expect(writes).toHaveLength(1);
+});
+
+test('a changed, missing, cancelled, or ambiguous warning target stops before the late write', async () => {
+  response = () => HttpResponse.json({ cancelState: 2 });
+  const client = await connect();
+  for (const change of [() => { reservationId = 901; }, () => { missing = true; }, () => { cancelledId = 900; }, () => { duplicate = true; }]) {
+    reservationId = 900; cancelledId = null; duplicate = false; missing = false;
+    const warned = await execute(client, await prepare(client));
+    const reference = (warned.structuredContent as { actionReference: string }).actionReference;
+    change();
+    expect((await executeLate(client, reference)).structuredContent).toMatchObject({ status: 'stale' });
+  }
+  expect(writes).toHaveLength(4);
+});
+
+test('a warning with a changed or uncertain refreshed reservation offers no late reference', async () => {
+  response = () => { reservationId = 901; return HttpResponse.json({ cancelState: 2 }); };
+  const client = await connect();
+  const result = await execute(client, await prepare(client));
+  expect(result.structuredContent).toMatchObject({ status: 'uncertain' });
+  expect(result.structuredContent).not.toHaveProperty('actionReference');
+  expect(writes).toHaveLength(1);
+});
+
+test('an expired second reference cannot send a late request', async () => {
+  response = () => HttpResponse.json({ cancelState: 2 });
+  const client = await connect();
+  const warned = await execute(client, await prepare(client));
+  const reference = (warned.structuredContent as { actionReference: string }).actionReference;
+  vi.useFakeTimers({ toFake: ['Date'] }); vi.setSystemTime(Date.now() + 120_001);
+  expect((await executeLate(client, reference)).isError).toBe(true);
+  expect(writes).toHaveLength(1);
+});
+
+test('one separately confirmed late attempt uses late=1 and reconciles cancelled state', async () => {
+  response = () => writes.length === 1 ? HttpResponse.json({ cancelState: 2 })
+    : (bookState = null, cancelledId = 900, upcomingState = null, HttpResponse.json({ cancelState: 1 }));
+  const client = await connect();
+  const warned = await execute(client, await prepare(client));
+  const reference = (warned.structuredContent as { actionReference: string }).actionReference;
+  const result = await executeLate(client, reference);
+  expect(result.structuredContent).toMatchObject({ status: 'confirmed', observedState: 'cancelled', credit: { balance: null } });
+  expect(writes).toHaveLength(2);
+  expect(writes.map(body => new URLSearchParams(body).get('late'))).toEqual(['0', '1']);
+  expect((await executeLate(client, reference)).isError).toBe(true);
+  expect(writes).toHaveLength(2);
+  expect(JSON.stringify(result)).not.toMatch(/refunded|reservationId|idres/i);
+});
+
+test.each(['denied', 'timeout'] as const)('a %s late attempt is reconciled without another write', async (mode) => {
+  response = () => writes.length === 1 ? HttpResponse.json({ cancelState: 2 })
+    : mode === 'denied' ? HttpResponse.json({ cancelState: 3 }) : HttpResponse.error();
+  const client = await connect();
+  const warned = await execute(client, await prepare(client));
+  const result = await executeLate(client, (warned.structuredContent as { actionReference: string }).actionReference);
+  expect(result.structuredContent).toMatchObject({ status: mode === 'denied' ? 'rejected' : 'uncertain' });
+  expect(writes).toHaveLength(2);
 });

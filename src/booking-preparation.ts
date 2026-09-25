@@ -15,6 +15,10 @@ export const bookingExecutionSchema = z.object({
   gymId: gymIdSchema.optional(), actionReference: z.string().regex(/^[a-f0-9]{64}$/), confirmed: z.literal(true),
 }).strict();
 export type BookingExecution = z.infer<typeof bookingExecutionSchema>;
+export const lateCancellationExecutionSchema = z.object({
+  gymId: gymIdSchema.optional(), actionReference: z.string().regex(/^[a-f0-9]{64}$/), confirmedCreditLoss: z.literal(true),
+}).strict();
+export type LateCancellationExecution = z.infer<typeof lateCancellationExecutionSchema>;
 
 const rowFields = z.object({
   enabled: z.number().int(), bookState: z.number().int().nullable(),
@@ -129,7 +133,7 @@ export type BookingCancellationPreview = {
 
 type Preparation =
   | { action: 'create'; accountId: number; boxId: number; sourceId: number; preview: BookingCreationPreview; expires: number }
-  | { action: 'cancel'; accountId: number; boxId: number; reservationId: number; preview: BookingCancellationPreview; expires: number };
+  | { action: 'cancel' | 'cancel-late'; accountId: number; boxId: number; reservationId: number; preview: BookingCancellationPreview; expires: number };
 
 export class BookingPreparationStore {
   #entries = new Map<string, Preparation>();
@@ -142,7 +146,11 @@ export class BookingPreparationStore {
     return this.#issue({ action: 'cancel', accountId, boxId, reservationId, preview });
   }
 
-  #issue(entry: Omit<Extract<Preparation, { action: 'create' }>, 'expires'> | Omit<Extract<Preparation, { action: 'cancel' }>, 'expires'>) {
+  issueLateCancellation(accountId: number, boxId: number, reservationId: number, preview: BookingCancellationPreview) {
+    return this.#issue({ action: 'cancel-late', accountId, boxId, reservationId, preview });
+  }
+
+  #issue(entry: Omit<Extract<Preparation, { action: 'create' }>, 'expires'> | Omit<Extract<Preparation, { action: 'cancel' | 'cancel-late' }>, 'expires'>) {
     const now = Date.now();
     for (const [reference, entry] of this.#entries) if (entry.expires <= now) this.#entries.delete(reference);
     if (this.#entries.size >= 32) this.#entries.delete(this.#entries.keys().next().value!);
@@ -153,8 +161,9 @@ export class BookingPreparationStore {
   }
 
   take(reference: string, action: 'create', accountId: number, gymId: string): Extract<Preparation, { action: 'create' }> | null;
-  take(reference: string, action: 'cancel', accountId: number, gymId: string): Extract<Preparation, { action: 'cancel' }> | null;
-  take(reference: string, action: 'create' | 'cancel', accountId: number, gymId: string): Preparation | null {
+  take(reference: string, action: 'cancel', accountId: number, gymId: string): Extract<Preparation, { action: 'cancel' | 'cancel-late' }> | null;
+  take(reference: string, action: 'cancel-late', accountId: number, gymId: string): Extract<Preparation, { action: 'cancel' | 'cancel-late' }> | null;
+  take(reference: string, action: 'create' | 'cancel' | 'cancel-late', accountId: number, gymId: string): Preparation | null {
     const entry = this.#entries.get(reference);
     this.#entries.delete(reference);
     if (!entry || entry.expires <= Date.now() || entry.action !== action || entry.accountId !== accountId || entry.preview.gym.id !== gymId) return null;
