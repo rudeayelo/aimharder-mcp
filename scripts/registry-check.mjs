@@ -20,6 +20,7 @@ const run = promisify(execFile);
 const registry = 'https://registry.npmjs.org/';
 const root = fileURLToPath(new URL('..', import.meta.url));
 const work = await mkdtemp(join(tmpdir(), 'aimharder-registry-'));
+let stage = 'registry metadata';
 // npm receives no AimHarder credentials. Only the installed MCP harness receives them.
 const baseEnv = { PATH: `${dirname(process.execPath)}:${process.env.PATH ?? ''}`, HOME: process.env.HOME, TMPDIR: tmpdir(), npm_config_cache: join(work, 'npm-cache') };
 try {
@@ -27,6 +28,7 @@ try {
   const published = JSON.parse(stdout);
   assert.equal(published.version, version);
   assert.equal(published['dist.tarball'], `${registry}aimharder-mcp/-/aimharder-mcp-${version}.tgz`);
+  stage = 'package installation';
   await writeFile(join(work, 'package.json'), JSON.stringify({ private: true, type: 'module' }));
   await run('npm', ['install', '--ignore-scripts', '--omit=dev', '--no-audit', '--no-fund', '--prefer-online', '--registry', registry, `aimharder-mcp@${version}`], { cwd: work, env: baseEnv, timeout: 120_000 });
   const installed = join(work, 'node_modules/aimharder-mcp');
@@ -34,6 +36,7 @@ try {
   assert.equal(metadata.name, 'aimharder-mcp');
   assert.equal(metadata.version, version);
   assert.equal(metadata.bin['aimharder-mcp'], 'dist/index.js');
+  stage = 'MCP harness';
   await copyFile(join(root, 'scripts/package-harness.mjs'), join(work, 'harness.mjs'));
   const env = { ...baseEnv, PACKAGE_CHECK_LIVE: '1' };
   for (const key of ['AIMHARDER_USERNAME', 'AIMHARDER_PASSWORD', 'AIMHARDER_DEFAULT_GYM', 'AIMHARDER_GYM_TIME_ZONES']) {
@@ -43,7 +46,7 @@ try {
   assert.equal(checked.stderr, '');
   process.stdout.write(JSON.stringify({ registry, version, registryArtifact: published['dist.tarball'], ...JSON.parse(checked.stdout), runtime: process.version }) + '\n');
 } catch {
-  process.stderr.write('Published-package verification failed; raw registry, subprocess and account output is suppressed.\n');
+  process.stderr.write(`Published-package verification failed at ${stage}; raw registry, subprocess and account output is suppressed.\n`);
   process.exitCode = 1;
 } finally {
   await rm(work, { recursive: true, force: true });
