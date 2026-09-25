@@ -1,6 +1,6 @@
 # ADR: manual booking writes for the next feature phase
 
-Status: accepted for feature scope on 2026-09-24; creation preview and fixture-tested execution are implemented under the [preparation decision](2026-09-25-booking-creation-preparation.md) and [execution decision](2026-09-25-booking-creation-execution.md). Upstream write contracts remain unverified live.
+Status: accepted for feature scope on 2026-09-24; creation preview/execution and read-only cancellation preparation are implemented under the [creation preparation decision](2026-09-25-booking-creation-preparation.md), [execution decision](2026-09-25-booking-creation-execution.md), and [cancellation preparation decision](2026-09-25-booking-cancellation-preparation.md). Upstream write contracts remain unverified live.
 
 ## Decision
 

@@ -7,7 +7,7 @@ import { classQuerySchema, classSessionSchema, dateSchema } from './classes.js';
 import { upcomingBookingSchema, historicalBookingSchema } from './bookings.js';
 import { workoutQuerySchema, workoutSchema } from './workouts.js';
 import { safeError } from './errors.js';
-import { bookingCreationQuerySchema, bookingExecutionSchema } from './booking-preparation.js';
+import { bookingCreationQuerySchema, bookingCancellationQuerySchema, bookingExecutionSchema } from './booking-preparation.js';
 
 const gymSchema = z.object({
   id: gymIdSchema, name: z.string(), timeZone: z.string().nullable(), timeZoneStatus: z.enum(['assumed', 'user-confirmed']),
@@ -79,6 +79,26 @@ export function createServer(environment: Record<string, string | undefined>) {
   }, async (query) => {
     try {
       const result = await client.executeBookingCreation(query);
+      return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
+    } catch (error) {
+      return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };
+    }
+  });
+  server.registerTool('prepare_booking_cancellation', {
+    description: 'Read the configured account’s fresh daily schedule and prepare cancellation of one exact booked class. Requires a user-confirmed gym IANA zone. Matches the schedule reservation internally; no reservation ID or family selector is accepted. Ambiguous, missing, cancelled, waitlisted, or unsupported targets receive no executable reference. At 9NBC, show the published 90-minute credit-loss risk before any cancellation request. This preview sends no cancellation POST, and no cancellation execution tool exists yet.',
+    inputSchema: bookingCancellationQuerySchema,
+    outputSchema: z.object({ action: z.literal('cancel'), status: z.enum(['ready', 'ambiguous', 'missing', 'already-cancelled', 'unsupported']),
+      gym: gymSchema, target: z.object({ className: z.string(), date: dateSchema, startTime: z.string(), endTime: z.string() }),
+      alternatives: z.array(z.object({ className: z.string(), date: dateSchema, startTime: z.string(), endTime: z.string(),
+        currentState: z.enum(['booked', 'waitlisted', 'cancelled', 'unbooked', 'unknown']), eligibility: z.enum(['offered', 'unsupported']) })),
+      currentState: z.enum(['booked', 'waitlisted', 'cancelled', 'unbooked', 'unknown']).optional(),
+      credit: z.object({ possibleLoss: z.string(), balance: z.null(), entitlementPeriod: z.null() }).optional(),
+      actionReference: z.string().optional(), expiresAt: z.string().optional(), notices: z.array(z.string()),
+    }),
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+  }, async (query) => {
+    try {
+      const result = await client.prepareBookingCancellation(query);
       return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
     } catch (error) {
       return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };

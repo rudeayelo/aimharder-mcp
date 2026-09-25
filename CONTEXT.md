@@ -32,6 +32,10 @@ _Avoid_: Booking or attendance as a synonym for credit.
 The currently available booking credits for a specific subscription or session pack and its validity period.
 _Avoid_: A single monthly total across credit sources with different expiry rules.
 
+**Action reference**:
+A short-lived, single-use server token bound to one prepared booking creation or cancellation preview. It identifies a proposed action, not a completed write or proof that the account holder confirmed it.
+_Avoid_: Booking confirmation or reservation ID as synonyms for an action reference.
+
 **Activity entry**:
 A distinct record of the account holder's personal activity. Several entries on the same date remain separate entries, even when their content is similar. An entry does not by itself establish a booking or verified attendance.
 _Avoid_: Booking or attendance as synonyms for an activity record.

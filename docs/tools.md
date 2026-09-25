@@ -1,6 +1,6 @@
 # Tools and results
 
-The original seven tools read one configured account. The checkout also includes a booking creation preview and execution tool. An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking writes require a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
+The original seven tools read one configured account. The checkout also includes booking creation preview and execution, plus a read-only cancellation preview. An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking action previews and writes require a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
 
 ## `get_account_context`
 
@@ -41,6 +41,14 @@ Show the complete preview to the account holder and obtain explicit confirmation
 The server consumes the reference, checks account/gym/zone and the same offered schedule session again, then attempts one standard `POST /api/book`. A changed or already booked target returns `stale` without writing. After the attempt, fresh daily schedule and upcoming views produce `confirmed`, `waitlisted`, `rejected`, or `uncertain`; a source denial is reported as rejected only when the fresh schedule remains unbooked. Conflicting views, unreadable results and transport failures remain uncertain. The upcoming view has no verified date horizon; absence there does not negate a daily schedule booking. No automatic write retry or waitlist follow-up is sent. A fresh preparation and confirmation are required for a further attempt, after checking the source directly.
 
 The request shape (`id`, `day`) is a candidate from unofficial clients. The official public frontend has not exposed authenticated creation; the exact write request, response semantics, and credit effect remain unverified until separate, explicitly approved live validation. Fixture success is not live acceptance.
+
+## `prepare_booking_cancellation` (checkout)
+
+Supply the exact gym-local date, class name, start and end time, with optional accessible `gymId`, as for creation preparation. The server reads the authenticated account's fresh daily schedule and uses its reservation identifier internally. It never joins an upcoming-booking ID to a schedule row by assumption. The public tool accepts no reservation ID, family selector or arbitrary endpoint.
+
+`ready` returns the verified gym, exact class and local times, `currentState: "booked"`, possible credit loss, `balance: null`, `entitlementPeriod: null`, a two-minute, single-use cancellation `actionReference`, and `expiresAt`. `missing`, `ambiguous`, `already-cancelled`, and `unsupported` return no reference; ambiguous results include alternatives. Waitlist leaving is unsupported. The reference is bound to this account, gym, reservation and preview, but **no cancellation execution tool exists yet**.
+
+At 9NBC, the preview warns at or inside the [published 90-minute boundary](https://noubarriscrosstraining.aimharder.es/boxmemberships) that cancellation may lose a credit. This is not generalized to other gyms, and the balance or actual refund remains unverified. Gym-local wall time is used without inventing a UTC class instant, including at daylight-saving transitions. Preparation sends no cancellation POST; an initial cancellation POST can itself change state and is never used as a probe.
 
 ## `get_published_workouts`
 

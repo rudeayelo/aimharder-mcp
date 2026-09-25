@@ -111,6 +111,15 @@ test('malformed or lost responses reconcile without another write', async () => 
   expect(writeCount).toBe(1);
 });
 
+test('an unreadable follow-up view cannot establish a confirmed result', async () => {
+  upstream.use(http.get('https://sample-gym.aimharder.es/api/nextBookings', () => HttpResponse.json({ secret: 'private view' })));
+  const client = await connect();
+  const result = await execute(client, await prepare(client));
+  expect(result.structuredContent).toMatchObject({ status: 'uncertain', observedState: 'booked' });
+  expect(JSON.stringify(result)).not.toContain('private view');
+  expect(writeCount).toBe(1);
+});
+
 test('waitlist and conflicting follow-up views remain distinct and trigger no retry', async () => {
   response = () => { sourceState = 0; upcomingState = 0; return HttpResponse.json({ bookState: 0 }); };
   const client = await connect();

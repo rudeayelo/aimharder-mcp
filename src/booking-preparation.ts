@@ -9,6 +9,8 @@ export const bookingCreationQuerySchema = z.object({
   startTime: timeSchema, endTime: timeSchema,
 }).strict();
 export type BookingCreationQuery = z.infer<typeof bookingCreationQuerySchema>;
+export const bookingCancellationQuerySchema = bookingCreationQuerySchema;
+export type BookingCancellationQuery = z.infer<typeof bookingCancellationQuerySchema>;
 export const bookingExecutionSchema = z.object({
   gymId: gymIdSchema.optional(), actionReference: z.string().regex(/^[a-f0-9]{64}$/), confirmed: z.literal(true),
 }).strict();
@@ -27,6 +29,33 @@ export type BookingCandidate = {
 };
 export type InternalBookingCandidate = BookingCandidate & { sourceId: number };
 
+export type CancellationCandidate = {
+  className: string; date: string; startTime: string; endTime: string;
+  currentState: 'booked' | 'waitlisted' | 'cancelled' | 'unbooked' | 'unknown';
+  eligibility: 'offered' | 'unsupported';
+};
+export type InternalCancellationCandidate = CancellationCandidate & { reservationId: number | null };
+
+export function cancellationCandidates(body: unknown, gymId: string, date: string, timeZone: string, query: BookingCancellationQuery): InternalCancellationCandidate[] {
+  const sessions = parseClassDay(body, gymId, date, timeZone);
+  const rows = (body as { bookings: unknown[] }).bookings;
+  const cancellationFields = rowFields.extend({ idres: z.number().int().positive().safe().nullable() });
+  return sessions.flatMap((session, index) => {
+    const endTime = session.timeLabel.slice(-5);
+    if (session.classType.name !== query.className || session.startTime !== query.startTime || endTime !== query.endTime) return [];
+    const flags = cancellationFields.safeParse(rows[index]);
+    const state = !flags.success ? 'unknown' as const : flags.data.cancelledId !== null ? 'cancelled' as const
+      : flags.data.bookState === 1 ? 'booked' as const : flags.data.bookState === 0 ? 'waitlisted' as const
+        : flags.data.bookState === null ? 'unbooked' as const : 'unknown' as const;
+    // Waitlist leaves belong to a later feature, even if the frontend offers them.
+    const offered = flags.success && state === 'booked' && flags.data.idres !== null && flags.data.enabled === 1
+      && flags.data.resadmin === 0 && flags.data.hidden === 0;
+    return [{ reservationId: flags.success ? flags.data.idres : null, className: session.classType.name, date,
+      startTime: session.startTime, endTime, currentState: state,
+      eligibility: offered ? 'offered' as const : 'unsupported' as const }];
+  });
+}
+
 export function bookingCandidates(body: unknown, gymId: string, date: string, timeZone: string, query: BookingCreationQuery): InternalBookingCandidate[] {
   const sessions = parseClassDay(body, gymId, date, timeZone);
   const rows = (body as { bookings: unknown[] }).bookings;
@@ -44,7 +73,7 @@ export function bookingCandidates(body: unknown, gymId: string, date: string, ti
   });
 }
 
-export function nearReportedBookingCutoff(date: string, startTime: string, timeZone: string, now = new Date()): boolean {
+export function minutesUntilGymLocalStart(date: string, startTime: string, timeZone: string, now = new Date()): number {
   const parts = Object.fromEntries(new Intl.DateTimeFormat('en-GB', {
     timeZone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
   }).formatToParts(now).map(({ type, value }) => [type, value]));
@@ -54,7 +83,16 @@ export function nearReportedBookingCutoff(date: string, startTime: string, timeZ
   const startMinutes = Number(startTime.slice(0, 2)) * 60 + Number(startTime.slice(3));
   const nowMinutes = Number(parts.hour) * 60 + Number(parts.minute);
   const wallMinutes = days * 1440 + startMinutes - nowMinutes;
-  return wallMinutes >= 0 && wallMinutes <= 120;
+  return wallMinutes;
+}
+
+export function nearReportedBookingCutoff(date: string, startTime: string, timeZone: string, now = new Date()): boolean {
+  const minutes = minutesUntilGymLocalStart(date, startTime, timeZone, now);
+  return minutes >= 0 && minutes <= 120;
+}
+
+export function atPublishedCancellationBoundary(date: string, startTime: string, timeZone: string, now = new Date()): boolean {
+  return minutesUntilGymLocalStart(date, startTime, timeZone, now) <= 90;
 }
 
 export type BookingCreationPreview = {
@@ -64,21 +102,41 @@ export type BookingCreationPreview = {
   credit: { possibleUse: string; balance: null; entitlementPeriod: null };
   notices: string[];
 };
+export type BookingCancellationPreview = {
+  action: 'cancel'; gym: BookingCreationPreview['gym'];
+  target: BookingCreationPreview['target']; currentState: 'booked';
+  credit: { possibleLoss: string; balance: null; entitlementPeriod: null };
+  notices: string[];
+};
+
+type Preparation =
+  | { action: 'create'; accountId: number; boxId: number; sourceId: number; preview: BookingCreationPreview; expires: number }
+  | { action: 'cancel'; accountId: number; boxId: number; reservationId: number; preview: BookingCancellationPreview; expires: number };
 
 export class BookingPreparationStore {
-  #entries = new Map<string, { action: 'create'; accountId: number; boxId: number; sourceId: number; preview: BookingCreationPreview; expires: number }>();
+  #entries = new Map<string, Preparation>();
 
   issue(accountId: number, boxId: number, sourceId: number, preview: BookingCreationPreview) {
+    return this.#issue({ action: 'create', accountId, boxId, sourceId, preview });
+  }
+
+  issueCancellation(accountId: number, boxId: number, reservationId: number, preview: BookingCancellationPreview) {
+    return this.#issue({ action: 'cancel', accountId, boxId, reservationId, preview });
+  }
+
+  #issue(entry: Omit<Extract<Preparation, { action: 'create' }>, 'expires'> | Omit<Extract<Preparation, { action: 'cancel' }>, 'expires'>) {
     const now = Date.now();
     for (const [reference, entry] of this.#entries) if (entry.expires <= now) this.#entries.delete(reference);
     if (this.#entries.size >= 32) this.#entries.delete(this.#entries.keys().next().value!);
     const actionReference = randomBytes(32).toString('hex');
     const expires = now + 120_000;
-    this.#entries.set(actionReference, { action: 'create', accountId, boxId, sourceId, preview: structuredClone(preview), expires });
+    this.#entries.set(actionReference, { ...entry, preview: structuredClone(entry.preview), expires } as Preparation);
     return { actionReference, expiresAt: new Date(expires).toISOString() };
   }
 
-  take(reference: string, action: 'create' | 'cancel', accountId: number, gymId: string) {
+  take(reference: string, action: 'create', accountId: number, gymId: string): Extract<Preparation, { action: 'create' }> | null;
+  take(reference: string, action: 'cancel', accountId: number, gymId: string): Extract<Preparation, { action: 'cancel' }> | null;
+  take(reference: string, action: 'create' | 'cancel', accountId: number, gymId: string): Preparation | null {
     const entry = this.#entries.get(reference);
     this.#entries.delete(reference);
     if (!entry || entry.expires <= Date.now() || entry.action !== action || entry.accountId !== accountId || entry.preview.gym.id !== gymId) return null;

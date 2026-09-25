@@ -8,7 +8,7 @@ import { calendarDates, classQuerySchema, parseClassDay, type ClassQuery, type C
 
 import { parseFeed, parseWorkout, workoutQuerySchema, type WorkoutQuery } from './workouts.js';
 import { parseUpcomingBookings, parseBookingHistory } from './bookings.js';
-import { bookingCandidates, bookingCreationQuerySchema, bookingExecutionSchema, BookingPreparationStore, nearReportedBookingCutoff, type BookingCreationQuery, type BookingCreationPreview, type BookingExecution } from './booking-preparation.js';
+import { atPublishedCancellationBoundary, bookingCandidates, bookingCreationQuerySchema, bookingCancellationQuerySchema, bookingExecutionSchema, cancellationCandidates, BookingPreparationStore, nearReportedBookingCutoff, type BookingCreationQuery, type BookingCreationPreview, type BookingCancellationQuery, type BookingCancellationPreview, type BookingExecution } from './booking-preparation.js';
 
 const loginUrl = 'https://login.aimharder.es/api/login';
 const identityUrl = 'https://aimharder.es/api/whoami';
@@ -165,6 +165,7 @@ export class AimHarderClient {
       } catch { writeIssue = true; }
       let scheduleState: 'unbooked' | 'booked' | 'waitlisted' | 'unknown' = 'unknown';
       let conflicting = false;
+      let reconciliationIssue = false;
       try {
         const read = async (operation: { kind: 'classes'; gymId: string; boxId: number; date: string } | { kind: 'upcoming'; gymId: string; boxId: number }) => {
           try { return await this.#request(operation); }
@@ -181,10 +182,10 @@ export class AimHarderClient {
           && item.timeLabel.endsWith(target.endTime) && item.classType.name === target.className);
         // This view has no verified horizon; absence cannot contradict a fresh daily schedule.
         conflicting = matches.length > 1 || matches.some(item => item.state !== scheduleState);
-      } catch { writeIssue = true; }
+      } catch { reconciliationIssue = true; }
       const sourceDenial = z.object({ bookState: z.number().int().negative().optional(), errorMssg: z.unknown().optional(), errorMssgLang: z.unknown().optional() }).safeParse(response);
       const denied = sourceDenial.success && (sourceDenial.data.bookState !== undefined || sourceDenial.data.errorMssg !== undefined || sourceDenial.data.errorMssgLang !== undefined);
-      const status = conflicting ? 'uncertain' as const : scheduleState === 'booked' ? 'confirmed' as const
+      const status = conflicting || reconciliationIssue ? 'uncertain' as const : scheduleState === 'booked' ? 'confirmed' as const
         : scheduleState === 'waitlisted' ? 'waitlisted' as const
           : scheduleState === 'unbooked' && denied ? 'rejected' as const : 'uncertain' as const;
       return { ...base, status, observedState: scheduleState, notices: [
@@ -193,8 +194,48 @@ export class AimHarderClient {
           : status === 'waitlisted' ? 'A fresh schedule read reported a waitlist state; no further write was sent.'
             : status === 'rejected' ? 'The source returned a denial indication and the fresh schedule remains unbooked. Denial semantics remain unverified live.'
               : 'The outcome is uncertain. Check the booking directly before preparing a new action; no automatic write retry was sent.',
-        ...(writeIssue ? ['The write response or follow-up read was incomplete; do not infer a credit change.'] : []),
+        ...(writeIssue ? ['The write response was incomplete; do not infer a credit change.'] : []),
+        ...(reconciliationIssue ? ['A follow-up view could not be read completely; booking state remains uncertain.'] : []),
       ] };
+    });
+  }
+
+  prepareBookingCancellation(input: BookingCancellationQuery) {
+    const parsed = bookingCancellationQuerySchema.safeParse(input);
+    if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_CANCELLATION_PREPARATION_QUERY'));
+    const query = parsed.data;
+    return this.#query(query.gymId, async (_gyms, { gym, boxId }) => {
+      if (gym.timeZoneStatus !== 'user-confirmed' || !gym.timeZone) throw new AimHarderError('CONFIRMED_GYM_TIME_ZONE_REQUIRED');
+      if (boxId === undefined) throw new AimHarderError('INVALID_CLASS_RESPONSE');
+      // This account-scoped daily schedule supplies idres; upcoming IDs are not a verified join.
+      const body = await this.#request({ kind: 'classes', gymId: gym.id, boxId, date: query.date });
+      const candidates = cancellationCandidates(body, gym.id, query.date, gym.timeZone, query);
+      const alternatives = candidates.map(({ reservationId: _reservationId, ...candidate }) => candidate);
+      const base = { action: 'cancel' as const, gym, target: {
+        className: query.className, date: query.date, startTime: query.startTime, endTime: query.endTime,
+      }, alternatives };
+      if (candidates.length !== 1) return { ...base, status: candidates.length ? 'ambiguous' as const : 'missing' as const,
+        notices: [candidates.length ? 'Several exact schedule rows match. No cancellation can be prepared.' : 'No exact class session was found in the retrieved daily schedule.'] };
+      const candidate = candidates[0]!;
+      const status = candidate.currentState === 'cancelled' ? 'already-cancelled' as const
+        : candidate.eligibility === 'offered' ? 'ready' as const : 'unsupported' as const;
+      const notices = [
+        'This is a read-only, account-scoped daily schedule snapshot. No cancellation request was sent.',
+        'The credit balance, entitlement period, and effect of this cancellation are not verified.',
+        ...(gym.id === 'noubarriscrosstraining' && atPublishedCancellationBoundary(query.date, query.startTime, gym.timeZone)
+          ? ['9NBC publishes a 90-minute cancellation boundary. At or inside it, cancellation may lose one credit. This is a gym rule, not a verified balance or API decision.'] : []),
+      ];
+      if (status !== 'ready' || candidate.reservationId === null) return { ...base, status, currentState: candidate.currentState, notices };
+      const preview: BookingCancellationPreview = {
+        action: 'cancel', gym: { ...gym, timeZone: gym.timeZone, timeZoneStatus: 'user-confirmed' },
+        target: base.target, currentState: 'booked',
+        credit: { possibleLoss: gym.id === 'noubarriscrosstraining'
+          ? 'At 9NBC, cancellation fewer than 90 minutes before class loses a credit under the published terms; the actual credit effect is not verified for this request.'
+          : 'Cancellation may affect a credit; the actual effect is not verified for this request.',
+        balance: null, entitlementPeriod: null }, notices,
+      };
+      return { status, ...preview, alternatives,
+        ...this.#bookingPreparations.issueCancellation(this.#accountId!, boxId, candidate.reservationId, preview) };
     });
   }
 
