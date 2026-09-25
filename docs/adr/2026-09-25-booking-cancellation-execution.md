@@ -1,0 +1,15 @@
+# ADR: confirmed standard cancellation and read reconciliation
+
+Status: accepted for issue #25 on 2026-09-25; amended after one live standard cancellation under #27 on 2026-09-25. The separate late confirmation is described in [the late cancellation decision](2026-09-25-late-cancellation-confirmation.md).
+
+## Decision
+
+Expose `execute_booking_cancellation` for a fresh, single-use cancellation reference and an explicit account-holder confirmation marker. The MCP client must show the exact preparation preview and obtain consent for that action. Consume the reference before source access. Recheck the authenticated account, accessible gym, confirmed IANA zone, exact schedule row, reservation identifier, booked state, and supported cancellation flags before writing.
+
+At 9NBC, reevaluate the published 90-minute credit-loss boundary at execution. If the boundary was reached after a preview that did not show its immediate-risk warning, mark the action stale without writing; the account holder must review and confirm a new preview.
+
+Send at most one form `POST /api/cancelBook` with the verified schedule reservation `id` and `late=0`. Do not use this POST as a preflight. The public official frontend shows this route, fields, and `cancelState` branches; one authenticated standard request at 9NBC returned `cancelState=1`. Never replay a write after a timeout, connection loss, or authentication interruption. Reconcile through fresh daily schedule and upcoming-booking reads, with read-only reauthentication if needed. `cancelState=1` supports `confirmed` when a nonconflicting fresh row retains the same reservation identifier and reports cancelled, or when the same source class session becomes unbooked with no reservation identifier and the upcoming view has no conflicting booking. A different source session, a different reservation, an unreadable view, or a conflicting upcoming entry remains uncertain. `cancelState=3` plus a still booked schedule supports `rejected`. `cancelState=2` plus a still booked schedule is `pending-credit-loss` and sends no second write. Other unsupported or incomplete outcomes remain `uncertain`. A fresh read does not establish a credit refund or balance.
+
+## Consequences
+
+The #27 Open Box cycle independently showed the same class session unbooked with no `idres` after the standard cancellation, absent from the upcoming view, and absent as a reservation in the account holder's UI. The live MCP call used the former stricter rule and returned `uncertain`; the amended reconciliation is fixture-tested and has not been exercised by a second live write. This limits the claim about the tool's live `confirmed` output, while the account's current no-booking state was checked independently. The credit balance or refund was not observed. The published npm package remains read-only. A pending warning follows the separate action-specific confirmation decision. The historical credential security ADR's read-only retry policy never authorizes replaying a write.

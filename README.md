@@ -1,6 +1,6 @@
 # aimharder-mcp
 
-Ask about your AimHarder classes, workouts, bookings and activity from an AI client. This is a local, read-only [MCP server](https://modelcontextprotocol.io/) and an independent project, neither affiliated with nor endorsed by AimHarder.
+Ask about your AimHarder classes, workouts, bookings and activity from an AI client. The current published `0.1.2` package is a local, read-only [MCP server](https://modelcontextprotocol.io/). The checkout also supports manual booking creation and cancellation, including a separate confirmation if a late cancellation may lose a credit. One standard Open Box creation/cancellation cycle was observed live at 9NBC; the late branch, other gyms and credit effects remain unverified. This is an independent project, neither affiliated with nor endorsed by AimHarder.
 
 **Data limits:** Live checks used one account at one location (9NBC). Other gyms may differ. Workout and booking views can be incomplete, so an empty result may not mean there is nothing to show. [Details](docs/tools.md#coverage-and-interpretation)
 
@@ -39,6 +39,11 @@ Hermes and Codex CLI have called the account tool through the published package.
 | --- | --- |
 | `get_account_context` | Which gyms can I query? |
 | `get_class_sessions` | What classes are available this week? |
+| `prepare_booking_creation` (checkout) | Preview booking this exact class without reserving it. |
+| `execute_booking_creation` (checkout) | Book the exact preview after explicit account-holder confirmation. |
+| `prepare_booking_cancellation` (checkout) | Preview cancelling one existing booking without changing it. |
+| `execute_booking_cancellation` (checkout) | Cancel the exact preview after explicit account-holder confirmation. |
+| `execute_late_booking_cancellation` (checkout) | After a warning, attempt late cancellation only with separate confirmation of possible credit loss. |
 | `get_published_workouts` | What is tomorrow's WOD? |
 | `get_upcoming_bookings` | When am I booked? |
 | `get_booking_history` | Which past bookings are available? |
@@ -50,7 +55,7 @@ Clients can combine tools for questions about workouts and bookings, or count re
 
 Planned capabilities, without committed dates or versions:
 
-- [ ] Create and cancel bookings.
+- [ ] Validate the late-credit-loss branch and write behavior at more gyms. One standard Open Box creation/cancellation cycle at 9NBC is recorded in [validation](docs/validation.md#open-box-cycle-validation-2026-09-25-issue-27).
 - [ ] Look up personal exercise RMs and show calculated loads alongside the original `%RM` prescription in future activities.
 - [ ] Record activity results.
 - [ ] Expand compatibility to more AimHarder gyms.

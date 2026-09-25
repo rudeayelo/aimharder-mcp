@@ -1,4 +1,10 @@
 const messages = {
+  INVALID_LATE_CANCELLATION_QUERY: 'Supply a fresh late-cancellation reference and confirmedCreditLoss: true only after a separate account-holder confirmation of possible credit loss. Other selectors are not accepted.',
+  INVALID_BOOKING_EXECUTION_QUERY: 'Supply a fresh action reference and confirmed: true after account-holder confirmation of the exact preview. Other selectors are not accepted.',
+  BOOKING_REFERENCE_INVALID: 'The booking action reference is expired, already used, or does not match this account and gym. Prepare a fresh action.',
+  INVALID_CANCELLATION_PREPARATION_QUERY: 'Supply one exact booked class name, gym-local date, start and end time, with an optional accessible gym ID. Reservation and family IDs are not accepted.',
+  INVALID_BOOKING_PREPARATION_QUERY: 'Supply one exact class name, gym-local date, start and end time, with an optional accessible gym ID. Source, account, and family IDs are not accepted.',
+  CONFIRMED_GYM_TIME_ZONE_REQUIRED: 'Booking preparation requires a user-confirmed IANA time zone for the selected gym. Configure AIMHARDER_GYM_TIME_ZONES and restart.',
   INVALID_ACTIVITY_QUERY: 'Supply valid inclusive gym-local dates spanning at most 31 calendar dates.',
   INVALID_ACTIVITY_RESPONSE: 'AimHarder returned unsupported or inconsistent personal activity data.',
   ACTIVITY_LIMIT: 'The activity detail limit of 500 records was reached; coverage is incomplete.',

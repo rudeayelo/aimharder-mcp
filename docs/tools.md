@@ -1,6 +1,6 @@
 # Tools and results
 
-The six tools read one configured account. An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Field names are English; AimHarder content keeps its source language.
+The published release's six tools read one configured account. The checkout adds booking creation and cancellation previews and execution. An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking action previews and writes require a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
 
 ## `get_account_context`
 
@@ -19,6 +19,46 @@ Input: an inclusive gym-local interval. Optional `className` and `startTime` (`H
 Returns `gym`, interval, `sessions`, `coverage: "complete"` and `notices`. Sessions include source/composite IDs, date, local time and zone, source class ID/name, occupancy and capacity. Missing counts are `null`; zero stays zero. Occupancy is **not attendance**; capacity does not prove booking eligibility.
 
 Every requested day must succeed or the tool errors without a partial schedule. Empty results cover only the retrieved days; future classes may appear later. Use smaller intervals if a client times out. Local times have no inferred UTC offset.
+
+## `prepare_booking_creation`
+
+Input: an exact gym-local class session by date, original class name, start and end time. An accessible `gymId` is optional:
+
+```json
+{"date":"2026-09-26","className":"Open Box","startTime":"10:00","endTime":"11:00"}
+```
+
+The server checks the configured account's current gym membership and daily schedule. It requires `timeZoneStatus: "user-confirmed"`; set `AIMHARDER_GYM_TIME_ZONES` before calling it. It does not accept source session IDs, account IDs, family selectors, or an arbitrary URL.
+
+`status: "ready"` returns the gym, exact target, `currentState: "unbooked"`, possible credit effect, `balance: null`, `entitlementPeriod: null`, an opaque `actionReference`, and `expiresAt`. The reference expires after two minutes, is tied to this account and preview, and is single-use. Preparation sends no booking request. An execution call must follow explicit account-holder confirmation and a fresh source check.
+
+`missing`, `ambiguous`, `already-booked`, `waitlisted`, and `unsupported` return no action reference. Ambiguous matches retain alternatives. Missing required source eligibility fields are unsupported; the `hidden` field may be absent because the observed schedule omits it and the official renderer does not require it for the booking button. These statuses describe the current schedule view, not a guarantee about final eligibility. The source booking button may be offered even when a booking attempt would fail, and `enabled=1` does not establish the account's booking window. One standard creation at 9NBC was observed live; preparation itself sends no write. For a ready 9NBC class within two wall-clock hours of its start, the account holder's reported one-hour booking cutoff appears as a warning, not a general rule or a local rejection. No credit balance or validity period has been verified.
+
+## `execute_booking_creation` (checkout)
+
+Show the complete preview to the account holder and obtain explicit confirmation of that exact gym, class, local date/time and possible credit use. Then call `{"actionReference":"<fresh reference>","confirmed":true}`. The boolean records the client's confirmation step; the server cannot prove the person saw the preview. Optional `gymId` must be accessible and match the reference. Source IDs, family selectors, `insist`, and arbitrary URLs are rejected.
+
+The server consumes the reference, checks account/gym/zone and the same offered schedule session again, and checks the current upcoming view for a matching booked, waitlisted or unknown entry before attempting one standard `POST /api/book`. A changed or already covered target returns `stale` without writing. After the attempt, fresh daily schedule and upcoming views produce `confirmed`, `waitlisted`, `rejected`, or `uncertain`; a source denial is reported as rejected only when the fresh schedule remains unbooked. Conflicting views, unreadable results and transport failures remain uncertain. The upcoming view has no verified date horizon; absence there does not prove that no booking exists. No automatic write retry or waitlist follow-up is sent. A fresh preparation and confirmation are required for a further attempt, after checking the source directly.
+
+The request shape (`id`, `day`) was observed in one confirmed standard 9NBC Open Box booking. Its HTTP response included `bookState=1`, but fresh schedule and upcoming reads established the booked state. Denials, waitlists, other gyms, and the actual credit effect remain unverified live; fixture success does not establish those branches.
+
+## `prepare_booking_cancellation` (checkout)
+
+Supply the exact gym-local date, class name, start and end time, with optional accessible `gymId`, as for creation preparation. The server reads the authenticated account's fresh daily schedule and uses its reservation identifier internally. It never joins an upcoming-booking ID to a schedule row by assumption. The public tool accepts no reservation ID, family selector or arbitrary endpoint.
+
+`ready` returns the verified gym, exact class and local times, `currentState: "booked"`, possible credit loss, `balance: null`, `entitlementPeriod: null`, a two-minute, single-use cancellation `actionReference`, and `expiresAt`. `missing`, `ambiguous`, `already-cancelled`, and `unsupported` return no reference; ambiguous results include alternatives. Waitlist leaving is unsupported. The reference is bound to this account, gym, reservation and preview.
+
+At 9NBC, the preview warns at or inside the [published 90-minute boundary](https://noubarriscrosstraining.aimharder.es/boxmemberships) that cancellation may lose a credit. This is not generalized to other gyms, and the balance or actual refund remains unverified. Around daylight-saving transitions, the server checks possible instants for the gym-local wall time and warns if any falls inside the boundary; it does not claim the upstream class's exact UTC instant. Preparation sends no cancellation POST; an initial cancellation POST can itself change state and is never used as a probe.
+
+## `execute_booking_cancellation` (checkout)
+
+Call only after showing the preparation preview and obtaining explicit account-holder confirmation for the exact gym, class, local date/time, booked state, and possible credit loss. Supply `actionReference` and `confirmed: true`, with optional accessible `gymId`; arbitrary reservation and family selectors are rejected. The server consumes the short-lived reference, rechecks the exact schedule reservation and eligibility, and sends at most one `POST /api/cancelBook` with `late=0`. It then reads the daily schedule and upcoming view again. A supported `cancelState=1` with a nonconflicting cancelled row retaining the reservation identifier, or with the same class session now unbooked and its reservation identifier removed, produces `confirmed`. Denial with a still booked reservation is `rejected`; a late-credit-loss warning with the same still booked, actionable reservation is `pending-credit-loss` and returns a new short-lived `actionReference` and `expiresAt`. Changed targets return `stale`; unsupported responses, transport failures, unreadable or conflicting views are `uncertain`. No write is retried. No balance or restored credit is claimed. One standard 9NBC cancellation was observed live; the corrected unbooked-row `confirmed` branch is fixture-tested after that write.
+
+At 9NBC, if the published 90-minute boundary is reached after a preview that did not show the immediate credit-loss warning, execution returns `stale` without writing. Prepare and explicitly confirm a new preview.
+
+## `execute_late_booking_cancellation` (checkout)
+
+Use only the new reference from a `pending-credit-loss` result, after displaying its exact class, gym-local date and times, still booked state, and possible lost credit and obtaining **separate** explicit account-holder confirmation of that consequence. Supply `confirmedCreditLoss: true`; the marker alone cannot prove human consent. The server consumes the new reference, refreshes the same reservation, and sends one `late=1` cancellation request only if it remains uniquely booked and actionable. Fresh schedule and upcoming reads distinguish `confirmed`, `rejected`, `uncertain`, and `stale`. Timeouts, repeated late warnings, unsupported results, and conflicting reads are uncertain; no write is replayed. No credit balance or refund is claimed. This follows the observed official frontend flow, not a live-verified account contract.
 
 ## `get_published_workouts`
 

@@ -1,7 +1,7 @@
 {
   "name": "aimharder-mcp",
   "version": "0.1.2",
-  "description": "Local read-only AimHarder MCP server",
+  "description": "Local AimHarder MCP server for queries and manual bookings",
   "license": "MIT",
   "type": "module",
   "engines": {
