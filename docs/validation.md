@@ -79,6 +79,10 @@ The authenticated `/diary` renderer and a fresh `/api/nextBookings` response exp
 
 No historical cursor, total or date horizon was observed. Thirty is an observed count, not a hard limit. Empty history does not prove empty lifetime history. Duplicate, malformed, partial and access-error cases were checked with fixtures. The targeted history/context/upcoming run passed 99 tests on Node 24.
 
+## Booking credits research (2026-09-24)
+
+With account-holder authorization for local 1Password CLI access, a separate read-only check verified the existing account identity and 9NBC membership, then inspected the complete key structures of fresh `/api/whoami`, `/api/nextBookings`, and daily `/api/bookings` responses for 23 and 25 September (19 and 14 class rows). None contained an identifiable remaining-credit or tariff-period field. No balance endpoint has been verified, so a credit count or post-cancellation refund cannot be claimed from these reads. The [research note](research/2026-09-24-booking-credits.md) records first-party frontend leads and the remaining authenticated-account discovery gap. No booking or cancellation write was made.
+
 ## Personal activity and entry summaries (2026-09-22)
 
 The authenticated activity calendar uses zero-based month numbers and lists source activity IDs by date. The implementation retrieves calendar partitions and linked workout details, then verifies account, gym and record date. It does not use feed publication order to infer training chronology. An SDK stdio comparison over an actual 22-date interval matched source IDs, record dates, exercise names, prescriptions, block notes and complete date coverage against fresh calendar/detail responses. Empty adjacent months and matching IDs in the personal feed were also observed.
@@ -152,3 +156,7 @@ The ChatGPT desktop STDIO form was observed in a user screenshot, but no package
 The user requested `npx` as the generic command, Node `>=24`, and an optional gym-zone override. Unmapped gyms now use an explicitly reported **assumed** `Europe/Madrid`; configured zones report `user-confirmed`. This is a product assumption, not an upstream time-zone discovery. Prior live date checks used a confirmed zone and do not validate the fallback for another gym. See the [default-zone ADR](adr/2026-09-24-default-gym-time-zone.md).
 
 On Node 24.14.0, typecheck, build, 272 tests and the 23-file isolated package check passed. On Node 26.9.0, typecheck, the same fixture suite and package check passed; test workers emitted experimental `localStorage` warnings without failed assertions. These checks cover those tested versions and fixtures, not future Node versions or real use of the assumed zone. npm publication occurred after this local setup check.
+
+## Read-only booking creation preparation (2026-09-25, issue #22)
+
+The checkout's `prepare_booking_creation` tool was checked through an MCP SDK client with an in-memory transport and anonymized HTTP fixtures. The behavioral test verified exact gym/date/class/time matching, ambiguous alternatives, observed booking and waitlist states, source eligibility flags, a confirmed-zone gate, inaccessible-gym rejection, and sanitized failures. The request trace contained one login POST and only read-only account/schedule GETs; no booking or cancellation POST was sent. Reference storage tests cover action, account and gym binding, two-minute expiry, and single use. These are fixture results, not live upstream acceptance. The creation write contract, real-time eligibility, and credit balance remain unverified. No live booking was attempted.

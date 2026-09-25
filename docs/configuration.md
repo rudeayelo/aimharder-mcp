@@ -21,6 +21,8 @@ Supply credentials through the client process environment or a secrets manager; 
 
 Date inputs use `YYYY-MM-DD` in the reported gym zone. An assumed zone can make “tomorrow” wrong near midnight. Returned times are local wall times without inferred UTC offsets.
 
+`prepare_booking_creation` is available in the development checkout, not the pinned public package above. It requires an explicit mapping for the selected gym in `AIMHARDER_GYM_TIME_ZONES`; the assumed fallback cannot authorize a booking preview with an action reference. Preparation only reads the schedule and does not create a reservation.
+
 ## Version-pinned startup
 
 A client that forwards the required variables can start the pinned release with:

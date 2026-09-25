@@ -10,7 +10,7 @@ The server receives credentials through environment variables and keeps the sess
 
 On session expiration, perform at most one automatic reauthentication per request and retry the query once. Stop with a clear error on invalid credentials, 2FA, or restrictions; do not retry in a loop.
 
-Exploration allows authentication and queries against the user's own account, not creating or canceling bookings, publishing results, or profile changes. Do not query other members' data in bulk. An explicit list of allowed operations is preferable to assuming every GET is safe. The login POST is an authentication exception, not permission for other POST requests.
+MVP exploration allows authentication and queries against the user's own account, not creating or canceling bookings, publishing results, or profile changes. Do not query other members' data in bulk. An explicit list of allowed operations is preferable to assuming every GET is safe. The login POST is an authentication exception, not permission for other POST requests. The later [manual booking-write decision](2026-09-24-manual-booking-writes.md) authorizes a separately scoped feature phase; it does not retroactively change MVP validation or allow arbitrary POST requests.
 
 ## Client and agent access
 
@@ -18,7 +18,7 @@ Each client or agent must use its own authorized access to the secrets manager. 
 
 ## Future write operations
 
-These require an explicit request, unambiguous identification of the date/session/person, compliance with gym rules, and a subsequent read of the booking or result. Do not bypass capacity limits, booking windows, credits, or access controls. Do not make real bookings to test connectivity.
+These require an explicit request, unambiguous identification of the date/session/person, compliance with gym rules, and a subsequent read of the booking or result. Do not bypass capacity limits, booking windows, credits, or access controls. For booking writes, see the [later scope and confirmation decision](2026-09-24-manual-booking-writes.md): the account holder permits real Open Box validation only with prior confirmation of each action.
 
 ## Verification and privacy
 

@@ -1,6 +1,6 @@
 # Tools and results
 
-The six tools read one configured account. An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Field names are English; AimHarder content keeps its source language.
+The seven tools read one configured account. An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking preparation requires a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
 
 ## `get_account_context`
 
@@ -19,6 +19,20 @@ Input: an inclusive gym-local interval. Optional `className` and `startTime` (`H
 Returns `gym`, interval, `sessions`, `coverage: "complete"` and `notices`. Sessions include source/composite IDs, date, local time and zone, source class ID/name, occupancy and capacity. Missing counts are `null`; zero stays zero. Occupancy is **not attendance**; capacity does not prove booking eligibility.
 
 Every requested day must succeed or the tool errors without a partial schedule. Empty results cover only the retrieved days; future classes may appear later. Use smaller intervals if a client times out. Local times have no inferred UTC offset.
+
+## `prepare_booking_creation`
+
+Input: an exact gym-local class session by date, original class name, start and end time. An accessible `gymId` is optional:
+
+```json
+{"date":"2026-09-26","className":"Open Box","startTime":"10:00","endTime":"11:00"}
+```
+
+The server checks the configured account's current gym membership and daily schedule. It requires `timeZoneStatus: "user-confirmed"`; set `AIMHARDER_GYM_TIME_ZONES` before calling it. It does not accept source session IDs, account IDs, family selectors, or an arbitrary URL.
+
+`status: "ready"` returns the gym, exact target, `currentState: "unbooked"`, possible credit effect, `balance: null`, `entitlementPeriod: null`, an opaque `actionReference`, and `expiresAt`. The reference expires after two minutes, is tied to this account and preview, and is single-use. It is a preparation artifact only: **no booking execution tool exists in this delivery**. A future execution call must follow explicit account-holder confirmation and a fresh source check.
+
+`missing`, `ambiguous`, `already-booked`, `waitlisted`, and `unsupported` return no action reference. Ambiguous matches retain alternatives. Missing source eligibility fields are unsupported. These statuses describe the current schedule view, not a guarantee about final eligibility. The source booking button may be offered even when a booking attempt would fail. The creation request and response contract remain unverified; no write is sent by this tool. For a ready 9NBC class within two wall-clock hours of its start, the account holder's reported one-hour booking cutoff appears as a warning, not a general rule or a local rejection. No credit balance or validity period has been verified.
 
 ## `get_published_workouts`
 
