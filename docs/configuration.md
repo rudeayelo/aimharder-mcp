@@ -1,6 +1,6 @@
 # Configure a local AimHarder MCP server
 
-Your MCP client runs the server locally over stdio, using one AimHarder account per process. Install Node.js 24 or newer. The current verified npm version is `aimharder-mcp@0.1.2`.
+Your MCP client runs the server locally over stdio, using one AimHarder account per process. Install Node.js 24 or newer. The examples pin `aimharder-mcp@0.2.0`.
 
 ## Environment variables
 
@@ -21,7 +21,7 @@ Supply credentials through the client process environment or a secrets manager; 
 
 Date inputs use `YYYY-MM-DD` in the reported gym zone. An assumed zone can make “tomorrow” wrong near midnight. Returned times are local wall times without inferred UTC offsets.
 
-`prepare_booking_creation` is available in the development checkout, not the pinned public package above. It requires an explicit mapping for the selected gym in `AIMHARDER_GYM_TIME_ZONES`; the assumed fallback cannot authorize a booking preview with an action reference. Preparation only reads the schedule and does not create a reservation.
+Booking action previews and writes require an explicit mapping for the selected gym in `AIMHARDER_GYM_TIME_ZONES`; the assumed fallback cannot authorize an action reference. Preparation only reads the schedule and does not create or cancel a reservation. Execution requires explicit account-holder confirmation.
 
 ## Version-pinned startup
 
@@ -29,7 +29,7 @@ A client that forwards the required variables can start the pinned release with:
 
 ```text
 command: npx
-arguments: --yes, aimharder-mcp@0.1.2
+arguments: --yes, aimharder-mcp@0.2.0
 ```
 
 If `npx` cannot start, check the app's access to Node and npm; GUI apps may have a different `PATH` from your terminal. The [private-file setup](#private-file-and-local-installation) runs Node directly. The server queries AimHarder on demand, without a persistent cache.
@@ -48,7 +48,7 @@ If needed, add `AIMHARDER_GYM_TIME_ZONES={"sample-gym":"Atlantic/Canary"}`, repl
 Alternatively, install the exact package into a private local directory:
 
 ```sh
-npm install --prefix /absolute/path/to/installation --ignore-scripts --omit=dev aimharder-mcp@0.1.2
+npm install --prefix /absolute/path/to/installation --ignore-scripts --omit=dev aimharder-mcp@0.2.0
 ```
 
 Point a stdio client at Node 24 or newer with these arguments, in this order:

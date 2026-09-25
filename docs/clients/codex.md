@@ -11,11 +11,11 @@ If Codex receives the required environment variables from your local environment
 ```toml
 [mcp_servers.aimharder]
 command = "npx"
-args = ["--yes", "aimharder-mcp@0.1.2"]
+args = ["--yes", "aimharder-mcp@0.2.0"]
 env_vars = ["AIMHARDER_USERNAME", "AIMHARDER_PASSWORD"]
 ```
 
-You can instead run `codex mcp add aimharder -- npx --yes aimharder-mcp@0.1.2`, then add the `env_vars` line to the created table. Also forward `AIMHARDER_GYM_TIME_ZONES` or `AIMHARDER_DEFAULT_GYM` if configured. Restart Codex after editing the configuration.
+You can instead run `codex mcp add aimharder -- npx --yes aimharder-mcp@0.2.0`, then add the `env_vars` line to the created table. Also forward `AIMHARDER_GYM_TIME_ZONES` or `AIMHARDER_DEFAULT_GYM` if configured. Restart Codex after editing the configuration.
 
 ## Private-file option
 
@@ -29,10 +29,10 @@ args = [
   "/absolute/path/to/npm/bin/npx-cli.js",
   "--yes",
   "--prefix=/absolute/path/to/empty-npx-directory",
-  "aimharder-mcp@0.1.2",
+  "aimharder-mcp@0.2.0",
 ]
 ```
 
 Create the empty directory first. The prefix makes `npx` resolve the public version even when Codex starts inside a checkout of `aimharder-mcp`. Find the npm CLI bundled with your Node installation; the path is installation-specific. Keep both the private file and empty directory outside the repository.
 
-Run `codex mcp get aimharder` to inspect the saved command. In a new Codex session, call `get_account_context` with `{}` to authenticate and inspect the gym and zone. Tool listing alone does not authenticate. The server is local and read-only.
+Run `codex mcp get aimharder` to inspect the saved command. In a new Codex session, call `get_account_context` with `{}` to authenticate and inspect the gym and zone. Tool listing alone does not authenticate. The server is local; booking creation and cancellation require a fresh preview and explicit account-holder confirmation.

@@ -1,6 +1,6 @@
 # Tools and results
 
-The published release's six tools read one configured account. The checkout adds booking creation and cancellation previews and execution. An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking action previews and writes require a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
+Version `0.2.0` offers eleven tools for one configured account: six read queries, read-only booking previews, and manual booking creation and cancellation actions. An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking action previews and writes require a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
 
 ## `get_account_context`
 
@@ -34,7 +34,7 @@ The server checks the configured account's current gym membership and daily sche
 
 `missing`, `ambiguous`, `already-booked`, `waitlisted`, and `unsupported` return no action reference. Ambiguous matches retain alternatives. Missing required source eligibility fields are unsupported; the `hidden` field may be absent because the observed schedule omits it and the official renderer does not require it for the booking button. These statuses describe the current schedule view, not a guarantee about final eligibility. The source booking button may be offered even when a booking attempt would fail, and `enabled=1` does not establish the account's booking window. One standard creation at 9NBC was observed live; preparation itself sends no write. For a ready 9NBC class within two wall-clock hours of its start, the account holder's reported one-hour booking cutoff appears as a warning, not a general rule or a local rejection. No credit balance or validity period has been verified.
 
-## `execute_booking_creation` (checkout)
+## `execute_booking_creation`
 
 Show the complete preview to the account holder and obtain explicit confirmation of that exact gym, class, local date/time and possible credit use. Then call `{"actionReference":"<fresh reference>","confirmed":true}`. The boolean records the client's confirmation step; the server cannot prove the person saw the preview. Optional `gymId` must be accessible and match the reference. Source IDs, family selectors, `insist`, and arbitrary URLs are rejected.
 
@@ -42,7 +42,7 @@ The server consumes the reference, checks account/gym/zone and the same offered 
 
 The request shape (`id`, `day`) was observed in one confirmed standard 9NBC Open Box booking. Its HTTP response included `bookState=1`, but fresh schedule and upcoming reads established the booked state. Denials, waitlists, other gyms, and the actual credit effect remain unverified live; fixture success does not establish those branches.
 
-## `prepare_booking_cancellation` (checkout)
+## `prepare_booking_cancellation`
 
 Supply the exact gym-local date, class name, start and end time, with optional accessible `gymId`, as for creation preparation. The server reads the authenticated account's fresh daily schedule and uses its reservation identifier internally. It never joins an upcoming-booking ID to a schedule row by assumption. The public tool accepts no reservation ID, family selector or arbitrary endpoint.
 
@@ -50,13 +50,13 @@ Supply the exact gym-local date, class name, start and end time, with optional a
 
 At 9NBC, the preview warns at or inside the [published 90-minute boundary](https://noubarriscrosstraining.aimharder.es/boxmemberships) that cancellation may lose a credit. This is not generalized to other gyms, and the balance or actual refund remains unverified. Around daylight-saving transitions, the server checks possible instants for the gym-local wall time and warns if any falls inside the boundary; it does not claim the upstream class's exact UTC instant. Preparation sends no cancellation POST; an initial cancellation POST can itself change state and is never used as a probe.
 
-## `execute_booking_cancellation` (checkout)
+## `execute_booking_cancellation`
 
 Call only after showing the preparation preview and obtaining explicit account-holder confirmation for the exact gym, class, local date/time, booked state, and possible credit loss. Supply `actionReference` and `confirmed: true`, with optional accessible `gymId`; arbitrary reservation and family selectors are rejected. The server consumes the short-lived reference, rechecks the exact schedule reservation and eligibility, and sends at most one `POST /api/cancelBook` with `late=0`. It then reads the daily schedule and upcoming view again. A supported `cancelState=1` with a nonconflicting cancelled row retaining the reservation identifier, or with the same class session now unbooked and its reservation identifier removed, produces `confirmed`. Denial with a still booked reservation is `rejected`; a late-credit-loss warning with the same still booked, actionable reservation is `pending-credit-loss` and returns a new short-lived `actionReference` and `expiresAt`. Changed targets return `stale`; unsupported responses, transport failures, unreadable or conflicting views are `uncertain`. No write is retried. No balance or restored credit is claimed. One standard 9NBC cancellation was observed live; the corrected unbooked-row `confirmed` branch is fixture-tested after that write.
 
 At 9NBC, if the published 90-minute boundary is reached after a preview that did not show the immediate credit-loss warning, execution returns `stale` without writing. Prepare and explicitly confirm a new preview.
 
-## `execute_late_booking_cancellation` (checkout)
+## `execute_late_booking_cancellation`
 
 Use only the new reference from a `pending-credit-loss` result, after displaying its exact class, gym-local date and times, still booked state, and possible lost credit and obtaining **separate** explicit account-holder confirmation of that consequence. Supply `confirmedCreditLoss: true`; the marker alone cannot prove human consent. The server consumes the new reference, refreshes the same reservation, and sends one `late=1` cancellation request only if it remains uniquely booked and actionable. Fresh schedule and upcoming reads distinguish `confirmed`, `rejected`, `uncertain`, and `stale`. Timeouts, repeated late warnings, unsupported results, and conflicting reads are uncertain; no write is replayed. No credit balance or refund is claimed. This follows the observed official frontend flow, not a live-verified account contract.
 
