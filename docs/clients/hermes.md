@@ -1,6 +1,6 @@
 # Connect Hermes
 
-Hermes configures local stdio servers in `mcp_servers`. The published package connected, exposed six tools and authenticated an account query in Hermes; a prior local archive answered a future-WOD question. See [validation](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/validation.md).
+Hermes configures local stdio servers in `mcp_servers`. Version `0.1.2` connected, exposed six tools and authenticated an account query in Hermes; a prior local archive answered a future-WOD question. The pinned `0.2.0` release has eleven tools, but Hermes has not been retested with that version. See [validation](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/validation.md).
 
 Set up [Node 24+ and credentials](../configuration.md). Hermes forwards configured `env` values, but does not pass every process variable to child servers. `${VAR}` resolves from the active profile's secrets or environment. See the [Hermes guide](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/features/mcp.md) and [config reference](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/reference/mcp-config-reference.md).
 

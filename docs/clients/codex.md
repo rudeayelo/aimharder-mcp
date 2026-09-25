@@ -35,4 +35,4 @@ args = [
 
 Create the empty directory first. The prefix makes `npx` resolve the public version even when Codex starts inside a checkout of `aimharder-mcp`. Find the npm CLI bundled with your Node installation; the path is installation-specific. Keep both the private file and empty directory outside the repository.
 
-Run `codex mcp get aimharder` to inspect the saved command. In a new Codex session, call `get_account_context` with `{}` to authenticate and inspect the gym and zone. Tool listing alone does not authenticate. The server is local and read-only.
+Run `codex mcp get aimharder` to inspect the saved command. In a new Codex session, call `get_account_context` with `{}` to authenticate and inspect the gym and zone. Tool listing alone does not authenticate. The server is local; booking creation and cancellation require a fresh preview and explicit account-holder confirmation.
