@@ -9,6 +9,10 @@ export const bookingCreationQuerySchema = z.object({
   startTime: timeSchema, endTime: timeSchema,
 }).strict();
 export type BookingCreationQuery = z.infer<typeof bookingCreationQuerySchema>;
+export const bookingExecutionSchema = z.object({
+  gymId: gymIdSchema.optional(), actionReference: z.string().regex(/^[a-f0-9]{64}$/), confirmed: z.literal(true),
+}).strict();
+export type BookingExecution = z.infer<typeof bookingExecutionSchema>;
 
 const rowFields = z.object({
   enabled: z.number().int(), bookState: z.number().int().nullable(),

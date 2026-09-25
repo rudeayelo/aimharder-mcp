@@ -7,7 +7,7 @@ import { classQuerySchema, classSessionSchema, dateSchema } from './classes.js';
 import { upcomingBookingSchema, historicalBookingSchema } from './bookings.js';
 import { workoutQuerySchema, workoutSchema } from './workouts.js';
 import { safeError } from './errors.js';
-import { bookingCreationQuerySchema } from './booking-preparation.js';
+import { bookingCreationQuerySchema, bookingExecutionSchema } from './booking-preparation.js';
 
 const gymSchema = z.object({
   id: gymIdSchema, name: z.string(), timeZone: z.string().nullable(), timeZoneStatus: z.enum(['assumed', 'user-confirmed']),
@@ -49,7 +49,7 @@ export function createServer(environment: Record<string, string | undefined>) {
     }
   });
   server.registerTool('prepare_booking_creation', {
-    description: 'Read the current daily schedule and prepare one exact class booking for the configured account. Requires a user-confirmed gym IANA zone and exact class name, date, start and end time. Ambiguous, missing, already booked, waitlisted or unsupported targets receive no action reference. The short-lived reference does not book a class; a future execution tool must require explicit account-holder confirmation of this preview and recheck the source. Possible credit use and the unverified balance are disclosed.',
+    description: 'Read the current daily schedule and prepare one exact class booking for the configured account. Requires a user-confirmed gym IANA zone and exact class name, date, start and end time. Ambiguous, missing, already booked, waitlisted or unsupported targets receive no action reference. The short-lived reference does not book a class. Show the full preview and obtain explicit account-holder confirmation before execute_booking_creation. Possible credit use and the unverified balance are disclosed.',
     inputSchema: bookingCreationQuerySchema,
     outputSchema: z.object({ action: z.literal('create'), status: z.enum(['ready', 'ambiguous', 'missing', 'already-booked', 'waitlisted', 'unsupported']),
       gym: gymSchema, target: z.object({ className: z.string(), date: dateSchema, startTime: z.string(), endTime: z.string() }),
@@ -62,6 +62,23 @@ export function createServer(environment: Record<string, string | undefined>) {
   }, async (query) => {
     try {
       const result = await client.prepareBookingCreation(query);
+      return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
+    } catch (error) {
+      return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };
+    }
+  });
+  server.registerTool('execute_booking_creation', {
+    description: 'Create exactly one booking from a fresh prepare_booking_creation reference. The MCP client MUST show the exact gym, class, local date/time and credit uncertainty from that preview and obtain explicit account-holder confirmation before calling with confirmed: true. A reference alone does not prove consent. Rechecks the target and sends at most one standard write, then reconciles with fresh reads. The upstream write response contract has not been verified live. An uncertain result requires manual inspection before a new action.',
+    inputSchema: bookingExecutionSchema,
+    outputSchema: z.object({ action: z.literal('create'), status: z.enum(['confirmed', 'rejected', 'waitlisted', 'uncertain', 'stale']),
+      gym: gymSchema, target: z.object({ className: z.string(), date: dateSchema, startTime: z.string(), endTime: z.string() }),
+      observedState: z.enum(['unbooked', 'booked', 'waitlisted', 'unknown']),
+      credit: z.object({ possibleUse: z.string(), balance: z.null(), entitlementPeriod: z.null() }), notices: z.array(z.string()),
+    }),
+    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+  }, async (query) => {
+    try {
+      const result = await client.executeBookingCreation(query);
       return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
     } catch (error) {
       return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };

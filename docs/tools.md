@@ -1,6 +1,6 @@
 # Tools and results
 
-The seven tools read one configured account. An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking preparation requires a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
+The original seven tools read one configured account. The checkout also includes a booking creation preview and execution tool. An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking writes require a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
 
 ## `get_account_context`
 
@@ -30,9 +30,17 @@ Input: an exact gym-local class session by date, original class name, start and 
 
 The server checks the configured account's current gym membership and daily schedule. It requires `timeZoneStatus: "user-confirmed"`; set `AIMHARDER_GYM_TIME_ZONES` before calling it. It does not accept source session IDs, account IDs, family selectors, or an arbitrary URL.
 
-`status: "ready"` returns the gym, exact target, `currentState: "unbooked"`, possible credit effect, `balance: null`, `entitlementPeriod: null`, an opaque `actionReference`, and `expiresAt`. The reference expires after two minutes, is tied to this account and preview, and is single-use. It is a preparation artifact only: **no booking execution tool exists in this delivery**. A future execution call must follow explicit account-holder confirmation and a fresh source check.
+`status: "ready"` returns the gym, exact target, `currentState: "unbooked"`, possible credit effect, `balance: null`, `entitlementPeriod: null`, an opaque `actionReference`, and `expiresAt`. The reference expires after two minutes, is tied to this account and preview, and is single-use. Preparation sends no booking request. An execution call must follow explicit account-holder confirmation and a fresh source check.
 
 `missing`, `ambiguous`, `already-booked`, `waitlisted`, and `unsupported` return no action reference. Ambiguous matches retain alternatives. Missing source eligibility fields are unsupported. These statuses describe the current schedule view, not a guarantee about final eligibility. The source booking button may be offered even when a booking attempt would fail. The creation request and response contract remain unverified; no write is sent by this tool. For a ready 9NBC class within two wall-clock hours of its start, the account holder's reported one-hour booking cutoff appears as a warning, not a general rule or a local rejection. No credit balance or validity period has been verified.
+
+## `execute_booking_creation` (checkout)
+
+Show the complete preview to the account holder and obtain explicit confirmation of that exact gym, class, local date/time and possible credit use. Then call `{"actionReference":"<fresh reference>","confirmed":true}`. The boolean records the client's confirmation step; the server cannot prove the person saw the preview. Optional `gymId` must be accessible and match the reference. Source IDs, family selectors, `insist`, and arbitrary URLs are rejected.
+
+The server consumes the reference, checks account/gym/zone and the same offered schedule session again, then attempts one standard `POST /api/book`. A changed or already booked target returns `stale` without writing. After the attempt, fresh daily schedule and upcoming views produce `confirmed`, `waitlisted`, `rejected`, or `uncertain`; a source denial is reported as rejected only when the fresh schedule remains unbooked. Conflicting views, unreadable results and transport failures remain uncertain. The upcoming view has no verified date horizon; absence there does not negate a daily schedule booking. No automatic write retry or waitlist follow-up is sent. A fresh preparation and confirmation are required for a further attempt, after checking the source directly.
+
+The request shape (`id`, `day`) is a candidate from unofficial clients. The official public frontend has not exposed authenticated creation; the exact write request, response semantics, and credit effect remain unverified until separate, explicitly approved live validation. Fixture success is not live acceptance.
 
 ## `get_published_workouts`
 

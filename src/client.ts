@@ -8,7 +8,7 @@ import { calendarDates, classQuerySchema, parseClassDay, type ClassQuery, type C
 
 import { parseFeed, parseWorkout, workoutQuerySchema, type WorkoutQuery } from './workouts.js';
 import { parseUpcomingBookings, parseBookingHistory } from './bookings.js';
-import { bookingCandidates, bookingCreationQuerySchema, BookingPreparationStore, nearReportedBookingCutoff, type BookingCreationQuery, type BookingCreationPreview } from './booking-preparation.js';
+import { bookingCandidates, bookingCreationQuerySchema, bookingExecutionSchema, BookingPreparationStore, nearReportedBookingCutoff, type BookingCreationQuery, type BookingCreationPreview, type BookingExecution } from './booking-preparation.js';
 
 const loginUrl = 'https://login.aimharder.es/api/login';
 const identityUrl = 'https://aimharder.es/api/whoami';
@@ -135,6 +135,66 @@ export class AimHarderClient {
         balance: null, entitlementPeriod: null }, notices,
       };
       return { status, ...preview, alternatives, ...this.#bookingPreparations.issue(this.#accountId!, boxId, candidate.sourceId, preview) };
+    });
+  }
+
+  executeBookingCreation(input: BookingExecution) {
+    const parsed = bookingExecutionSchema.safeParse(input);
+    if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_BOOKING_EXECUTION_QUERY'));
+    const query = parsed.data;
+    return this.#query(query.gymId, async (_gyms, { gym, boxId }, recover) => {
+      // The reference is consumed before any source access, including failed preflight reads.
+      const entry = this.#bookingPreparations.take(query.actionReference, 'create', this.#accountId!, gym.id);
+      if (!entry) throw new AimHarderError('BOOKING_REFERENCE_INVALID');
+      const { preview } = entry;
+      const target = preview.target;
+      const base = { action: 'create' as const, gym, target, credit: preview.credit };
+      if (boxId !== entry.boxId || gym.timeZoneStatus !== 'user-confirmed' || gym.timeZone !== preview.gym.timeZone || gym.name !== preview.gym.name) {
+        return { ...base, status: 'stale' as const, observedState: 'unknown' as const, notices: ['Account, gym, or confirmed time zone changed. No booking request was sent.'] };
+      }
+      const before = bookingCandidates(await this.#request({ kind: 'classes', gymId: gym.id, boxId, date: target.date }), gym.id, target.date, gym.timeZone, target);
+      if (before.length !== 1 || before[0]!.sourceId !== entry.sourceId || before[0]!.eligibility !== 'offered') {
+        return { ...base, status: 'stale' as const, observedState: before.length === 1 ? before[0]!.currentState : 'unknown' as const,
+          notices: ['The exact class or its offered state changed. No booking request was sent.'] };
+      }
+      let response: unknown;
+      let writeIssue = false;
+      try {
+        response = await this.#request({ kind: 'book-create', gymId: gym.id, sourceId: entry.sourceId, date: target.date });
+        if (!z.record(z.string(), z.unknown()).safeParse(response).success) writeIssue = true;
+      } catch { writeIssue = true; }
+      let scheduleState: 'unbooked' | 'booked' | 'waitlisted' | 'unknown' = 'unknown';
+      let conflicting = false;
+      try {
+        const read = async (operation: { kind: 'classes'; gymId: string; boxId: number; date: string } | { kind: 'upcoming'; gymId: string; boxId: number }) => {
+          try { return await this.#request(operation); }
+          catch (error) {
+            if (!(error instanceof SessionExpired)) throw error;
+            await recover();
+            return this.#request(operation);
+          }
+        };
+        const after = bookingCandidates(await read({ kind: 'classes', gymId: gym.id, boxId, date: target.date }), gym.id, target.date, gym.timeZone, target);
+        if (after.length === 1 && after[0]!.sourceId === entry.sourceId) scheduleState = after[0]!.currentState;
+        const upcoming = parseUpcomingBookings(await read({ kind: 'upcoming', gymId: gym.id, boxId }), gym.timeZone);
+        const matches = upcoming.filter(item => item.date === target.date && item.startTime === target.startTime
+          && item.timeLabel.endsWith(target.endTime) && item.classType.name === target.className);
+        // This view has no verified horizon; absence cannot contradict a fresh daily schedule.
+        conflicting = matches.length > 1 || matches.some(item => item.state !== scheduleState);
+      } catch { writeIssue = true; }
+      const sourceDenial = z.object({ bookState: z.number().int().negative().optional(), errorMssg: z.unknown().optional(), errorMssgLang: z.unknown().optional() }).safeParse(response);
+      const denied = sourceDenial.success && (sourceDenial.data.bookState !== undefined || sourceDenial.data.errorMssg !== undefined || sourceDenial.data.errorMssgLang !== undefined);
+      const status = conflicting ? 'uncertain' as const : scheduleState === 'booked' ? 'confirmed' as const
+        : scheduleState === 'waitlisted' ? 'waitlisted' as const
+          : scheduleState === 'unbooked' && denied ? 'rejected' as const : 'uncertain' as const;
+      return { ...base, status, observedState: scheduleState, notices: [
+        'One standard booking request was attempted. Its response contract has not been verified with a live booking.',
+        status === 'confirmed' ? 'A fresh schedule read reported a confirmed booking.'
+          : status === 'waitlisted' ? 'A fresh schedule read reported a waitlist state; no further write was sent.'
+            : status === 'rejected' ? 'The source returned a denial indication and the fresh schedule remains unbooked. Denial semantics remain unverified live.'
+              : 'The outcome is uncertain. Check the booking directly before preparing a new action; no automatic write retry was sent.',
+        ...(writeIssue ? ['The write response or follow-up read was incomplete; do not infer a credit change.'] : []),
+      ] };
     });
   }
 
@@ -377,7 +437,7 @@ export class AimHarderClient {
     return [...gyms.values()];
   }
 
-  async #request(operation: { kind: 'activity-calendar'; month: string } | { kind: 'activity-detail'; sourceId: number } | 'login' | 'identity' | { kind: 'classes'; gymId: string; boxId: number; date: string } | { kind: 'upcoming'; gymId: string; boxId: number } | { kind: 'gym-page'; gymId: string } | { kind: 'feed'; gymId: string; publisher: number } | { kind: 'workout'; gymId: string; sourceId: number }): Promise<unknown> {
+  async #request(operation: { kind: 'activity-calendar'; month: string } | { kind: 'activity-detail'; sourceId: number } | 'login' | 'identity' | { kind: 'classes'; gymId: string; boxId: number; date: string } | { kind: 'book-create'; gymId: string; sourceId: number; date: string } | { kind: 'upcoming'; gymId: string; boxId: number } | { kind: 'gym-page'; gymId: string } | { kind: 'feed'; gymId: string; publisher: number } | { kind: 'workout'; gymId: string; sourceId: number }): Promise<unknown> {
     let url: string;
     if (typeof operation === 'string') url = operation === 'login' ? loginUrl : identityUrl;
     else {
@@ -389,6 +449,7 @@ export class AimHarderClient {
         case 'feed': url = `${origin}/api/activity?${new URLSearchParams({ timeLineFormat: '0', timeLineContent: '7', userID: String(operation.publisher) })}`; break;
         case 'workout': url = `${origin}/api/activity/workout?SEID=${operation.sourceId}`; break;
         case 'classes': url = `${origin}/api/bookings?${new URLSearchParams({ box: String(operation.boxId), day: operation.date.replaceAll('-', '') })}`; break;
+        case 'book-create': url = `${origin}/api/book`; break;
         case 'upcoming': url = `${origin}/api/nextBookings?box=${operation.boxId}`; break;
       }
     }
@@ -396,7 +457,7 @@ export class AimHarderClient {
     const cookie = await this.#cookies.getCookieString(url);
     if (cookie) headers.Cookie = cookie;
     const init: RequestInit = {
-      method: operation === 'login' ? 'POST' : 'GET', headers,
+      method: operation === 'login' || (typeof operation === 'object' && operation.kind === 'book-create') ? 'POST' : 'GET', headers,
       redirect: 'error', signal: AbortSignal.timeout(15_000),
     };
     if (operation === 'login') {
@@ -405,6 +466,10 @@ export class AimHarderClient {
         username: this.configuration.username, password: this.configuration.password,
         iniframe: 0, fingerprint: randomBytes(25).toString('hex'),
       });
+    }
+    if (typeof operation === 'object' && operation.kind === 'book-create') {
+      headers['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
+      init.body = new URLSearchParams({ id: String(operation.sourceId), day: operation.date.replaceAll('-', '') }).toString();
     }
     try {
       const response = await fetch(url, init);

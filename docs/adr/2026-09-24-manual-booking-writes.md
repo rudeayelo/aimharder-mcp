@@ -1,6 +1,6 @@
 # ADR: manual booking writes for the next feature phase
 
-Status: accepted for feature scope on 2026-09-24; the read-only creation preview is implemented under the [2026-09-25 preparation decision](2026-09-25-booking-creation-preparation.md). Upstream write contracts and execution remain unverified.
+Status: accepted for feature scope on 2026-09-24; creation preview and fixture-tested execution are implemented under the [preparation decision](2026-09-25-booking-creation-preparation.md) and [execution decision](2026-09-25-booking-creation-execution.md). Upstream write contracts remain unverified live.
 
 ## Decision
 
@@ -24,4 +24,4 @@ For real validation, inspect the account's five-day booking window at test time 
 
 ## Consequences
 
-The existing MVP remains a read-only historical release; these actions are a later feature phase. The prior booking-read models do not establish a write contract or a reliable schedule-session join. The action-reference format, cancellation eligibility, source response handling, and live verification still require design and evidence before implementation. The server cannot prove that a person saw a prompt merely because a client supplies a confirmation reference; client behavior and tool descriptions must also require actual user confirmation.
+The existing MVP remains a read-only historical release; these actions are a later feature phase. The prior booking-read models do not establish a write contract or a reliable schedule-session join. Cancellation eligibility, source response handling, and live verification still require evidence. The server cannot prove that a person saw a prompt merely because a client supplies a confirmation reference; client behavior and tool descriptions must also require actual user confirmation.
