@@ -1,4 +1,6 @@
 const messages = {
+  INVALID_BOOKING_PREPARATION_QUERY: 'Supply one exact class name, gym-local date, start and end time, with an optional accessible gym ID. Source, account, and family IDs are not accepted.',
+  CONFIRMED_GYM_TIME_ZONE_REQUIRED: 'Booking preparation requires a user-confirmed IANA time zone for the selected gym. Configure AIMHARDER_GYM_TIME_ZONES and restart.',
   INVALID_ACTIVITY_QUERY: 'Supply valid inclusive gym-local dates spanning at most 31 calendar dates.',
   INVALID_ACTIVITY_RESPONSE: 'AimHarder returned unsupported or inconsistent personal activity data.',
   ACTIVITY_LIMIT: 'The activity detail limit of 500 records was reached; coverage is incomplete.',

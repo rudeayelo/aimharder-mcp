@@ -7,6 +7,7 @@ import { classQuerySchema, classSessionSchema, dateSchema } from './classes.js';
 import { upcomingBookingSchema, historicalBookingSchema } from './bookings.js';
 import { workoutQuerySchema, workoutSchema } from './workouts.js';
 import { safeError } from './errors.js';
+import { bookingCreationQuerySchema } from './booking-preparation.js';
 
 const gymSchema = z.object({
   id: gymIdSchema, name: z.string(), timeZone: z.string().nullable(), timeZoneStatus: z.enum(['assumed', 'user-confirmed']),
@@ -42,6 +43,25 @@ export function createServer(environment: Record<string, string | undefined>) {
   }, async (query) => {
     try {
       const result = await client.getClassSessions(query);
+      return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
+    } catch (error) {
+      return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };
+    }
+  });
+  server.registerTool('prepare_booking_creation', {
+    description: 'Read the current daily schedule and prepare one exact class booking for the configured account. Requires a user-confirmed gym IANA zone and exact class name, date, start and end time. Ambiguous, missing, already booked, waitlisted or unsupported targets receive no action reference. The short-lived reference does not book a class; a future execution tool must require explicit account-holder confirmation of this preview and recheck the source. Possible credit use and the unverified balance are disclosed.',
+    inputSchema: bookingCreationQuerySchema,
+    outputSchema: z.object({ action: z.literal('create'), status: z.enum(['ready', 'ambiguous', 'missing', 'already-booked', 'waitlisted', 'unsupported']),
+      gym: gymSchema, target: z.object({ className: z.string(), date: dateSchema, startTime: z.string(), endTime: z.string() }),
+      alternatives: z.array(z.object({ className: z.string(), date: dateSchema, startTime: z.string(), endTime: z.string(), currentState: z.enum(['unbooked', 'booked', 'waitlisted', 'unknown']), eligibility: z.enum(['offered', 'unsupported']) })),
+      currentState: z.enum(['unbooked', 'booked', 'waitlisted', 'unknown']).optional(),
+      credit: z.object({ possibleUse: z.string(), balance: z.null(), entitlementPeriod: z.null() }).optional(),
+      actionReference: z.string().optional(), expiresAt: z.string().optional(), notices: z.array(z.string()),
+    }),
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+  }, async (query) => {
+    try {
+      const result = await client.prepareBookingCreation(query);
       return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
     } catch (error) {
       return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };

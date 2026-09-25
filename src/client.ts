@@ -8,6 +8,7 @@ import { calendarDates, classQuerySchema, parseClassDay, type ClassQuery, type C
 
 import { parseFeed, parseWorkout, workoutQuerySchema, type WorkoutQuery } from './workouts.js';
 import { parseUpcomingBookings, parseBookingHistory } from './bookings.js';
+import { bookingCandidates, bookingCreationQuerySchema, BookingPreparationStore, nearReportedBookingCutoff, type BookingCreationQuery, type BookingCreationPreview } from './booking-preparation.js';
 
 const loginUrl = 'https://login.aimharder.es/api/login';
 const identityUrl = 'https://aimharder.es/api/whoami';
@@ -59,6 +60,7 @@ export class AimHarderClient {
   #accountId: number | undefined;
   #authenticationFailure: AimHarderError | undefined;
   #queue: Promise<void> = Promise.resolve();
+  #bookingPreparations = new BookingPreparationStore();
 
   constructor(private readonly configuration: Configuration) {}
 
@@ -95,6 +97,44 @@ export class AimHarderClient {
           'Coverage describes successful daily schedule retrieval, not all possible future publications or booking availability.',
         ],
       };
+    });
+  }
+
+  prepareBookingCreation(input: BookingCreationQuery) {
+    const parsed = bookingCreationQuerySchema.safeParse(input);
+    if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_BOOKING_PREPARATION_QUERY'));
+    const query = parsed.data;
+    return this.#query(query.gymId, async (_gyms, { gym, boxId }) => {
+      if (gym.timeZoneStatus !== 'user-confirmed' || !gym.timeZone) throw new AimHarderError('CONFIRMED_GYM_TIME_ZONE_REQUIRED');
+      if (boxId === undefined) throw new AimHarderError('INVALID_CLASS_RESPONSE');
+      const body = await this.#request({ kind: 'classes', gymId: gym.id, boxId, date: query.date });
+      const candidates = bookingCandidates(body, gym.id, query.date, gym.timeZone, query);
+      const alternatives = candidates.map(({ sourceId: _sourceId, ...candidate }) => candidate);
+      const base = { action: 'create' as const, gym, target: {
+        className: query.className, date: query.date, startTime: query.startTime, endTime: query.endTime,
+      }, alternatives };
+      if (candidates.length !== 1) return { ...base, status: candidates.length ? 'ambiguous' as const : 'missing' as const,
+        notices: [candidates.length ? 'Several exact class sessions match. Choose a different date or time; no booking can be prepared.' : 'No exact class session was found in the retrieved daily schedule.'] };
+      const candidate = candidates[0]!;
+      const status = candidate.currentState === 'booked' ? 'already-booked' as const
+        : candidate.currentState === 'waitlisted' ? 'waitlisted' as const
+          : candidate.eligibility === 'offered' ? 'ready' as const : 'unsupported' as const;
+      const notices = [
+        'This is a read-only schedule snapshot. Preparation does not reserve a place; the write contract and final eligibility remain unverified.',
+        'A booking may use a credit. No verified available balance or entitlement period is available.',
+        ...(status === 'ready' && gym.id === 'noubarriscrosstraining' && nearReportedBookingCutoff(query.date, query.startTime, gym.timeZone)
+          ? ['This class is near 9NBC’s reported one-hour booking cutoff by gym-local wall time. The actual eligibility is decided by AimHarder; this warning does not reject the request.'] : []),
+      ];
+      if (status !== 'ready') return { ...base, status, currentState: candidate.currentState, notices };
+      const preview: BookingCreationPreview = {
+        action: 'create', gym: { ...gym, timeZone: gym.timeZone, timeZoneStatus: 'user-confirmed' },
+        target: base.target, currentState: 'unbooked',
+        credit: { possibleUse: gym.id === 'noubarriscrosstraining'
+          ? 'The account holder reports that a confirmed booking uses one credit at 9NBC; the actual charge is not verified for this request.'
+          : 'A booking may use a credit; the actual charge is not verified for this request.',
+        balance: null, entitlementPeriod: null }, notices,
+      };
+      return { status, ...preview, alternatives, ...this.#bookingPreparations.issue(this.#accountId!, boxId, candidate.sourceId, preview) };
     });
   }
 
