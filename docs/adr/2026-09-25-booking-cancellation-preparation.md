@@ -1,6 +1,6 @@
 # ADR: read-only cancellation preparation from a daily reservation
 
-Status: accepted for issue #24 on 2026-09-25. Cancellation execution and live contract validation remain pending in #25–#27.
+Status: accepted for issue #24 on 2026-09-25. Standard execution is described in [the cancellation execution decision](2026-09-25-booking-cancellation-execution.md); live contract validation remains pending in #27.
 
 ## Decision
 
@@ -10,4 +10,4 @@ The preview shows the gym, class, local times, current booked state, possible cr
 
 ## Consequences
 
-No cancellation POST or late attempt is available under this issue. Fixtures establish public MCP behavior but do not verify live `idres` shape, eligibility, credit balance, or cancellation response semantics. The published npm package remains read-only; the checkout's cancellation preview is a later feature phase. Issue #25 must recheck the reservation and obtain explicit action-time confirmation before any cancellation write.
+Issue #24 itself added no cancellation POST or late attempt. Fixtures establish public MCP behavior but do not verify live `idres` shape, eligibility, credit balance, or cancellation response semantics. The published npm package remains read-only; the checkout's cancellation preview is a later feature phase. The execution decision requires a fresh recheck and explicit action-time confirmation before a write.

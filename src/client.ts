@@ -245,6 +245,65 @@ export class AimHarderClient {
     });
   }
 
+  executeBookingCancellation(input: BookingExecution) {
+    const parsed = bookingExecutionSchema.safeParse(input);
+    if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_BOOKING_EXECUTION_QUERY'));
+    const query = parsed.data;
+    return this.#query(query.gymId, async (_gyms, { gym, boxId }, recover) => {
+      const entry = this.#bookingPreparations.take(query.actionReference, 'cancel', this.#accountId!, gym.id);
+      if (!entry) throw new AimHarderError('BOOKING_REFERENCE_INVALID');
+      const { preview } = entry;
+      const target = preview.target;
+      const base = { action: 'cancel' as const, gym, target, credit: preview.credit };
+      if (boxId !== entry.boxId || gym.timeZoneStatus !== 'user-confirmed' || gym.timeZone !== preview.gym.timeZone || gym.name !== preview.gym.name) {
+        return { ...base, status: 'stale' as const, observedState: 'unknown' as const,
+          notices: ['Account, gym, or confirmed time zone changed. No cancellation request was sent.'] };
+      }
+      const before = cancellationCandidates(await this.#request({ kind: 'classes', gymId: gym.id, boxId, date: target.date }), gym.id, target.date, gym.timeZone!, target);
+      if (before.length !== 1 || before[0]!.reservationId !== entry.reservationId || before[0]!.eligibility !== 'offered') {
+        return { ...base, status: 'stale' as const, observedState: before.length === 1 ? before[0]!.currentState : 'unknown' as const,
+          notices: ['The exact reservation or its cancellation eligibility changed. No cancellation request was sent.'] };
+      }
+      let response: unknown;
+      let writeIssue = false;
+      try { response = await this.#request({ kind: 'book-cancel', gymId: gym.id, reservationId: entry.reservationId, late: false }); }
+      catch { writeIssue = true; }
+      let observedState: 'booked' | 'waitlisted' | 'cancelled' | 'unbooked' | 'unknown' = 'unknown';
+      let conflicting = false;
+      let reconciliationIssue = false;
+      try {
+        const read = async (operation: { kind: 'classes'; gymId: string; boxId: number; date: string } | { kind: 'upcoming'; gymId: string; boxId: number }) => {
+          try { return await this.#request(operation); }
+          catch (error) {
+            if (!(error instanceof SessionExpired)) throw error;
+            await recover();
+            return this.#request(operation);
+          }
+        };
+        const after = cancellationCandidates(await read({ kind: 'classes', gymId: gym.id, boxId, date: target.date }), gym.id, target.date, gym.timeZone!, target);
+        if (after.length === 1 && (after[0]!.reservationId === entry.reservationId || after[0]!.currentState === 'cancelled')) observedState = after[0]!.currentState;
+        else conflicting = true;
+        const upcoming = parseUpcomingBookings(await read({ kind: 'upcoming', gymId: gym.id, boxId }), gym.timeZone!);
+        const matches = upcoming.filter(item => item.date === target.date && item.startTime === target.startTime
+          && item.timeLabel.endsWith(target.endTime) && (item.classType.name === target.className || item.classType.name === null));
+        conflicting = conflicting || matches.length > 1 || matches.some(item => item.state !== observedState);
+      } catch { reconciliationIssue = true; }
+      const parsedResponse = z.object({ cancelState: z.number().int() }).safeParse(response);
+      const result = parsedResponse.success ? parsedResponse.data.cancelState : null;
+      const status = conflicting || reconciliationIssue || writeIssue ? 'uncertain' as const
+        : result === 1 && observedState === 'cancelled' ? 'confirmed' as const
+          : result === 2 && observedState === 'booked' ? 'pending-credit-loss' as const
+            : result === 3 && observedState === 'booked' ? 'rejected' as const : 'uncertain' as const;
+      return { ...base, status, observedState, notices: [
+        'One standard cancellation request was attempted. Its response contract has not been verified with a live cancellation.',
+        status === 'confirmed' ? 'A fresh schedule read supports a cancelled reservation. No credit balance or refund was verified.'
+          : status === 'pending-credit-loss' ? 'AimHarder indicated possible late credit loss. The reservation remains booked. No second cancellation request was sent.'
+            : status === 'rejected' ? 'AimHarder indicated a denial and the reservation remains booked.'
+              : 'The cancellation outcome is uncertain. Inspect the reservation directly before preparing another action; no automatic retry was sent.',
+      ] };
+    });
+  }
+
   getUpcomingBookings(gymId?: string) {
     return this.#query(gymId, async (_gyms, { gym, boxId }) => {
       if (!gym.timeZone) throw new AimHarderError('GYM_TIME_ZONE_REQUIRED');
@@ -484,7 +543,7 @@ export class AimHarderClient {
     return [...gyms.values()];
   }
 
-  async #request(operation: { kind: 'activity-calendar'; month: string } | { kind: 'activity-detail'; sourceId: number } | 'login' | 'identity' | { kind: 'classes'; gymId: string; boxId: number; date: string } | { kind: 'book-create'; gymId: string; sourceId: number; date: string } | { kind: 'upcoming'; gymId: string; boxId: number } | { kind: 'gym-page'; gymId: string } | { kind: 'feed'; gymId: string; publisher: number } | { kind: 'workout'; gymId: string; sourceId: number }): Promise<unknown> {
+  async #request(operation: { kind: 'activity-calendar'; month: string } | { kind: 'activity-detail'; sourceId: number } | 'login' | 'identity' | { kind: 'classes'; gymId: string; boxId: number; date: string } | { kind: 'book-create'; gymId: string; sourceId: number; date: string } | { kind: 'book-cancel'; gymId: string; reservationId: number; late: boolean } | { kind: 'upcoming'; gymId: string; boxId: number } | { kind: 'gym-page'; gymId: string } | { kind: 'feed'; gymId: string; publisher: number } | { kind: 'workout'; gymId: string; sourceId: number }): Promise<unknown> {
     let url: string;
     if (typeof operation === 'string') url = operation === 'login' ? loginUrl : identityUrl;
     else {
@@ -497,6 +556,7 @@ export class AimHarderClient {
         case 'workout': url = `${origin}/api/activity/workout?SEID=${operation.sourceId}`; break;
         case 'classes': url = `${origin}/api/bookings?${new URLSearchParams({ box: String(operation.boxId), day: operation.date.replaceAll('-', '') })}`; break;
         case 'book-create': url = `${origin}/api/book`; break;
+        case 'book-cancel': url = `${origin}/api/cancelBook`; break;
         case 'upcoming': url = `${origin}/api/nextBookings?box=${operation.boxId}`; break;
       }
     }
@@ -504,7 +564,7 @@ export class AimHarderClient {
     const cookie = await this.#cookies.getCookieString(url);
     if (cookie) headers.Cookie = cookie;
     const init: RequestInit = {
-      method: operation === 'login' || (typeof operation === 'object' && operation.kind === 'book-create') ? 'POST' : 'GET', headers,
+      method: operation === 'login' || (typeof operation === 'object' && (operation.kind === 'book-create' || operation.kind === 'book-cancel')) ? 'POST' : 'GET', headers,
       redirect: 'error', signal: AbortSignal.timeout(15_000),
     };
     if (operation === 'login') {
@@ -517,6 +577,10 @@ export class AimHarderClient {
     if (typeof operation === 'object' && operation.kind === 'book-create') {
       headers['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
       init.body = new URLSearchParams({ id: String(operation.sourceId), day: operation.date.replaceAll('-', '') }).toString();
+    }
+    if (typeof operation === 'object' && operation.kind === 'book-cancel') {
+      headers['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
+      init.body = new URLSearchParams({ id: String(operation.reservationId), late: operation.late ? '1' : '0' }).toString();
     }
     try {
       const response = await fetch(url, init);

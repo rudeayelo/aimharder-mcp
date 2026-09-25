@@ -85,7 +85,7 @@ export function createServer(environment: Record<string, string | undefined>) {
     }
   });
   server.registerTool('prepare_booking_cancellation', {
-    description: 'Read the configured account’s fresh daily schedule and prepare cancellation of one exact booked class. Requires a user-confirmed gym IANA zone. Matches the schedule reservation internally; no reservation ID or family selector is accepted. Ambiguous, missing, cancelled, waitlisted, or unsupported targets receive no executable reference. At 9NBC, show the published 90-minute credit-loss risk before any cancellation request. This preview sends no cancellation POST, and no cancellation execution tool exists yet.',
+    description: 'Read the configured account’s fresh daily schedule and prepare cancellation of one exact booked class. Requires a user-confirmed gym IANA zone. Matches the schedule reservation internally; no reservation ID or family selector is accepted. Ambiguous, missing, cancelled, waitlisted, or unsupported targets receive no executable reference. At 9NBC, show the published 90-minute credit-loss risk before any cancellation request. Show the full preview and obtain explicit account-holder confirmation before execute_booking_cancellation. This preview sends no cancellation POST.',
     inputSchema: bookingCancellationQuerySchema,
     outputSchema: z.object({ action: z.literal('cancel'), status: z.enum(['ready', 'ambiguous', 'missing', 'already-cancelled', 'unsupported']),
       gym: gymSchema, target: z.object({ className: z.string(), date: dateSchema, startTime: z.string(), endTime: z.string() }),
@@ -99,6 +99,23 @@ export function createServer(environment: Record<string, string | undefined>) {
   }, async (query) => {
     try {
       const result = await client.prepareBookingCancellation(query);
+      return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
+    } catch (error) {
+      return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };
+    }
+  });
+  server.registerTool('execute_booking_cancellation', {
+    description: 'Cancel one exact prepared booking. The MCP client MUST show the gym, class, local date/time, current booked state and possible credit loss from the preview, then obtain explicit account-holder confirmation before calling with confirmed: true. A reference alone does not prove consent. Rechecks the reservation, sends at most one standard cancellation request, then reconciles with fresh reads. A late-credit-loss warning remains pending; never retry automatically. The upstream write contract is not verified live.',
+    inputSchema: bookingExecutionSchema,
+    outputSchema: z.object({ action: z.literal('cancel'), status: z.enum(['confirmed', 'rejected', 'pending-credit-loss', 'uncertain', 'stale']),
+      gym: gymSchema, target: z.object({ className: z.string(), date: dateSchema, startTime: z.string(), endTime: z.string() }),
+      observedState: z.enum(['booked', 'waitlisted', 'cancelled', 'unbooked', 'unknown']),
+      credit: z.object({ possibleLoss: z.string(), balance: z.null(), entitlementPeriod: z.null() }), notices: z.array(z.string()),
+    }),
+    annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
+  }, async (query) => {
+    try {
+      const result = await client.executeBookingCancellation(query);
       return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
     } catch (error) {
       return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };

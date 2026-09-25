@@ -1,6 +1,6 @@
 # Tools and results
 
-The published release's six tools read one configured account. The checkout adds booking creation preview and execution, plus a read-only cancellation preview. An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking action previews and writes require a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
+The published release's six tools read one configured account. The checkout adds booking creation and cancellation previews and execution. An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking action previews and writes require a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
 
 ## `get_account_context`
 
@@ -46,9 +46,13 @@ The request shape (`id`, `day`) is a candidate from unofficial clients. The offi
 
 Supply the exact gym-local date, class name, start and end time, with optional accessible `gymId`, as for creation preparation. The server reads the authenticated account's fresh daily schedule and uses its reservation identifier internally. It never joins an upcoming-booking ID to a schedule row by assumption. The public tool accepts no reservation ID, family selector or arbitrary endpoint.
 
-`ready` returns the verified gym, exact class and local times, `currentState: "booked"`, possible credit loss, `balance: null`, `entitlementPeriod: null`, a two-minute, single-use cancellation `actionReference`, and `expiresAt`. `missing`, `ambiguous`, `already-cancelled`, and `unsupported` return no reference; ambiguous results include alternatives. Waitlist leaving is unsupported. The reference is bound to this account, gym, reservation and preview, but **no cancellation execution tool exists yet**.
+`ready` returns the verified gym, exact class and local times, `currentState: "booked"`, possible credit loss, `balance: null`, `entitlementPeriod: null`, a two-minute, single-use cancellation `actionReference`, and `expiresAt`. `missing`, `ambiguous`, `already-cancelled`, and `unsupported` return no reference; ambiguous results include alternatives. Waitlist leaving is unsupported. The reference is bound to this account, gym, reservation and preview.
 
 At 9NBC, the preview warns at or inside the [published 90-minute boundary](https://noubarriscrosstraining.aimharder.es/boxmemberships) that cancellation may lose a credit. This is not generalized to other gyms, and the balance or actual refund remains unverified. Around daylight-saving transitions, the server checks possible instants for the gym-local wall time and warns if any falls inside the boundary; it does not claim the upstream class's exact UTC instant. Preparation sends no cancellation POST; an initial cancellation POST can itself change state and is never used as a probe.
+
+## `execute_booking_cancellation` (checkout)
+
+Call only after showing the preparation preview and obtaining explicit account-holder confirmation for the exact gym, class, local date/time, booked state, and possible credit loss. Supply `actionReference` and `confirmed: true`, with optional accessible `gymId`; arbitrary reservation and family selectors are rejected. The server consumes the short-lived reference, rechecks the exact schedule reservation and eligibility, and sends at most one `POST /api/cancelBook` with `late=0`. It then reads the daily schedule and upcoming view again. A matching fresh cancelled state and a supported source result produce `confirmed`; denial with a still booked reservation is `rejected`; a late-credit-loss warning with a still booked reservation is `pending-credit-loss`. Changed targets return `stale`; unsupported responses, transport failures, unreadable or conflicting views are `uncertain`. No write is retried. No balance or restored credit is claimed. The exact authenticated cancellation contract remains unverified live.
 
 ## `get_published_workouts`
 
