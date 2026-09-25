@@ -13,7 +13,7 @@ let rows: unknown[];
 const row = (extra: Record<string, unknown> = {}) => ({
   id: 501, idres: 900, classId: 10, className: 'Open Box', time: '10:00 - 11:00',
   ocupation: 8, limit: 20, enabled: 1, bookState: 1, cancelledId: null,
-  resadmin: 0, hidden: 0, ...extra,
+  resadmin: 0, ...extra,
 });
 const day = () => ({ clasesDisp: 'Classes', day: 'Source label', bookings: rows, timetable: [], seminars: [] });
 
@@ -73,6 +73,7 @@ test('ambiguous, missing, cancelled, waitlisted, and unsupported rows have no ex
     [[row({ cancelledId: 7, idres: null })], 'already-cancelled'],
     [[row({ bookState: 0 })], 'unsupported'], [[row({ bookState: null, idres: null })], 'unsupported'],
     [[row({ idres: undefined })], 'unsupported'], [[row({ enabled: 0 })], 'unsupported'],
+    [[row({ hidden: 1 })], 'unsupported'],
   ] as const) {
     rows = [...candidateRows];
     const result = await prepare(client);

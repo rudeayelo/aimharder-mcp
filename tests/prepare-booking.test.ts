@@ -85,13 +85,20 @@ test.each([
   [[row({ enabled: 0 })], 'unsupported'], [[row({ resadmin: 1 })], 'unsupported'],
   [[row({ cancelledId: 3 })], 'unsupported'], [[row({ hidden: 1 })], 'unsupported'],
   [[row({ enabled: undefined })], 'unsupported'], [[row({ bookState: undefined })], 'unsupported'],
-  [[row({ cancelledId: undefined })], 'unsupported'], [[row({ hidden: undefined })], 'unsupported'],
+  [[row({ cancelledId: undefined })], 'unsupported'],
 ] as const)('does not issue a reference for %s', async (bookings, status) => {
   upstream.use(http.get('https://sample-gym.aimharder.es/api/bookings', () => HttpResponse.json(day([...bookings]))));
   const result = await prepare(await connect());
   expect(result.structuredContent).toMatchObject({ status });
   expect(result.structuredContent).not.toHaveProperty('actionReference');
   expect(JSON.stringify(result)).not.toContain('currently offers this class');
+});
+
+test('prepares a class when the optional source hidden flag is absent', async () => {
+  upstream.use(http.get('https://sample-gym.aimharder.es/api/bookings', () => HttpResponse.json(day([row({ hidden: undefined })]))));
+  const result = await prepare(await connect());
+  expect(result.structuredContent).toMatchObject({ status: 'ready', currentState: 'unbooked' });
+  expect(requests.some(({ pathname }) => pathname === '/api/book')).toBe(false);
 });
 
 test('an assumed zone and an inaccessible gym block preparation', async () => {

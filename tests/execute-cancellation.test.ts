@@ -18,7 +18,7 @@ let response: () => Response;
 let scheduleReads: number;
 
 const row = (id = 501, idres = reservationId) => ({ id, idres, classId: 10, className: 'Open Box', time: '10:00 - 11:00',
-  ocupation: 8, limit: 20, enabled: 1, bookState, cancelledId, resadmin: 0, hidden: 0 });
+  ocupation: 8, limit: 20, enabled: 1, bookState, cancelledId, resadmin: 0 });
 const day = () => ({ clasesDisp: 'Classes', day: 'Source label', bookings: missing ? [] : duplicate ? [row(), row(502, 901)] : [row()], timetable: [], seminars: [] });
 const upcoming = () => ({ nextClasses: upcomingState === null ? [] : [{ id: 777, day: 'Sábado, 26 de Septiembre de 2026',
   time: '10:00 - 11:00', className: 'Open Box', bookState: upcomingState }], history: [] });

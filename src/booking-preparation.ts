@@ -23,7 +23,7 @@ export type LateCancellationExecution = z.infer<typeof lateCancellationExecution
 const rowFields = z.object({
   enabled: z.number().int(), bookState: z.number().int().nullable(),
   cancelledId: z.number().int().nullable(), resadmin: z.number().int(),
-  hidden: z.number().int(),
+  hidden: z.number().int().optional(),
 });
 
 export type BookingCandidate = {
@@ -53,7 +53,7 @@ export function cancellationCandidates(body: unknown, gymId: string, date: strin
         : flags.data.bookState === null ? 'unbooked' as const : 'unknown' as const;
     // Waitlist leaves belong to a later feature, even if the frontend offers them.
     const offered = flags.success && state === 'booked' && flags.data.idres !== null && flags.data.enabled === 1
-      && flags.data.resadmin === 0 && flags.data.hidden === 0;
+      && flags.data.resadmin === 0 && (flags.data.hidden === undefined || flags.data.hidden === 0);
     return [{ reservationId: flags.success ? flags.data.idres : null, className: session.classType.name, date,
       startTime: session.startTime, endTime, currentState: state,
       eligibility: offered ? 'offered' as const : 'unsupported' as const }];
@@ -70,7 +70,7 @@ export function bookingCandidates(body: unknown, gymId: string, date: string, ti
     const state = !flags.success ? 'unknown' as const : flags.data.bookState === null ? 'unbooked' as const
       : flags.data.bookState === 1 ? 'booked' as const : flags.data.bookState === 0 ? 'waitlisted' as const : 'unknown' as const;
     const offered = flags.success && flags.data.enabled === 1 && flags.data.resadmin === 0
-      && flags.data.cancelledId === null && flags.data.hidden === 0 && state === 'unbooked';
+      && flags.data.cancelledId === null && (flags.data.hidden === undefined || flags.data.hidden === 0) && state === 'unbooked';
     return [{ sourceId: session.sourceId, className: session.classType.name, date,
       startTime: session.startTime, endTime, currentState: state,
       eligibility: offered ? 'offered' as const : 'unsupported' as const }];

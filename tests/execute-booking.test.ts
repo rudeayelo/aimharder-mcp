@@ -15,7 +15,7 @@ let upcomingState: number | null = null;
 let changed = false;
 let requestBody = '';
 const row = () => ({ id: changed ? 502 : 501, classId: 10, className: 'Open Box', time: '10:00 - 11:00',
-  ocupation: 8, limit: 20, enabled: 1, bookState: sourceState, cancelledId: null, resadmin: 0, hidden: 0 });
+  ocupation: 8, limit: 20, enabled: 1, bookState: sourceState, cancelledId: null, resadmin: 0 });
 const day = () => ({ clasesDisp: 'Classes', day: 'Source label', bookings: [row()], timetable: [], seminars: [] });
 const upcoming = () => ({ nextClasses: upcomingState === null ? [] : [{ id: 900, day: 'Sábado, 26 de Septiembre de 2026',
   time: '10:00 - 11:00', className: 'Open Box', bookState: upcomingState }], history: [] });
