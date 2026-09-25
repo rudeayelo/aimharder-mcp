@@ -105,6 +105,10 @@ test('9NBC warning starts at the published 90-minute wall-clock boundary', async
   expect(atPublishedCancellationBoundary('2026-09-26', '10:00', 'Europe/Madrid', new Date('2026-09-26T06:29:00Z'))).toBe(false);
   expect(atPublishedCancellationBoundary('2026-09-26', '10:00', 'Europe/Madrid', new Date('2026-09-26T06:30:00Z'))).toBe(true);
   expect(atPublishedCancellationBoundary('2026-09-26', '10:00', 'Europe/Madrid', new Date('2026-09-26T06:31:00Z'))).toBe(true);
+  // The spring jump skips 02:00–02:59 local; elapsed time is shorter than wall time.
+  expect(atPublishedCancellationBoundary('2026-03-29', '03:00', 'Europe/Madrid', new Date('2026-03-28T23:29:00Z'))).toBe(false);
+  expect(atPublishedCancellationBoundary('2026-03-29', '03:00', 'Europe/Madrid', new Date('2026-03-28T23:30:00Z'))).toBe(true);
+  expect(atPublishedCancellationBoundary('2026-03-29', '03:00', 'Europe/Madrid', new Date('2026-03-29T00:30:00Z'))).toBe(true);
 });
 
 test('gym-local midnight and DST wall times preserve exact labels without inventing UTC instants', async () => {

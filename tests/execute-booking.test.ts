@@ -1,4 +1,4 @@
-import { afterAll, afterEach, beforeAll, beforeEach, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, expect, test, vi } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
@@ -39,7 +39,7 @@ beforeEach(() => {
 });
 afterEach(async () => {
   for (const { client, server } of connections.splice(0)) { await client.close(); await server.close(); }
-  upstream.resetHandlers();
+  upstream.resetHandlers(); vi.useRealTimers();
 });
 afterAll(() => upstream.close());
 
@@ -82,9 +82,21 @@ test('confirmation marker, selectors and changed targets block a write', async (
   const reference = await prepare(client);
   expect((await execute(client, reference, { confirmed: false })).isError).toBe(true);
   expect((await execute(client, reference, { familyId: 1 })).isError).toBe(true);
+  expect((await execute(client, reference, { gymId: 'other-gym' })).isError).toBe(true);
   changed = true;
   expect((await execute(client, reference)).structuredContent).toMatchObject({ status: 'stale' });
   expect(writeCount).toBe(0);
+});
+
+test('an expired public action reference cannot send a write', async () => {
+  const client = await connect();
+  const reference = await prepare(client);
+  const now = Date.now();
+  vi.useFakeTimers({ toFake: ['Date'] });
+  vi.setSystemTime(now + 120_001);
+  expect((await execute(client, reference)).isError).toBe(true);
+  expect(writeCount).toBe(0);
+  vi.useRealTimers();
 });
 
 test('an already booked target prevents a duplicate write', async () => {
@@ -92,6 +104,22 @@ test('an already booked target prevents a duplicate write', async () => {
   const reference = await prepare(client);
   sourceState = 1;
   expect((await execute(client, reference)).structuredContent).toMatchObject({ status: 'stale', observedState: 'booked' });
+  expect(writeCount).toBe(0);
+});
+
+test('an existing upcoming entry blocks a duplicate even when the daily row still looks free', async () => {
+  const client = await connect();
+  const reference = await prepare(client);
+  upcomingState = 1;
+  expect((await execute(client, reference)).structuredContent).toMatchObject({ status: 'stale' });
+  expect(writeCount).toBe(0);
+});
+
+test('an existing waitlist entry also blocks a second booking attempt', async () => {
+  const client = await connect();
+  const reference = await prepare(client);
+  upcomingState = 0;
+  expect((await execute(client, reference)).structuredContent).toMatchObject({ status: 'stale' });
   expect(writeCount).toBe(0);
 });
 
@@ -111,12 +139,27 @@ test('malformed or lost responses reconcile without another write', async () => 
   expect(writeCount).toBe(1);
 });
 
+test.each(['unauthorized', 'connection-lost'] as const)('a %s write outcome is reconciled without replay', async (mode) => {
+  response = () => mode === 'unauthorized' ? new HttpResponse(null, { status: 401 }) : HttpResponse.error();
+  const client = await connect();
+  expect((await execute(client, await prepare(client))).structuredContent).toMatchObject({ status: 'uncertain' });
+  expect(writeCount).toBe(1);
+});
+
 test('an unreadable follow-up view cannot establish a confirmed result', async () => {
-  upstream.use(http.get('https://sample-gym.aimharder.es/api/nextBookings', () => HttpResponse.json({ secret: 'private view' })));
+  upstream.use(http.get('https://sample-gym.aimharder.es/api/nextBookings', () =>
+    HttpResponse.json(writeCount ? { secret: 'private view' } : upcoming())));
   const client = await connect();
   const result = await execute(client, await prepare(client));
   expect(result.structuredContent).toMatchObject({ status: 'uncertain', observedState: 'booked' });
   expect(JSON.stringify(result)).not.toContain('private view');
+  expect(writeCount).toBe(1);
+});
+
+test('a source denial conflicting with a booked follow-up remains uncertain', async () => {
+  response = () => { sourceState = 1; upcomingState = 1; return HttpResponse.json({ bookState: -2 }); };
+  const client = await connect();
+  expect((await execute(client, await prepare(client))).structuredContent).toMatchObject({ status: 'uncertain', observedState: 'booked' });
   expect(writeCount).toBe(1);
 });
 

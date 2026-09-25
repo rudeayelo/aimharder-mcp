@@ -92,7 +92,25 @@ export function nearReportedBookingCutoff(date: string, startTime: string, timeZ
 }
 
 export function atPublishedCancellationBoundary(date: string, startTime: string, timeZone: string, now = new Date()): boolean {
-  return minutesUntilGymLocalStart(date, startTime, timeZone, now) <= 90;
+  const naive = Date.parse(`${date}T${startTime}:00Z`);
+  const formatter = new Intl.DateTimeFormat('en-GB', {
+    timeZone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+  });
+  const wall = (instant: number) => {
+    const parts = Object.fromEntries(formatter.formatToParts(new Date(instant)).map(({ type, value }) => [type, value]));
+    return { date: `${parts.year}-${parts.month}-${parts.day}`, time: `${parts.hour}:${parts.minute}`,
+      asUtc: Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day), Number(parts.hour), Number(parts.minute)) };
+  };
+  // Try offsets on both sides of a transition. Ambiguous local times can have two
+  // possible instants; warn if either is inside the boundary without exposing one
+  // as the source's verified class instant.
+  const offsets = new Set([-86_400_000, 0, 86_400_000].map(delta => wall(naive + delta).asUtc - (naive + delta)));
+  const possible = [...offsets].map(offset => naive - offset).filter(instant => {
+    const parts = wall(instant);
+    return parts.date === date && parts.time === startTime;
+  });
+  if (!possible.length) return minutesUntilGymLocalStart(date, startTime, timeZone, now) <= 150;
+  return possible.some(instant => instant - now.getTime() <= 90 * 60_000);
 }
 
 export type BookingCreationPreview = {

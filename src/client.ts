@@ -157,6 +157,13 @@ export class AimHarderClient {
         return { ...base, status: 'stale' as const, observedState: before.length === 1 ? before[0]!.currentState : 'unknown' as const,
           notices: ['The exact class or its offered state changed. No booking request was sent.'] };
       }
+      const upcomingBefore = parseUpcomingBookings(await this.#request({ kind: 'upcoming', gymId: gym.id, boxId }), gym.timeZone);
+      const matchesTarget = (item: (typeof upcomingBefore)[number]) => item.date === target.date && item.startTime === target.startTime
+        && item.timeLabel.endsWith(target.endTime) && (item.classType.name === target.className || item.classType.name === null);
+      if (upcomingBefore.some(matchesTarget)) {
+        return { ...base, status: 'stale' as const, observedState: 'unknown' as const,
+          notices: ['A current upcoming entry may already cover this class. No booking request was sent.'] };
+      }
       let response: unknown;
       let writeIssue = false;
       try {
@@ -178,14 +185,13 @@ export class AimHarderClient {
         const after = bookingCandidates(await read({ kind: 'classes', gymId: gym.id, boxId, date: target.date }), gym.id, target.date, gym.timeZone, target);
         if (after.length === 1 && after[0]!.sourceId === entry.sourceId) scheduleState = after[0]!.currentState;
         const upcoming = parseUpcomingBookings(await read({ kind: 'upcoming', gymId: gym.id, boxId }), gym.timeZone);
-        const matches = upcoming.filter(item => item.date === target.date && item.startTime === target.startTime
-          && item.timeLabel.endsWith(target.endTime) && item.classType.name === target.className);
+        const matches = upcoming.filter(matchesTarget);
         // This view has no verified horizon; absence cannot contradict a fresh daily schedule.
         conflicting = matches.length > 1 || matches.some(item => item.state !== scheduleState);
       } catch { reconciliationIssue = true; }
       const sourceDenial = z.object({ bookState: z.number().int().negative().optional(), errorMssg: z.unknown().optional(), errorMssgLang: z.unknown().optional() }).safeParse(response);
       const denied = sourceDenial.success && (sourceDenial.data.bookState !== undefined || sourceDenial.data.errorMssg !== undefined || sourceDenial.data.errorMssgLang !== undefined);
-      const status = conflicting || reconciliationIssue ? 'uncertain' as const : scheduleState === 'booked' ? 'confirmed' as const
+      const status = conflicting || reconciliationIssue || (denied && scheduleState !== 'unbooked') ? 'uncertain' as const : scheduleState === 'booked' ? 'confirmed' as const
         : scheduleState === 'waitlisted' ? 'waitlisted' as const
           : scheduleState === 'unbooked' && denied ? 'rejected' as const : 'uncertain' as const;
       return { ...base, status, observedState: scheduleState, notices: [
