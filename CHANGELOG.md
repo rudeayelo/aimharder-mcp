@@ -1,5 +1,11 @@
 # aimharder-mcp
 
+## 0.2.0
+
+### Minor Changes
+
+- 2e68ea2: Add account-scoped booking creation and cancellation with read-only previews, single-use action references, separate confirmations, and fresh state checks. One standard Open Box booking and cancellation cycle was observed live at 9NBC; late credit loss and credit balances remain unverified.
+
 ## 0.1.2
 
 ### Patch Changes

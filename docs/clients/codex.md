@@ -11,11 +11,11 @@ If Codex receives the required environment variables from your local environment
 ```toml
 [mcp_servers.aimharder]
 command = "npx"
-args = ["--yes", "aimharder-mcp@0.1.2"]
+args = ["--yes", "aimharder-mcp@0.2.0"]
 env_vars = ["AIMHARDER_USERNAME", "AIMHARDER_PASSWORD"]
 ```
 
-You can instead run `codex mcp add aimharder -- npx --yes aimharder-mcp@0.1.2`, then add the `env_vars` line to the created table. Also forward `AIMHARDER_GYM_TIME_ZONES` or `AIMHARDER_DEFAULT_GYM` if configured. Restart Codex after editing the configuration.
+You can instead run `codex mcp add aimharder -- npx --yes aimharder-mcp@0.2.0`, then add the `env_vars` line to the created table. Also forward `AIMHARDER_GYM_TIME_ZONES` or `AIMHARDER_DEFAULT_GYM` if configured. Restart Codex after editing the configuration.
 
 ## Private-file option
 
@@ -29,7 +29,7 @@ args = [
   "/absolute/path/to/npm/bin/npx-cli.js",
   "--yes",
   "--prefix=/absolute/path/to/empty-npx-directory",
-  "aimharder-mcp@0.1.2",
+  "aimharder-mcp@0.2.0",
 ]
 ```
 

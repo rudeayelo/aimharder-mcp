@@ -14,7 +14,7 @@ mcp_servers:
     command: npx
     args:
       - --yes
-      - aimharder-mcp@0.1.2
+      - aimharder-mcp@0.2.0
     env:
       AIMHARDER_USERNAME: "${AIMHARDER_USERNAME}"
       AIMHARDER_PASSWORD: "${AIMHARDER_PASSWORD}"
@@ -33,7 +33,7 @@ args:
   - /absolute/path/to/npm/bin/npx-cli.js
   - --yes
   - --prefix=/absolute/path/to/empty-npx-directory
-  - aimharder-mcp@0.1.2
+  - aimharder-mcp@0.2.0
 ```
 
 Create the empty directory first. The prefix prevents `npx` from mistaking a checkout of this same package for the published executable. The private file and paths stay outside the repository. This form was used for the published-package Hermes check.
