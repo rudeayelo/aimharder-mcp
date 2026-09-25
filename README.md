@@ -1,6 +1,6 @@
 # aimharder-mcp
 
-Ask about your AimHarder classes, workouts, bookings and activity from an AI client. The published package is a local, read-only [MCP server](https://modelcontextprotocol.io/) and an independent project, neither affiliated with nor endorsed by AimHarder. The checkout also supports booking creation and cancellation, including a separate confirmation if a late cancellation may lose a credit. Its write contracts have fixture coverage but no live acceptance.
+Ask about your AimHarder classes, workouts, bookings and activity from an AI client. The current published `0.1.2` package is a local, read-only [MCP server](https://modelcontextprotocol.io/). The checkout also supports manual booking creation and cancellation, including a separate confirmation if a late cancellation may lose a credit. One standard Open Box creation/cancellation cycle was observed live at 9NBC; the late branch, other gyms and credit effects remain unverified. This is an independent project, neither affiliated with nor endorsed by AimHarder.
 
 **Data limits:** Live checks used one account at one location (9NBC). Other gyms may differ. Workout and booking views can be incomplete, so an empty result may not mean there is nothing to show. [Details](docs/tools.md#coverage-and-interpretation)
 

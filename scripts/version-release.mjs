@@ -15,6 +15,7 @@ assert.match(nextVersion, /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/);
 
 const consumerDocs = [
   'README.md',
+  'docs/configuration.md',
   'docs/clients/chatgpt-desktop.md',
   'docs/clients/claude-desktop.md',
   'docs/clients/codex.md',
