@@ -2,6 +2,12 @@
 
 This page records what was checked against AimHarder, what was checked only with anonymized fixtures, and what remains unknown. Live checks used one account at one location (9NBC). They do not establish behavior for every gym. The user defined recent and period activity questions in terms of **activity entries**; earlier physical-session grouping blockers were superseded by [the entry semantics decision](adr/2026-09-22-activity-entry-query-semantics.md).
 
+## Published exercise IDs (2026-09-27, issue #33)
+
+The local checkout's public `get_published_workouts` MCP seam passed 25 anonymized fixture tests in `tests/workouts.test.ts`, including positive source IDs on unselected and variant exercises, shared source rows, absent and malformed IDs, name collisions, and multiple publication alternatives. `pnpm typecheck` and `pnpm build` passed on Node 24.14.0. These tests establish local projection behavior only.
+
+An authorized read-only MCP SDK stdio check on 27 September used the account holder's 9NBC membership and user-confirmed `Europe/Madrid` zone. A fresh source feed and WOD detail for 25 September matched one returned publication, two variants, eight non-null unselected exercise-ID occurrences and ten variant exercise-ID occurrences. The independent comparison checked each returned ID against its corresponding source `ejerId`; no IDs or personal values were recorded. Client startup, explicit gym selection, inaccessible-gym rejection and empty stderr also passed. This verifies that single retrieved publication, not exercise-ID presence in every row or another gym, and does not establish an exhaustive feed or personal RM access. This checkout is not the published `0.2.0` package.
+
 ## Current release status
 
 The user accepted first-release functional QA on 2026-09-24 using the combined evidence below and [QA #13](https://github.com/rudeayelo/aimharder-mcp/issues/13). The exact single-run future-workout-plus-booking harness check was **not performed**; the user accepted separate live comparisons and a Hermes future-WOD check instead. See the [QA evidence decision](adr/2026-09-24-functional-qa-evidence-for-first-release.md).

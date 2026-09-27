@@ -26,7 +26,7 @@ transport.stderr?.on('data', () => { hasStderr = true; });
 try {
   await client.connect(transport);
   const tools = await client.listTools();
-  assert.deepEqual(tools.tools.map((tool) => tool.name), ['get_account_context', 'get_class_sessions', 'prepare_booking_creation', 'execute_booking_creation', 'prepare_booking_cancellation', 'get_upcoming_bookings', 'get_booking_history', 'get_published_workouts', 'get_personal_activity']);
+  assert.deepEqual(tools.tools.map((tool) => tool.name), ['get_account_context', 'get_class_sessions', 'prepare_booking_creation', 'execute_booking_creation', 'prepare_booking_cancellation', 'execute_booking_cancellation', 'execute_late_booking_cancellation', 'get_upcoming_bookings', 'get_booking_history', 'get_published_workouts', 'get_personal_activity']);
   const result = await client.callTool({ name: 'get_account_context', arguments: {} });
   assert.notEqual(result.isError, true);
   const context = result.structuredContent;
@@ -226,6 +226,9 @@ async function checkWorkouts(client, gym, date = process.env.AIMHARDER_LIVE_WORK
   assert.equal(view.status, expectedIds.length ? 'available' : 'unavailable');
   let compared = 0;
   let comparedVariants = 0;
+  let comparedExerciseIds = 0;
+  let comparedVariantExerciseIds = 0;
+  const expectedExerciseId = row => Number.isSafeInteger(row.ejerId) && row.ejerId > 0 ? row.ejerId : null;
   for (const workout of view.workouts) {
     const post = feed.elements.find(row => row.id === workout.provenance.sourceId);
     assert.equal(post.wodClass, className);
@@ -244,6 +247,8 @@ async function checkWorkouts(client, gym, date = process.env.AIMHARDER_LIVE_WORK
     const sourceExercises = detail.ejerRate.filter(e => e.tipoWOD == null || !detail.TIPOWODs[e.tipoWOD].deleted);
     for (let index = 0; index < workout.exercises.length; index++) {
       assertExercisePrescription(workout.exercises[index].prescription, sourceExercises[index]);
+      assert.equal(workout.exercises[index].sourceExerciseId, expectedExerciseId(sourceExercises[index]));
+      if (workout.exercises[index].sourceExerciseId != null) comparedExerciseIds++;
     }
     const labels = [...new Set(detail.TIPOWODs.flatMap(block => Array.isArray(block.scaledops) ? block.scaledops : []))];
     assert.deepEqual(workout.variants.map(variant => variant.label), labels);
@@ -264,13 +269,15 @@ async function checkWorkouts(client, gym, date = process.env.AIMHARDER_LIVE_WORK
       }
       for (let index = 0; index < variant.exercises.length; index++) {
         assertExercisePrescription(variant.exercises[index].prescription, selectedExercises[index]);
+        assert.equal(variant.exercises[index].sourceExerciseId, expectedExerciseId(selectedExercises[index]));
+        if (variant.exercises[index].sourceExerciseId != null) comparedVariantExerciseIds++;
       }
       comparedVariants++;
     }
     compared++;
   }
   const daily = await request(`https://${role.centre_url}/api/bookings?${new URLSearchParams({ box: String(role.boid), day: date.replaceAll('-', '') })}`);
-  return { feedAndDetailComparison: compared ? 'passed' : 'no matching content available in retrieved view', status: view.status, comparedWorkoutCount: compared, comparedVariants, matchingClassSessionCount: daily.bookings.filter(row => row.className === className).length, coverage: view.coverage.scope, exhaustive: false };
+  return { feedAndDetailComparison: compared ? 'passed' : 'no matching content available in retrieved view', status: view.status, comparedWorkoutCount: compared, comparedVariants, comparedExerciseIds, comparedVariantExerciseIds, matchingClassSessionCount: daily.bookings.filter(row => row.className === className).length, coverage: view.coverage.scope, exhaustive: false };
 }
 
 

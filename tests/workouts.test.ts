@@ -57,6 +57,31 @@ test('returns original future workout content with verified date, class and prov
  expect(result.isError).not.toBe(true);
  expect(result.structuredContent).toMatchObject({ status: 'available', ambiguous: false, workouts: [{ date: '2026-09-23', className: 'WOD', sessionId: null, titles: ['Fuerza Ñ'], blocks: [{ notes: '3 rondas\nDescansa 60 segundos' }], exercises: [{ name: 'Sentadilla', prescription: { valor1: ['10'] } }], provenance: { sourceId: 8001, dateField: 'recordDate' } }] });
 });
+test('exposes only source exercise IDs on base, shared, and replacement exercises', async () => {
+ upstream.use(http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({
+  TIPOWODs: [{ notes: 'Shared', deleted: false }, { notes: 'Levels', deleted: false, scaledops: ['SCALED', 'RX'] }],
+  ejerRate: [
+   { ejerId: 101, ejerName: 'Shared lift', tipoWOD: 0, valor1: ['5'] },
+   { ejerId: 102, ejerName: 'Lift', tipoWOD: 1, valor2: '85', scaledver: [
+    { ejerId: 201, ejerName: 'Lift', tipoWOD: 1, valor2: '65' },
+    { ejerId: 'bad-id', ejerName: 'Lift', tipoWOD: 1, valor2: '85' },
+   ] },
+   { ejerName: 'Shared lift', tipoWOD: 0 },
+  ],
+ }))));
+ respond([post(), post({ id: 8002 })]);
+ const result = await query(await connect());
+ expect(result.isError).not.toBe(true);
+ const workouts = (result.structuredContent as { workouts: { exercises: { sourceExerciseId: number | null; prescription: Record<string, unknown> }[]; variants: { exercises: { sourceExerciseId: number | null; prescription: Record<string, unknown> }[] }[] }[] }).workouts;
+ expect(workouts).toHaveLength(2);
+ for (const workout of workouts) {
+  expect(workout.exercises.map(e => e.sourceExerciseId)).toEqual([101, 102, null]);
+  expect(workout.variants.map(v => v.exercises.map(e => e.sourceExerciseId))).toEqual([[101, 201, null], [101, null, null]]);
+  expect(workout.exercises[1]?.prescription.valor2).toBe('85');
+  expect(workout.variants[0]?.exercises[1]?.prescription.valor2).toBe('65');
+ }
+ expect(result.structuredContent).toMatchObject({ ambiguous: true });
+});
 test('announcements cannot establish applicability from future timestamps', async () => {
  respond([{ id: 1, highlight: 1, when: '20560923210000', desc: 'Announcement' }]);
  expect((await query(await connect())).structuredContent).toMatchObject({ status: 'unavailable', workouts: [], coverage: { scope: 'upstream-feed-view', status: 'incomplete' } });

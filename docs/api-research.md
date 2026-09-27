@@ -118,6 +118,12 @@ Authenticated read-only checks of 23/24 September WOD, GAP and Mobility details 
 
 The renderer lists weight units `kg`, `lbs`, `pood`, `%BW`, `%RM`, `RIR`, `RPE` and distance units `m`, `mi`, `yd`, `ft`, `steps`, `km`. The observed Front Squat had `valor2="85/85"`, `tipoud=4` and therefore `%RM`, not kilograms. The 24 September dumbbell snatch had variant-specific kilogram loads. Rest values 30/60/90 were seconds; the UI displayed 60 as `1'`. An unweighted lunge and a distance carry had no load despite recognizable unit codes, because `valor2` was null. Empty values get no unit. The SDK stdio comparison matched these fields against fresh feed/detail responses, but other source formats and gyms remain unverified. The current server does not look up a personal RM or compute an absolute load; see [validation](validation.md).
 
+## Published exercise identity projection (2026-09-27, issue #33)
+
+The official workout renderer refers to the source exercise field as `ejerId` when opening an exercise detail. The current checkout projects a positive, safe integer `ejerId` as `sourceExerciseId` on each unselected exercise and each source-labeled variant replacement. Missing or unsupported IDs become `null`; a matching name does not supply an ID. Anonymized MCP fixtures cover this projection, including shared exercises, replacement IDs, malformed IDs and multiple publications.
+
+An authorized 9NBC comparison on 27 September used the MCP SDK over stdio and a separate authenticated source read of the 25 September WOD detail. One publication, two labeled variants, eight non-null base exercise IDs and ten non-null variant exercise IDs matched their corresponding source rows, with no ID values retained. This confirms numeric IDs for those rows and that comparison only. It does not establish ID presence or type across other workouts or gyms, an exhaustive feed, or personal-record eligibility for those IDs.
+
 ## Personal exercise detail sample (2026-09-25)
 
 The account holder supplied one response from `GET /api/exercise/<exercise-id>/<user-id>` for an exercise with personal history. This is a user-supplied sample, not an independently authenticated MCP/source comparison. The response has `chartData1RM`, `chartData3RM`, `chartData5RM`, `chartData10RM`, and a separate `chartDataWOD` array. Chart points contain `date`, `idAction`, and a string field named `lbs`; the response also has `history`, `chartUserId`, `ud`, and `lastRM`. In this sample, `chartData` duplicates `chartData1RM`, but that relationship is not established generally.

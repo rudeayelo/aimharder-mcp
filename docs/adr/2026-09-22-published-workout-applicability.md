@@ -1,6 +1,6 @@
 # ADR: published workout applicability and feed coverage
 
-Status: accepted for [issue #5](https://github.com/rudeayelo/aimharder-mcp/issues/5); difficulty-variant projection amended on 2026-09-23 and exercise-unit projection amended on 2026-09-24.
+Status: accepted for [issue #5](https://github.com/rudeayelo/aimharder-mcp/issues/5); difficulty-variant projection amended on 2026-09-23, exercise-unit projection amended on 2026-09-24, and exercise identity projection amended on 2026-09-27.
 
 Time-zone amendment: the explicit confirmed-zone gate described below was superseded by the [2026-09-24 default-zone decision](2026-09-24-default-gym-time-zone.md). Other decisions and historical validation evidence remain unchanged.
 
@@ -33,3 +33,9 @@ The previous projection preserved numeric `formaReg`, `tipoud` and `tipoud2` cod
 Preserve raw prescription values and source codes. Add `valueUnit` for a nonempty `valor1` and `loadUnit` for a nonempty load only when the format and unit code resolve through that observed mapping. Also allowlist source `valor2h` and `valor2m` so variant loads are not silently discarded. Unknown codes and absent values stay unlabeled. Never convert `%RM` into kilograms or infer a personal maximum. A `formaReg=4` exercise with reps but null `valor2` returns `reps` without a load label; a `formaReg=6` carry with distance but null load returns its distance unit only.
 
 Consequences: MCP clients can distinguish a weight, a relative maximum, a timed rest, repetitions and distance without parsing exercise names. Published workouts and personal activity reuse the same exercise projection. No request, account scope, performance calculation or authentication behavior changes. Broader gym/locale variants of the renderer's code table remain unverified; the source values remain available if a label cannot be assigned.
+
+## Exercise identity amendment (2026-09-27, issue #33)
+
+The official renderer uses `ejerId` when opening an exercise detail. Project only positive safe integer values from each source exercise row as `sourceExerciseId`; otherwise report `null`. The unselected prescription retains its own IDs and source-labeled replacements retain theirs. Shared exercises use the same source row. Never infer identity from an equal or similar exercise name, nor inherit the base exercise's ID for a replacement that lacks one.
+
+This is an additive projection without a new upstream request or personal-data read. It prepares an exact join for the later own-account RM query under the [personal RM decision](2026-09-27-personal-exercise-rms-and-calculated-loads.md). Anonymized public MCP fixtures verify projection behavior; an authorized 9NBC MCP/source comparison matched eight base and ten variant ID occurrences from one WOD publication. Other workouts and gyms remain unverified. Publication ambiguity, first-page coverage, original prescriptions, and the current prohibition on personal load calculation remain unchanged by this amendment.

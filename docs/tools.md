@@ -68,6 +68,8 @@ Available workouts include source titles, notes, exercises, prescriptions and in
 
 Each `variants` item has a source level label and complete blocks/exercises, including shared content. Top-level content is the **unselected** prescription, not necessarily RX. Labels vary by workout.
 
+Each exercise in the unselected prescription and each variant has `sourceExerciseId`, taken only from a positive, safe integer upstream `ejerId`. `null` means the row supplied no supported identity. A replacement variant uses its own ID; a shared exercise keeps its source ID. Names never establish identity or a personal-record join.
+
 When source format permits, `valueUnit` labels `valor1` as seconds (`s`), repetitions (`reps`), calories (`cal`) or distance. `loadUnit` labels nonempty load values with units such as `kg`, `lbs` or `%RM`. `85/85` with `%RM` stays relative; the server does not calculate kilograms from a personal RM. Raw values remain available and unknown units stay unlabeled.
 
 Coverage is always `incomplete`: only the current feed page is searched. `unavailable` does **not** prove no publication exists. `unsupported` means source content could not be interpreted; retrieval failures are errors.
