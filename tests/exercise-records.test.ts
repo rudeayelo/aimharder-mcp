@@ -88,7 +88,10 @@ test.each([
  { chartData1RM: Array.from({ length: 1001 }, () => ({ date: latest, lbs: '100', idAction: 11 })) },
  { chartDataWOD: null },
  { chartData3RM: [null] },
-])('rejects inconsistent identity or malformed 1RM data %o', async extra => {
+ { chartData3RM: [{ date: -1, lbs: '90', idAction: 12 }] },
+ { chartData3RM: [{ date: older, lbs: 'invalid', idAction: 12 }] },
+ { chartDataWOD: [{ date: -1, idAction: 13 }] },
+])('rejects inconsistent identity or malformed exercise series data %o', async extra => {
  respond(detail(extra));
  expect((await query(await connect())).isError).toBe(true);
 });

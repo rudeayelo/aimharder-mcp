@@ -6,19 +6,18 @@ export const exerciseIdSchema = z.number().int().positive().safe();
 export const exercise1RMQuerySchema = z.object({ exerciseId: exerciseIdSchema, gymId: gymIdSchema.optional() }).strict();
 export type Exercise1RMQuery = z.infer<typeof exercise1RMQuerySchema>;
 
-const sourceDateSchema = z.number().int().safe().refine(value =>
-  value >= Date.UTC(2000, 0, 1) && value < Date.UTC(2100, 0, 1) && value % 86_400_000 === 0,
-);
+const plausibleTimestampSchema = z.number().int().safe().refine(value => value >= Date.UTC(2000, 0, 1) && value < Date.UTC(2100, 0, 1));
+const sourceDateSchema = plausibleTimestampSchema.refine(value => value % 86_400_000 === 0);
 const sourceValueSchema = z.string().regex(/^(?:0|[1-9]\d*)(?:\.\d+)?$/).max(40).refine(value => Number.isFinite(Number(value)) && Number(value) > 0);
 const pointSchema = z.object({ date: sourceDateSchema, lbs: sourceValueSchema, idAction: exerciseIdSchema });
-const contextPointSchema = z.object({ date: z.number().int().safe(), idAction: exerciseIdSchema });
+const wodContextPointSchema = z.object({ date: plausibleTimestampSchema, idAction: exerciseIdSchema });
 const historySchema = z.object({ date: z.unknown(), idAction: z.unknown(), desc: z.string().max(100_000).nullish() });
 const responseSchema = z.object({
   id: z.union([exerciseIdSchema, z.string().regex(/^[1-9]\d*$/).max(16)]),
   name: z.string().trim().min(1).max(300), chartUserId: exerciseIdSchema.optional(),
-  chartData1RM: z.array(pointSchema).max(1000), chartData3RM: z.array(contextPointSchema).max(1000),
-  chartData5RM: z.array(contextPointSchema).max(1000), chartData10RM: z.array(contextPointSchema).max(1000),
-  chartDataWOD: z.array(contextPointSchema).max(1000), history: z.array(historySchema).max(3000),
+  chartData1RM: z.array(pointSchema).max(1000), chartData3RM: z.array(pointSchema).max(1000),
+  chartData5RM: z.array(pointSchema).max(1000), chartData10RM: z.array(pointSchema).max(1000),
+  chartDataWOD: z.array(wodContextPointSchema).max(1000), history: z.array(historySchema).max(3000),
 });
 
 export const exercise1RMResultSchema = z.object({
