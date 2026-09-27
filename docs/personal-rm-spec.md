@@ -1,6 +1,6 @@
 # Personal exercise records and calculated loads: feature specification
 
-Status: feature scope confirmed by the account holder on 2026-09-27. This document records the product decisions from the interview. It does not claim an implemented tool or a verified exercise API contract.
+Status: feature scope confirmed by the account holder on 2026-09-27. Issues #33 and #34 have been implemented and narrowly verified in the source checkout. Exercise search, progression, calculated workout loads and a new npm release remain pending. This document retains the full feature specification; see [validation](validation.md#own-account-1rm-query-2026-09-27-issue-34) for the delivered slice and its limits.
 
 ## Purpose and scope
 

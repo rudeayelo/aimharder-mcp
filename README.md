@@ -45,11 +45,14 @@ Hermes and Codex CLI have called the account tool through the published package.
 | `execute_booking_cancellation` | Cancel the exact preview after explicit account-holder confirmation. |
 | `execute_late_booking_cancellation` | After a warning, attempt late cancellation only with separate confirmation of possible credit loss. |
 | `get_published_workouts` | What is tomorrow's WOD? |
+| `get_exercise_1rm` | What is my latest 1RM for this source exercise ID? (Source checkout only.) |
 | `get_upcoming_bookings` | When am I booked? |
 | `get_booking_history` | Which past bookings are available? |
 | `get_personal_activity` | What activity did I record this month? |
 
 Clients can combine tools for questions about workouts and bookings, or count recent **activity entries**. An activity entry does not establish attendance or one distinct training session. See [tool inputs and coverage](docs/tools.md).
+
+The source checkout for [feature #32](https://github.com/rudeayelo/aimharder-mcp/issues/32) additionally exposes workout `sourceExerciseId` values and a known-ID `get_exercise_1rm` query with limited own-account coverage. These changes are not in the published `0.2.0` package. Exercise-name search, RM progression and calculated workout loads remain future work.
 
 ## Roadmap
 

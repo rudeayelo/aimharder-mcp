@@ -1,6 +1,6 @@
 # Tools and results
 
-Version `0.2.0` offers eleven tools for one configured account: six read queries, read-only booking previews, and manual booking creation and cancellation actions. An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking action previews and writes require a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
+Published version `0.2.0` offers eleven tools for one configured account: six read queries, read-only booking previews, and manual booking creation and cancellation actions. The current source checkout adds `get_exercise_1rm`; it has not been published in a new npm version. An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking action previews and writes require a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
 
 ## `get_account_context`
 
@@ -74,6 +74,14 @@ When source format permits, `valueUnit` labels `valor1` as seconds (`s`), repeti
 
 Coverage is always `incomplete`: only the current feed page is searched. `unavailable` does **not** prove no publication exists. `unsupported` means source content could not be interpreted; retrieval failures are errors.
 
+## `get_exercise_1rm` (source checkout)
+
+Input: one known positive integer source exercise ID, such as `{"exerciseId":101}`. An accessible `gymId` may select the origin used for the read. The account holder's user ID is derived from the authenticated session and is never an input or output. Arbitrary URLs and member selectors are rejected.
+
+`status: "available"` returns the exercise's validated source ID and name, the **latest dated** 1RM value, its source calendar date and a `kg` or `lbs` unit corroborated by a same-date, same-action source history description containing that exact load. This is not the historical maximum. `unit-unverified` retains the latest value and source date with `unit: null` when the source cannot corroborate a physical unit; the chart field named `lbs` and the `ud` code do not establish it alone. `no-1rm` means no 1RM was present in the returned exercise-detail view. The response also counts available 3RM, 5RM, 10RM and **separate WOD** entries without treating them as 1RM values.
+
+Coverage is `limited` to one exercise-detail response with unverified history completeness and gym of origin. The observed numeric source dates represent UTC midnight; the tool accepts that format and calls the resulting calendar date a source date, not a publication date. Unsupported dates, conflicting latest points, malformed responses, or an identity mismatch are errors rather than invented records. Exercise names and history text are untrusted source data; incidental private profile fields and raw history descriptions are omitted. This tool does not search exercises by name or enumerate a personal exercise catalog.
+
 ## `get_upcoming_bookings`
 
 Input: `{}` or an accessible `gymId` override. The response includes `bookings`, `bookingStatus`, `coverage` and `notices`. Each booking has its own `sourceBookingId`, gym-local date and time, original class name when available, and a `state`: `booked`, `waitlisted` or `unknown`. The upcoming source ID is not a verified class-session ID; `sessionId` and `classType.id` remain `null`.
@@ -93,6 +101,8 @@ Coverage is `limited` to `upstream-history-view`, without date bounds. `retrieva
 Input: 1–31 consecutive gym-local calendar dates, inclusive, such as `{"startDate":"2026-09-01","endDate":"2026-09-30"}`. A client can make further explicit queries for a longer period. The response has `entries`, `coverage` and `notices`. Distinct `sourceActivityId` values identify entries, including several entries on one day. Entries are sorted by record date newest first; order **within one date is unverified**.
 
 Entries retain available notes, exercises, prescriptions and block `result` fields. `result.time` is seconds; other score fields keep source encodings. `rx: false` alone does not establish scaling. Optional `result.desc` preserves a matched source description such as `7R` without a universal interpretation. Prescription units are not achieved loads. No session/time join is verified: `trainingSessionId` and `startTime` are `null`.
+
+The shared exercise projection also includes `sourceExerciseId` on personal activity entries when that detail row supplies a validated `ejerId`; otherwise it is `null`. The live ID comparison above covered published workout rows, not personal activity rows.
 
 `completedDates` lists dates whose calendar and details were retrieved. Partial results cannot support exact counts; a first-partition failure errors, while later failures/read limits retain entries marked incomplete. Complete coverage means available records for requested dates, not attendance or immutable lifetime history.
 

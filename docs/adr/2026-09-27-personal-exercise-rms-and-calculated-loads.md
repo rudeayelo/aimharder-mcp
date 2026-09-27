@@ -1,6 +1,6 @@
 # ADR: personal exercise RMs and calculated loads
 
-Status: accepted for feature scope on 2026-09-27; source validation and implementation remain pending.
+Status: accepted for feature scope on 2026-09-27; issues #33 and #34 are implemented in the source checkout, while search, progression, workout-load enrichment and release remain pending.
 
 ## Decision
 
@@ -10,4 +10,12 @@ The source exercise route, account identity, units, dates, record flags, search 
 
 ## Consequences
 
-Clients can answer direct RM and progression questions and explain practical loads for current/future published prescriptions without presenting a derived number as an original prescription or achieved result. Personal record reads add work and require bounded retrieval, privacy validation, and partial-enrichment reporting. This proposal extends the scope of the [MVP security decision](2026-09-21-credential-security-and-read-only-access.md) and, once implemented, will replace only the current prohibition on personal `%RM` conversion in the [published-workout decision](2026-09-22-published-workout-applicability.md); those earlier documents remain accurate for the shipped behavior until then. See the [feature specification](../personal-rm-spec.md) for detailed behavior and acceptance.
+When the full feature is complete, clients can answer direct RM and progression questions and explain practical loads for current/future published prescriptions without presenting a derived number as an original prescription or achieved result. Personal record reads add work and require bounded retrieval, privacy validation, and partial-enrichment reporting. This proposal extends the scope of the [MVP security decision](2026-09-21-credential-security-and-read-only-access.md) and, once implemented, will replace only the current prohibition on personal `%RM` conversion in the [published-workout decision](2026-09-22-published-workout-applicability.md); those earlier documents remain accurate for the shipped behavior until then. See the [feature specification](../personal-rm-spec.md) for detailed behavior and acceptance.
+
+## Staged implementation decision (2026-09-27, issues #33 and #34)
+
+First, project only validated source `ejerId` values from published exercise rows, including variant replacements; see the [workout identity amendment](2026-09-22-published-workout-applicability.md#exercise-identity-amendment-2026-09-27-issue-33). Then allow one own-account exercise-detail GET for a known positive source exercise ID at a verified gym origin. Derive the user ID from login and `/api/whoami`; compare the response's canonical exercise `id` and, whenever personal arrays/history are present, `chartUserId`. An omitted `chartUserId` is acceptable only for a completely empty view. No arbitrary member selector, URL, name-based join, raw history, chart profile, or persistent personal data is exposed.
+
+Use the latest unique 1RM point by its numeric source date, never the highest load or `lastRM`. Accept the observed UTC-midnight millisecond date format only and label its calendar date a source date. Preserve the chart load string, including decimal precision. The field named `lbs` and `ud` code are insufficient to assign a physical unit; corroborate `kg` or `lbs` only when history for the same date and action contains that exact load and unit. If not, return the latest point with `unit: null` and `unit-unverified`. A missing 1RM returns `no-1rm` with counts of available 3/5/10RM and separate WOD context. Coverage is limited to the returned exercise-detail view, with unknown history completeness and record gym of origin. Ambiguous latest dates, unsupported source dates, identity mismatches and malformed data are errors.
+
+Anonymized public MCP fixtures and one authorized 9NBC SDK/source comparison verify the observed slice; [validation](../validation.md#own-account-1rm-query-2026-09-27-issue-34) records its limits. This amendment does not yet enable name search, RM progression, calculated workout loads, or a claim of complete personal-exercise history. The earlier prohibition on personal `%RM` conversion remains current until the later load-enrichment slice is delivered.

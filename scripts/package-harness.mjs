@@ -26,10 +26,12 @@ async function withClient(extra, check) {
   finally { await client.close(); }
 }
 let gymCount;
+let toolCount;
 await withClient({}, async client => {
   const tools = await client.listTools();
+  toolCount = tools.tools.length;
   assert.equal(client.getServerVersion()?.version, packageVersion);
-  assert.deepEqual(tools.tools.map(tool => tool.name), ['get_account_context', 'get_class_sessions', 'prepare_booking_creation', 'execute_booking_creation', 'prepare_booking_cancellation', 'execute_booking_cancellation', 'execute_late_booking_cancellation', 'get_upcoming_bookings', 'get_booking_history', 'get_published_workouts', 'get_personal_activity']);
+  assert.deepEqual(tools.tools.map(tool => tool.name), ['get_account_context', 'get_class_sessions', 'prepare_booking_creation', 'execute_booking_creation', 'prepare_booking_cancellation', 'execute_booking_cancellation', 'execute_late_booking_cancellation', 'get_upcoming_bookings', 'get_booking_history', 'get_published_workouts', 'get_exercise_1rm', 'get_personal_activity']);
   const result = await client.callTool({ name: 'get_account_context', arguments: {} });
   assert.notEqual(result.isError, true);
   assert.equal(result.structuredContent.account.authenticated, true);
@@ -61,4 +63,4 @@ try {
   assert.equal(error.stdout, '');
   assert.match(error.stderr, /^INVALID_CONFIGURATION: /);
 }
-process.stdout.write(JSON.stringify({ mode: live ? 'live-read-only' : 'anonymized', initialization: 'passed', toolCount: 11, accountContext: 'passed', accessibleGymCount: gymCount, explicitSelection: 'passed', inaccessibleSelection: 'rejected', sanitizedErrors: 'passed', serverStderr: 'empty' }) + '\n');
+process.stdout.write(JSON.stringify({ mode: live ? 'live-read-only' : 'anonymized', initialization: 'passed', toolCount, accountContext: 'passed', accessibleGymCount: gymCount, explicitSelection: 'passed', inaccessibleSelection: 'rejected', sanitizedErrors: 'passed', serverStderr: 'empty' }) + '\n');

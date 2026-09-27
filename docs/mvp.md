@@ -112,7 +112,7 @@ The original MVP scope excluded booking writes, automation, exercise/progress an
 
 The [roadmap](../README.md#roadmap) lists personal RM lookups with calculated loads beside original `%RM`, recording results, broader gym support and mobile exploration. No dates or versions are promised.
 
-The [personal RM feature](personal-rm-spec.md) has confirmed scope. Exercise search and personal-record source contracts still need verification; RM lookup and load calculations are not yet implemented.
+The later [personal RM feature](personal-rm-spec.md) has confirmed scope outside the original MVP. The source checkout now projects verified exercise IDs and offers a known-ID own-account 1RM query, each checked against one authorized 9NBC source view. Exercise search, progression and calculated workout loads remain pending; these changes are not part of the published `0.2.0` package. Other gyms, complete history, and broader unit/date formats are unverified.
 
 ## Technical validation
 

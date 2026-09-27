@@ -7,6 +7,7 @@ import { AimHarderError } from './errors.js';
 import { calendarDates, classQuerySchema, parseClassDay, type ClassQuery, type ClassSession } from './classes.js';
 
 import { parseFeed, parseWorkout, workoutQuerySchema, type WorkoutQuery } from './workouts.js';
+import { exercise1RMQuerySchema, parseExercise1RM, type Exercise1RMQuery } from './exercise-records.js';
 import { parseUpcomingBookings, parseBookingHistory } from './bookings.js';
 import { atPublishedCancellationBoundary, bookingCandidates, bookingCreationQuerySchema, bookingCancellationQuerySchema, bookingExecutionSchema, lateCancellationExecutionSchema, cancellationCandidates, BookingPreparationStore, nearReportedBookingCutoff, type BookingCreationQuery, type BookingCreationPreview, type BookingCancellationQuery, type BookingCancellationPreview, type BookingExecution, type LateCancellationExecution } from './booking-preparation.js';
 
@@ -469,6 +470,16 @@ export class AimHarderClient {
     });
   }
 
+  getExercise1RM(input: Exercise1RMQuery) {
+    const parsed = exercise1RMQuerySchema.safeParse(input);
+    if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_EXERCISE_QUERY'));
+    const query = parsed.data;
+    return this.#query(query.gymId, async (_gyms, { gym }) => {
+      const body = await this.#request({ kind: 'exercise-detail', gymId: gym.id, exerciseId: query.exerciseId, accountId: this.#accountId! });
+      return { gym, ...parseExercise1RM(body, query.exerciseId, this.#accountId!) };
+    });
+  }
+
   #query<T>(gymId: string | undefined, work: (gyms: AccessibleGym[], selected: AccessibleGym, recover: () => Promise<void>) => Promise<T>): Promise<T> {
     // Serialize whole queries so recovery cannot replace another request's session.
     const result = this.#queue.then(() => this.#authenticatedQuery(gymId, work));
@@ -567,7 +578,7 @@ export class AimHarderClient {
     return [...gyms.values()];
   }
 
-  async #request(operation: { kind: 'activity-calendar'; month: string } | { kind: 'activity-detail'; sourceId: number } | 'login' | 'identity' | { kind: 'classes'; gymId: string; boxId: number; date: string } | { kind: 'book-create'; gymId: string; sourceId: number; date: string } | { kind: 'book-cancel'; gymId: string; reservationId: number; late: boolean } | { kind: 'upcoming'; gymId: string; boxId: number } | { kind: 'gym-page'; gymId: string } | { kind: 'feed'; gymId: string; publisher: number } | { kind: 'workout'; gymId: string; sourceId: number }): Promise<unknown> {
+  async #request(operation: { kind: 'activity-calendar'; month: string } | { kind: 'activity-detail'; sourceId: number } | 'login' | 'identity' | { kind: 'classes'; gymId: string; boxId: number; date: string } | { kind: 'book-create'; gymId: string; sourceId: number; date: string } | { kind: 'book-cancel'; gymId: string; reservationId: number; late: boolean } | { kind: 'upcoming'; gymId: string; boxId: number } | { kind: 'gym-page'; gymId: string } | { kind: 'feed'; gymId: string; publisher: number } | { kind: 'workout'; gymId: string; sourceId: number } | { kind: 'exercise-detail'; gymId: string; exerciseId: number; accountId: number }): Promise<unknown> {
     let url: string;
     if (typeof operation === 'string') url = operation === 'login' ? loginUrl : identityUrl;
     else {
@@ -578,6 +589,7 @@ export class AimHarderClient {
         case 'gym-page': url = `${origin}/`; break;
         case 'feed': url = `${origin}/api/activity?${new URLSearchParams({ timeLineFormat: '0', timeLineContent: '7', userID: String(operation.publisher) })}`; break;
         case 'workout': url = `${origin}/api/activity/workout?SEID=${operation.sourceId}`; break;
+        case 'exercise-detail': url = `${origin}/api/exercise/${operation.exerciseId}/${operation.accountId}`; break;
         case 'classes': url = `${origin}/api/bookings?${new URLSearchParams({ box: String(operation.boxId), day: operation.date.replaceAll('-', '') })}`; break;
         case 'book-create': url = `${origin}/api/book`; break;
         case 'book-cancel': url = `${origin}/api/cancelBook`; break;
