@@ -1,6 +1,6 @@
 # Tools and results
 
-Published version `0.2.0` offers eleven tools for one configured account: six read queries, read-only booking previews, and manual booking creation and cancellation actions. The current source checkout adds `get_exercise_1rm`; it has not been published in a new npm version. An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking action previews and writes require a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
+Published version `0.2.0` offers eleven tools for one configured account: six read queries, read-only booking previews, and manual booking creation and cancellation actions. The current source checkout adds `get_exercise_1rm`, `find_exercise_1rm`, and `get_exercise_rm_progression`, and extends workout answers; it has not been published in a new npm version. An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking action previews and writes require a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
 
 ## `get_account_context`
 
@@ -62,7 +62,7 @@ Use only the new reference from a `pending-credit-loss` result, after displaying
 
 ## `get_published_workouts`
 
-Input: an explicit gym-local date and an exact class name, such as `{"date":"2026-09-24","className":"WOD"}`. The response includes `status` (`available`, `unavailable`, or `unsupported`), `ambiguous`, `workouts`, `coverage` and `notices`.
+Input: an explicit gym-local date and an exact class name, such as `{"date":"2026-09-24","className":"WOD"}`. The response includes `status` (`available`, `unavailable`, or `unsupported`), `ambiguous`, `workouts`, `enrichment`, `coverage` and `notices`.
 
 Available workouts include source titles, notes, exercises, prescriptions and intended `recordDate`/class provenance. A workout may apply to several sessions, so `sessionId` is `null`. Multiple publications remain alternatives with `ambiguous: true`; recency does not establish supersession.
 
@@ -70,7 +70,9 @@ Each `variants` item has a source level label and complete blocks/exercises, inc
 
 Each exercise in the unselected prescription and each variant has `sourceExerciseId`, taken only from a positive, safe integer upstream `ejerId`. `null` means the row supplied no supported identity. A replacement variant uses its own ID; a shared exercise keeps its source ID. Names never establish identity or a personal-record join.
 
-When source format permits, `valueUnit` labels `valor1` as seconds (`s`), repetitions (`reps`), calories (`cal`) or distance. `loadUnit` labels nonempty load values with units such as `kg`, `lbs` or `%RM`. `85/85` with `%RM` stays relative; the server does not calculate kilograms from a personal RM. Raw values remain available and unknown units stay unlabeled.
+When source format permits, `valueUnit` labels `valor1` as seconds (`s`), repetitions (`reps`), calories (`cal`) or distance. `loadUnit` labels nonempty load values with units such as `kg`, `lbs` or `%RM`. Raw values remain available and unknown units stay unlabeled.
+
+For a requested date today or later in the reported gym zone, each `%RM` exercise in every returned publication and source-labeled variant receives `personalLoad`. Its `alternatives` preserve the original percentage, source field and label, exact source exercise ID, latest dated 1RM basis, verified physical unit and precise `1RM × percentage / 100` result. This formula is a product rule, not a verified AimHarder rule; no conversion or plate rounding occurs. A separately supplied `valor2h`/`valor2m` pair produces male/female source-labeled alternatives without profile selection. An equal preformatted pair such as `85/85` produces one load; an unequal or malformed unstructured pair remains uncalculated. Missing identity, 1RM, physical unit, supported percentage, or an ordinary failed/bounded personal detail read produces an unavailable reason while retaining the prescription. Authentication, access, account-identity and gym-verification failures stop the tool with a safe error. At most 24 distinct personal exercise IDs are read per workout query; repeated IDs reuse the result. `enrichment` reports complete or incomplete coverage of eligible exercises in the **returned** workouts. Past dates have `not-applicable` enrichment and no present-day `personalLoad`.
 
 Coverage is always `incomplete`: only the current feed page is searched. `unavailable` does **not** prove no publication exists. `unsupported` means source content could not be interpreted; retrieval failures are errors.
 
@@ -80,7 +82,15 @@ Input: one known positive integer source exercise ID, such as `{"exerciseId":101
 
 `status: "available"` returns the exercise's validated source ID and name, the **latest dated** 1RM value, its source calendar date and a `kg` or `lbs` unit corroborated by a same-date, same-action source history description containing that exact load. This is not the historical maximum. `unit-unverified` retains the latest value and source date with `unit: null` when the source cannot corroborate a physical unit; the chart field named `lbs` and the `ud` code do not establish it alone. `no-1rm` means no 1RM was present in the returned exercise-detail view. The response also counts available 3RM, 5RM, 10RM and **separate WOD** entries without treating them as 1RM values.
 
-Coverage is `limited` to one exercise-detail response with unverified history completeness and gym of origin. The observed numeric source dates represent UTC midnight; the tool accepts that format and calls the resulting calendar date a source date, not a publication date. Unsupported dates, conflicting latest points, malformed responses, or an identity mismatch are errors rather than invented records. Exercise names and history text are untrusted source data; incidental private profile fields and raw history descriptions are omitted. This tool does not search exercises by name or enumerate a personal exercise catalog.
+Coverage is `limited` to one exercise-detail response with unverified history completeness and gym of origin. The observed numeric source dates represent UTC midnight; the tool accepts that format and calls the resulting calendar date a source date, not a publication date. Unsupported dates, conflicting latest points, malformed responses, or an identity mismatch are errors rather than invented records. Exercise names and history text are untrusted source data; incidental private profile fields and raw history descriptions are omitted. This tool does not enumerate a personal exercise catalog.
+
+## `find_exercise_1rm` (source checkout)
+
+Input: `{"name":"Front Squat"}` with an optional accessible `gymId`. A bounded search returns source exercise IDs and names. An exact name or one sole plausible candidate is selected and read using the same own-account rules as `get_exercise_1rm`. Several plausible candidates return `ambiguous`; pass one returned `exerciseId` with the same name to select explicitly. `selection-not-found` does not read a different ID. `empty-view` and `unsupported-view` describe only the returned search response. Coverage is limited; 50 rows indicate possible truncation, not a complete catalog or absence of personal records. Search and pagination behavior outside the observed view remain unverified. Member IDs and arbitrary URLs are rejected.
+
+## `get_exercise_rm_progression` (source checkout)
+
+Input: a known `exerciseId`, optional accessible `gymId`, and optional `includeWod: true`. The answer presents dated 1RM, 3RM, 5RM and 10RM arrays separately, with each source load and corroborated unit when available. `newMark` is true only for a matching source history marker for that repetition category. Ordinary points remain ordinary, including a lower recent 1RM. Optional `wodContext` carries source dates and raw WOD values without calling them RM loads. No incidental profile fields, raw history descriptions or source action IDs are exposed. Source dates are not publication dates; lifetime coverage and record gym of origin remain unverified.
 
 ## `get_upcoming_bookings`
 

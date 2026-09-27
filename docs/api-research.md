@@ -144,6 +144,16 @@ For the observed exercise with 1RM data, `chartData1RM` points had numeric Unix-
 
 This observes one account and one gym. It does not establish the meaning of `ud` or `tipoPeso`, all date encodings, decimal precision across exercises, complete history, the record's gym of origin, other units/gyms, or a complete exercise catalog. The own-account route is bounded to one verified gym origin and one source exercise ID per tool call.
 
+## Exercise search and progression follow-up (2026-09-27, issues #35 and #36)
+
+An authorized read-only SDK/source comparison used the same verified 9NBC account and selected an exercise with a corroborated 1RM from a previously published workout. `GET /api/workoutAndEjers` on the verified gym origin, with fixed `showWODs=0`, empty `byLetter`, `filterType=0`, and a bounded encoded `search` name, returned 28 candidate rows. The MCP candidate source IDs and order matched a separate source response; the exact named candidate was selected and its own-account detail read. This response had no personal-record flag, total or cursor. Empty, 50-row, unsupported and ambiguous branches were fixture-tested only. Server-side filtering, pagination and any 50-row cap remain unverified.
+
+The selected detail returned four 1RM, seven 3RM, eight 5RM and one 10RM points. The MCP series counts and load values matched a separate source read, as did the per-category source `history.record` marker counts (2, 1, 2 and 1 respectively). WOD remained a separate series. The marker relationship was checked by matching date, action ID and repetition category in memory; no personal values or identifiers were recorded. This verifies one exercise-detail view, not complete lifetime progression or all marker formats. Duplicate/conflicting markers and malformed dates were checked only with anonymized fixtures.
+
+## Current/future percentage research (2026-09-27, issues #37 and #38)
+
+The same authorized check inspected 29 bounded publications from the selected gym's current feed page. None had an intended `recordDate` from 27 through 30 September 2026, so no current/future `%RM` workout or split percentage could be compared live. Earlier source evidence for `valor2="85/85"`, separate `valor2h`/`valor2m` frontend inputs and the own-account 1RM remains relevant, but it does not validate a live current/future calculated load. The source checkout implements the product arithmetic with fixtures and reports unavailable per-exercise status. The physical unit still requires the own-account history corroboration; `ud` and the chart field `lbs` are not treated as unit evidence. Other date windows, gyms, feed pages, split values and a source conversion rule remain unverified.
+
 ## Remaining research boundaries
 
 Only one account/location has live evidence. Future feed pages, complete booking/history horizons, other account roles/domains/locales, 2FA, rate limits and physical training-session grouping are not established. The assumed `Europe/Madrid` fallback is explicitly a product choice. The single confirmed standard write cycle does not authorize or validate further write branches; each real action still requires its own explicit confirmation.

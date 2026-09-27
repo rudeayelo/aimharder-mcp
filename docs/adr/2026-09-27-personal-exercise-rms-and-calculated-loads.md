@@ -1,6 +1,6 @@
 # ADR: personal exercise RMs and calculated loads
 
-Status: accepted for feature scope on 2026-09-27; issues #33 and #34 are implemented in the source checkout, while search, progression, workout-load enrichment and release remain pending.
+Status: accepted for feature scope on 2026-09-27; issues #33–#38 are implemented in the source checkout. Search and progression have narrow live comparison evidence. Current/future load and split comparison and release remain pending.
 
 ## Decision
 
@@ -19,3 +19,11 @@ First, project only validated source `ejerId` values from published exercise row
 Use the latest unique 1RM point by its numeric source date, never the highest load or `lastRM`. Accept the observed UTC-midnight millisecond date format only and label its calendar date a source date. Preserve the chart load string, including decimal precision. The field named `lbs` and `ud` code are insufficient to assign a physical unit; corroborate `kg` or `lbs` only when history for the same date and action contains that exact load and unit. If not, return the latest point with `unit: null` and `unit-unverified`. A missing 1RM returns `no-1rm` with counts of available 3/5/10RM and separate WOD context. Coverage is limited to the returned exercise-detail view, with unknown history completeness and record gym of origin. Ambiguous latest dates, unsupported source dates, identity mismatches and malformed data are errors.
 
 Anonymized public MCP fixtures and one authorized 9NBC SDK/source comparison verify the observed slice; [validation](../validation.md#own-account-1rm-query-2026-09-27-issue-34) records its limits. This amendment does not yet enable name search, RM progression, calculated workout loads, or a claim of complete personal-exercise history. The earlier prohibition on personal `%RM` conversion remains current until the later load-enrichment slice is delivered.
+
+## Search, progression, and load implementation (2026-09-27, issues #35–#38)
+
+Add bounded name search on the selected gym origin with fixed filter parameters. Select one exact or sole plausible candidate automatically; multiple matches require an explicit returned source ID. The search view is limited and candidates do not prove personal records. Return own-account 1/3/5/10RM progression as separate dated series, using a matching `history.record` marker for a new mark. Optional WOD values are separate context. Do not expose raw history or action IDs. One authorized 9NBC search and detail comparison matched candidates, series and mark counts; filtering, truncation, pagination, complete history and other gyms remain unverified.
+
+For current/future gym-local workout dates, enrich each eligible `%RM` exercise occurrence in every publication and labeled variant. Join by exact source ID, deduplicate reads, cap them at 24 distinct IDs per query, and attach the original percentage, source field/label, precise arithmetic load, selected latest 1RM value/date and verified physical unit. Two separate `valor2h`/`valor2m` fields retain both alternatives; an equal `valor2` slash pair is one percentage; unequal unstructured values remain unavailable. Keep the workout intact on absent data or personal-read failure and report incomplete enrichment of the returned view. No unit conversion, plate rounding or profile-based choice is allowed. This is a product rule independent of upstream calculation behavior.
+
+Public MCP fixture tests cover these rules. The authorized 27 September feed scan found no current/future applicable publication in the inspected page, so live acceptance for load and split calculation is still pending. The [published-workout decision](2026-09-22-published-workout-applicability.md#calculated-load-source-checkout-amendment-2026-09-27-issues-37-and-38) distinguishes this checkout from shipped `0.2.0`.

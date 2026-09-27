@@ -26,7 +26,7 @@ transport.stderr?.on('data', () => { hasStderr = true; });
 try {
   await client.connect(transport);
   const tools = await client.listTools();
-  assert.deepEqual(tools.tools.map((tool) => tool.name), ['get_account_context', 'get_class_sessions', 'prepare_booking_creation', 'execute_booking_creation', 'prepare_booking_cancellation', 'execute_booking_cancellation', 'execute_late_booking_cancellation', 'get_upcoming_bookings', 'get_booking_history', 'get_published_workouts', 'get_exercise_1rm', 'get_personal_activity']);
+  assert.deepEqual(tools.tools.map((tool) => tool.name), ['get_account_context', 'get_class_sessions', 'prepare_booking_creation', 'execute_booking_creation', 'prepare_booking_cancellation', 'execute_booking_cancellation', 'execute_late_booking_cancellation', 'get_upcoming_bookings', 'get_booking_history', 'get_published_workouts', 'get_exercise_1rm', 'find_exercise_1rm', 'get_exercise_rm_progression', 'get_personal_activity']);
   const result = await client.callTool({ name: 'get_account_context', arguments: {} });
   assert.notEqual(result.isError, true);
   const context = result.structuredContent;

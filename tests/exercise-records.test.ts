@@ -117,3 +117,87 @@ test('stops after repeated expiry without exposing upstream response', async () 
  expect(requests.filter(r => r.url.pathname === '/api/login')).toHaveLength(2);
  expect(requests.filter(r => r.url.pathname.startsWith('/api/exercise/'))).toHaveLength(2);
 });
+
+test('name search selects one exact candidate using its source ID and the own-account detail route', async () => {
+ upstream.use(http.get('https://sample-gym.aimharder.es/api/workoutAndEjers', ({ request }) => {
+  const params = new URL(request.url).searchParams;
+  expect([...params.entries()]).toEqual([['search', 'Barbell lift'], ['showWODs', '0'], ['byLetter', ''], ['filterType', '0']]);
+  return HttpResponse.json({ term: 'Barbell lift', result: [{ id: 102, name: 'Barbell lift variant', type: 0 }, { id: 101, name: 'Barbell lift', type: 0 }] });
+ }));
+ const result = await (await connect()).callTool({ name: 'find_exercise_1rm', arguments: { name: 'Barbell lift' } });
+ expect(result.structuredContent).toMatchObject({ status: 'selected', selected: { exercise: { sourceExerciseId: 101 }, latest1RM: { value: '100.5' } }, coverage: { status: 'limited' } });
+ expect(requests.filter(r => r.url.pathname.startsWith('/api/exercise/'))).toHaveLength(1);
+});
+
+test('ambiguous search returns identities without reading or merging personal records; explicit selection is exact', async () => {
+ upstream.use(http.get('https://sample-gym.aimharder.es/api/workoutAndEjers', () => HttpResponse.json({ term: 'lift', result: [{ id: 101, name: 'Barbell lift', type: 0 }, { id: 102, name: 'Dumbbell lift', type: 0 }] })));
+ const client = await connect();
+ const ambiguous = await client.callTool({ name: 'find_exercise_1rm', arguments: { name: 'lift' } });
+ expect(ambiguous.structuredContent).toMatchObject({ status: 'ambiguous', candidates: [{ sourceExerciseId: 101 }, { sourceExerciseId: 102 }], selected: null });
+ expect(requests.filter(r => r.url.pathname.startsWith('/api/exercise/'))).toHaveLength(0);
+ const selected = await client.callTool({ name: 'find_exercise_1rm', arguments: { name: 'lift', exerciseId: 101 } });
+ expect(selected.structuredContent).toMatchObject({ status: 'selected', selected: { status: 'available' } });
+ const missing = await client.callTool({ name: 'find_exercise_1rm', arguments: { name: 'lift', exerciseId: 999 } });
+ expect(missing.structuredContent).toMatchObject({ status: 'selection-not-found', selected: null });
+});
+
+test('empty and full search views never claim catalog or record absence', async () => {
+ const client = await connect();
+ upstream.use(http.get('https://sample-gym.aimharder.es/api/workoutAndEjers', () => HttpResponse.json({ term: 'unknown', result: [] })));
+ expect((await client.callTool({ name: 'find_exercise_1rm', arguments: { name: 'unknown' } })).structuredContent).toMatchObject({ status: 'empty-view', coverage: { possibleTruncation: false } });
+ upstream.use(http.get('https://sample-gym.aimharder.es/api/workoutAndEjers', () => HttpResponse.json({ term: 'lift', result: Array.from({ length: 50 }, (_, i) => ({ id: i + 200, name: `Lift ${i}`, type: 0 })) })));
+ expect((await client.callTool({ name: 'find_exercise_1rm', arguments: { name: 'lift' } })).structuredContent).toMatchObject({ status: 'ambiguous', coverage: { possibleTruncation: true, returnedCount: 50 } });
+});
+
+test('unsupported search and unsafe selectors do not query a personal record', async () => {
+ const client = await connect();
+ upstream.use(http.get('https://sample-gym.aimharder.es/api/workoutAndEjers', () => HttpResponse.json({ term: 'lift', result: [{ id: 101, name: 'Barbell lift', type: 99 }] })));
+ expect((await client.callTool({ name: 'find_exercise_1rm', arguments: { name: 'lift' } })).structuredContent).toMatchObject({ status: 'unsupported-view', selected: null });
+ for (const arguments_ of [{ name: 'lift', userId: 42 }, { name: 'lift', url: 'https://invalid.example/' }, { name: 'x'.repeat(101) }]) {
+  expect((await client.callTool({ name: 'find_exercise_1rm', arguments: arguments_ })).isError).toBe(true);
+ }
+ expect(requests.filter(r => r.url.pathname.startsWith('/api/exercise/'))).toHaveLength(0);
+});
+
+test('name search can select a candidate with no 1RM without confusing that with catalog absence', async () => {
+ upstream.use(
+  http.get('https://sample-gym.aimharder.es/api/workoutAndEjers', () => HttpResponse.json({ term: 'Barbell lift', result: [{ id: 101, name: 'Barbell lift', type: 0 }] })),
+  http.get('https://sample-gym.aimharder.es/api/exercise/101/42', () => HttpResponse.json(detail({ chartData1RM: [] }))),
+ );
+ expect((await (await connect()).callTool({ name: 'find_exercise_1rm', arguments: { name: 'Barbell lift' } })).structuredContent).toMatchObject({ status: 'selected', selected: { status: 'no-1rm' } });
+});
+
+test('progression keeps repetition series distinct and only marks source-identified records', async () => {
+ const result = await (await connect()).callTool({ name: 'get_exercise_rm_progression', arguments: { exerciseId: 101, includeWod: true } });
+ expect(result.structuredContent).toMatchObject({ series: { '1RM': [{ value: '120', newMark: true }, { value: '100.5', newMark: false }], '3RM': [{ value: '90', newMark: false }], '5RM': [], '10RM': [] }, wodContext: [{ sourceValue: '4' }] });
+ expect(JSON.stringify(result)).not.toMatch(/private-name|private-picture|private-profile|120 kg|100\.5 kg/);
+});
+
+test('progression rejects conflicting markers and malformed dates', async () => {
+ const client = await connect();
+ respond(detail({ history: [{ date: older, idAction: 10, record: 1 }, { date: older, idAction: 10, record: 3 }] }));
+ expect((await client.callTool({ name: 'get_exercise_rm_progression', arguments: { exerciseId: 101 } })).isError).toBe(true);
+ respond(detail({ chartData3RM: [{ date: older + 1, lbs: '90', idAction: 12 }] }));
+ expect((await client.callTool({ name: 'get_exercise_rm_progression', arguments: { exerciseId: 101 } })).isError).toBe(true);
+});
+
+test('duplicate identical source markers identify one point without inventing another mark', async () => {
+ respond(detail({ history: [{ date: older, idAction: 10, record: 1 }, { date: older, idAction: 10, record: 1 }] }));
+ const result = await (await connect()).callTool({ name: 'get_exercise_rm_progression', arguments: { exerciseId: 101 } });
+ expect(result.structuredContent).toMatchObject({ series: { '1RM': [{ newMark: true }, { newMark: false }] } });
+});
+
+test('WOD-only detail has empty RM progression and optional separate context', async () => {
+ respond(detail({ chartData1RM: [], chartData3RM: [], chartData5RM: [], chartData10RM: [], history: [] }));
+ const client = await connect();
+ const progression = await client.callTool({ name: 'get_exercise_rm_progression', arguments: { exerciseId: 101, includeWod: true } });
+ expect(progression.structuredContent).toMatchObject({ series: { '1RM': [], '3RM': [], '5RM': [], '10RM': [] }, wodContext: [{ sourceValue: '4' }] });
+ const withoutWod = await client.callTool({ name: 'get_exercise_rm_progression', arguments: { exerciseId: 101 } });
+ expect(JSON.stringify(withoutWod.structuredContent)).not.toContain('wodContext');
+});
+
+test('progression rejects arbitrary member selectors before personal reads', async () => {
+ const result = await (await connect()).callTool({ name: 'get_exercise_rm_progression', arguments: { exerciseId: 101, userId: 99 } });
+ expect(result.isError).toBe(true);
+ expect(requests.filter(r => r.url.pathname.startsWith('/api/exercise/'))).toHaveLength(0);
+});

@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { dateSchema } from './classes.js';
 import { gymIdSchema } from './config.js';
 import { AimHarderError } from './errors.js';
+import { personalLoadSchema } from './calculated-loads.js';
 
 export const workoutQuerySchema = z.object({ date: dateSchema, className: z.string().trim().min(1).max(300), gymId: gymIdSchema.optional() }).strict();
 export type WorkoutQuery = z.infer<typeof workoutQuerySchema>;
@@ -12,7 +13,7 @@ const prescriptionSchema = z.record(z.string(), z.union([scalar, z.array(scalar)
 const loadUnits = ['kg', 'lbs', 'pood', '%BW', '%RM', 'RIR', 'RPE'] as const;
 const distanceUnits = ['m', 'mi', 'yd', 'ft', 'steps', 'km'] as const;
 const blockSchema = z.object({ notes: text.nullable(), prescription: prescriptionSchema });
-const exerciseSchema = z.object({ name: text, sourceExerciseId: z.number().int().positive().safe().nullable().describe('Validated upstream ejerId; null means no supported source identity was supplied.'), blockIndex: z.number().int().nonnegative().nullable(), prescription: prescriptionSchema.describe('Raw exercise values: valueUnit labels valor1; loadUnit labels valor2/valor2h/valor2m when verified. s means seconds and %RM is relative, not kilograms.') });
+const exerciseSchema = z.object({ name: text, sourceExerciseId: z.number().int().positive().safe().nullable().describe('Validated upstream ejerId; null means no supported source identity was supplied.'), blockIndex: z.number().int().nonnegative().nullable(), prescription: prescriptionSchema.describe('Raw exercise values: valueUnit labels valor1; loadUnit labels valor2/valor2h/valor2m when verified. s means seconds and %RM is relative, not kilograms.'), personalLoad: personalLoadSchema.optional() });
 export const workoutSchema = z.object({
   date: dateSchema, className: z.string(), timeZone: z.string(), sessionId: z.null(),
   titles: z.array(text), blocks: z.array(blockSchema), exercises: z.array(exerciseSchema),

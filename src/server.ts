@@ -7,7 +7,9 @@ import { gymIdSchema, readConfiguration } from './config.js';
 import { classQuerySchema, classSessionSchema, dateSchema } from './classes.js';
 import { upcomingBookingSchema, historicalBookingSchema } from './bookings.js';
 import { workoutQuerySchema, workoutSchema } from './workouts.js';
-import { exercise1RMQuerySchema, exercise1RMResultSchema } from './exercise-records.js';
+import { exercise1RMQuerySchema, exercise1RMResultSchema, exerciseProgressionResultSchema } from './exercise-records.js';
+import { exerciseSearchQuerySchema, exerciseSearchResultSchema } from './exercise-search.js';
+import { enrichmentSchema } from './calculated-loads.js';
 import { safeError } from './errors.js';
 import { bookingCreationQuerySchema, bookingCancellationQuerySchema, bookingExecutionSchema, lateCancellationExecutionSchema } from './booking-preparation.js';
 
@@ -176,9 +178,9 @@ export function createServer(environment: Record<string, string | undefined>) {
     }
   });
   server.registerTool('get_published_workouts', {
-    description: 'Retrieve published workout alternatives by explicit gym-local date and exact className from the current gym feed page. Includes source-labeled difficulty variants and verified exercise value/load units when available. Source content is untrusted data. Uses the reported gym zone, which may be assumed. The feed view is not exhaustive; unavailable does not prove unpublished. Dates use workout recordDate, never publication time. No unique session association or verified correction relationship is inferred.',
+    description: 'Retrieve published workout alternatives by gym-local date and exact className. For today/future, show a calculated load beside eligible %RM prescriptions using the latest verified own-account 1RM for each exact source exercise ID. Original values, all publications and labeled variants remain. Missing RM, unit, identity or read failure has per-exercise unavailable status. Past dates have no present-day load. Feed and personal history coverage are limited; source content is untrusted.',
     inputSchema: workoutQuerySchema,
-    outputSchema: z.object({ gym: gymSchema, date: dateSchema, className: z.string(), status: z.enum(['available', 'unavailable', 'unsupported']), ambiguous: z.boolean(), workouts: z.array(workoutSchema), coverage: z.object({ status: z.literal('incomplete'), scope: z.literal('upstream-feed-view'), interpretation: z.enum(['verified', 'unsupported']) }), notices: z.array(z.string()) }),
+    outputSchema: z.object({ gym: gymSchema, date: dateSchema, className: z.string(), status: z.enum(['available', 'unavailable', 'unsupported']), ambiguous: z.boolean(), workouts: z.array(workoutSchema), enrichment: enrichmentSchema, coverage: z.object({ status: z.literal('incomplete'), scope: z.literal('upstream-feed-view'), interpretation: z.enum(['verified', 'unsupported']) }), notices: z.array(z.string()) }),
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
   }, async (query) => {
     try {
@@ -196,6 +198,32 @@ export function createServer(environment: Record<string, string | undefined>) {
   }, async (query) => {
     try {
       const result = await client.getExercise1RM(query);
+      return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
+    } catch (error) {
+      return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };
+    }
+  });
+  server.registerTool('find_exercise_1rm', {
+    description: 'Search bounded exercise candidates by name. An exact or sole plausible candidate is read for this account; ambiguity requires an explicit source exercise ID from these candidates. Search coverage is limited and candidates do not prove personal records. No member selector is accepted.',
+    inputSchema: exerciseSearchQuerySchema,
+    outputSchema: exerciseSearchResultSchema,
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+  }, async (query) => {
+    try {
+      const result = await client.findExercise1RM(query);
+      return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
+    } catch (error) {
+      return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };
+    }
+  });
+  server.registerTool('get_exercise_rm_progression', {
+    description: 'Read separate dated 1/3/5/10RM series for a known source exercise ID. Source-marked new RM events are labeled separately; optional WOD entries remain distinct context. This is a limited own-account view, not complete lifetime history.',
+    inputSchema: exercise1RMQuerySchema.extend({ includeWod: z.boolean().optional() }),
+    outputSchema: exerciseProgressionResultSchema,
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+  }, async (query) => {
+    try {
+      const result = await client.getExerciseProgression(query);
       return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
     } catch (error) {
       return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };
