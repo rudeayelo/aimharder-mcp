@@ -1,6 +1,6 @@
 # ADR: personal exercise RMs and calculated loads
 
-Status: accepted for feature scope on 2026-09-27; issues #33–#38 are implemented in the source checkout. Search and progression have narrow live comparison evidence. Current/future load and split comparison and release remain pending.
+Status: accepted for feature scope on 2026-09-27; issues #33–#38 are implemented in the source checkout. Search, progression and one current/future simple load have narrow live comparison evidence. Split unavailable behavior was compared live; calculated split arithmetic and release remain pending.
 
 ## Decision
 
@@ -26,4 +26,4 @@ Add bounded name search on the selected gym origin with fixed filter parameters.
 
 For current/future gym-local workout dates, enrich each eligible `%RM` exercise occurrence in every publication and labeled variant. Join by exact source ID, deduplicate reads, cap them at 24 distinct IDs per query, and attach the original percentage, source field/label, precise arithmetic load, selected latest 1RM value/date and verified physical unit. Two separate `valor2h`/`valor2m` fields retain both alternatives; an equal `valor2` slash pair is one percentage; unequal unstructured values remain unavailable. Keep the workout intact on absent data or personal-read failure and report incomplete enrichment of the returned view. No unit conversion, plate rounding or profile-based choice is allowed. This is a product rule independent of upstream calculation behavior.
 
-Public MCP fixture tests cover these rules. The authorized 27 September feed scan found no current/future applicable publication in the inspected page, so live acceptance for load and split calculation is still pending. The [published-workout decision](2026-09-22-published-workout-applicability.md#calculated-load-source-checkout-amendment-2026-09-27-issues-37-and-38) distinguishes this checkout from shipped `0.2.0`.
+Public MCP fixture tests cover these rules. An early 27 September feed scan found no current/future publication; a later fresh view included a WOD intended for 28 September. An independent source/MCP comparison verified one simple calculated load and the exact exercise/record/unit/percentage basis. Three split variant rows supplied separate percentages but no valid source exercise IDs, so both labeled alternatives remained unavailable. The live calculated split path remains unobserved. The [published-workout decision](2026-09-22-published-workout-applicability.md#calculated-load-source-checkout-amendment-2026-09-27-issues-37-and-38) distinguishes this checkout from shipped `0.2.0`.

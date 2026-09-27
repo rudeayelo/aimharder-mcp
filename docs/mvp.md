@@ -112,7 +112,7 @@ The original MVP scope excluded booking writes, automation, exercise/progress an
 
 The [roadmap](../README.md#roadmap) lists personal RM lookups with calculated loads beside original `%RM`, recording results, broader gym support and mobile exploration. No dates or versions are promised.
 
-The later [personal RM feature](personal-rm-spec.md) has confirmed scope outside the original MVP. The source checkout projects verified exercise IDs, provides known-ID and name-based own-account 1RM queries and separate progression, and calculates eligible loads for current/future published workouts. Search and progression passed one authorized 9NBC source comparison. Load and split behavior are fixture-verified but await an applicable live publication; none of this is in published `0.2.0`. Other gyms, complete history, and broader unit/date formats remain unverified.
+The later [personal RM feature](personal-rm-spec.md) has confirmed scope outside the original MVP. The source checkout projects verified exercise IDs, provides known-ID and name-based own-account 1RM queries and separate progression, and calculates eligible loads for current/future published workouts. Search, progression and one current/future WOD calculation passed authorized 9NBC source comparison. Separate-field split prescriptions in that WOD lacked source exercise IDs, so their original values and unavailable statuses were confirmed live while split arithmetic remains fixture-verified. None of this is in published `0.2.0`. Other gyms, complete history, and broader unit/date formats remain unverified.
 
 ## Technical validation
 

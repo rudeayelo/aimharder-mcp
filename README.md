@@ -54,13 +54,13 @@ Hermes and Codex CLI have called the account tool through the published package.
 
 Clients can combine tools for questions about workouts and bookings, or count recent **activity entries**. An activity entry does not establish attendance or one distinct training session. See [tool inputs and coverage](docs/tools.md).
 
-The source checkout for [feature #32](https://github.com/rudeayelo/aimharder-mcp/issues/32) adds source exercise IDs, known-ID and name-based own-account 1RM queries, separate RM progression, and calculated loads for eligible `%RM` prescriptions dated today or later in the gym's reported zone. Original instructions and all publication/variant alternatives remain visible. Search and personal history coverage are limited. Live source comparison passed for search and progression; a current/future published `%RM` workout was unavailable during this check, so load enrichment is fixture-verified only. None of these changes are in published `0.2.0`.
+The source checkout for [feature #32](https://github.com/rudeayelo/aimharder-mcp/issues/32) adds source exercise IDs, known-ID and name-based own-account 1RM queries, separate RM progression, and calculated loads for eligible `%RM` prescriptions dated today or later in the gym's reported zone. Original instructions and all publication/variant alternatives remain visible. Search and personal history coverage are limited. Live source comparison passed for search, progression and a calculated load in the 28 September WOD. That WOD's split variant rows lacked valid source exercise IDs, so their original percentages remained visible with unavailable calculation status; split arithmetic remains fixture-verified only. None of these changes are in published `0.2.0`.
 
 ## Roadmap
 
 Planned capabilities, without committed dates or versions:
 
-- [ ] Complete live validation and release the source checkout's personal RM and calculated-load feature.
+- [ ] Find a calculable split `%RM` source example for live comparison, then release the source checkout's personal RM feature.
 - [ ] Record activity results.
 - [ ] Expand compatibility to more AimHarder gyms.
 - [ ] Explore compatibility with mobile apps.
