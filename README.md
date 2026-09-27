@@ -55,8 +55,7 @@ Clients can combine tools for questions about workouts and bookings, or count re
 
 Planned capabilities, without committed dates or versions:
 
-- [ ] Validate the late-credit-loss branch and write behavior at more gyms. One standard Open Box creation/cancellation cycle at 9NBC is recorded in [validation](docs/validation.md#open-box-cycle-validation-2026-09-25-issue-27).
-- [ ] Look up personal exercise RMs and show calculated loads alongside the original `%RM` prescription in future activities.
+- [ ] Look up personal exercise RMs and show calculated loads alongside original `%RM` prescriptions in today's and future published workouts.
 - [ ] Record activity results.
 - [ ] Expand compatibility to more AimHarder gyms.
 - [ ] Explore compatibility with mobile apps.
