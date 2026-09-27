@@ -16,6 +16,30 @@ _Avoid_: Workout or booking when referring to the scheduled class itself.
 The prescribed training content, which may be shared by multiple class sessions. A workout published in a gym feed does not necessarily belong to one unique session.
 _Avoid_: Class session when referring to training instructions.
 
+**Exercise**:
+A movement named in a workout prescription that may also have the account holder's recorded performance.
+_Avoid_: Workout when referring to one movement.
+
+**RM record**:
+A dated AimHarder load for the account holder and one exercise in a named repetition-maximum series, such as 1RM or 3RM. The latest record need not be the highest historical load.
+_Avoid_: WOD series entry or prescribed load.
+
+**RM progression**:
+The dated sequence of an exercise's recorded RM values. A point in the sequence is not necessarily a newly achieved personal mark.
+_Avoid_: New-mark history when referring to every recorded point.
+
+**New RM mark**:
+An exercise result that AimHarder identifies as a new mark for a named repetition count.
+_Avoid_: Any RM progression point.
+
+**WOD series entry**:
+A dated point in AimHarder's personal WOD series for an exercise. It provides performance context but is not an RM record.
+_Avoid_: 1RM or personal maximum.
+
+**Calculated load**:
+A load derived from an exercise's relative `%RM` prescription and a personal RM record. It is neither the original prescription nor a result achieved by the account holder.
+_Avoid_: Recorded result or absolute source prescription.
+
 **Booking**:
 The account holder's reservation for a class session. A booking does not establish attendance.
 _Avoid_: Attendance or completed workout as synonyms for a booking.

@@ -108,9 +108,11 @@ Run separate, authorized read-only live comparisons and record sanitized outcome
 
 ## Outside the MVP and future development
 
-Current scope excludes booking writes, automation, exercise/progress analysis, a UI and a remote service.
+The original MVP scope excluded booking writes, automation, exercise/progress analysis, a UI and a remote service. Manual booking writes were added later under the [separate scope decision](adr/2026-09-24-manual-booking-writes.md).
 
-The [roadmap](../README.md#roadmap) lists booking writes, personal RM lookups with optional calculated loads beside original `%RM`, recording results, broader gym support and mobile exploration. No dates or versions are promised.
+The [roadmap](../README.md#roadmap) lists personal RM lookups with calculated loads beside original `%RM`, recording results, broader gym support and mobile exploration. No dates or versions are promised.
+
+The [personal RM feature](personal-rm-spec.md) has confirmed scope. Exercise search and personal-record source contracts still need verification; RM lookup and load calculations are not yet implemented.
 
 ## Technical validation
 
