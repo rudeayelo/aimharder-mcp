@@ -1,6 +1,6 @@
 # ADR: personal exercise RMs and calculated loads
 
-Status: accepted for feature scope on 2026-09-27; issues #33–#38 are implemented and closed. Search, progression and one current/future simple load have narrow live comparison evidence. Split unavailable behavior was compared live; calculated split arithmetic remains unverified live. The account holder accepted this limit for the next minor release on 2026-09-28; publication remains pending.
+Status: accepted for feature scope on 2026-09-27; issues #33–#38 are implemented and closed. Search, progression and one current/future simple load have narrow live comparison evidence. Split unavailable behavior was compared live; calculated split arithmetic remains unverified live. The account holder accepted this limit on 2026-09-28, when version `0.3.0` was published. Its exact registry artifact passed an anonymized MCP check; authenticated artifact verification remains pending.
 
 ## Decision
 
