@@ -1,0 +1,33 @@
+# ADR: manual publication and deletion of own activity
+
+Status: accepted for feature scope on 2026-09-28 and specified in [issue #42](https://github.com/rudeayelo/aimharder-mcp/issues/42); API contracts, implementation, and live validation are pending.
+
+## Decision
+
+Extend the post-MVP local server with manual publication of the authenticated account holder's activity and deletion of an existing own activity entry. Editing an existing entry is outside the initial phase. Each publication or deletion requires a separate account-holder confirmation of the specific action. A supplied request capture or general feature approval is not permission to perform a live write.
+
+For a copied `%RM` prescription, preserve the source prescription, present the calculated kilogram load as an editable suggestion, and distinguish the load actually used from both. The initial user-editable content is the gym-local date, block results, exercise loads, and an optional general comment. Media, mentions, and schedule metadata are outside the first phase.
+
+Publication begins from an activity published by the selected gym and accessible to the account holder. Other members' entries, the account holder's past entries, and blank-form publication are outside the initial source set. Deletion may target any own entry at the selected gym, including one created through the AimHarder web UI, once account ownership and gym are verified. A source ID supplied by a caller alone cannot establish that verification.
+
+If an existing own entry can be reliably linked to the same source and gym-local date, warn before publication; an intentional second entry may proceed only after explicit confirmation of that possibility. A shared date alone is insufficient evidence of a duplicate. A published entry should follow the web Copy flow's visibility, and the confirmed preview must state the verified audience. Its actual visibility remains under investigation.
+
+Use one source-supported difficulty variant label for the copied prescription across the publication, consistent with the account holder's observation of one visible toggle; verify Copy-editor behavior before encoding it. A block's separate `rx` result data is not the variant selector and needs its own verified input semantics. Default to the copied workout's intended date in the selected gym's zone. Allow today and past dates, but reject future-dated personal results. Accept structured block results and actual exercise loads, not arbitrary free-text block scores. Require at least one such result or load before publishing. The optional general comment is not a substitute for a result.
+
+Require an explicit level choice when several levels are available; a sole available level may be selected automatically. For a past activity date, suggest a load only from the latest eligible own RM record dated on or before that date. Do not use a later RM retroactively or claim complete historical coverage from a limited source view. The account holder may enter the kilograms actually used even without a calculable RM or source exercise ID, provided the destination result field and unit are verified. Such an input does not establish exercise identity or a calculated suggestion by name.
+
+Converting a copied `%RM` exercise row to kilograms requires an explicitly chosen numeric load: calculated from an eligible RM as an editable suggestion when available, or entered manually when not. Confirm that number as the load actually used before changing the unit; an unchanged number is valid only when the account holder deliberately chose it. If the source has separate `valor2h` and `valor2m` alternatives, require the account holder to choose the applicable alternative or enter the actual load directly; do not infer account sex. Preserve both source alternatives for explanation. Convert only the effective rows for the selected difficulty variant, including shared blocks, and leave unselected variants unchanged.
+
+For any publication or deletion with an uncertain transport or response outcome, do not retry the write automatically. Read the current own-activity state first and report what it shows. If the outcome remains uncertain, a further write requires fresh preparation and action-specific confirmation.
+
+Do not expose a per-block `rx`/`rxstr` input in the first delivery until its write semantics are verified, and do not derive it from the publication-wide difficulty variant. A new structured block result must match the source-supported result kind and unit; unrecognized kinds are not writable. Deletion may proceed for a verified own activity that contains RM marks, with an explicit warning in the action preview that its effect on RM history and progression is unverified. A successful activity deletion must not be reported as proof that related RM data was retained or removed.
+
+An older gym publication that cannot be found and verified in the supported source view is unavailable as a Copy source; do not accept an arbitrary source ID. The original prescription may be shown alongside a published own result on later reads only when that gym source can be reverified. If it cannot, report provenance unavailable rather than reconstructing it from a changed own entry. The first phase adds no persistent local personal-history store. Deletion creates no automatic local backup or undo path; its preview must make possible irreversible loss explicit.
+
+The feature must be limited to the verified account and gym. The source capture does not establish a safe write contract or deletion contract; endpoint meanings, source identity, response handling, and read-back verification require further research and design before implementation. The official frontend sends `DELETE /api/activity/<id>`, but its response and later server state have not been verified. No live publication or deletion is authorized by this scope decision alone.
+
+## Consequences
+
+The read-only MVP remains a historical release boundary. The [booking-write decision](2026-09-24-manual-booking-writes.md) is specific to bookings and does not supply activity endpoint semantics or authorize result writes. Activity publication and deletion need their own target identification, previews, confirmation handling, and outcome reconciliation. A deletion may be irreversible or affect a public activity entry; the account holder must see the exact target and consequence before confirming it.
+
+The [feature discovery](../activity-results-spec.md) records unresolved design questions and the [API research](../api-research.md#candidate-activity-result-write-flow-user-supplied-samples-2026-09-28) distinguishes user-supplied samples from verified behavior.

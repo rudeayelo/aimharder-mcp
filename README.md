@@ -61,7 +61,7 @@ Version `0.3.0` adds source exercise IDs, known-ID and name-based own-account 1R
 Planned capabilities, without committed dates or versions:
 
 - [ ] Compare a calculable split `%RM` source example against the MCP when one becomes available; the current release decision accepts fixture-only evidence for that arithmetic path.
-- [ ] Record activity results.
+- [ ] [Record activity results](docs/activity-results-spec.md) ([specified in #42](https://github.com/rudeayelo/aimharder-mcp/issues/42); implementation pending).
 - [ ] Expand compatibility to more AimHarder gyms.
 - [ ] Explore compatibility with mobile apps.
 

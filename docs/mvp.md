@@ -110,7 +110,7 @@ Run separate, authorized read-only live comparisons and record sanitized outcome
 
 The original MVP scope excluded booking writes, automation, exercise/progress analysis, a UI and a remote service. Manual booking writes were added later under the [separate scope decision](adr/2026-09-24-manual-booking-writes.md).
 
-The [roadmap](../README.md#roadmap) lists personal RM lookups with calculated loads beside original `%RM`, recording results, broader gym support and mobile exploration. No dates or versions are promised.
+The [roadmap](../README.md#roadmap) lists personal RM lookups with calculated loads beside original `%RM`, recording results, broader gym support and mobile exploration. The later [activity scope decision](adr/2026-09-28-manual-activity-publication-and-deletion.md) covers manual publication and deletion of own activity; its write contracts and implementation are pending. No dates or versions are promised.
 
 The later [personal RM feature](personal-rm-spec.md) has confirmed scope outside the original MVP. The source checkout projects verified exercise IDs, provides known-ID and name-based own-account 1RM queries and separate progression, and calculates eligible loads for current/future published workouts. Search, progression and one current/future WOD calculation passed authorized 9NBC source comparison. Separate-field split prescriptions in that WOD lacked source exercise IDs, so their original values and unavailable statuses were confirmed live while split arithmetic remains fixture-verified. None of this is in published `0.2.0`. Other gyms, complete history, and broader unit/date formats remain unverified.
 
