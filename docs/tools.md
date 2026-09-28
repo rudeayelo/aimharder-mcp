@@ -1,6 +1,6 @@
 # Tools and results
 
-Published version `0.2.0` offers eleven tools for one configured account: six read queries, read-only booking previews, and manual booking creation and cancellation actions. The current source checkout adds `get_exercise_1rm`, `find_exercise_1rm`, and `get_exercise_rm_progression`, and extends workout answers; it has not been published in a new npm version. An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking action previews and writes require a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
+Version `0.3.0` offers fourteen tools for one configured account: nine read queries, read-only booking previews, and manual booking creation and cancellation actions. It adds `get_exercise_1rm`, `find_exercise_1rm`, and `get_exercise_rm_progression`, and extends workout answers. Exact public artifact verification is recorded separately in [validation](validation.md). An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking action previews and writes require a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
 
 ## `get_account_context`
 
@@ -76,7 +76,7 @@ For a requested date today or later in the reported gym zone, each `%RM` exercis
 
 Coverage is always `incomplete`: only the current feed page is searched. `unavailable` does **not** prove no publication exists. `unsupported` means source content could not be interpreted; retrieval failures are errors.
 
-## `get_exercise_1rm` (source checkout)
+## `get_exercise_1rm`
 
 Input: one known positive integer source exercise ID, such as `{"exerciseId":101}`. An accessible `gymId` may select the origin used for the read. The account holder's user ID is derived from the authenticated session and is never an input or output. Arbitrary URLs and member selectors are rejected.
 
@@ -84,11 +84,11 @@ Input: one known positive integer source exercise ID, such as `{"exerciseId":101
 
 Coverage is `limited` to one exercise-detail response with unverified history completeness and gym of origin. The observed numeric source dates represent UTC midnight; the tool accepts that format and calls the resulting calendar date a source date, not a publication date. Unsupported dates, conflicting latest points, malformed responses, or an identity mismatch are errors rather than invented records. Exercise names and history text are untrusted source data; incidental private profile fields and raw history descriptions are omitted. This tool does not enumerate a personal exercise catalog.
 
-## `find_exercise_1rm` (source checkout)
+## `find_exercise_1rm`
 
 Input: `{"name":"Front Squat"}` with an optional accessible `gymId`. A bounded search returns source exercise IDs and names. An exact name or one sole plausible candidate is selected and read using the same own-account rules as `get_exercise_1rm`. Several plausible candidates return `ambiguous`; pass one returned `exerciseId` with the same name to select explicitly. `selection-not-found` does not read a different ID. `empty-view` and `unsupported-view` describe only the returned search response. Coverage is limited; 50 rows indicate possible truncation, not a complete catalog or absence of personal records. Search and pagination behavior outside the observed view remain unverified. Member IDs and arbitrary URLs are rejected.
 
-## `get_exercise_rm_progression` (source checkout)
+## `get_exercise_rm_progression`
 
 Input: a known `exerciseId`, optional accessible `gymId`, and optional `includeWod: true`. The answer presents dated 1RM, 3RM, 5RM and 10RM arrays separately, with each source load and corroborated unit when available. `newMark` is true only for a matching source history marker for that repetition category. Ordinary points remain ordinary, including a lower recent 1RM. Optional `wodContext` carries source dates and raw WOD values without calling them RM loads. No incidental profile fields, raw history descriptions or source action IDs are exposed. Source dates are not publication dates; lifetime coverage and record gym of origin remain unverified.
 

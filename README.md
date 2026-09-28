@@ -1,6 +1,6 @@
 # aimharder-mcp
 
-Ask about your AimHarder classes, workouts, bookings and activity from an AI client. Version `0.2.0` is a local [MCP server](https://modelcontextprotocol.io/) that also supports manual booking creation and cancellation, with a separate confirmation if a late cancellation may lose a credit. One standard Open Box creation/cancellation cycle was observed live at 9NBC; the late branch, other gyms and credit effects remain unverified. This is an independent project, neither affiliated with nor endorsed by AimHarder.
+Ask about your AimHarder classes, workouts, bookings and activity from an AI client. Version `0.3.0` is a local [MCP server](https://modelcontextprotocol.io/) that also supports manual booking creation and cancellation, with a separate confirmation if a late cancellation may lose a credit. One standard Open Box creation/cancellation cycle was observed live at 9NBC; the late branch, other gyms and credit effects remain unverified. This is an independent project, neither affiliated with nor endorsed by AimHarder.
 
 **Data limits:** Live checks used one account at one location (9NBC). Other gyms may differ. Workout and booking views can be incomplete, so an empty result may not mean there is nothing to show. [Details](docs/tools.md#coverage-and-interpretation)
 
@@ -15,7 +15,7 @@ Ask about your AimHarder classes, workouts, bookings and activity from an AI cli
      "mcpServers": {
        "aimharder": {
          "command": "npx",
-         "args": ["--yes", "aimharder-mcp@0.2.0"]
+         "args": ["--yes", "aimharder-mcp@0.3.0"]
        }
      }
    }
@@ -45,16 +45,16 @@ Hermes and Codex CLI have called the account tool through the published package.
 | `execute_booking_cancellation` | Cancel the exact preview after explicit account-holder confirmation. |
 | `execute_late_booking_cancellation` | After a warning, attempt late cancellation only with separate confirmation of possible credit loss. |
 | `get_published_workouts` | What is tomorrow's WOD? |
-| `get_exercise_1rm` | What is my latest 1RM for this source exercise ID? (Source checkout only.) |
-| `find_exercise_1rm` | Which exercise by this name has my latest 1RM? (Source checkout only.) |
-| `get_exercise_rm_progression` | How have my RMs for this source exercise progressed? (Source checkout only.) |
+| `get_exercise_1rm` | What is my latest 1RM for this source exercise ID? |
+| `find_exercise_1rm` | Which exercise by this name has my latest 1RM? |
+| `get_exercise_rm_progression` | How have my RMs for this source exercise progressed? |
 | `get_upcoming_bookings` | When am I booked? |
 | `get_booking_history` | Which past bookings are available? |
 | `get_personal_activity` | What activity did I record this month? |
 
 Clients can combine tools for questions about workouts and bookings, or count recent **activity entries**. An activity entry does not establish attendance or one distinct training session. See [tool inputs and coverage](docs/tools.md).
 
-The source checkout for [feature #32](https://github.com/rudeayelo/aimharder-mcp/issues/32) adds source exercise IDs, known-ID and name-based own-account 1RM queries, separate RM progression, and calculated loads for eligible `%RM` prescriptions dated today or later in the gym's reported zone. Original instructions and all publication/variant alternatives remain visible. Search and personal history coverage are limited. Live source comparison passed for search, progression and a calculated load in the 28 September WOD. That WOD's split variant rows lacked valid source exercise IDs, so their original percentages remained visible with unavailable calculation status; split arithmetic remains fixture-verified only. None of these changes are in published `0.2.0`.
+Version `0.3.0` adds source exercise IDs, known-ID and name-based own-account 1RM queries, separate RM progression, and calculated loads for eligible `%RM` prescriptions dated today or later in the gym's reported zone. Original instructions and all publication/variant alternatives remain visible. Search and personal history coverage are limited. Live source comparison passed for search, progression and a calculated load in the 28 September WOD. That WOD's split variant rows lacked valid source exercise IDs, so their original percentages remained visible with unavailable calculation status; split arithmetic remains fixture-verified only. See [validation](docs/validation.md#personal-rm-follow-up-2026-09-27-issues-35-38) for the evidence limits.
 
 ## Roadmap
 
