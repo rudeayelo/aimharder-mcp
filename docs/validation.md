@@ -32,7 +32,7 @@ On Node 24.14.0, `pnpm typecheck`, `pnpm build`, the full `pnpm test` run (**381
 
 The user accepted first-release functional QA on 2026-09-24 using the combined evidence below and [QA #13](https://github.com/rudeayelo/aimharder-mcp/issues/13). The exact single-run future-workout-plus-booking harness check was **not performed**; the user accepted separate live comparisons and a Hermes future-WOD check instead. See the [QA evidence decision](adr/2026-09-24-functional-qa-evidence-for-first-release.md).
 
-`aimharder-mcp` is public on npm. Versions `0.1.0`, `0.1.1`, `0.1.2`, and `0.2.0` passed authenticated exact registry-artifact verification. Version `0.2.0` is the current consumer pin and adds manual booking actions. The registry and client results are recorded below, separately from the functional QA verdict and the single live Open Box write cycle.
+`aimharder-mcp` is public on npm. Versions `0.1.0`, `0.1.1`, `0.1.2`, and `0.2.0` passed authenticated exact registry-artifact verification. Version `0.3.0` is prepared as the next consumer pin; npm publication and exact-artifact verification are pending. The registry and client results are recorded below, separately from the functional QA verdict and the single live Open Box write cycle.
 
 ## Automated npm release 0.2.0 (2026-09-25)
 
