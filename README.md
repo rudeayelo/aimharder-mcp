@@ -60,7 +60,7 @@ The source checkout for [feature #32](https://github.com/rudeayelo/aimharder-mcp
 
 Planned capabilities, without committed dates or versions:
 
-- [ ] Find a calculable split `%RM` source example for live comparison, then release the source checkout's personal RM feature.
+- [ ] Compare a calculable split `%RM` source example against the MCP when one becomes available; the current release decision accepts fixture-only evidence for that arithmetic path.
 - [ ] Record activity results.
 - [ ] Expand compatibility to more AimHarder gyms.
 - [ ] Explore compatibility with mobile apps.

@@ -1,6 +1,6 @@
 # Personal exercise records and calculated loads: feature specification
 
-Status: feature scope confirmed by the account holder on 2026-09-27. Issues #33 and #34 were verified earlier. The source checkout now implements #35–#38; search, progression and one current/future WOD load passed narrow authorized source comparisons. The WOD's separate-field split variants lacked source exercise IDs, so their unavailable status was verified live but calculated split arithmetic still lacks a live example. A new npm release is pending. See [validation](validation.md#personal-rm-follow-up-2026-09-27-issues-35-38).
+Status: feature scope confirmed by the account holder on 2026-09-27. Issues #33–#38 are implemented and closed. Search, progression and one current/future WOD load passed narrow authorized source comparisons. The WOD's separate-field split variants lacked source exercise IDs, so their unavailable status was verified live but calculated split arithmetic still lacks a live example. On 2026-09-28 the account holder accepted this evidence limit for the next minor release; publication remains pending. See [validation](validation.md#personal-rm-follow-up-2026-09-27-issues-35-38).
 
 ## Purpose and scope
 

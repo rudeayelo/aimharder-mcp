@@ -24,6 +24,8 @@ An earlier authorized check scanned 29 publications from the current feed page a
 
 Three variant occurrences in that WOD had separately supplied `valor2h` and `valor2m` percentages but no valid source exercise ID in the replacement rows. The MCP preserved each source field and label and reported `source-exercise-id-unavailable` on both alternatives, without inheriting a base ID or using profile fields. This is a live source/MCP comparison of a split **unavailable** case; no split load could be calculated from those rows. Calculated split arithmetic, equal slash pairs and other unavailable branches remain verified with anonymized fixtures. The published `0.2.0` package still has no personal-load feature.
 
+On 2026-09-28, the account holder accepted closing #38 and preparing the next minor release with this live calculated-split gap still open. Publication and exact-registry-artifact verification must be recorded separately; this acceptance does not turn fixture results into live evidence.
+
 On Node 24.14.0, `pnpm typecheck`, `pnpm build`, the full `pnpm test` run (**381 tests in 15 files**), and `pnpm test:package` passed. The isolated local archive installed outside the checkout with production dependencies and passed MCP initialization, 14-tool discovery, account/gym selection, sanitized errors and empty stderr; it contained 28 files. This was a local packed-archive check, not npm publication. The later live check above covered one applicable calculated WOD load; it did not cover calculated split arithmetic.
 
 ## Current release status
