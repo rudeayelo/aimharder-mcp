@@ -132,3 +132,85 @@ test('requires one explicit level among several and verifies its Copy replacemen
   expect((await prepare(client, { variantLabel: 'EASY' })).isError).toBe(true);
   expect(activityWrites()).toHaveLength(0);
 });
+
+async function execute(client: Client, reference: string, extra: Record<string, unknown> = {}) {
+  return client.callTool({ name: 'execute_activity_publication', arguments: {
+    actionReference: reference, confirmed: true, ...extra,
+  } });
+}
+function acceptedReadback(options: { response?: unknown; calendar?: unknown; detail?: unknown } = {}) {
+  upstream.use(
+    http.post('https://sample-gym.aimharder.es/api/activity', () => HttpResponse.json(options.response ?? {
+      errors: [], errorWODsID: [], errorWODsType: [], errorEjerID: [], id: '9001',
+    })),
+    http.get('https://aimharder.es/api/activityCalendar', () => HttpResponse.json(options.calendar ?? {
+      workouts: { '2026-09-28': { rates: { ids: [9001] }, TIPOWODs: {} } },
+    })),
+    http.get('https://aimharder.es/api/activity/workout', () => HttpResponse.json(options.detail ?? {
+      userId: 42, boxId: 200, ...detail({ TIPOWODs: [{ ...sourceBlock, time: 275 }] }),
+    })),
+  );
+}
+
+test('confirmed reference sends one allowlisted multipart request and requires own readback', async () => {
+  const client = await connect();
+  const prepared = (await prepare(client)).structuredContent as { actionReference: string };
+  let form: FormData | undefined;
+  acceptedReadback();
+  upstream.use(http.post('https://sample-gym.aimharder.es/api/activity', async ({ request }) => {
+    form = await request.formData();
+    return HttpResponse.json({ errors: [], errorWODsID: [], errorWODsType: [], errorEjerID: [], id: '9001' });
+  }));
+  const result = await execute(client, prepared.actionReference);
+  expect(result.structuredContent).toMatchObject({ status: 'confirmed', responseStatus: 'accepted', acceptedResponseId: 9001, observedEntry: 'matched' });
+  expect(activityWrites()).toHaveLength(1);
+  expect([...form!.keys()].sort()).toEqual(['conCom', 'conComInside', 'selectedDate', 'copyId', 'imagesCargadas', 'ejerRate',
+    'TIPOWODs', 'homeVideoID', 'boxLocation', 'valueWithMentions', 'mentionsCollection', 'wodSchedule'].sort());
+  expect(JSON.parse(String(form!.get('ejerRate')))).toEqual([sourceExercise]);
+  expect(JSON.parse(String(form!.get('TIPOWODs')))).toEqual([{ ...sourceBlock, time: '04:35' }]);
+  expect(String(form!.get('copyId'))).toBe(String(sourceId));
+  expect(JSON.stringify(result)).not.toMatch(/Publisher Private Name|private-image|synthetic-cookie|synthetic-password/);
+  expect((await execute(client, prepared.actionReference)).isError).toBe(true);
+  expect(activityWrites()).toHaveLength(1);
+});
+
+test('missing confirmation, changed preferences, expired and reused references send no write', async () => {
+  const client = await connect();
+  const one = (await prepare(client)).structuredContent as { actionReference: string };
+  expect((await execute(client, one.actionReference, { confirmed: false })).isError).toBe(true);
+  upstream.use(http.get('https://aimharder.es/settings', () => HttpResponse.text(settings('4'))));
+  expect((await execute(client, one.actionReference)).structuredContent).toMatchObject({ status: 'stale' });
+  expect((await execute(client, one.actionReference)).isError).toBe(true);
+  upstream.use(http.get('https://aimharder.es/settings', () => HttpResponse.text(settings())));
+  const two = (await prepare(client)).structuredContent as { actionReference: string };
+  vi.setSystemTime(new Date('2026-09-28T12:03:00Z'));
+  expect((await execute(client, two.actionReference)).isError).toBe(true);
+  expect(activityWrites()).toHaveLength(0);
+});
+
+test('accepted ID alone, conflicting owner, explicit rejection and transport uncertainty stay distinct', async () => {
+  const client = await connect();
+  acceptedReadback({ calendar: { workouts: [] } });
+  const missing = (await prepare(client)).structuredContent as { actionReference: string };
+  expect((await execute(client, missing.actionReference)).structuredContent).toMatchObject({ status: 'uncertain', responseStatus: 'accepted', observedEntry: 'missing' });
+  acceptedReadback({ detail: { userId: 43, boxId: 200, ...detail({ TIPOWODs: [{ ...sourceBlock, time: 275 }] }) } });
+  const otherOwner = (await prepare(client)).structuredContent as { actionReference: string };
+  expect((await execute(client, otherOwner.actionReference)).structuredContent).toMatchObject({ status: 'uncertain', observedEntry: 'unreadable' });
+  acceptedReadback({ response: { errors: ['denied'], errorWODsID: [], errorWODsType: [], errorEjerID: [] } });
+  const rejected = (await prepare(client)).structuredContent as { actionReference: string };
+  expect((await execute(client, rejected.actionReference)).structuredContent).toMatchObject({ status: 'rejected', responseStatus: 'rejected' });
+  upstream.use(http.post('https://sample-gym.aimharder.es/api/activity', () => HttpResponse.error()));
+  const timedOut = (await prepare(client)).structuredContent as { actionReference: string };
+  expect((await execute(client, timedOut.actionReference)).structuredContent).toMatchObject({ status: 'uncertain', responseStatus: 'uncertain' });
+  expect(activityWrites()).toHaveLength(4);
+});
+
+test('unsupported Copy transport fields stop before the write', async () => {
+  const client = await connect();
+  const prepared = (await prepare(client)).structuredContent as { actionReference: string };
+  upstream.use(http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({
+    TIPOWODs: [{ ...sourceBlock, link: ['https://example.invalid/unsupported'] }],
+  }))));
+  expect((await execute(client, prepared.actionReference)).structuredContent).toMatchObject({ status: 'stale' });
+  expect(activityWrites()).toHaveLength(0);
+});

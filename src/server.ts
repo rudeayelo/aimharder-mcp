@@ -12,7 +12,7 @@ import { exerciseSearchQuerySchema, exerciseSearchResultSchema } from './exercis
 import { enrichmentSchema } from './calculated-loads.js';
 import { safeError } from './errors.js';
 import { bookingCreationQuerySchema, bookingCancellationQuerySchema, bookingExecutionSchema, lateCancellationExecutionSchema } from './booking-preparation.js';
-import { publicationQuerySchema } from './activity-publication.js';
+import { publicationExecutionSchema, publicationQuerySchema } from './activity-publication.js';
 
 const gymSchema = z.object({
   id: gymIdSchema, name: z.string(), timeZone: z.string().nullable(), timeZoneStatus: z.enum(['assumed', 'user-confirmed']),
@@ -199,6 +199,19 @@ export function createServer(environment: Record<string, string | undefined>) {
   }, async (query) => {
     try {
       const result = await client.prepareActivityPublication(query);
+      return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
+    } catch (error) {
+      return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };
+    }
+  });
+  server.registerTool('execute_activity_publication', {
+    description: 'Publish the exact fresh prepare_activity_publication preview only after the MCP client shows its gym, source, date, variant, account audience, WOD TV setting and results and obtains action-specific account-holder confirmation. A reference alone does not prove consent. Rechecks the source and preferences, sends at most one activity POST, then reads the own calendar and detail. A timeout or unverified read-back remains uncertain and is never retried automatically.',
+    inputSchema: publicationExecutionSchema,
+    outputSchema: z.object({ status: z.enum(['confirmed', 'rejected', 'stale', 'uncertain']) }).passthrough(),
+    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+  }, async (query) => {
+    try {
+      const result = await client.executeActivityPublication(query);
       return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
     } catch (error) {
       return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };

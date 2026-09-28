@@ -177,16 +177,17 @@ export function publicationPreview(workout: Workout, copy: CopySource, query: Pu
   };
 }
 
-type StoredPublication = { accountId: number; boxId: number; preview: PublicationPreview; query: PublicationQuery; expires: number };
+type StoredPublication = { accountId: number; boxId: number; preview: PublicationPreview; query: PublicationQuery;
+  formSnapshot: string; expires: number };
 export class PublicationPreparationStore {
   #entries = new Map<string, StoredPublication>();
-  issue(accountId: number, boxId: number, preview: PublicationPreview, query: PublicationQuery) {
+  issue(accountId: number, boxId: number, preview: PublicationPreview, query: PublicationQuery, formSnapshot: string) {
     const now = Date.now();
     for (const [reference, entry] of this.#entries) if (entry.expires <= now) this.#entries.delete(reference);
     if (this.#entries.size >= 32) this.#entries.delete(this.#entries.keys().next().value!);
     const actionReference = randomBytes(32).toString('hex');
     const expires = now + 120_000;
-    this.#entries.set(actionReference, { accountId, boxId, preview: structuredClone(preview), query: structuredClone(query), expires });
+    this.#entries.set(actionReference, { accountId, boxId, preview: structuredClone(preview), query: structuredClone(query), formSnapshot, expires });
     return { actionReference, expiresAt: new Date(expires).toISOString() };
   }
   take(reference: string, accountId: number, gymId: string) {

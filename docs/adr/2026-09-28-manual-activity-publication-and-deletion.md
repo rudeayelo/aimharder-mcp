@@ -1,6 +1,6 @@
 # ADR: manual publication and deletion of own activity
 
-Status: accepted for feature scope on 2026-09-28 and specified in [issue #42](https://github.com/rudeayelo/aimharder-mcp/issues/42). The read-only publication preparation slice is implemented in the source checkout with MCP fixture coverage. Write/read-back behavior and live publication validation remain pending.
+Status: accepted for feature scope on 2026-09-28 and specified in [issue #42](https://github.com/rudeayelo/aimharder-mcp/issues/42). Publication preparation and structured-block execution are implemented in the source checkout with MCP fixture coverage. Kilogram and historical-RM slices, deletion, and live write validation remain pending.
 
 ## Decision
 
