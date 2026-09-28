@@ -1,4 +1,4 @@
-import { afterAll, afterEach, beforeAll, beforeEach, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, expect, test, vi } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
@@ -32,6 +32,7 @@ upstream.events.on('request:start', ({ request }) => requests.push({ method: req
 afterEach(async () => {
   for (const { client, server } of connections.splice(0)) { await client.close(); await server.close(); }
   upstream.resetHandlers();
+  vi.useRealTimers();
 });
 afterAll(() => upstream.close());
 async function connect(extra: Record<string, string | undefined> = {}) {
@@ -52,10 +53,186 @@ const post = (extra = {}) => ({ id: 8001, day: '23 Sep', when: '20560923210000',
 const detail = (extra = {}) => ({ recordDate: '23 de Septiembre de 2026', publishDate: '22 de Septiembre de 2026', ejerRate: [{ ejerName: 'Sentadilla', tipoWOD: 0, valor1: ['10'], formaReg: 0 }], TIPOWODs: [{ notes: '3 rondas\nDescansa 60 segundos', deleted: false }], ...extra });
 const feed = (elements = [post()]) => ({ timeLineContent: '7', timeLineFormat: '0', elements, firstLoaded: 8001, lastLoaded: 7990, curDate: '20260922' });
 function respond(elements: unknown[]) { upstream.use(http.get('https://sample-gym.aimharder.es/api/activity', () => HttpResponse.json(feed(elements as ReturnType<typeof post>[])))); }
+function personalRecord(id: number, value = '100.5', unit = 'kg') {
+ const date = Date.UTC(2026, 8, 24);
+ return { id: String(id), name: 'Source lift', chartUserId: 42, chartData1RM: [{ date: Date.UTC(2026, 8, 1), lbs: '200', idAction: 899 }, { date, lbs: value, idAction: 900 }], chartData3RM: [], chartData5RM: [], chartData10RM: [], chartDataWOD: [], history: [{ date, idAction: 900, desc: `${value} ${unit}` }], privateProfile: 'private-profile' };
+}
+function todayWorkout(exercises: unknown[], extra: Record<string, unknown> = {}) {
+ return detail({ recordDate: '27 de Septiembre de 2026', ejerRate: exercises, ...extra });
+}
+function percentExercise(id: unknown, valor2: unknown, extra: Record<string, unknown> = {}) {
+ return { ejerId: id, ejerName: 'Source lift', tipoWOD: 0, formaReg: 4, tipoud: 4, valor2, ...extra };
+}
+function setToday() { vi.useFakeTimers({ toFake: ['Date'] }); vi.setSystemTime(new Date('2026-09-26T22:30:00Z')); }
+
+test('today and future use the latest exact-ID 1RM with precise arithmetic; past preserves only the prescription', async () => {
+ setToday();
+ upstream.use(
+  http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(todayWorkout([percentExercise(101, '85')]))),
+  http.get('https://sample-gym.aimharder.es/api/exercise/101/42', () => HttpResponse.json(personalRecord(101))),
+ );
+ const client = await connect();
+ const result = await query(client, { date: '2026-09-27' });
+ expect(result.structuredContent).toMatchObject({ enrichment: { status: 'complete', eligibleExercises: 1 }, workouts: [{ exercises: [{ prescription: { valor2: '85', loadUnit: '%RM' }, personalLoad: { status: 'available', alternatives: [{ originalPercent: '85', calculatedLoad: '85.425', unit: 'kg', basis: { value: '100.5', sourceDate: '2026-09-24', sourceExerciseId: 101 } }] } }] }] });
+ expect(JSON.stringify(result)).not.toContain('private-profile');
+ expect(requests.filter(r => r.url.pathname.startsWith('/api/exercise/')).map(r => r.url.pathname)).toEqual(['/api/exercise/101/42']);
+ upstream.use(http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ recordDate: '26 de Septiembre de 2026', ejerRate: [percentExercise(101, '85')] }))));
+ const past = await query(client, { date: '2026-09-26' });
+ expect(past.structuredContent).toMatchObject({ enrichment: { status: 'not-applicable' }, workouts: [{ exercises: [{ prescription: { valor2: '85' } }] }] });
+ expect(JSON.stringify(past.structuredContent)).not.toContain('personalLoad');
+ expect(requests.filter(r => r.url.pathname.startsWith('/api/exercise/'))).toHaveLength(1);
+ upstream.use(http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ recordDate: '28 de Septiembre de 2026', ejerRate: [percentExercise(101, '85')] }))));
+ const future = await query(client, { date: '2026-09-28' });
+ expect(future.structuredContent).toMatchObject({ enrichment: { status: 'complete' }, workouts: [{ exercises: [{ personalLoad: { status: 'available' } }] }] });
+});
+
+test('keeps every publication and labeled variant with exact source IDs and bounded deduplicated reads', async () => {
+ setToday();
+ respond([post(), post({ id: 8002 })]);
+ upstream.use(
+  http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(todayWorkout([percentExercise(101, '80', { scaledver: [percentExercise(102, '60')] })], { TIPOWODs: [{ notes: 'Original', deleted: false, scaledops: ['SCALED'] }] }))),
+  http.get('https://sample-gym.aimharder.es/api/exercise/101/42', () => HttpResponse.json(personalRecord(101))),
+  http.get('https://sample-gym.aimharder.es/api/exercise/102/42', () => HttpResponse.json(personalRecord(102, '50', 'lbs'))),
+ );
+ const result = await query(await connect(), { date: '2026-09-27' });
+ expect(result.structuredContent).toMatchObject({ ambiguous: true, enrichment: { status: 'complete', eligibleExercises: 4 }, workouts: [{ exercises: [{ personalLoad: { alternatives: [{ calculatedLoad: '80.4', unit: 'kg' }] } }], variants: [{ label: 'SCALED', exercises: [{ sourceExerciseId: 102, personalLoad: { alternatives: [{ calculatedLoad: '30', unit: 'lbs' }] } }] }] }, {}] });
+ expect(requests.filter(r => r.url.pathname.startsWith('/api/exercise/'))).toHaveLength(2);
+});
+
+test('split source fields produce both labeled loads and equal slash pairs produce one', async () => {
+ setToday();
+ upstream.use(
+  http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(todayWorkout([percentExercise(101, '85/85', { valor2h: '85', valor2m: '75' }), percentExercise(101, '85/85')]))),
+  http.get('https://sample-gym.aimharder.es/api/exercise/101/42', () => HttpResponse.json(personalRecord(101))),
+ );
+ const result = await query(await connect(), { date: '2026-09-27' });
+ expect(result.structuredContent).toMatchObject({ enrichment: { status: 'complete' }, workouts: [{ exercises: [
+  { personalLoad: { alternatives: [{ sourceField: 'valor2h', sourceLabel: 'male', originalPercent: '85', calculatedLoad: '85.425' }, { sourceField: 'valor2m', sourceLabel: 'female', originalPercent: '75', calculatedLoad: '75.375' }] } },
+  { personalLoad: { alternatives: [{ originalPercent: '85/85', calculatedLoad: '85.425' }] } },
+ ] }] });
+});
+
+test('unequal unstructured pairs, unknown units, missing IDs and read failures retain original workouts with unavailable reasons', async () => {
+ setToday();
+ upstream.use(
+  http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(todayWorkout([percentExercise(101, '85/75'), percentExercise(102, '70'), percentExercise(null, '60'), percentExercise(103, '50')]))),
+  http.get('https://sample-gym.aimharder.es/api/exercise/101/42', () => HttpResponse.json(personalRecord(101))),
+  http.get('https://sample-gym.aimharder.es/api/exercise/102/42', () => HttpResponse.json({ ...personalRecord(102), history: [] })),
+  http.get('https://sample-gym.aimharder.es/api/exercise/103/42', () => new HttpResponse(null, { status: 500 })),
+ );
+ const result = await query(await connect(), { date: '2026-09-27' });
+ expect(result.isError).not.toBe(true);
+ expect(result.structuredContent).toMatchObject({ enrichment: { status: 'incomplete', unavailableExercises: 4 }, workouts: [{ exercises: [
+  { prescription: { valor2: '85/75' }, personalLoad: { alternatives: [{ status: 'unavailable', reason: 'unstructured-or-unequal-percentage', calculatedLoad: null }] } },
+  { personalLoad: { alternatives: [{ reason: 'physical-unit-unverified' }] } },
+  { sourceExerciseId: null, personalLoad: { alternatives: [{ reason: 'source-exercise-id-unavailable' }] } },
+  { personalLoad: { alternatives: [{ reason: 'personal-read-failed' }] } },
+ ] }] });
+});
+
+test('identity mismatch and access denial during enrichment stop the workout query', async () => {
+ setToday();
+ upstream.use(http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(todayWorkout([percentExercise(101, '85')]))));
+ const client = await connect();
+ upstream.use(http.get('https://sample-gym.aimharder.es/api/exercise/101/42', () => HttpResponse.json({ ...personalRecord(101), chartUserId: 99 })));
+ const mismatch = await query(client, { date: '2026-09-27' });
+ expect(mismatch.isError).toBe(true);
+ expect(JSON.stringify(mismatch)).toContain('IDENTITY_MISMATCH');
+ upstream.use(http.get('https://sample-gym.aimharder.es/api/exercise/101/42', () => new HttpResponse(null, { status: 403 })));
+ const denied = await query(client, { date: '2026-09-27' });
+ expect(denied.isError).toBe(true);
+ expect(JSON.stringify(denied)).toContain('ACCESS_RESTRICTED');
+});
+
+test('failed identity verification during session recovery is not downgraded to incomplete enrichment', async () => {
+ setToday();
+ let loginCount = 0;
+ upstream.use(
+  http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(todayWorkout([percentExercise(101, '85')]))),
+  http.get('https://sample-gym.aimharder.es/api/exercise/101/42', () => new HttpResponse(null, { status: 401 })),
+  http.post('https://login.aimharder.es/api/login', () => HttpResponse.json({ data: { userData: { id: ++loginCount === 1 ? 42 : 99 }, auth: { authOK: true } } }, { headers: { 'Set-Cookie': 'amhrdrauth=synthetic-cookie; Domain=.aimharder.es; Path=/' } })),
+ );
+ const result = await query(await connect(), { date: '2026-09-27' });
+ expect(result.isError).toBe(true);
+ expect(JSON.stringify(result)).toContain('IDENTITY_MISMATCH');
+ expect(loginCount).toBe(2);
+});
+
+test('split alternatives retain original values and individual unavailable statuses when one percentage is malformed', async () => {
+ setToday();
+ upstream.use(
+  http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(todayWorkout([percentExercise(101, '80/??', { valor2h: '80', valor2m: 'bad' })]))),
+  http.get('https://sample-gym.aimharder.es/api/exercise/101/42', () => HttpResponse.json(personalRecord(101))),
+ );
+ const result = await query(await connect(), { date: '2026-09-27' });
+ expect(result.structuredContent).toMatchObject({ enrichment: { status: 'incomplete' }, workouts: [{ exercises: [{ prescription: { valor2: '80/??', valor2h: '80', valor2m: 'bad' }, personalLoad: { status: 'partial', alternatives: [{ calculatedLoad: '80.4' }, { status: 'unavailable', reason: 'unsupported-percentage', calculatedLoad: null }] } }] }] });
+});
+
+test('split percentages on a labeled variant retain both unavailable branches for no RM, unknown unit and read failure', async () => {
+ setToday();
+ upstream.use(
+  http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(todayWorkout([
+   percentExercise(101, '80', { scaledver: [percentExercise(102, '80/70', { valor2h: '80', valor2m: '70' })] }),
+   percentExercise(103, '80', { valor2h: '80', valor2m: '70', scaledver: [percentExercise(103, '80', { valor2h: '80', valor2m: '70' })] }),
+   percentExercise(104, '80', { valor2h: '80', valor2m: '70', scaledver: [percentExercise(104, '80', { valor2h: '80', valor2m: '70' })] }),
+  ], { TIPOWODs: [{ notes: 'Block', deleted: false, scaledops: ['SCALED'] }] }))),
+  http.get('https://sample-gym.aimharder.es/api/exercise/:id/42', ({ params }) => {
+   const id = Number(params.id);
+   if (id === 102) return HttpResponse.json({ ...personalRecord(id), chartData1RM: [] });
+   if (id === 103) return HttpResponse.json({ ...personalRecord(id), history: [] });
+   if (id === 104) return new HttpResponse(null, { status: 500 });
+   return HttpResponse.json(personalRecord(id));
+  }),
+ );
+ const result = await query(await connect(), { date: '2026-09-27' });
+ expect(result.structuredContent).toMatchObject({ enrichment: { status: 'incomplete' }, workouts: [{ variants: [{ label: 'SCALED', exercises: [
+  { sourceExerciseId: 102, prescription: { valor2h: '80', valor2m: '70' }, personalLoad: { alternatives: [{ reason: 'no-1rm-in-returned-view' }, { reason: 'no-1rm-in-returned-view' }] } },
+  { sourceExerciseId: 103, personalLoad: { alternatives: [{ reason: 'physical-unit-unverified' }, { reason: 'physical-unit-unverified' }] } },
+  { sourceExerciseId: 104, personalLoad: { alternatives: [{ reason: 'personal-read-failed' }, { reason: 'personal-read-failed' }] } },
+ ] }] }] });
+});
+
+test('limits unique personal reads and marks excess exact IDs unavailable', async () => {
+ setToday();
+ upstream.use(
+  http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(todayWorkout(Array.from({ length: 25 }, (_, i) => percentExercise(100 + i, '50'))))),
+  http.get('https://sample-gym.aimharder.es/api/exercise/:id/42', ({ params }) => HttpResponse.json(personalRecord(Number(params.id)))),
+ );
+ const result = await query(await connect(), { date: '2026-09-27' });
+ expect(result.structuredContent).toMatchObject({ enrichment: { status: 'incomplete', eligibleExercises: 25, availableExercises: 24, unavailableExercises: 1 } });
+ expect(requests.filter(r => r.url.pathname.startsWith('/api/exercise/'))).toHaveLength(24);
+ const body = result.structuredContent as { workouts: { exercises: { personalLoad: { alternatives: { reason: string | null }[] } }[] }[] };
+ expect(body.workouts[0]!.exercises[24]!.personalLoad.alternatives[0]!.reason).toBe('personal-read-limit');
+});
 test('returns original future workout content with verified date, class and provenance, without a unique session', async () => {
  const result = await query(await connect());
  expect(result.isError).not.toBe(true);
  expect(result.structuredContent).toMatchObject({ status: 'available', ambiguous: false, workouts: [{ date: '2026-09-23', className: 'WOD', sessionId: null, titles: ['Fuerza Ñ'], blocks: [{ notes: '3 rondas\nDescansa 60 segundos' }], exercises: [{ name: 'Sentadilla', prescription: { valor1: ['10'] } }], provenance: { sourceId: 8001, dateField: 'recordDate' } }] });
+});
+test('exposes only source exercise IDs on base, shared, and replacement exercises', async () => {
+ upstream.use(http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({
+  TIPOWODs: [{ notes: 'Shared', deleted: false }, { notes: 'Levels', deleted: false, scaledops: ['SCALED', 'RX'] }],
+  ejerRate: [
+   { ejerId: 101, ejerName: 'Shared lift', tipoWOD: 0, valor1: ['5'] },
+   { ejerId: 102, ejerName: 'Lift', tipoWOD: 1, valor2: '85', scaledver: [
+    { ejerId: 201, ejerName: 'Lift', tipoWOD: 1, valor2: '65' },
+    { ejerId: 'bad-id', ejerName: 'Lift', tipoWOD: 1, valor2: '85' },
+   ] },
+   { ejerName: 'Shared lift', tipoWOD: 0 },
+  ],
+ }))));
+ respond([post(), post({ id: 8002 })]);
+ const result = await query(await connect());
+ expect(result.isError).not.toBe(true);
+ const workouts = (result.structuredContent as { workouts: { exercises: { sourceExerciseId: number | null; prescription: Record<string, unknown> }[]; variants: { exercises: { sourceExerciseId: number | null; prescription: Record<string, unknown> }[] }[] }[] }).workouts;
+ expect(workouts).toHaveLength(2);
+ for (const workout of workouts) {
+  expect(workout.exercises.map(e => e.sourceExerciseId)).toEqual([101, 102, null]);
+  expect(workout.variants.map(v => v.exercises.map(e => e.sourceExerciseId))).toEqual([[101, 201, null], [101, null, null]]);
+  expect(workout.exercises[1]?.prescription.valor2).toBe('85');
+  expect(workout.variants[0]?.exercises[1]?.prescription.valor2).toBe('65');
+ }
+ expect(result.structuredContent).toMatchObject({ ambiguous: true });
 });
 test('announcements cannot establish applicability from future timestamps', async () => {
  respond([{ id: 1, highlight: 1, when: '20560923210000', desc: 'Announcement' }]);

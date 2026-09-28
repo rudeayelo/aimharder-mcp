@@ -1,6 +1,6 @@
 # ADR: published workout applicability and feed coverage
 
-Status: accepted for [issue #5](https://github.com/rudeayelo/aimharder-mcp/issues/5); difficulty-variant projection amended on 2026-09-23 and exercise-unit projection amended on 2026-09-24.
+Status: accepted for [issue #5](https://github.com/rudeayelo/aimharder-mcp/issues/5); difficulty-variant projection amended on 2026-09-23, exercise-unit projection amended on 2026-09-24, and exercise identity projection amended on 2026-09-27.
 
 Time-zone amendment: the explicit confirmed-zone gate described below was superseded by the [2026-09-24 default-zone decision](2026-09-24-default-gym-time-zone.md). Other decisions and historical validation evidence remain unchanged.
 
@@ -33,3 +33,15 @@ The previous projection preserved numeric `formaReg`, `tipoud` and `tipoud2` cod
 Preserve raw prescription values and source codes. Add `valueUnit` for a nonempty `valor1` and `loadUnit` for a nonempty load only when the format and unit code resolve through that observed mapping. Also allowlist source `valor2h` and `valor2m` so variant loads are not silently discarded. Unknown codes and absent values stay unlabeled. Never convert `%RM` into kilograms or infer a personal maximum. A `formaReg=4` exercise with reps but null `valor2` returns `reps` without a load label; a `formaReg=6` carry with distance but null load returns its distance unit only.
 
 Consequences: MCP clients can distinguish a weight, a relative maximum, a timed rest, repetitions and distance without parsing exercise names. Published workouts and personal activity reuse the same exercise projection. No request, account scope, performance calculation or authentication behavior changes. Broader gym/locale variants of the renderer's code table remain unverified; the source values remain available if a label cannot be assigned.
+
+## Exercise identity amendment (2026-09-27, issue #33)
+
+The official renderer uses `ejerId` when opening an exercise detail. Project only positive safe integer values from each source exercise row as `sourceExerciseId`; otherwise report `null`. The unselected prescription retains its own IDs and source-labeled replacements retain theirs. Shared exercises use the same source row. Never infer identity from an equal or similar exercise name, nor inherit the base exercise's ID for a replacement that lacks one.
+
+This is an additive projection without a new upstream request or personal-data read. It prepares an exact join for the later own-account RM query under the [personal RM decision](2026-09-27-personal-exercise-rms-and-calculated-loads.md). Anonymized public MCP fixtures verify projection behavior; an authorized 9NBC MCP/source comparison matched eight base and ten variant ID occurrences from one WOD publication. Other workouts and gyms remain unverified. Publication ambiguity, first-page coverage, original prescriptions, and the current prohibition on personal load calculation remain unchanged by this amendment.
+
+## Calculated-load source-checkout amendment (2026-09-27, issues #37 and #38)
+
+The source checkout now attaches a separate `personalLoad` projection to eligible `%RM` exercise rows of requested current/future workouts, using the latest dated own-account 1RM of the exact source exercise ID and a corroborated physical unit. Original values, unselected content, all publication alternatives, source-labeled variants and first-page coverage remain unchanged. Simple percentages and equal preformatted slash pairs yield one precise arithmetic result. Separate `valor2h`/`valor2m` fields yield both source-labeled results without profile selection. Unequal or malformed unstructured pairs, missing identity/RM/unit and failed/bounded reads remain explicitly unavailable. Past workouts do not receive present-day loads. This is the product's calculation rule, not a verified upstream formula; no conversion or equipment rounding is applied.
+
+Anonymized public MCP fixtures verify these projections and their partial-failure behavior. An early 27 September source scan found no current/future publication, but a later fresh view contained a WOD intended for 28 September. An independent source/MCP comparison verified one calculated simple `%RM` load against the exact exercise ID, latest dated own-account 1RM, corroborated unit, original percentage and precise result. Three split variant occurrences lacked valid source IDs and correctly remained unavailable. This verifies the newer checkout's simple-load decision for one selected gym/publication, while calculated split arithmetic remains fixture-only. The earlier no-conversion rule continues to describe shipped `0.2.0`; no npm release is claimed.

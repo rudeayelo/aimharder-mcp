@@ -20,6 +20,10 @@ _Avoid_: Class session when referring to training instructions.
 A movement named in a workout prescription that may also have the account holder's recorded performance.
 _Avoid_: Workout when referring to one movement.
 
+**Source exercise ID**:
+The validated `ejerId` from an AimHarder exercise row. A difficulty-variant replacement can have a different ID from the unselected prescription; similar names do not prove shared identity.
+_Avoid_: Exercise name as an identity key.
+
 **RM record**:
 A dated AimHarder load for the account holder and one exercise in a named repetition-maximum series, such as 1RM or 3RM. The latest record need not be the highest historical load.
 _Avoid_: WOD series entry or prescribed load.

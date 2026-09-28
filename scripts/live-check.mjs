@@ -26,7 +26,7 @@ transport.stderr?.on('data', () => { hasStderr = true; });
 try {
   await client.connect(transport);
   const tools = await client.listTools();
-  assert.deepEqual(tools.tools.map((tool) => tool.name), ['get_account_context', 'get_class_sessions', 'prepare_booking_creation', 'execute_booking_creation', 'prepare_booking_cancellation', 'get_upcoming_bookings', 'get_booking_history', 'get_published_workouts', 'get_personal_activity']);
+  assert.deepEqual(tools.tools.map((tool) => tool.name), ['get_account_context', 'get_class_sessions', 'prepare_booking_creation', 'execute_booking_creation', 'prepare_booking_cancellation', 'execute_booking_cancellation', 'execute_late_booking_cancellation', 'get_upcoming_bookings', 'get_booking_history', 'get_published_workouts', 'get_exercise_1rm', 'find_exercise_1rm', 'get_exercise_rm_progression', 'get_personal_activity']);
   const result = await client.callTool({ name: 'get_account_context', arguments: {} });
   assert.notEqual(result.isError, true);
   const context = result.structuredContent;
@@ -53,6 +53,7 @@ try {
   const activity = process.env.AIMHARDER_LIVE_ACTIVITY_START ? await checkActivity(client, context.selectedGym) : undefined;
   const history = process.env.AIMHARDER_LIVE_HISTORY === '1' ? await checkHistory(client, context.selectedGym) : undefined;
   const workouts = process.env.AIMHARDER_LIVE_WORKOUT_DATE ? await checkWorkouts(client, context.selectedGym) : undefined;
+  const exercise1RM = process.env.AIMHARDER_LIVE_EXERCISE_DATE ? await checkExercise1RM(client, context.selectedGym) : undefined;
   const training = process.env.AIMHARDER_LIVE_TRAINING === '1' ? await checkTraining(client, context.selectedGym) : undefined;
   assert.equal(hasStderr, false);
   process.stdout.write(JSON.stringify({
@@ -60,7 +61,7 @@ try {
     accessibleGymCount: context.gyms.length,
     explicitSelection: 'passed', inaccessibleSelection: 'rejected',
     timeZoneStatus: context.selectedGym.timeZoneStatus,
-    serverStderr: 'empty', ...(activityPeriod ? { activityPeriod } : {}), ...(recentActivity ? { recentActivity } : {}), ...(activity ? { activity } : {}), ...(history ? { history } : {}), ...(classes ? { classes } : {}), ...(bookings ? { bookings } : {}), ...(workouts ? { workouts } : {}), ...(training ? { training } : {}),
+    serverStderr: 'empty', ...(activityPeriod ? { activityPeriod } : {}), ...(recentActivity ? { recentActivity } : {}), ...(activity ? { activity } : {}), ...(history ? { history } : {}), ...(classes ? { classes } : {}), ...(bookings ? { bookings } : {}), ...(workouts ? { workouts } : {}), ...(exercise1RM ? { exercise1RM } : {}), ...(training ? { training } : {}),
   }, null, 2) + '\n');
 } catch {
   process.stderr.write('Live MCP validation failed. Check configuration, authentication, and supported account contracts. Raw errors and responses are suppressed.\n');
@@ -226,6 +227,9 @@ async function checkWorkouts(client, gym, date = process.env.AIMHARDER_LIVE_WORK
   assert.equal(view.status, expectedIds.length ? 'available' : 'unavailable');
   let compared = 0;
   let comparedVariants = 0;
+  let comparedExerciseIds = 0;
+  let comparedVariantExerciseIds = 0;
+  const expectedExerciseId = row => Number.isSafeInteger(row.ejerId) && row.ejerId > 0 ? row.ejerId : null;
   for (const workout of view.workouts) {
     const post = feed.elements.find(row => row.id === workout.provenance.sourceId);
     assert.equal(post.wodClass, className);
@@ -244,6 +248,8 @@ async function checkWorkouts(client, gym, date = process.env.AIMHARDER_LIVE_WORK
     const sourceExercises = detail.ejerRate.filter(e => e.tipoWOD == null || !detail.TIPOWODs[e.tipoWOD].deleted);
     for (let index = 0; index < workout.exercises.length; index++) {
       assertExercisePrescription(workout.exercises[index].prescription, sourceExercises[index]);
+      assert.equal(workout.exercises[index].sourceExerciseId, expectedExerciseId(sourceExercises[index]));
+      if (workout.exercises[index].sourceExerciseId != null) comparedExerciseIds++;
     }
     const labels = [...new Set(detail.TIPOWODs.flatMap(block => Array.isArray(block.scaledops) ? block.scaledops : []))];
     assert.deepEqual(workout.variants.map(variant => variant.label), labels);
@@ -264,13 +270,62 @@ async function checkWorkouts(client, gym, date = process.env.AIMHARDER_LIVE_WORK
       }
       for (let index = 0; index < variant.exercises.length; index++) {
         assertExercisePrescription(variant.exercises[index].prescription, selectedExercises[index]);
+        assert.equal(variant.exercises[index].sourceExerciseId, expectedExerciseId(selectedExercises[index]));
+        if (variant.exercises[index].sourceExerciseId != null) comparedVariantExerciseIds++;
       }
       comparedVariants++;
     }
     compared++;
   }
   const daily = await request(`https://${role.centre_url}/api/bookings?${new URLSearchParams({ box: String(role.boid), day: date.replaceAll('-', '') })}`);
-  return { feedAndDetailComparison: compared ? 'passed' : 'no matching content available in retrieved view', status: view.status, comparedWorkoutCount: compared, comparedVariants, matchingClassSessionCount: daily.bookings.filter(row => row.className === className).length, coverage: view.coverage.scope, exhaustive: false };
+  return { feedAndDetailComparison: compared ? 'passed' : 'no matching content available in retrieved view', status: view.status, comparedWorkoutCount: compared, comparedVariants, comparedExerciseIds, comparedVariantExerciseIds, matchingClassSessionCount: daily.bookings.filter(row => row.className === className).length, coverage: view.coverage.scope, exhaustive: false };
+}
+
+async function checkExercise1RM(client, gym) {
+  const date = process.env.AIMHARDER_LIVE_EXERCISE_DATE;
+  const { request, role, accountId } = await openLiveSession(gym);
+  const origin = `https://${role.centre_url}`;
+  const page = await request(`${origin}/`);
+  const publisher = /timeLineContent:\s*7,\s*userID:\s*(\d+)/.exec(page)?.[1];
+  assert.ok(publisher);
+  const feed = await request(`${origin}/api/activity?${new URLSearchParams({ timeLineFormat: '0', timeLineContent: '7', userID: publisher })}`);
+  const [year, month, day] = date.split('-').map(Number);
+  const dateLabel = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(Date.UTC(year, month - 1, day)));
+  let candidates = [];
+  for (const post of feed.elements.filter(row => row.wodClass === 'WOD' && Array.isArray(row.ejerRate)).slice(0, 20)) {
+    const workout = await request(`${origin}/api/activity/workout?SEID=${post.id}`);
+    if (workout.recordDate.toLocaleLowerCase('es-ES') !== dateLabel) continue;
+    candidates = [...new Map(workout.ejerRate.filter(row => Number.isSafeInteger(row.ejerId) && row.ejerId > 0).map(row => [row.ejerId, row])).values()];
+    break;
+  }
+  assert.ok(candidates.length);
+  let candidateReads = 0;
+  for (const exercise of candidates.slice(0, 12)) {
+    candidateReads++;
+    const source = await request(`${origin}/api/exercise/${exercise.ejerId}/${accountId}`);
+    if (!Array.isArray(source.chartData1RM) || !source.chartData1RM.length) continue;
+    assert.equal(Number(source.id), exercise.ejerId);
+    assert.equal(source.chartUserId, accountId);
+    assert.equal(source.name, exercise.ejerName);
+    const latestDate = Math.max(...source.chartData1RM.map(point => point.date));
+    const point = source.chartData1RM.find(row => row.date === latestDate);
+    assert.ok(point && latestDate % 86_400_000 === 0);
+    const escapedValue = String(point.lbs).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const unitMatches = source.history.filter(row => row.date === point.date && row.idAction === point.idAction)
+      .flatMap(row => [...String(row.desc ?? '').matchAll(new RegExp(`(?:^|[^0-9.,])${escapedValue}\\s*(kg|lbs)\\b`, 'gi'))].map(match => match[1].toLowerCase()));
+    assert.deepEqual([...new Set(unitMatches)], ['kg']);
+    const result = await client.callTool({ name: 'get_exercise_1rm', arguments: { exerciseId: exercise.ejerId, gymId: gym.id } });
+    assert.notEqual(result.isError, true);
+    const view = result.structuredContent;
+    assert.equal(view.exercise.sourceExerciseId, exercise.ejerId);
+    assert.equal(view.exercise.name, source.name);
+    assert.equal(view.status, 'available');
+    assert.deepEqual(view.latest1RM, { value: point.lbs, unit: 'kg', sourceDate: new Date(point.date).toISOString().slice(0, 10) });
+    assert.deepEqual(view.otherSeries, { '3RM': source.chartData3RM.length, '5RM': source.chartData5RM.length, '10RM': source.chartData10RM.length, WOD: source.chartDataWOD.length });
+    assert.equal(view.coverage.status, 'limited');
+    return { comparison: 'passed', sourceIdentity: 'matched', latestDatedRecord: 'matched', unit: 'kg corroborated by same-action history', otherSeries: 'matched counts only', candidateReads, coverage: 'limited exercise-detail view', exhaustive: false };
+  }
+  throw new Error('No 1RM candidate in the bounded source workout exercise set.');
 }
 
 

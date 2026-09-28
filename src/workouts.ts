@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { dateSchema } from './classes.js';
 import { gymIdSchema } from './config.js';
 import { AimHarderError } from './errors.js';
+import { personalLoadSchema } from './calculated-loads.js';
 
 export const workoutQuerySchema = z.object({ date: dateSchema, className: z.string().trim().min(1).max(300), gymId: gymIdSchema.optional() }).strict();
 export type WorkoutQuery = z.infer<typeof workoutQuerySchema>;
@@ -12,7 +13,7 @@ const prescriptionSchema = z.record(z.string(), z.union([scalar, z.array(scalar)
 const loadUnits = ['kg', 'lbs', 'pood', '%BW', '%RM', 'RIR', 'RPE'] as const;
 const distanceUnits = ['m', 'mi', 'yd', 'ft', 'steps', 'km'] as const;
 const blockSchema = z.object({ notes: text.nullable(), prescription: prescriptionSchema });
-const exerciseSchema = z.object({ name: text, blockIndex: z.number().int().nonnegative().nullable(), prescription: prescriptionSchema.describe('Raw exercise values: valueUnit labels valor1; loadUnit labels valor2/valor2h/valor2m when verified. s means seconds and %RM is relative, not kilograms.') });
+const exerciseSchema = z.object({ name: text, sourceExerciseId: z.number().int().positive().safe().nullable().describe('Validated upstream ejerId; null means no supported source identity was supplied.'), blockIndex: z.number().int().nonnegative().nullable(), prescription: prescriptionSchema.describe('Raw exercise values: valueUnit labels valor1; loadUnit labels valor2/valor2h/valor2m when verified. s means seconds and %RM is relative, not kilograms.'), personalLoad: personalLoadSchema.optional() });
 export const workoutSchema = z.object({
   date: dateSchema, className: z.string(), timeZone: z.string(), sessionId: z.null(),
   titles: z.array(text), blocks: z.array(blockSchema), exercises: z.array(exerciseSchema),
@@ -30,7 +31,7 @@ const blockDetailSchema = z.object({
   notes: text.nullish(), deleted: z.boolean(), type: scalar.optional(), timecap: scalar.optional(), timecaptype: scalar.optional(), time: scalar.optional(), rx: scalar.optional(), rondas: scalar.optional(), sstipo: scalar.optional(),
   scaledops: z.union([z.array(text).max(20), z.literal(-1)]).nullish(), scaledver: z.array(z.unknown()).max(20).nullish(),
 });
-const exerciseDetailSchema = z.object({ ejerName: text, tipoWOD: z.number().int().nonnegative().nullish(),
+const exerciseDetailSchema = z.object({ ejerName: text, ejerId: z.unknown().optional(), tipoWOD: z.number().int().nonnegative().nullish(),
     valor1: z.array(scalar).nullish(), valor2: scalar.nullish(), valor2h: scalar.nullish(), valor2m: scalar.nullish(), formaReg: scalar.optional(), tipoud: scalar.optional(), tipoud2: scalar.optional(), round: scalar.optional(), roundrepeat: scalar.optional(),
     scaledver: z.array(z.unknown()).max(20).nullish(),
 });
@@ -45,7 +46,7 @@ function unitIndex(value: unknown) {
 function projectBlock({ notes, deleted, scaledops: _scaledops, scaledver: _scaledver, ...prescription }: z.infer<typeof blockDetailSchema>) {
   return { notes: deleted ? null : notes ?? null, prescription: deleted ? {} : Object.fromEntries(Object.entries(prescription).filter(([, value]) => value !== undefined)) };
 }
-function projectExercise({ ejerName, tipoWOD, scaledver: _scaledver, ...prescription }: z.infer<typeof exerciseDetailSchema>) {
+function projectExercise({ ejerName, ejerId, tipoWOD, scaledver: _scaledver, ...prescription }: z.infer<typeof exerciseDetailSchema>) {
   const form = prescription.formaReg;
   const format = typeof form === 'number' && Number.isInteger(form) ? form : typeof form === 'string' && /^[1-6]$/.test(form) ? Number(form) : -1;
   const rawUnit = format === 4 ? prescription.tipoud : format === 6 ? prescription.tipoud2 : undefined;
@@ -60,7 +61,8 @@ function projectExercise({ ejerName, tipoWOD, scaledver: _scaledver, ...prescrip
     else if (format === 3 || format === 4) valueUnit = 'reps';
     else if (format === 5) valueUnit = 'cal';
   }
-  return { name: ejerName, blockIndex: tipoWOD ?? null, prescription: {
+  const sourceExerciseId = typeof ejerId === 'number' && Number.isSafeInteger(ejerId) && ejerId > 0 ? ejerId : null;
+  return { name: ejerName, sourceExerciseId, blockIndex: tipoWOD ?? null, prescription: {
     ...Object.fromEntries(Object.entries(prescription).filter(([, value]) => value !== undefined)),
     ...(valueUnit ? { valueUnit } : {}),
     ...(loadUnit ? { loadUnit } : {}),
