@@ -1,18 +1,18 @@
 # Record activity results: discovery
 
-Status: feature behavior confirmed on 2026-09-28 and published as [issue #42](https://github.com/rudeayelo/aimharder-mcp/issues/42). This is a post-MVP roadmap item, not an implemented or authorized live write. Upstream write contracts, live validation, and final implementation acceptance remain pending.
+Status: feature behavior confirmed on 2026-09-28 and published as [issue #42](https://github.com/rudeayelo/aimharder-mcp/issues/42). The source checkout implements the publication slices #44–#47 with anonymized fixture tests; no live activity write is authorized or validated. Deletion, broader upstream contract validation, and final parent-feature acceptance remain pending.
 
 ## Confirmed scope and decisions
 
 - The first phase lets the authenticated account holder publish an activity and delete an existing own activity entry. Editing an existing entry is outside the first phase.
 - Every publication and deletion requires separate account-holder confirmation of that specific action before it is sent to AimHarder. A request to design the feature, a sample `fetch` call, or a test plan does not authorize a live write.
-- For `%RM` prescriptions, show the calculated kilogram load as an editable suggestion and record the load actually used. Preserve the original prescription and distinguish it from both the calculated suggestion and the achieved result. The source representation for these distinct values still needs verification.
+- For `%RM` prescriptions, show the calculated kilogram load as an editable suggestion and record the load actually used. Preserve the original prescription and distinguish it from both the calculated suggestion and the achieved result. The Copy editor writes the actual load to `valor2` with `tipoud=0`; numeric persistence remains unverified live.
 - The initial editable content is the gym-local date, block results, exercise loads, and an optional general comment. Photos, video, mentions, and schedule metadata are outside the initial editable scope. The source may require fixed or copied transport fields; those do not become user-facing editing capabilities.
 - Publication starts from a workout/activity published by the selected gym and accessible to this account. Copying other members' entries, copying the account holder's past entries, and publishing from a blank form are outside the first phase.
 - Deletion may target any verified own activity entry at the selected gym, including one created in AimHarder's web UI. A caller-supplied ID alone never establishes ownership.
 - Warn when a reliably identified same-source, same-date own entry may already exist. A deliberate second entry is allowed only after the account holder explicitly confirms that duplicate; matching dates alone do not establish duplication.
 - The published entry should have the visibility of AimHarder's web Copy flow. Show that visibility in the confirmation preview once verified; do not describe it as private without evidence.
-- Select one source-supported difficulty variant label for the copied prescription across the whole new publication. The account holder reports one visible level toggle; the timeline renderer supports one visible variant selection, while its separate per-block `rx` result fields must not be conflated with that selector. Copy-editor behavior remains unverified.
+- Select one source-supported difficulty variant label for the copied prescription across the whole new publication. The authenticated Copy editor stores selected replacements in `scaledver`. Its separate per-block `rx` result fields must not be conflated with that selector.
 - Default to the source workout's intended gym-local date. The account holder may choose today or a past date, but may not publish a future-dated personal result.
 - Block result inputs are structured values only. Arbitrary free-text block scores are outside this phase; the optional general comment remains available. Do not infer the meaning of gym-specific shorthand.
 - Require at least one entered block result or actual exercise load before publication. A copied prescription and comment alone do not satisfy this requirement.
@@ -34,9 +34,9 @@ See the [feature scope decision](adr/2026-09-28-manual-activity-publication-and-
 
 ## Candidate workflow and evidence boundary
 
-The account holder supplied examples from the gym activity list's **Copy** flow: a `samewod` response, an exercise-list response, and a subsequent `POST /api/activity` in `fetch` form. The POST uses multipart form data with JSON-string exercise and block arrays. It retains the source exercise prescription fields in this sample, so it does not demonstrate the intended adjustment of RM loads to kilograms. These samples are investigation inputs; create-versus-update behavior, eligibility, response meaning, and read-back reconciliation are not yet verified. The sanitized structure is recorded in [API research](api-research.md#candidate-activity-result-write-flow-user-supplied-samples-2026-09-28). Private source payloads and request headers remain outside this document and the repository.
+The account holder supplied examples from the gym activity list's **Copy** flow: a `samewod` response, an exercise-list response, and a subsequent `POST /api/activity` in `fetch` form. The POST uses multipart form data with JSON-string exercise and block arrays. It retains the source exercise prescription fields in this sample, so it does not demonstrate the intended adjustment of RM loads to kilograms. The authenticated editor was later inspected read-only, and the checkout now implements the observed Copy field mapping with fixture tests. Live numeric persistence, applied audience, and read-back reconciliation remain unverified. The sanitized structure is recorded in [API research](api-research.md#candidate-activity-result-write-flow-user-supplied-samples-2026-09-28). Private source payloads and request headers remain outside this document and the repository.
 
-A later account-holder publication capture changed seven exercise/variant unit codes from `%RM` to `kg` and returned an ID with empty error arrays. It did not change numeric/load fields relative to the earlier captured POST. This establishes a user-observed accepted unit change, not automatic percentage arithmetic or persisted content. The first-phase design must still define how a calculated suggestion becomes an explicitly chosen actual kilogram number before the write.
+A later account-holder publication capture changed seven exercise/variant unit codes from `%RM` to `kg` and returned an ID with empty error arrays. It did not change numeric/load fields relative to the earlier captured POST. This establishes a user-observed accepted unit change, not automatic percentage arithmetic or persisted content. The checkout requires an explicitly confirmed actual kilogram number, independently of its optional historical suggestion.
 
 The existing [`get_personal_activity`](tools.md) path reads the account's calendar and activity details, including available block results. It does not write results. An activity entry, a published workout, and an exercise RM record are distinct domain concepts in the [glossary](../CONTEXT.md).
 
@@ -66,18 +66,15 @@ These steps describe the desired MCP behavior. Exact tool names, write-field ser
 4. Add one confirmed deletion request with read-back reconciliation and the RM-effect warning. Validate a real deletion only after separately confirming the exact own entry to delete.
 5. Run the project and MCP-compatible-client checks, update documentation and ADRs with actual evidence limits, then handle any release separately.
 
-## Open design decisions
+## Remaining evidence and design limits
 
-- How to identify a selected-gym publication as an eligible Copy source and exclude publisher personal fields from the new own activity entry.
-- How source result and exercise fields represent the original prescription, calculated suggestion, and achieved load without conflating them.
-- How the Copy form serializes an explicitly chosen or corrected kilogram number in `valor2`, `valor2h`, `valor2m`, or variant rows, including cases where the source has split alternatives. The supplied accepted POST changed unit codes but did not change numeric load fields.
-- Which source form fields safely represent structured block results and their units; the supplied POST contains a string `res`, while the current read projection expects a number.
-- Whether the official Copy form truly applies one difficulty variant to the entire publication, how that maps to submitted blocks and exercises, and how independent per-block `rx` results are entered.
-- How a prepared publication identifies its source, detects a reliably linked possible duplicate, handles stale source content, and is reconciled with a fresh read.
-- How to verify Copy-flow visibility and include its actual audience in the publication preview.
+- Whether a live numeric kilogram write is accepted and later read back with the same value, including when the source has split `valor2h`/`valor2m` fields. The fixture path follows the editor's `valor2` and `tipoud=0` mapping and preserves untouched source alternatives.
+- Whether the accepted structured result fields persist and project exactly as the fixture response. The checkout reconciles by own calendar/detail, but no separate live publication was authorized.
+- Whether a reliable same-source identifier becomes available on an own entry. The current detail has no verified Copy-source linkage, so date and exercise names alone cannot trigger a duplicate warning.
+- Whether the account's selected publication audience is applied to a new record. The checkout reads `USPRIVACIDADDEF` and separate `USPRIVCAST` settings, with no per-publication audience control.
 - The official frontend sends `DELETE /api/activity/<id>`, but owner authorization, response meaning, and post-delete visibility remain unverified.
 - How a prepared deletion identifies its target and reconciles an uncertain or partially completed outcome.
-- Whether the available RM detail view can support a date-bounded historical suggestion and how the form represents manually entered kilogram loads when source exercise identity is absent.
+- Whether the bounded upstream exercise-detail view omits eligible historical RM points. The checkout applies the date cutoff to returned data and reports limited coverage; complete lifetime history remains unverified.
 - Whether deletion removes or changes RM history, marks, or progression associated with the target entry. This unknown effect does not by itself block the account holder's confirmed deletion decision.
 - Which live write, if any, the account holder will explicitly authorize for contract validation.
 

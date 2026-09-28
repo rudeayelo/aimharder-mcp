@@ -61,6 +61,21 @@ function verifiedDetail(body: unknown, exerciseId: number, accountId: number) {
   return row;
 }
 
+export function parseHistorical1RM(body: unknown, exerciseId: number, accountId: number, activityDate: string) {
+  const row = verifiedDetail(body, exerciseId, accountId);
+  const eligible = row.chartData1RM.filter(point => new Date(point.date).toISOString().slice(0, 10) <= activityDate);
+  if (!eligible.length) return { status: 'unavailable' as const, reason: 'no-1rm-on-or-before-activity-date', basis: null };
+  const latestDate = Math.max(...eligible.map(point => point.date));
+  const latest = eligible.filter(point => point.date === latestDate);
+  if (latest.length !== 1) return { status: 'unavailable' as const, reason: 'ambiguous-1rm-on-latest-eligible-date', basis: null };
+  const point = latest[0]!;
+  const unit = physicalUnit(point, row.history);
+  const basis = { sourceExerciseId: exerciseId, value: point.lbs,
+    sourceDate: new Date(point.date).toISOString().slice(0, 10), unit };
+  return unit === 'kg' ? { status: 'available' as const, reason: null, basis }
+    : { status: 'unavailable' as const, reason: unit === 'lbs' ? 'eligible-1rm-is-not-kilograms' : 'physical-unit-unverified', basis };
+}
+
 const limitedCoverage = { status: 'limited' as const, scope: 'upstream-exercise-detail-view' as const, history: 'unverified' as const };
 
 export function parseExercise1RM(body: unknown, exerciseId: number, accountId: number) {

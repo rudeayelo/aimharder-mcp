@@ -268,6 +268,14 @@ test('manual kilograms need an explicit actual confirmation and supported split 
     const result = await prepare(client, { blockResults: [], actualLoads });
     expect(result.isError || (result.structuredContent as { status?: string })?.status === 'unsupported').toBe(true);
   }
+  const split = { ...sourceExercise, valor2h: '85', valor2m: null };
+  upstream.use(
+    http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ ejerRate: [split] }))),
+    http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ rates: [split] }))),
+  );
+  expect((await prepare(client, { blockResults: [], actualLoads: [{
+    exerciseIndex: 0, actualKilograms: '70', sourceAlternative: 'female', confirmedActual: true,
+  }] })).structuredContent).toMatchObject({ status: 'unsupported' });
   expect(activityWrites()).toHaveLength(0);
 });
 
@@ -280,7 +288,143 @@ test('manual kilograms prepare without a source exercise ID or personal RM read'
   const result = await prepare(await connect(), { blockResults: [], actualLoads: [
     { exerciseIndex: 0, actualKilograms: '80', confirmedActual: true },
   ] });
-  expect(result.structuredContent).toMatchObject({ status: 'ready', actualLoads: [{ actualKilograms: '80', calculatedSuggestion: null }] });
+  expect(result.structuredContent).toMatchObject({ status: 'ready', actualLoads: [{ actualKilograms: '80', calculatedSuggestion: {
+    status: 'unavailable', reason: 'source-exercise-id-unavailable', loadKilograms: null,
+  } }] });
   expect(requests.filter(r => r.path.startsWith('/api/exercise/'))).toHaveLength(0);
+  expect(activityWrites()).toHaveLength(0);
+});
+
+const rmDate = (day: number) => Date.UTC(2026, 8, day);
+function ownRm(extra: Record<string, unknown> = {}) {
+  return { id: '101', name: 'Sample lift', chartUserId: 42,
+    chartData1RM: [
+      { date: rmDate(20), lbs: '120', idAction: 10 },
+      { date: rmDate(24), lbs: '200', idAction: 11 },
+    ], chartData3RM: [], chartData5RM: [], chartData10RM: [], chartDataWOD: [],
+    history: [
+      { date: rmDate(20), idAction: 10, desc: '120 kg' },
+      { date: rmDate(24), idAction: 11, desc: '200 kg' },
+    ], ...extra };
+}
+function respondRm(body: Record<string, unknown>) {
+  upstream.use(http.get('https://sample-gym.aimharder.es/api/exercise/101/42', () => HttpResponse.json(body)));
+}
+
+test('historical suggestion uses the latest eligible own kilogram RM and preserves manual override', async () => {
+  respondRm(ownRm());
+  const result = await prepare(await connect(), { activityDate: '2026-09-22', blockResults: [], actualLoads: [
+    { exerciseIndex: 0, actualKilograms: '70', sourceAlternative: 'single', confirmedActual: true },
+  ] });
+  expect(result.structuredContent).toMatchObject({ status: 'ready', activityDate: '2026-09-22', actualLoads: [{
+    originalPrescription: { valor2: '80', loadUnit: '%RM' }, actualKilograms: '70',
+    calculatedSuggestion: { status: 'available', loadKilograms: '96', basis: {
+      sourceExerciseId: 101, value: '120', sourceDate: '2026-09-20', unit: 'kg',
+    } },
+  }] });
+  expect(requests.filter(r => r.path.startsWith('/api/exercise/'))).toHaveLength(1);
+  expect(activityWrites()).toHaveLength(0);
+});
+
+test('same-date ambiguity, later-only record and unverified unit leave manual kilograms available', async () => {
+  const client = await connect();
+  const loads = [{ exerciseIndex: 0, actualKilograms: '70', confirmedActual: true }];
+  respondRm(ownRm({ chartData1RM: [{ date: rmDate(24), lbs: '200', idAction: 11 }] }));
+  expect((await prepare(client, { activityDate: '2026-09-22', blockResults: [], actualLoads: loads })).structuredContent)
+    .toMatchObject({ status: 'ready', actualLoads: [{ calculatedSuggestion: { status: 'unavailable', reason: 'no-1rm-on-or-before-activity-date' } }] });
+  respondRm(ownRm({ chartData1RM: [
+    { date: rmDate(20), lbs: '120', idAction: 10 }, { date: rmDate(20), lbs: '130', idAction: 12 },
+  ] }));
+  expect((await prepare(client, { activityDate: '2026-09-22', blockResults: [], actualLoads: loads })).structuredContent)
+    .toMatchObject({ status: 'ready', actualLoads: [{ calculatedSuggestion: { status: 'unavailable', reason: 'ambiguous-1rm-on-latest-eligible-date' } }] });
+  respondRm(ownRm({ history: [] }));
+  expect((await prepare(client, { activityDate: '2026-09-22', blockResults: [], actualLoads: loads })).structuredContent)
+    .toMatchObject({ status: 'ready', actualLoads: [{ calculatedSuggestion: { status: 'unavailable', reason: 'physical-unit-unverified' } }] });
+  expect(activityWrites()).toHaveLength(0);
+});
+
+test('split source alternatives require selection for a suggestion and never infer a profile', async () => {
+  const row = { ...sourceExercise, valor2h: '85', valor2m: '75' };
+  upstream.use(
+    http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ ejerRate: [row] }))),
+    http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ rates: [row] }))),
+  );
+  respondRm(ownRm());
+  const client = await connect();
+  const input = { blockResults: [], actualLoads: [{ exerciseIndex: 0, actualKilograms: '70', confirmedActual: true }] };
+  expect((await prepare(client, input)).structuredContent).toMatchObject({ status: 'ready', actualLoads: [{
+    calculatedSuggestion: { status: 'unavailable', reason: 'source-alternative-not-selected' },
+  }] });
+  expect(requests.filter(r => r.path.startsWith('/api/exercise/'))).toHaveLength(0);
+  expect((await prepare(client, { ...input, actualLoads: [{ ...input.actualLoads[0], sourceAlternative: 'female' }] })).structuredContent)
+    .toMatchObject({ status: 'ready', actualLoads: [{ actualKilograms: '70', calculatedSuggestion: {
+      status: 'available', loadKilograms: '150', basis: { sourceDate: '2026-09-24' },
+    } }] });
+  expect(requests.filter(r => r.path.startsWith('/api/exercise/'))).toHaveLength(1);
+  expect(activityWrites()).toHaveLength(0);
+});
+
+test('unsupported percentage makes no personal read and leaves confirmed manual load ready', async () => {
+  const row = { ...sourceExercise, valor2: '85/75' };
+  upstream.use(
+    http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ ejerRate: [row] }))),
+    http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ rates: [row] }))),
+  );
+  const result = await prepare(await connect(), { blockResults: [], actualLoads: [
+    { exerciseIndex: 0, actualKilograms: '70', confirmedActual: true },
+  ] });
+  expect(result.structuredContent).toMatchObject({ status: 'ready', actualLoads: [{
+    calculatedSuggestion: { status: 'unavailable', reason: 'unstructured-or-unequal-percentage' },
+  }] });
+  expect(requests.filter(r => r.path.startsWith('/api/exercise/'))).toHaveLength(0);
+  expect(activityWrites()).toHaveLength(0);
+});
+
+test('later original-source provenance appears only after a fresh gym publication read', async () => {
+  const client = await connect();
+  const prepared = (await prepare(client)).structuredContent as { actionReference: string };
+  acceptedReadback();
+  upstream.use(http.get('https://aimharder.es/api/activity/workout', ({ request }) => HttpResponse.json(
+    new URL(request.url).searchParams.get('SEID') === String(sourceId) ? detail() : {
+      userId: 42, boxId: 200, ...detail({ TIPOWODs: [{ ...sourceBlock, time: 275 }] }),
+    },
+  )));
+  expect((await execute(client, prepared.actionReference)).structuredContent).toMatchObject({ status: 'confirmed',
+    sourceProvenance: { status: 'verified', originalPrescription: { exercises: [{ name: 'Sample lift' }] } },
+  });
+  expect(activityWrites()).toHaveLength(1);
+});
+
+test('historical suggestion reads only the chosen variant exercise ID', async () => {
+  const block = { ...sourceBlock, scaledops: ['EASY', 'HARD'], scaledver: [sourceBlock, sourceBlock] };
+  const exercise = { ...sourceExercise, scaledver: [
+    { ...sourceExercise, ejerName: 'Easy lift', ejerId: 101 },
+    { ...sourceExercise, ejerName: 'Hard lift', ejerId: 102 },
+  ] };
+  upstream.use(
+    http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ TIPOWODs: [block], ejerRate: [exercise] }))),
+    http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ TIPOWODs: [block], rates: [exercise] }))),
+  );
+  respondRm(ownRm());
+  const result = await prepare(await connect(), { variantLabel: 'EASY', activityDate: '2026-09-22', blockResults: [], actualLoads: [
+    { exerciseIndex: 0, actualKilograms: '95', confirmedActual: true },
+  ] });
+  expect(result.structuredContent).toMatchObject({ status: 'ready', actualLoads: [{ calculatedSuggestion: {
+    status: 'available', loadKilograms: '96', basis: { sourceExerciseId: 101 },
+  } }] });
+  expect(requests.filter(r => r.path.startsWith('/api/exercise/')).map(r => r.path)).toEqual(['/api/exercise/101/42']);
+  expect(activityWrites()).toHaveLength(0);
+});
+
+test('a changed eligible RM basis invalidates the prepared action before any POST', async () => {
+  respondRm(ownRm());
+  const client = await connect();
+  const prepared = (await prepare(client, { activityDate: '2026-09-22', blockResults: [], actualLoads: [
+    { exerciseIndex: 0, actualKilograms: '70', confirmedActual: true },
+  ] })).structuredContent as { actionReference: string };
+  respondRm(ownRm({ chartData1RM: [
+    { date: rmDate(20), lbs: '125', idAction: 10 }, { date: rmDate(24), lbs: '200', idAction: 11 },
+  ], history: [{ date: rmDate(20), idAction: 10, desc: '125 kg' }] }));
+  expect((await execute(client, prepared.actionReference)).structuredContent).toMatchObject({ status: 'stale' });
   expect(activityWrites()).toHaveLength(0);
 });

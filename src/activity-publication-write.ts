@@ -7,6 +7,7 @@ const scalar = z.union([z.string().max(100_000), z.number().finite(), z.boolean(
 const sourceExercise = z.object({
   ejerId: z.number().int().positive().safe().nullish(), ejerName: z.string().max(100_000),
   tipoWOD: z.number().int().nonnegative().nullable(), formaReg: scalar,
+  complex: z.union([z.literal(0), z.literal('0')]).nullish(),
   tipoud: scalar.nullish(), tipoud2: scalar.nullish(),
   valor1: z.array(scalar).max(100).nullish(), valor2: scalar.nullish(), valor2h: scalar.nullish(), valor2m: scalar.nullish(),
   round: scalar.nullish(), roundrepeat: scalar.nullish(), wodId: scalar.nullish(),

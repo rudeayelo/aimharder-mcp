@@ -7,11 +7,11 @@ import { AimHarderError } from './errors.js';
 import { calendarDates, classQuerySchema, parseClassDay, type ClassQuery, type ClassSession } from './classes.js';
 
 import { parseFeed, parseWorkout, workoutQuerySchema, workoutSchema, type WorkoutQuery } from './workouts.js';
-import { exercise1RMQuerySchema, parseExercise1RM, parseExerciseProgression, type Exercise1RMQuery } from './exercise-records.js';
+import { exercise1RMQuerySchema, parseExercise1RM, parseExerciseProgression, parseHistorical1RM, type Exercise1RMQuery } from './exercise-records.js';
 import { exerciseSearchQuerySchema, parseExerciseSearch, type ExerciseSearchQuery } from './exercise-search.js';
 import { calculatePersonalLoad, gymLocalToday, percentageExercise, type PersonalRM, type Workout } from './calculated-loads.js';
 import { parseUpcomingBookings, parseBookingHistory } from './bookings.js';
-import { parsePublicationAudience, publicationExecutionSchema, publicationPreview, publicationQuerySchema, PublicationPreparationStore, verifyCopySource, type CopySource, type PublicationAudience, type PublicationQuery } from './activity-publication.js';
+import { parsePublicationAudience, publicationExecutionSchema, publicationPreview, publicationQuerySchema, PublicationPreparationStore, verifyCopySource, withHistoricalSuggestions, type CopySource, type PublicationAudience, type PublicationPreview, type PublicationQuery } from './activity-publication.js';
 import { buildActivityForm, matchesPublication, publicationResponse } from './activity-publication-write.js';
 import { atPublishedCancellationBoundary, bookingCandidates, bookingCreationQuerySchema, bookingCancellationQuerySchema, bookingExecutionSchema, lateCancellationExecutionSchema, cancellationCandidates, BookingPreparationStore, nearReportedBookingCutoff, type BookingCreationQuery, type BookingCreationPreview, type BookingCancellationQuery, type BookingCancellationPreview, type BookingExecution, type LateCancellationExecution } from './booking-preparation.js';
 
@@ -539,10 +539,11 @@ export class AimHarderClient {
       const source = await this.#readPublicationSource(gym, boxId, query.sourceActivityId);
       if (!source) return { status: 'missing' as const, gym, sourceActivityId: query.sourceActivityId,
         notices: ['The source was not in the selected gym’s current bounded publication view. An older unavailable source cannot be prepared.'] };
-      const preview = publicationPreview(source.workout, source.copy, query,
+      const basePreview = publicationPreview(source.workout, source.copy, query,
         { ...gym, timeZone: gym.timeZone, timeZoneStatus: 'user-confirmed' }, source.audience);
-      if (!preview) return { status: 'unsupported' as const, gym,
+      if (!basePreview) return { status: 'unsupported' as const, gym,
         notices: ['The date, variant, score kind, unit, or load target is unsupported. No activity write was prepared.'] };
+      const preview = await this.#withPublicationSuggestions(basePreview, gym.id);
       let formSnapshot: string;
       try { formSnapshot = JSON.stringify([...buildActivityForm(source.copy, preview)]); }
       catch { return { status: 'unsupported' as const, gym,
@@ -569,6 +570,19 @@ export class AimHarderClient {
     return { workout: verifiedWorkout, copy, audience };
   }
 
+  async #withPublicationSuggestions(preview: PublicationPreview, gymId: string) {
+    return withHistoricalSuggestions(preview, async exerciseId => {
+      try {
+        const body = await this.#request({ kind: 'exercise-detail', gymId, exerciseId, accountId: this.#accountId! });
+        return parseHistorical1RM(body, exerciseId, this.#accountId!, preview.activityDate);
+      } catch (error) {
+        if (error instanceof SessionExpired) throw new AimHarderError('SESSION_EXPIRED');
+        if (isFatalPersonalRead(error)) throw error;
+        return { status: 'unavailable' as const, reason: 'personal-read-failed' as const, basis: null };
+      }
+    });
+  }
+
   executeActivityPublication(input: z.infer<typeof publicationExecutionSchema>) {
     const parsed = publicationExecutionSchema.safeParse(input);
     if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_ACTIVITY_PUBLICATION_QUERY'));
@@ -583,8 +597,9 @@ export class AimHarderClient {
       try { source = await this.#readPublicationSource(gym, boxId, stored.query.sourceActivityId); }
       catch { return { status: 'stale' as const, preview, notices: ['The source or account audience could not be reverified. No activity write was sent.'] }; }
       if (!source) return { status: 'stale' as const, preview, notices: ['The gym source left the supported current view. No activity write was sent.'] };
-      const fresh = publicationPreview(source.workout, source.copy, stored.query,
+      const freshBase = publicationPreview(source.workout, source.copy, stored.query,
         { ...gym, timeZone: gym.timeZone!, timeZoneStatus: 'user-confirmed' }, source.audience);
+      const fresh = freshBase ? await this.#withPublicationSuggestions(freshBase, gym.id) : null;
       if (!fresh || JSON.stringify(fresh) !== JSON.stringify(preview))
         return { status: 'stale' as const, preview, notices: ['The source, audience, target, or activity date changed. No activity write was sent.'] };
       let form: FormData;
@@ -610,7 +625,16 @@ export class AimHarderClient {
       } catch { observedEntry = 'unreadable'; }
       const status = response.status === 'accepted' && observedEntry === 'matched' ? 'confirmed' as const
         : response.status === 'rejected' ? 'rejected' as const : 'uncertain' as const;
-      return { status, preview, responseStatus: response.status, acceptedResponseId: response.id, observedEntry,
+      let sourceProvenance: { status: 'verified' | 'unavailable'; originalPrescription: PublicationPreview['prescription'] | null } =
+        { status: 'unavailable', originalPrescription: null };
+      if (status === 'confirmed') {
+        try {
+          const sourceAfter = await this.#readPublicationSource(gym, boxId!, stored.query.sourceActivityId);
+          if (sourceAfter && JSON.stringify([...buildActivityForm(sourceAfter.copy, preview)]) === stored.formSnapshot)
+            sourceProvenance = { status: 'verified', originalPrescription: preview.prescription };
+        } catch { /* A changed or unreadable gym source cannot establish later provenance. */ }
+      }
+      return { status, preview, responseStatus: response.status, acceptedResponseId: response.id, observedEntry, sourceProvenance,
         notices: [status === 'confirmed' ? 'A fresh account calendar and detail read matched the submitted structured results.'
           : status === 'rejected' ? 'AimHarder rejected the request; a calendar read alone cannot prove absence of a separate entry.'
             : 'The activity outcome is not confirmed by a fresh own-account read.',

@@ -3,8 +3,9 @@ import { z } from 'zod';
 import { dateSchema } from './classes.js';
 import { gymIdSchema } from './config.js';
 import { AimHarderError } from './errors.js';
-import { gymLocalToday } from './calculated-loads.js';
+import { calculatePersonalLoad, gymLocalToday } from './calculated-loads.js';
 import type { Workout } from './calculated-loads.js';
+import type { parseHistorical1RM } from './exercise-records.js';
 
 const positiveId = z.number().int().positive().safe();
 const decimalKilograms = z.string().regex(/^(?:0|[1-9]\d*)(?:\.\d+)?$/).max(40)
@@ -128,9 +129,57 @@ export type PublicationPreview = {
   prescription: { blocks: Workout['blocks']; exercises: Workout['exercises'] };
   blockResults: PublicationQuery['blockResults']; actualLoads: Array<{ exerciseIndex: number; exerciseName: string;
     originalPrescription: Workout['exercises'][number]['prescription']; actualKilograms: string;
-    sourceAlternative: 'single' | 'male' | 'female' | null; calculatedSuggestion: null }>;
+    sourceAlternative: 'single' | 'male' | 'female' | null; calculatedSuggestion: PublicationSuggestion }>;
   comment: string | null; possibleDuplicate: null; notices: string[];
 };
+
+export type PublicationSuggestion = { status: 'available' | 'unavailable'; loadKilograms: string | null;
+  basis: { sourceExerciseId: number; value: string; sourceDate: string; unit: 'kg' | 'lbs' | null } | null;
+  reason: string | null; coverage: 'limited-upstream-exercise-detail' };
+type HistoricalRM = ReturnType<typeof parseHistorical1RM> | { status: 'unavailable'; reason: 'personal-read-failed'; basis: null };
+const unavailableSuggestion = (reason: string, basis: PublicationSuggestion['basis'] = null): PublicationSuggestion => ({
+  status: 'unavailable', loadKilograms: null, basis, reason, coverage: 'limited-upstream-exercise-detail',
+});
+
+export async function withHistoricalSuggestions(preview: PublicationPreview, read: (exerciseId: number) => Promise<HistoricalRM>): Promise<PublicationPreview> {
+  const cache = new Map<number, HistoricalRM>();
+  const actualLoads = [];
+  for (const load of preview.actualLoads) {
+    const exercise = preview.prescription.exercises[load.exerciseIndex]!;
+    const split = exercise.prescription.valor2h != null || exercise.prescription.valor2m != null;
+    const label = load.sourceAlternative ?? (split ? null : 'single');
+    let calculatedSuggestion: PublicationSuggestion;
+    if (!label) calculatedSuggestion = unavailableSuggestion('source-alternative-not-selected');
+    else {
+      const initial = calculatePersonalLoad(exercise, undefined).alternatives.find(row => row.sourceLabel === label);
+      if (!initial || initial.reason !== 'personal-read-limit')
+        calculatedSuggestion = unavailableSuggestion(initial?.reason ?? 'source-alternative-unavailable');
+      else {
+        const id = exercise.sourceExerciseId!;
+        if (!cache.has(id)) cache.set(id, cache.size >= 24
+          ? { status: 'unavailable', reason: 'personal-read-limit', basis: null } : await read(id));
+        const historical = cache.get(id)!;
+        if (historical.status !== 'available' || !historical.basis || historical.basis.unit !== 'kg')
+          calculatedSuggestion = unavailableSuggestion(historical.reason ?? 'eligible-1rm-unavailable', historical.basis);
+        else {
+          const rm = { status: 'available' as const, latest1RM: {
+            value: historical.basis.value, unit: 'kg' as const, sourceDate: historical.basis.sourceDate,
+          } };
+          const alternative = calculatePersonalLoad(exercise, rm as Parameters<typeof calculatePersonalLoad>[1])
+            .alternatives.find(row => row.sourceLabel === label);
+          calculatedSuggestion = alternative?.calculatedLoad
+            ? { status: 'available', loadKilograms: alternative.calculatedLoad, basis: historical.basis,
+              reason: null, coverage: 'limited-upstream-exercise-detail' }
+            : unavailableSuggestion(alternative?.reason ?? 'unsupported-percentage', historical.basis);
+        }
+      }
+    }
+    actualLoads.push({ ...load, calculatedSuggestion });
+  }
+  return { ...preview, actualLoads, notices: preview.actualLoads.length ? [...preview.notices,
+    'Historical kilogram suggestions use only eligible own 1RM points dated on or before the activity date. Source history completeness and RM gym of origin are unverified; the actual load remains independently confirmed.']
+    : preview.notices };
+}
 
 function supportedResult(block: Workout['blocks'][number], kind: PublicationQuery['blockResults'][number]['kind']) {
   const type = Number(block.prescription.type);
@@ -164,9 +213,11 @@ export function publicationPreview(workout: Workout, copy: CopySource, query: Pu
     if (!exercise || exercise.prescription.loadUnit !== '%RM' || ![4, '4'].includes(exercise.prescription.tipoud as string | number)) return null;
     const split = exercise.prescription.valor2h != null || exercise.prescription.valor2m != null;
     if (load.sourceAlternative && (split ? load.sourceAlternative === 'single' : load.sourceAlternative !== 'single')) return null;
+    if (load.sourceAlternative === 'male' && exercise.prescription.valor2h == null) return null;
+    if (load.sourceAlternative === 'female' && exercise.prescription.valor2m == null) return null;
     actualLoads.push({ exerciseIndex: load.exerciseIndex, exerciseName: exercise.name,
       originalPrescription: exercise.prescription, actualKilograms: load.actualKilograms,
-      sourceAlternative: load.sourceAlternative ?? null, calculatedSuggestion: null });
+      sourceAlternative: load.sourceAlternative ?? null, calculatedSuggestion: unavailableSuggestion('not-requested') });
   }
   return {
     gym, source: { sourceActivityId: query.sourceActivityId, className: workout.className, intendedDate: workout.date, titles: workout.titles },
