@@ -1,6 +1,6 @@
 # ADR: manual publication and deletion of own activity
 
-Status: accepted for feature scope on 2026-09-28 and specified in [issue #42](https://github.com/rudeayelo/aimharder-mcp/issues/42). An authenticated read-only Copy-editor inspection identified some destination fields; audience, write/read-back behavior, implementation, and live validation remain pending.
+Status: accepted for feature scope on 2026-09-28 and specified in [issue #42](https://github.com/rudeayelo/aimharder-mcp/issues/42). The read-only publication preparation slice is implemented in the source checkout with MCP fixture coverage. Write/read-back behavior and live publication validation remain pending.
 
 ## Decision
 
@@ -10,7 +10,7 @@ For a copied `%RM` prescription, preserve the source prescription, present the c
 
 Publication begins from an activity published by the selected gym and accessible to the account holder. Other members' entries, the account holder's past entries, and blank-form publication are outside the initial source set. Deletion may target any own entry at the selected gym, including one created through the AimHarder web UI, once account ownership and gym are verified. A source ID supplied by a caller alone cannot establish that verification.
 
-If an existing own entry can be reliably linked to the same source and gym-local date, warn before publication; an intentional second entry may proceed only after explicit confirmation of that possibility. A shared date alone is insufficient evidence of a duplicate. A published entry should follow the web Copy flow's visibility, and the confirmed preview must state the verified audience. Its actual visibility remains under investigation.
+If an existing own entry can be reliably linked to the same source and gym-local date, warn before publication; an intentional second entry may proceed only after explicit confirmation of that possibility. A shared date alone is insufficient evidence of a duplicate. Publication audience is selected in the account's preferences, independently of each post. Read the selected `USPRIVACIDADDEF` value for the preview and recheck it before execution; show the separate WOD TV result setting. A changed or unsupported preference makes the prepared action stale. Its effective visibility after a write remains subject to read-back validation.
 
 Use one source-supported difficulty variant label for the copied prescription across the publication, consistent with the account holder's observation of one visible toggle; verify Copy-editor behavior before encoding it. A block's separate `rx` result data is not the variant selector and needs its own verified input semantics. Default to the copied workout's intended date in the selected gym's zone. Allow today and past dates, but reject future-dated personal results. Accept structured block results and actual exercise loads, not arbitrary free-text block scores. Require at least one such result or load before publishing. The optional general comment is not a substitute for a result.
 

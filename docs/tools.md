@@ -76,6 +76,18 @@ For a requested date today or later in the reported gym zone, each `%RM` exercis
 
 Coverage is always `incomplete`: only the current feed page is searched. `unavailable` does **not** prove no publication exists. `unsupported` means source content could not be interpreted; retrieval failures are errors.
 
+## `prepare_activity_publication` (source checkout)
+
+Prepare one own activity entry from a workout source ID returned by `get_published_workouts` for the selected gym. Supply a supported structured block result or a deliberately confirmed actual kilogram load. A general comment alone is insufficient. Optional `activityDate` defaults to the workout's intended date and must be today or earlier in a configured, user-confirmed gym zone. When several difficulty levels exist, pass exactly one source label in `variantLabel`; a sole level is selected automatically.
+
+```json
+{"sourceActivityId":8001,"activityDate":"2026-09-28","variantLabel":"RX","blockResults":[{"blockIndex":0,"kind":"time-seconds","value":275}]}
+```
+
+The current supported result inputs are elapsed seconds for a source For Time or RFT block and numeric kilograms, pounds, or repetitions for a free-text block whose verified result code names that unit. Other score formats and arbitrary text are rejected. `actualLoads` accepts entries with `exerciseIndex`, a positive decimal `actualKilograms`, `confirmedActual: true`, and an optional source alternative label. This input identifies the value actually used; it is not a conversion merely because a unit label changed. The load write path is not yet implemented.
+
+A `ready` response includes the verified gym, source, intended and chosen dates, selected difficulty, full effective prescription, entered results, current account publication audience, separate WOD TV result setting, and a two-minute single-use reference. Preparation is read-only. `missing` means the source was absent from the bounded current gym feed, not that it never existed. `unsupported` and safe errors return no reference for mismatched Copy content, unknown preferences, future dates, invalid variants, or unsupported scores. The current own activity detail provides no reliable Copy-source linkage, so same-date entries alone do not produce a duplicate warning. Execution and live publication remain pending.
+
 ## `get_exercise_1rm`
 
 Input: one known positive integer source exercise ID, such as `{"exerciseId":101}`. An accessible `gymId` may select the origin used for the read. The account holder's user ID is derived from the authenticated session and is never an input or output. Arbitrary URLs and member selectors are rejected.

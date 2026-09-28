@@ -1,0 +1,197 @@
+import { randomBytes } from 'node:crypto';
+import { z } from 'zod';
+import { dateSchema } from './classes.js';
+import { gymIdSchema } from './config.js';
+import { AimHarderError } from './errors.js';
+import { gymLocalToday } from './calculated-loads.js';
+import type { Workout } from './calculated-loads.js';
+
+const positiveId = z.number().int().positive().safe();
+const decimalKilograms = z.string().regex(/^(?:0|[1-9]\d*)(?:\.\d+)?$/).max(40)
+  .refine(value => Number.isFinite(Number(value)) && Number(value) > 0);
+export const publicationQuerySchema = z.object({
+  gymId: gymIdSchema.optional(), sourceActivityId: positiveId, activityDate: dateSchema.optional(),
+  variantLabel: z.string().min(1).max(100).optional(),
+  blockResults: z.array(z.object({ blockIndex: z.number().int().nonnegative(),
+    kind: z.enum(['time-seconds', 'repetitions', 'kilograms', 'pounds']),
+    value: z.number().finite().nonnegative(),
+  }).strict()).max(30).default([]),
+  actualLoads: z.array(z.object({ exerciseIndex: z.number().int().nonnegative(),
+    actualKilograms: decimalKilograms, sourceAlternative: z.enum(['single', 'male', 'female']).optional(),
+    confirmedActual: z.literal(true),
+  }).strict()).max(50).default([]),
+  comment: z.string().max(5000).optional(),
+}).strict().refine(query => query.blockResults.length + query.actualLoads.length > 0,
+  { message: 'At least one structured result or actual load is required.' });
+export type PublicationQuery = z.infer<typeof publicationQuerySchema>;
+export const publicationExecutionSchema = z.object({
+  gymId: gymIdSchema.optional(), actionReference: z.string().regex(/^[a-f0-9]{64}$/),
+  confirmed: z.literal(true), acknowledgePossibleDuplicate: z.boolean().optional(),
+}).strict();
+
+export type PublicationAudience = { publication: 'everyone' | 'followers' | 'only-me'; wodTvResults: boolean };
+function checkedRadio(form: string, name: string, values: readonly string[]): string {
+  const inputs = [...form.matchAll(/<input\b[^>]*>/gi)].map(match => match[0]!).filter(input =>
+    new RegExp(`\\bname=["']${name}["']`, 'i').test(input));
+  if (inputs.length !== values.length) throw new AimHarderError('INVALID_ACTIVITY_PREFERENCES');
+  const found = inputs.map(input => ({ value: /\bvalue=["']([^"']+)["']/i.exec(input)?.[1], checked: /\bchecked(?:\s*=|\s|>)/i.test(input) }));
+  if (new Set(found.map(row => row.value)).size !== values.length || found.some(row => !row.value || !values.includes(row.value)))
+    throw new AimHarderError('INVALID_ACTIVITY_PREFERENCES');
+  const selected = found.filter(row => row.checked);
+  if (selected.length !== 1) throw new AimHarderError('INVALID_ACTIVITY_PREFERENCES');
+  return selected[0]!.value!;
+}
+
+export function parsePublicationAudience(body: unknown): PublicationAudience {
+  if (typeof body !== 'string') throw new AimHarderError('INVALID_ACTIVITY_PREFERENCES');
+  const form = /<form\b[^>]*\bid=["']frmConfiguration["'][^>]*>([\s\S]*?)<\/form>/i.exec(body)?.[1];
+  if (!form || !form.includes('¿Quién puede ver tus publicaciones?')) throw new AimHarderError('INVALID_ACTIVITY_PREFERENCES');
+  const publication = checkedRadio(form, 'USPRIVACIDADDEF', ['1', '2', '4']);
+  const wodTv = checkedRadio(form, 'USPRIVCAST', ['0', '1']);
+  return { publication: publication === '1' ? 'followers' : publication === '2' ? 'everyone' : 'only-me', wodTvResults: wodTv === '0' };
+}
+
+const copySchema = z.object({ box: z.array(z.object({
+  boxID: positiveId, userId: positiveId, date: z.string().max(40),
+  rates: z.array(z.object({ ejerName: z.string().max(100_000), ejerId: z.unknown().optional(), tipoWOD: z.number().int().nonnegative().nullable() }).passthrough()).max(200),
+  TIPOWODs: z.array(z.object({ type: z.union([z.string(), z.number()]), deleted: z.boolean() }).passthrough()).max(50),
+}).passthrough()).length(1) });
+export type CopySource = z.infer<typeof copySchema>['box'][number];
+function sameExercise(copyRow: unknown, projected: Workout['exercises'][number]) {
+  const row = z.object({ ejerName: z.string(), ejerId: z.unknown().optional(),
+    formaReg: z.unknown().optional(), tipoud: z.unknown().optional(),
+    valor2: z.unknown().optional(), valor2h: z.unknown().optional(), valor2m: z.unknown().optional(),
+  }).safeParse(copyRow);
+  if (!row.success || row.data.ejerName !== projected.name) return false;
+  const sourceId = typeof row.data.ejerId === 'number' && Number.isSafeInteger(row.data.ejerId) && row.data.ejerId > 0
+    ? row.data.ejerId : null;
+  if (sourceId !== projected.sourceExerciseId) return false;
+  for (const field of ['formaReg', 'tipoud', 'valor2', 'valor2h', 'valor2m'] as const) {
+    if (JSON.stringify(row.data[field] ?? null) !== JSON.stringify(projected.prescription[field] ?? null)) return false;
+  }
+  return true;
+}
+function sameBlock(copyBlock: unknown, projected: Workout['blocks'][number]) {
+  const block = z.object({ deleted: z.boolean(), notes: z.unknown().optional(), type: z.unknown().optional(),
+    timecap: z.unknown().optional(), timecaptype: z.unknown().optional() }).safeParse(copyBlock);
+  if (!block.success) return false;
+  if (block.data.deleted) return projected.notes === null && Object.keys(projected.prescription).length === 0;
+  if ((block.data.notes ?? null) !== projected.notes) return false;
+  return (['type', 'timecap', 'timecaptype'] as const).every(field =>
+    JSON.stringify(block.data[field] ?? null) === JSON.stringify(projected.prescription[field] ?? null));
+}
+export function verifyCopySource(body: unknown, publisher: number, boxId: number, workout: Workout): CopySource {
+  const parsed = copySchema.safeParse(body);
+  if (!parsed.success) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+  const copy = parsed.data.box[0]!;
+  if (copy.userId !== publisher || copy.boxID !== boxId || copy.date.slice(0, 10) !== workout.date
+    || copy.TIPOWODs.length !== workout.blocks.length) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+  if (copy.TIPOWODs.some((block, index) => !sameBlock(block, workout.blocks[index]!))) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+  // The detail and Copy views must describe the same ordered exercise rows.
+  const visible = copy.rates.filter(row => row.tipoWOD === null || !copy.TIPOWODs[row.tipoWOD]?.deleted);
+  if (visible.length !== workout.exercises.length || visible.some((row, index) => !sameExercise(row, workout.exercises[index]!)))
+    throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+  for (const variant of workout.variants) {
+    const selectedRows = [];
+    if (copy.TIPOWODs.some((block, blockIndex) => {
+      const labels = Array.isArray(block.scaledops) ? block.scaledops : [];
+      const index = labels.indexOf(variant.label);
+      const selectedBlock = index < 0 || block.scaledver == null ? block :
+        Array.isArray(block.scaledver) ? block.scaledver[index] : null;
+      return !sameBlock(selectedBlock, variant.blocks[blockIndex]!);
+    })) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+    for (const row of copy.rates) {
+      if (row.tipoWOD === null) continue;
+      const block = copy.TIPOWODs[row.tipoWOD];
+      if (!block) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+      const labels = Array.isArray(block.scaledops) ? block.scaledops : [];
+      const index = labels.indexOf(variant.label);
+      const selectedBlock = index < 0 || block.scaledver == null ? block :
+        Array.isArray(block.scaledver) ? block.scaledver[index] : null;
+      const selectedRow = index < 0 ? row : Array.isArray(row.scaledver) ? row.scaledver[index] : null;
+      if (!selectedBlock || typeof selectedBlock !== 'object' || !selectedRow || typeof selectedRow !== 'object')
+        throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+      if ('deleted' in selectedBlock && selectedBlock.deleted === true) continue;
+      selectedRows.push(selectedRow);
+    }
+    if (selectedRows.length !== variant.exercises.length || selectedRows.some((row, index) =>
+      !sameExercise(row, variant.exercises[index]!)))
+      throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+  }
+  return copy;
+}
+
+export type PublicationPreview = {
+  gym: { id: string; name: string; timeZone: string; timeZoneStatus: 'user-confirmed' };
+  source: { sourceActivityId: number; className: string; intendedDate: string; titles: string[] };
+  activityDate: string; variantLabel: string | null; audience: PublicationAudience;
+  prescription: { blocks: Workout['blocks']; exercises: Workout['exercises'] };
+  blockResults: PublicationQuery['blockResults']; actualLoads: Array<{ exerciseIndex: number; exerciseName: string;
+    originalPrescription: Workout['exercises'][number]['prescription']; actualKilograms: string;
+    sourceAlternative: 'single' | 'male' | 'female' | null; calculatedSuggestion: null }>;
+  comment: string | null; possibleDuplicate: null; notices: string[];
+};
+
+function supportedResult(block: Workout['blocks'][number], kind: PublicationQuery['blockResults'][number]['kind']) {
+  const type = Number(block.prescription.type);
+  const textResultType = Number(block.prescription.timecap);
+  return (kind === 'time-seconds' && [1, 10].includes(type))
+    || (type === 11 && ((kind === 'kilograms' && textResultType === 3)
+      || (kind === 'pounds' && textResultType === 4) || (kind === 'repetitions' && textResultType === 5)));
+}
+
+export function publicationPreview(workout: Workout, copy: CopySource, query: PublicationQuery,
+  gym: PublicationPreview['gym'], audience: PublicationAudience): PublicationPreview | null {
+  const date = query.activityDate ?? workout.date;
+  if (date > gymLocalToday(gym.timeZone)) return null;
+  const selected = workout.variants.length
+    ? workout.variants.find(variant => variant.label === query.variantLabel) : null;
+  if (workout.variants.length && !selected && !(workout.variants.length === 1 && query.variantLabel === undefined)) return null;
+  if (!workout.variants.length && query.variantLabel !== undefined) return null;
+  const variant = selected ?? (workout.variants.length === 1 ? workout.variants[0]! : null);
+  const blocks = variant?.blocks ?? workout.blocks;
+  const exercises = variant?.exercises ?? workout.exercises;
+  if (blocks.length !== copy.TIPOWODs.length) return null;
+  if (new Set(query.blockResults.map(result => result.blockIndex)).size !== query.blockResults.length
+    || new Set(query.actualLoads.map(load => load.exerciseIndex)).size !== query.actualLoads.length) return null;
+  for (const result of query.blockResults) {
+    const block = blocks[result.blockIndex];
+    if (!block || !supportedResult(block, result.kind) || !Number.isSafeInteger(result.value * (result.kind === 'time-seconds' ? 1 : 1000))) return null;
+  }
+  const actualLoads = [];
+  for (const load of query.actualLoads) {
+    const exercise = exercises[load.exerciseIndex];
+    if (!exercise || exercise.prescription.loadUnit !== '%RM' || ![4, '4'].includes(exercise.prescription.tipoud as string | number)) return null;
+    const split = exercise.prescription.valor2h != null || exercise.prescription.valor2m != null;
+    if (load.sourceAlternative && (split ? load.sourceAlternative === 'single' : load.sourceAlternative !== 'single')) return null;
+    actualLoads.push({ exerciseIndex: load.exerciseIndex, exerciseName: exercise.name,
+      originalPrescription: exercise.prescription, actualKilograms: load.actualKilograms,
+      sourceAlternative: load.sourceAlternative ?? null, calculatedSuggestion: null });
+  }
+  return {
+    gym, source: { sourceActivityId: query.sourceActivityId, className: workout.className, intendedDate: workout.date, titles: workout.titles },
+    activityDate: date, variantLabel: variant?.label ?? null, audience, prescription: { blocks, exercises }, blockResults: query.blockResults,
+    actualLoads, comment: query.comment ?? null, possibleDuplicate: null,
+    notices: ['This preview is read-only. The publication audience comes from current account preferences and will be checked again before a write.',
+      'The source feed is bounded; a missing older publication cannot be treated as absent. Same-date activity alone does not establish a duplicate.'],
+  };
+}
+
+type StoredPublication = { accountId: number; boxId: number; preview: PublicationPreview; query: PublicationQuery; expires: number };
+export class PublicationPreparationStore {
+  #entries = new Map<string, StoredPublication>();
+  issue(accountId: number, boxId: number, preview: PublicationPreview, query: PublicationQuery) {
+    const now = Date.now();
+    for (const [reference, entry] of this.#entries) if (entry.expires <= now) this.#entries.delete(reference);
+    if (this.#entries.size >= 32) this.#entries.delete(this.#entries.keys().next().value!);
+    const actionReference = randomBytes(32).toString('hex');
+    const expires = now + 120_000;
+    this.#entries.set(actionReference, { accountId, boxId, preview: structuredClone(preview), query: structuredClone(query), expires });
+    return { actionReference, expiresAt: new Date(expires).toISOString() };
+  }
+  take(reference: string, accountId: number, gymId: string) {
+    const entry = this.#entries.get(reference);
+    this.#entries.delete(reference);
+    return entry && entry.expires > Date.now() && entry.accountId === accountId && entry.preview.gym.id === gymId ? entry : null;
+  }
+}

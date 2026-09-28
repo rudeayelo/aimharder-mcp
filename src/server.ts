@@ -12,6 +12,7 @@ import { exerciseSearchQuerySchema, exerciseSearchResultSchema } from './exercis
 import { enrichmentSchema } from './calculated-loads.js';
 import { safeError } from './errors.js';
 import { bookingCreationQuerySchema, bookingCancellationQuerySchema, bookingExecutionSchema, lateCancellationExecutionSchema } from './booking-preparation.js';
+import { publicationQuerySchema } from './activity-publication.js';
 
 const gymSchema = z.object({
   id: gymIdSchema, name: z.string(), timeZone: z.string().nullable(), timeZoneStatus: z.enum(['assumed', 'user-confirmed']),
@@ -185,6 +186,19 @@ export function createServer(environment: Record<string, string | undefined>) {
   }, async (query) => {
     try {
       const result = await client.getPublishedWorkouts(query);
+      return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
+    } catch (error) {
+      return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };
+    }
+  });
+  server.registerTool('prepare_activity_publication', {
+    description: 'Read a selected gym workout in the current supported publication view and prepare one own activity entry. Supply its source ID from get_published_workouts, structured block results or explicitly confirmed actual kilograms, and one difficulty label if several exist. The audience and WOD TV setting come from the account preferences and are rechecked before execution. The source view is bounded; this read-only preview never publishes. Show the full preview and obtain action-specific account-holder confirmation before execution.',
+    inputSchema: publicationQuerySchema,
+    outputSchema: z.object({ status: z.enum(['ready', 'missing', 'unsupported']) }).passthrough(),
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+  }, async (query) => {
+    try {
+      const result = await client.prepareActivityPublication(query);
       return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
     } catch (error) {
       return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };
