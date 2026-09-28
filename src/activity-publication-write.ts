@@ -19,10 +19,11 @@ const sourceBlock = z.object({
   res: scalar.nullish(), reps: scalar.nullish(), rondas: scalar.nullish(), rx: scalar.nullish(),
   sstipo: scalar.nullish(), pwid: scalar.nullish(), copybox: scalar.nullish(), customize: scalar.nullish(),
   scaledops: z.array(z.string().max(100)).max(20).nullish(), scaledver: z.array(z.unknown()).max(20).nullish(),
+  selectedscaling: z.number().int().nonnegative().optional(),
   link: z.array(z.unknown()).max(0).nullish(), video: z.array(z.unknown()).max(0).nullish(),
 });
 type ExercisePayload = Omit<z.infer<typeof sourceExercise>, 'scaledver'> & { scaledver?: Array<ExercisePayload | null> | null };
-type BlockPayload = Omit<z.infer<typeof sourceBlock>, 'scaledver'> & { scaledver?: Array<BlockPayload | null> | null; selectedscaling?: number };
+type BlockPayload = Omit<z.infer<typeof sourceBlock>, 'scaledver' | 'selectedscaling'> & { scaledver?: Array<BlockPayload | null> | null; selectedscaling?: number | undefined };
 
 function exercisePayload(value: unknown, depth = 0): ExercisePayload {
   const parsed = sourceExercise.safeParse(value);
@@ -48,9 +49,37 @@ function effectiveBlock(block: BlockPayload, label: string | null): BlockPayload
   return block.scaledver?.[index] ?? block;
 }
 
+function effectiveExerciseRows(exercises: ExercisePayload[], blocks: BlockPayload[], label: string | null): ExercisePayload[] {
+  if (!label) return exercises.filter(row => row.tipoWOD === null || !blocks[row.tipoWOD]?.deleted);
+  const rows: ExercisePayload[] = [];
+  for (const row of exercises) {
+    if (row.tipoWOD === null) continue;
+    const block = blocks[row.tipoWOD];
+    if (!block) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+    const index = block.scaledops?.indexOf(label) ?? -1;
+    if (effectiveBlock(block, label).deleted) continue;
+    const target = index < 0 ? row : row.scaledver?.[index];
+    if (!target || target.tipoWOD !== row.tipoWOD) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+    rows.push(target);
+  }
+  return rows;
+}
+
 export function buildActivityForm(copy: CopySource, preview: PublicationPreview): FormData {
   const blocks = copy.TIPOWODs.map(block => blockPayload(block));
   const exercises = copy.rates.map(row => exercisePayload(row));
+  const effectiveExercises = effectiveExerciseRows(exercises, blocks, preview.variantLabel);
+  for (const load of preview.actualLoads) {
+    const target = effectiveExercises[load.exerciseIndex];
+    const prescribed = preview.prescription.exercises[load.exerciseIndex];
+    if (!target || !prescribed || target.ejerName !== prescribed.name || (target.ejerId ?? null) !== prescribed.sourceExerciseId
+      || ![4, '4'].includes(target.formaReg as string | number) || ![4, '4'].includes(target.tipoud as string | number))
+      throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+    // saveCRW uses valor2 as the personal actual-load input and tipoud=0 for kg.
+    // Split source alternatives remain in the Copy payload, as in the observed editor.
+    target.valor2 = load.actualKilograms;
+    target.tipoud = 0;
+  }
   for (const result of preview.blockResults) {
     const base = blocks[result.blockIndex];
     if (!base) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
@@ -96,11 +125,28 @@ export function publicationResponse(body: unknown) {
     : { status: 'uncertain' as const, id: null };
 }
 
-export function matchesPublication(entry: ActivityEntry, preview: PublicationPreview): boolean {
+export function matchesPublication(entry: ActivityEntry, preview: PublicationPreview, body: unknown): boolean {
   if (entry.date !== preview.activityDate || entry.blocks.length !== preview.prescription.blocks.length) return false;
+  const raw = z.object({ TIPOWODs: z.array(z.unknown()), ejerRate: z.array(z.unknown()) }).safeParse(body);
+  if (!raw.success) return false;
+  let blocks: BlockPayload[];
+  let exercises: ExercisePayload[];
+  try {
+    blocks = raw.data.TIPOWODs.map(block => blockPayload(block));
+    exercises = effectiveExerciseRows(raw.data.ejerRate.map(row => exercisePayload(row)), blocks, preview.variantLabel);
+  } catch { return false; }
+  if (blocks.length !== preview.prescription.blocks.length || exercises.length !== preview.prescription.exercises.length) return false;
+  if (preview.variantLabel && blocks.some(block => block.scaledops?.includes(preview.variantLabel!)
+    && block.selectedscaling !== block.scaledops.indexOf(preview.variantLabel!))) return false;
   return preview.blockResults.every(result => {
-    const observed = entry.blocks[result.blockIndex]?.result;
+    const base = blocks[result.blockIndex];
+    const observed = base && effectiveBlock(base, preview.variantLabel);
     if (!observed) return false;
-    return result.kind === 'time-seconds' ? observed.time === result.value : observed.res === result.value;
+    const value = result.kind === 'time-seconds' ? observed.time : observed.res;
+    return value !== null && value !== undefined && value !== '' && Number(value) === result.value;
+  }) && preview.actualLoads.every(load => {
+    const observed = exercises[load.exerciseIndex];
+    return observed?.ejerName === load.exerciseName && Number(observed.tipoud) === 0
+      && Number(observed.valor2) === Number(load.actualKilograms);
   });
 }

@@ -587,8 +587,6 @@ export class AimHarderClient {
         { ...gym, timeZone: gym.timeZone!, timeZoneStatus: 'user-confirmed' }, source.audience);
       if (!fresh || JSON.stringify(fresh) !== JSON.stringify(preview))
         return { status: 'stale' as const, preview, notices: ['The source, audience, target, or activity date changed. No activity write was sent.'] };
-      if (stored.query.actualLoads.length)
-        return { status: 'stale' as const, preview, notices: ['Kilogram publication is not yet enabled. No activity write was sent.'] };
       let form: FormData;
       try { form = buildActivityForm(source.copy, preview); }
       catch { return { status: 'stale' as const, preview, notices: ['The Copy payload has unsupported fields. No activity write was sent.'] }; }
@@ -607,7 +605,7 @@ export class AimHarderClient {
           const detail = await this.#request({ kind: 'activity-detail', sourceId: response.id });
           const entry = parseActivityDetail(detail, response.id, preview.activityDate, this.#accountId!, boxId,
             gym.id, gym.timeZone!);
-          observedEntry = entry && matchesPublication(entry, preview) ? 'matched' : 'conflicting';
+          observedEntry = entry && matchesPublication(entry, preview, detail) ? 'matched' : 'conflicting';
         }
       } catch { observedEntry = 'unreadable'; }
       const status = response.status === 'accepted' && observedEntry === 'matched' ? 'confirmed' as const

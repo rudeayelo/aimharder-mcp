@@ -214,3 +214,73 @@ test('unsupported Copy transport fields stop before the write', async () => {
   expect((await execute(client, prepared.actionReference)).structuredContent).toMatchObject({ status: 'stale' });
   expect(activityWrites()).toHaveLength(0);
 });
+
+test('selected variant records actual kilograms in its effective row and preserves unselected prescriptions', async () => {
+  const block = { ...sourceBlock, scaledops: ['EASY', 'HARD'], scaledver: [
+    { ...sourceBlock, notes: 'Easy' }, { ...sourceBlock, notes: 'Hard' },
+  ] };
+  const easy = { ...sourceExercise, ejerName: 'Easy lift', valor2: '85', valor2h: '85', valor2m: '75' };
+  const hard = { ...sourceExercise, ejerName: 'Hard lift', valor2: '90' };
+  const exercise = { ...sourceExercise, scaledver: [easy, hard] };
+  upstream.use(
+    http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ TIPOWODs: [block], ejerRate: [exercise] }))),
+    http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ TIPOWODs: [block], rates: [exercise] }))),
+  );
+  const client = await connect();
+  const prepared = await prepare(client, { variantLabel: 'EASY', blockResults: [], actualLoads: [
+    { exerciseIndex: 0, actualKilograms: '72.5', sourceAlternative: 'female', confirmedActual: true },
+  ] });
+  expect(prepared.structuredContent).toMatchObject({ status: 'ready', actualLoads: [{
+    originalPrescription: { valor2h: '85', valor2m: '75', loadUnit: '%RM' },
+    actualKilograms: '72.5', sourceAlternative: 'female',
+  }] });
+  let sent: FormData | undefined;
+  const submitted = { ...exercise, scaledver: [{ ...easy, valor2: '72.5', tipoud: 0 }, hard] };
+  upstream.use(
+    http.post('https://sample-gym.aimharder.es/api/activity', async ({ request }) => {
+      sent = await request.formData();
+      return HttpResponse.json({ errors: [], errorWODsID: [], errorWODsType: [], errorEjerID: [], id: '9001' });
+    }),
+    http.get('https://aimharder.es/api/activityCalendar', () => HttpResponse.json({ workouts: {
+      '2026-09-28': { rates: { ids: [9001] }, TIPOWODs: {} },
+    } })),
+    http.get('https://aimharder.es/api/activity/workout', () => HttpResponse.json({ userId: 42, boxId: 200,
+      ...detail({ TIPOWODs: [{ ...block, selectedscaling: 0 }], ejerRate: [submitted] }),
+    })),
+  );
+  const result = await execute(client, String((prepared.structuredContent as { actionReference: string }).actionReference));
+  expect(result.structuredContent).toMatchObject({ status: 'confirmed', observedEntry: 'matched' });
+  const sentRows = JSON.parse(String(sent!.get('ejerRate')));
+  expect(sentRows[0].valor2).toBe('80');
+  expect(sentRows[0].tipoud).toBe(4);
+  expect(sentRows[0].scaledver[0]).toMatchObject({ valor2: '72.5', tipoud: 0, valor2h: '85', valor2m: '75' });
+  expect(sentRows[0].scaledver[1]).toMatchObject({ valor2: '90', tipoud: 4 });
+  expect(JSON.parse(String(sent!.get('TIPOWODs')))[0].selectedscaling).toBe(0);
+  expect(activityWrites()).toHaveLength(1);
+});
+
+test('manual kilograms need an explicit actual confirmation and supported split selection', async () => {
+  const client = await connect();
+  for (const actualLoads of [
+    [{ exerciseIndex: 0, actualKilograms: '80' }],
+    [{ exerciseIndex: 0, actualKilograms: '80', sourceAlternative: 'male', confirmedActual: true }],
+  ]) {
+    const result = await prepare(client, { blockResults: [], actualLoads });
+    expect(result.isError || (result.structuredContent as { status?: string })?.status === 'unsupported').toBe(true);
+  }
+  expect(activityWrites()).toHaveLength(0);
+});
+
+test('manual kilograms prepare without a source exercise ID or personal RM read', async () => {
+  const row = { ...sourceExercise, ejerId: undefined };
+  upstream.use(
+    http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ ejerRate: [row] }))),
+    http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ rates: [row] }))),
+  );
+  const result = await prepare(await connect(), { blockResults: [], actualLoads: [
+    { exerciseIndex: 0, actualKilograms: '80', confirmedActual: true },
+  ] });
+  expect(result.structuredContent).toMatchObject({ status: 'ready', actualLoads: [{ actualKilograms: '80', calculatedSuggestion: null }] });
+  expect(requests.filter(r => r.path.startsWith('/api/exercise/'))).toHaveLength(0);
+  expect(activityWrites()).toHaveLength(0);
+});
