@@ -15,7 +15,7 @@ Ask about your AimHarder classes, workouts, bookings and activity from an AI cli
      "mcpServers": {
        "aimharder": {
          "command": "npx",
-         "args": ["--yes", "aimharder-mcp@0.2.0"]
+         "args": ["--yes", "aimharder-mcp@0.3.0"]
        }
      }
    }
