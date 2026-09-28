@@ -1,6 +1,6 @@
 # ADR: manual publication and deletion of own activity
 
-Status: accepted for feature scope on 2026-09-28 and specified in [issue #42](https://github.com/rudeayelo/aimharder-mcp/issues/42); API contracts, implementation, and live validation are pending.
+Status: accepted for feature scope on 2026-09-28 and specified in [issue #42](https://github.com/rudeayelo/aimharder-mcp/issues/42). An authenticated read-only Copy-editor inspection identified some destination fields; audience, write/read-back behavior, implementation, and live validation remain pending.
 
 ## Decision
 
