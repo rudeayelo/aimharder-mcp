@@ -14,7 +14,7 @@ export const publicationQuerySchema = z.object({
   gymId: gymIdSchema.optional(), sourceActivityId: positiveId, activityDate: dateSchema.optional(),
   variantLabel: z.string().min(1).max(100).optional(),
   blockResults: z.array(z.object({ blockIndex: z.number().int().nonnegative(),
-    kind: z.enum(['time-seconds', 'repetitions', 'kilograms', 'pounds']),
+    kind: z.enum(['time-seconds', 'rounds', 'repetitions', 'kilograms', 'pounds']),
     value: z.number().finite().nonnegative(),
   }).strict()).max(30).default([]),
   actualLoads: z.array(z.object({ exerciseIndex: z.number().int().nonnegative(),
@@ -22,8 +22,7 @@ export const publicationQuerySchema = z.object({
     confirmedActual: z.literal(true),
   }).strict()).max(50).default([]),
   comment: z.string().max(5000).optional(),
-}).strict().refine(query => query.blockResults.length + query.actualLoads.length > 0,
-  { message: 'At least one structured result or actual load is required.' });
+}).strict();
 export type PublicationQuery = z.infer<typeof publicationQuerySchema>;
 export const publicationExecutionSchema = z.object({
   gymId: gymIdSchema.optional(), actionReference: z.string().regex(/^[a-f0-9]{64}$/),
@@ -72,12 +71,17 @@ function sameExercise(copyRow: unknown, projected: Workout['exercises'][number])
   }
   return true;
 }
+export function sameCopyNotes(copyNotes: unknown, sourceNotes: unknown) {
+  if ((copyNotes ?? null) === (sourceNotes ?? null)) return true;
+  return typeof copyNotes === 'string' && typeof sourceNotes === 'string'
+    && copyNotes === sourceNotes.replace(/<[^>]*>/g, '');
+}
 function sameBlock(copyBlock: unknown, projected: Workout['blocks'][number]) {
   const block = z.object({ deleted: z.boolean(), notes: z.unknown().optional(), type: z.unknown().optional(),
     timecap: z.unknown().optional(), timecaptype: z.unknown().optional() }).safeParse(copyBlock);
   if (!block.success) return false;
   if (block.data.deleted) return projected.notes === null && Object.keys(projected.prescription).length === 0;
-  if ((block.data.notes ?? null) !== projected.notes) return false;
+  if (!sameCopyNotes(block.data.notes, projected.notes)) return false;
   return (['type', 'timecap', 'timecaptype'] as const).every(field =>
     JSON.stringify(block.data[field] ?? null) === JSON.stringify(projected.prescription[field] ?? null));
 }
@@ -130,6 +134,9 @@ export type PublicationPreview = {
   blockResults: PublicationQuery['blockResults']; actualLoads: Array<{ exerciseIndex: number; exerciseName: string;
     originalPrescription: Workout['exercises'][number]['prescription']; actualKilograms: string;
     sourceAlternative: 'single' | 'male' | 'female' | null; calculatedSuggestion: PublicationSuggestion }>;
+  exerciseSuggestions: Array<{ exerciseIndex: number; exerciseName: string;
+    originalPrescription: Workout['exercises'][number]['prescription']; alternatives: Array<{
+      sourceAlternative: 'single' | 'male' | 'female'; suggestion: PublicationSuggestion }> }>;
   comment: string | null; possibleDuplicate: null; notices: string[];
 };
 
@@ -143,50 +150,62 @@ const unavailableSuggestion = (reason: string, basis: PublicationSuggestion['bas
 
 export async function withHistoricalSuggestions(preview: PublicationPreview, read: (exerciseId: number) => Promise<HistoricalRM>): Promise<PublicationPreview> {
   const cache = new Map<number, HistoricalRM>();
-  const actualLoads = [];
-  for (const load of preview.actualLoads) {
-    const exercise = preview.prescription.exercises[load.exerciseIndex]!;
-    const split = exercise.prescription.valor2h != null || exercise.prescription.valor2m != null;
-    const label = load.sourceAlternative ?? (split ? null : 'single');
-    let calculatedSuggestion: PublicationSuggestion;
-    if (!label) calculatedSuggestion = unavailableSuggestion('source-alternative-not-selected');
-    else {
-      const initial = calculatePersonalLoad(exercise, undefined).alternatives.find(row => row.sourceLabel === label);
-      if (!initial || initial.reason !== 'personal-read-limit')
-        calculatedSuggestion = unavailableSuggestion(initial?.reason ?? 'source-alternative-unavailable');
+  const exerciseSuggestions: PublicationPreview['exerciseSuggestions'] = [];
+  for (const [exerciseIndex, exercise] of preview.prescription.exercises.entries()) {
+    if (exercise.prescription.loadUnit !== '%RM') continue;
+    const initial = calculatePersonalLoad(exercise, undefined).alternatives;
+    const alternatives: PublicationPreview['exerciseSuggestions'][number]['alternatives'] = [];
+    for (const item of initial) {
+      let suggestion: PublicationSuggestion;
+      if (item.reason !== 'personal-read-limit') suggestion = unavailableSuggestion(item.reason ?? 'unsupported-percentage');
       else {
         const id = exercise.sourceExerciseId!;
         if (!cache.has(id)) cache.set(id, cache.size >= 24
           ? { status: 'unavailable', reason: 'personal-read-limit', basis: null } : await read(id));
         const historical = cache.get(id)!;
         if (historical.status !== 'available' || !historical.basis || historical.basis.unit !== 'kg')
-          calculatedSuggestion = unavailableSuggestion(historical.reason ?? 'eligible-1rm-unavailable', historical.basis);
+          suggestion = unavailableSuggestion(historical.reason ?? 'eligible-1rm-unavailable', historical.basis);
         else {
           const rm = { status: 'available' as const, latest1RM: {
             value: historical.basis.value, unit: 'kg' as const, sourceDate: historical.basis.sourceDate,
           } };
           const alternative = calculatePersonalLoad(exercise, rm as Parameters<typeof calculatePersonalLoad>[1])
-            .alternatives.find(row => row.sourceLabel === label);
-          calculatedSuggestion = alternative?.calculatedLoad
+            .alternatives.find(row => row.sourceLabel === item.sourceLabel);
+          suggestion = alternative?.calculatedLoad
             ? { status: 'available', loadKilograms: alternative.calculatedLoad, basis: historical.basis,
               reason: null, coverage: 'limited-upstream-exercise-detail' }
             : unavailableSuggestion(alternative?.reason ?? 'unsupported-percentage', historical.basis);
         }
       }
+      alternatives.push({ sourceAlternative: item.sourceLabel, suggestion });
     }
-    actualLoads.push({ ...load, calculatedSuggestion });
+    exerciseSuggestions.push({ exerciseIndex, exerciseName: exercise.name,
+      originalPrescription: exercise.prescription, alternatives });
   }
-  return { ...preview, actualLoads, notices: preview.actualLoads.length ? [...preview.notices,
+  const actualLoads = preview.actualLoads.map(load => {
+    const exercise = preview.prescription.exercises[load.exerciseIndex]!;
+    const split = exercise.prescription.valor2h != null || exercise.prescription.valor2m != null;
+    const label = load.sourceAlternative ?? (split ? null : 'single');
+    const calculatedSuggestion = label ? exerciseSuggestions.find(row => row.exerciseIndex === load.exerciseIndex)
+      ?.alternatives.find(row => row.sourceAlternative === label)?.suggestion
+      ?? unavailableSuggestion('source-alternative-unavailable') : unavailableSuggestion('source-alternative-not-selected');
+    return { ...load, calculatedSuggestion };
+  });
+  return { ...preview, exerciseSuggestions, actualLoads, notices: exerciseSuggestions.length ? [...preview.notices,
     'Historical kilogram suggestions use only eligible own 1RM points dated on or before the activity date. Source history completeness and RM gym of origin are unverified; the actual load remains independently confirmed.']
     : preview.notices };
 }
 
-function supportedResult(block: Workout['blocks'][number], kind: PublicationQuery['blockResults'][number]['kind']) {
+export function blockResultField(block: Workout['blocks'][number], kind: PublicationQuery['blockResults'][number]['kind']): 'time' | 'res' | 'reps' | null {
   const type = Number(block.prescription.type);
   const textResultType = Number(block.prescription.timecap);
-  return (kind === 'time-seconds' && [1, 10].includes(type))
-    || (type === 11 && ((kind === 'kilograms' && textResultType === 3)
-      || (kind === 'pounds' && textResultType === 4) || (kind === 'repetitions' && textResultType === 5)));
+  if (kind === 'time-seconds' && ([1, 10].includes(type) || (type === 11 && textResultType === 1))) return 'time';
+  if (kind === 'rounds' && ([2, 10].includes(type) || (type === 11 && textResultType === 2))) return 'res';
+  if (kind === 'repetitions' && ([2, 10].includes(type) || (type === 11 && textResultType === 2))) return 'reps';
+  if (kind === 'repetitions' && (type === 1 || (type === 11 && [1, 5].includes(textResultType)))) return 'res';
+  if (kind === 'kilograms' && type === 11 && textResultType === 3) return 'res';
+  if (kind === 'pounds' && type === 11 && textResultType === 4) return 'res';
+  return null;
 }
 
 export function publicationPreview(workout: Workout, copy: CopySource, query: PublicationQuery,
@@ -201,11 +220,16 @@ export function publicationPreview(workout: Workout, copy: CopySource, query: Pu
   const blocks = variant?.blocks ?? workout.blocks;
   const exercises = variant?.exercises ?? workout.exercises;
   if (blocks.length !== copy.TIPOWODs.length) return null;
-  if (new Set(query.blockResults.map(result => result.blockIndex)).size !== query.blockResults.length
-    || new Set(query.actualLoads.map(load => load.exerciseIndex)).size !== query.actualLoads.length) return null;
+  if (new Set(query.actualLoads.map(load => load.exerciseIndex)).size !== query.actualLoads.length) return null;
+  const fields = new Set<string>();
   for (const result of query.blockResults) {
     const block = blocks[result.blockIndex];
-    if (!block || !supportedResult(block, result.kind) || !Number.isSafeInteger(result.value * (result.kind === 'time-seconds' ? 1 : 1000))) return null;
+    const field = block && blockResultField(block, result.kind);
+    if (!field || (field === 'time' && result.value === 0)
+      || !Number.isSafeInteger(result.value * (['time-seconds', 'rounds', 'repetitions'].includes(result.kind) ? 1 : 1000))) return null;
+    const target = `${result.blockIndex}:${field}`;
+    if (fields.has(target)) return null;
+    fields.add(target);
   }
   const actualLoads = [];
   for (const load of query.actualLoads) {
@@ -222,7 +246,7 @@ export function publicationPreview(workout: Workout, copy: CopySource, query: Pu
   return {
     gym, source: { sourceActivityId: query.sourceActivityId, className: workout.className, intendedDate: workout.date, titles: workout.titles },
     activityDate: date, variantLabel: variant?.label ?? null, audience, prescription: { blocks, exercises }, blockResults: query.blockResults,
-    actualLoads, comment: query.comment ?? null, possibleDuplicate: null,
+    actualLoads, exerciseSuggestions: [], comment: query.comment ?? null, possibleDuplicate: null,
     notices: ['This preview is read-only. The publication audience comes from current account preferences and will be checked again before a write.',
       'The source feed is bounded; a missing older publication cannot be treated as absent. Same-date activity alone does not establish a duplicate.'],
   };

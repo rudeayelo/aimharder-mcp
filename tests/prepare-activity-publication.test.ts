@@ -90,7 +90,8 @@ test('unsupported audience, source identity, date and score kind never issue a r
   upstream.use(http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ boxID: 201 }))));
   expect((await prepare(client)).isError).toBe(true);
   upstream.use(http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy())));
-  for (const extra of [{ activityDate: '2026-09-29' }, { blockResults: [{ blockIndex: 0, kind: 'kilograms', value: 10 }] }]) {
+  for (const extra of [{ activityDate: '2026-09-29' }, { blockResults: [{ blockIndex: 0, kind: 'kilograms', value: 10 }] },
+    { blockResults: [{ blockIndex: 0, kind: 'time-seconds', value: 0 }] }]) {
     const result = await prepare(client, extra);
     expect(result.structuredContent).toMatchObject({ status: 'unsupported' });
     expect(result.structuredContent).not.toHaveProperty('actionReference');
@@ -98,9 +99,12 @@ test('unsupported audience, source identity, date and score kind never issue a r
   expect(activityWrites()).toHaveLength(0);
 });
 
-test('rejects comment-only, arbitrary text results, a selected unverified gym and assumed zone', async () => {
+test('comment-only remains a read-only draft; arbitrary text, inaccessible gym and assumed zone fail', async () => {
   const client = await connect();
-  for (const extra of [{ blockResults: [], comment: 'Only prose' },
+  const draft = await prepare(client, { blockResults: [], comment: 'Only prose' });
+  expect(draft.structuredContent).toMatchObject({ status: 'draft' });
+  expect(draft.structuredContent).not.toHaveProperty('actionReference');
+  for (const extra of [
     { blockResults: [{ blockIndex: 0, kind: 'free-text', value: 'faster' }] }, { gymId: 'other-gym' }]) {
     expect((await prepare(client, extra)).isError).toBe(true);
   }
@@ -355,12 +359,12 @@ test('split source alternatives require selection for a suggestion and never inf
   expect((await prepare(client, input)).structuredContent).toMatchObject({ status: 'ready', actualLoads: [{
     calculatedSuggestion: { status: 'unavailable', reason: 'source-alternative-not-selected' },
   }] });
-  expect(requests.filter(r => r.path.startsWith('/api/exercise/'))).toHaveLength(0);
+  expect(requests.filter(r => r.path.startsWith('/api/exercise/'))).toHaveLength(1);
   expect((await prepare(client, { ...input, actualLoads: [{ ...input.actualLoads[0], sourceAlternative: 'female' }] })).structuredContent)
     .toMatchObject({ status: 'ready', actualLoads: [{ actualKilograms: '70', calculatedSuggestion: {
       status: 'available', loadKilograms: '150', basis: { sourceDate: '2026-09-24' },
     } }] });
-  expect(requests.filter(r => r.path.startsWith('/api/exercise/'))).toHaveLength(1);
+  expect(requests.filter(r => r.path.startsWith('/api/exercise/'))).toHaveLength(2);
   expect(activityWrites()).toHaveLength(0);
 });
 
@@ -427,4 +431,79 @@ test('a changed eligible RM basis invalidates the prepared action before any POS
   ], history: [{ date: rmDate(20), idAction: 10, desc: '125 kg' }] }));
   expect((await execute(client, prepared.actionReference)).structuredContent).toMatchObject({ status: 'stale' });
   expect(activityWrites()).toHaveLength(0);
+});
+
+test('a read-only draft offers the historical suggestion before choosing an actual load', async () => {
+  respondRm(ownRm());
+  const client = await connect();
+  const draft = await prepare(client, { activityDate: '2026-09-22', blockResults: [], actualLoads: [] });
+  expect(draft.structuredContent).toMatchObject({ status: 'draft', exerciseSuggestions: [{ exerciseIndex: 0,
+    alternatives: [{ sourceAlternative: 'single', suggestion: { status: 'available', loadKilograms: '96',
+      basis: { sourceDate: '2026-09-20', unit: 'kg' } } }],
+  }] });
+  expect(draft.structuredContent).not.toHaveProperty('actionReference');
+  const ready = await prepare(client, { activityDate: '2026-09-22', blockResults: [], actualLoads: [
+    { exerciseIndex: 0, actualKilograms: '95', confirmedActual: true },
+  ] });
+  expect(ready.structuredContent).toMatchObject({ status: 'ready', actualLoads: [{ actualKilograms: '95',
+    calculatedSuggestion: { loadKilograms: '96' },
+  }] });
+  expect(activityWrites()).toHaveLength(0);
+});
+
+test('rounds and leftover repetitions use distinct structured fields in one block', async () => {
+  const block = { ...sourceBlock, type: 11, timecap: 2 };
+  upstream.use(
+    http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ TIPOWODs: [block] }))),
+    http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ TIPOWODs: [block] }))),
+  );
+  const client = await connect();
+  const prepared = await prepare(client, { blockResults: [
+    { blockIndex: 0, kind: 'rounds', value: 5 }, { blockIndex: 0, kind: 'repetitions', value: 3 },
+  ] });
+  expect(prepared.structuredContent).toMatchObject({ status: 'ready' });
+  let sent: FormData | undefined;
+  upstream.use(
+    http.post('https://sample-gym.aimharder.es/api/activity', async ({ request }) => {
+      sent = await request.formData();
+      return HttpResponse.json({ errors: [], errorWODsID: [], errorWODsType: [], errorEjerID: [], id: '9001' });
+    }),
+    http.get('https://aimharder.es/api/activityCalendar', () => HttpResponse.json({ workouts: {
+      '2026-09-28': { rates: { ids: [9001] }, TIPOWODs: {} },
+    } })),
+    http.get('https://aimharder.es/api/activity/workout', () => HttpResponse.json({ userId: 42, boxId: 200,
+      ...detail({ TIPOWODs: [{ ...block, res: 5, reps: 3 }] }),
+    })),
+  );
+  const result = await execute(client, String((prepared.structuredContent as { actionReference: string }).actionReference));
+  expect(result.structuredContent).toMatchObject({ status: 'confirmed' });
+  expect(JSON.parse(String(sent!.get('TIPOWODs')))[0]).toMatchObject({ res: '5', reps: '3' });
+  expect(activityWrites()).toHaveLength(1);
+});
+
+test('same score with a different exercise cannot confirm the intended copied content', async () => {
+  const client = await connect();
+  const prepared = (await prepare(client)).structuredContent as { actionReference: string };
+  acceptedReadback({ detail: { userId: 42, boxId: 200, ...detail({
+    TIPOWODs: [{ ...sourceBlock, time: 275 }], ejerRate: [{ ...sourceExercise, ejerName: 'Different lift' }],
+  }) } });
+  expect((await execute(client, prepared.actionReference)).structuredContent).toMatchObject({
+    status: 'uncertain', observedEntry: 'conflicting',
+  });
+  expect(activityWrites()).toHaveLength(1);
+});
+
+test('Copy editor plain notes match source notes with only HTML tags removed', async () => {
+  const published = { ...sourceBlock, notes: '<p>Complete for time</p>' };
+  upstream.use(
+    http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ TIPOWODs: [published] }))),
+    http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ TIPOWODs: [sourceBlock] }))),
+  );
+  const client = await connect();
+  const prepared = await prepare(client);
+  expect(prepared.structuredContent).toMatchObject({ status: 'ready' });
+  acceptedReadback();
+  expect((await execute(client, String((prepared.structuredContent as { actionReference: string }).actionReference))).structuredContent)
+    .toMatchObject({ status: 'confirmed' });
+  expect(activityWrites()).toHaveLength(1);
 });

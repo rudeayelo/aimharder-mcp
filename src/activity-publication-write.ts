@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { AimHarderError } from './errors.js';
 import type { ActivityEntry } from './activity.js';
-import type { CopySource, PublicationPreview } from './activity-publication.js';
+import { blockResultField, sameCopyNotes, type CopySource, type PublicationPreview } from './activity-publication.js';
 
 const scalar = z.union([z.string().max(100_000), z.number().finite(), z.boolean(), z.null()]);
 const sourceExercise = z.object({
@@ -85,11 +85,13 @@ export function buildActivityForm(copy: CopySource, preview: PublicationPreview)
     const base = blocks[result.blockIndex];
     if (!base) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
     const target = effectiveBlock(base, preview.variantLabel);
-    if (result.kind === 'time-seconds') {
+    const field = blockResultField(preview.prescription.blocks[result.blockIndex]!, result.kind);
+    if (!field) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+    if (field === 'time') {
       const minutes = Math.floor(result.value / 60);
       const seconds = result.value % 60;
       target.time = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    } else target.res = String(result.value);
+    } else target[field] = String(result.value);
   }
   // For a selected label, preserve all other scaledver branches and mark only
   // that one on blocks that offer it. Shared blocks stay at their base values.
@@ -139,11 +141,29 @@ export function matchesPublication(entry: ActivityEntry, preview: PublicationPre
   if (blocks.length !== preview.prescription.blocks.length || exercises.length !== preview.prescription.exercises.length) return false;
   if (preview.variantLabel && blocks.some(block => block.scaledops?.includes(preview.variantLabel!)
     && block.selectedscaling !== block.scaledops.indexOf(preview.variantLabel!))) return false;
+  const rawField = (row: ExercisePayload, field: string) => row[field as keyof ExercisePayload] ?? null;
+  if (exercises.some((observed, index) => {
+    const expected = preview.prescription.exercises[index]!;
+    if (observed.ejerName !== expected.name || (observed.ejerId ?? null) !== expected.sourceExerciseId
+      || observed.tipoWOD !== expected.blockIndex) return true;
+    const changedLoad = preview.actualLoads.some(load => load.exerciseIndex === index);
+    return ['formaReg', 'tipoud', 'tipoud2', 'valor1', 'valor2', 'valor2h', 'valor2m', 'round', 'roundrepeat']
+      .filter(field => !changedLoad || (field !== 'tipoud' && field !== 'valor2'))
+      .some(field => JSON.stringify(rawField(observed, field)) !== JSON.stringify(expected.prescription[field] ?? null));
+  })) return false;
+  if (blocks.some((base, index) => {
+    const observed = effectiveBlock(base, preview.variantLabel);
+    const expected = preview.prescription.blocks[index]!;
+    return !sameCopyNotes(observed.notes, expected.notes) || ['type', 'timecap', 'timecaptype'].some(field =>
+      JSON.stringify(observed[field as keyof BlockPayload] ?? null) !== JSON.stringify(expected.prescription[field] ?? null));
+  })) return false;
   return preview.blockResults.every(result => {
     const base = blocks[result.blockIndex];
     const observed = base && effectiveBlock(base, preview.variantLabel);
     if (!observed) return false;
-    const value = result.kind === 'time-seconds' ? observed.time : observed.res;
+    const field = blockResultField(preview.prescription.blocks[result.blockIndex]!, result.kind);
+    if (!field) return false;
+    const value = observed[field];
     return value !== null && value !== undefined && value !== '' && Number(value) === result.value;
   }) && preview.actualLoads.every(load => {
     const observed = exercises[load.exerciseIndex];

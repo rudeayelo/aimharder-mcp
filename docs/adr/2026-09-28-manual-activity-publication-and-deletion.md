@@ -24,7 +24,7 @@ Do not expose a per-block `rx`/`rxstr` input in the first delivery until its wri
 
 An older gym publication that cannot be found and verified in the supported source view is unavailable as a Copy source; do not accept an arbitrary source ID. The original prescription may be shown alongside a published own result on later reads only when that gym source can be reverified. If it cannot, report provenance unavailable rather than reconstructing it from a changed own entry. The first phase adds no persistent local personal-history store. Deletion creates no automatic local backup or undo path; its preview must make possible irreversible loss explicit.
 
-The feature must be limited to the verified account and gym. The source capture does not establish a safe write contract or deletion contract; endpoint meanings, source identity, response handling, and read-back verification require further research and design before implementation. The official frontend sends `DELETE /api/activity/<id>`, but its response and later server state have not been verified. No live publication or deletion is authorized by this scope decision alone.
+The feature must be limited to the verified account and gym. The original source capture did not establish a safe write contract; authenticated Copy-editor inspection and fixture tests subsequently informed the checkout's publication path. Live response, applied audience, and persistence remain unverified. The original capture also did not establish a deletion contract: the official frontend sends `DELETE /api/activity/<id>`, but its response and later server state have not been verified. No live publication or deletion is authorized by this scope decision alone.
 
 ## Consequences
 

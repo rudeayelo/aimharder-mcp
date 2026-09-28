@@ -548,6 +548,9 @@ export class AimHarderClient {
       try { formSnapshot = JSON.stringify([...buildActivityForm(source.copy, preview)]); }
       catch { return { status: 'unsupported' as const, gym,
         notices: ['The Copy source has unsupported transport fields. No activity write was prepared.'] }; }
+      if (!query.blockResults.length && !query.actualLoads.length)
+        return { status: 'draft' as const, ...preview,
+          notices: [...preview.notices, 'Choose a supported block result or explicitly confirm an actual kilogram load before preparing a write. No action reference was issued.'] };
       return { status: 'ready' as const, ...preview, ...this.#publicationPreparations.issue(this.#accountId!, boxId, preview, query, formSnapshot) };
     });
   }
