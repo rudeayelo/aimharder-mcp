@@ -1,6 +1,6 @@
 # Record activity results: discovery
 
-Status: feature behavior confirmed on 2026-09-28 and published as [issue #42](https://github.com/rudeayelo/aimharder-mcp/issues/42). The source checkout implements publication slices #44–#47 and deletion preparation/execution #48–#49. Issue #50 adds one complete anonymized MCP client journey across both actions and a fresh read-only source/calendar/detail comparison of a same-date own candidate. The candidate cannot be linked to the account holder's supplied response ID, and effective audience remains unverified. No live activity write or deletion is authorized or validated; final parent-feature acceptance remains pending.
+Status: feature behavior confirmed on 2026-09-28 and specified in [issue #42](https://github.com/rudeayelo/aimharder-mcp/issues/42). The publication slices #44–#47, deletion slices #48–#49, and validation slice #50 are implemented and included in npm version `0.4.0`. Issue #50 exercised one complete anonymized MCP client journey and compared a same-date own candidate with read-only source/calendar/detail views. The candidate cannot be linked to the account holder's supplied response ID, and effective audience remains unverified. No live activity write or deletion through this server has been authorized or validated; final parent-feature acceptance remains pending.
 
 ## Confirmed scope and decisions
 
