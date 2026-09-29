@@ -137,6 +137,12 @@ The account holder later supplied a second `POST /api/activity` capture and repo
 
 A read-only inspection of the official gym frontend found two deletion handlers for timeline and calendar items. Each asks for confirmation, sends one `DELETE /api/activity/<id>`, and removes the visible item in its AJAX success callback. The frontend does not inspect a structured response or perform a fresh server read in that callback. No authenticated DELETE was sent. Owner-only authorization, response structure, error behavior, permanent-versus-logical deletion, and visibility in a later account calendar/detail read remain unverified. An own-entry target could be grounded in the existing account calendar and verified detail identity, but that is a proposed server design, not an observed deletion contract.
 
+### Deletion preparation contract (issue #48, 2026-09-29)
+
+The source checkout implements `prepare_activity_deletion` as a read-only step. It reads the account calendar for one supplied gym-local date; a supplied source ID is only accepted if present in that calendar. The selected detail is checked against the authenticated account ID, selected membership `boid`, and exact calendar date before a short-lived reference is issued. The preview includes the verified content and states possible irreversible loss, no automatic backup/undo, and unknown effects on RM history/progression. Entries containing RM marks remain eligible. Calendar candidate ambiguity, missing entries and rejected details do not issue a reference; rejected content is not returned. A failed or malformed/partial-shaped calendar response returns `incomplete` without probing detail or issuing a reference; authentication and access failures remain safe errors. Fixture tests exercise this path through MCP and MSW, including no outbound DELETE. These are implementation/test facts, not independently observed upstream deletion semantics.
+
+The 2026-09-28 frontend observation above remains the only upstream deletion evidence. No DELETE request, deletion response, owner authorization, permanent-deletion behavior, or post-delete account read-back has been validated. A prepared reference proves only this checkout's bounded target verification and expires after two minutes; it is not account-holder confirmation or permission to delete.
+
 ## Exercise value and load units (2026-09-24)
 
 Authenticated read-only checks of 23/24 September WOD, GAP and Mobility details and the official renderer established these observed rules:

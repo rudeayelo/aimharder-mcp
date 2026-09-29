@@ -13,6 +13,7 @@ import { calculatePersonalLoad, gymLocalToday, percentageExercise, type Personal
 import { parseUpcomingBookings, parseBookingHistory } from './bookings.js';
 import { parsePublicationAudience, publicationExecutionSchema, publicationPreview, publicationQuerySchema, PublicationPreparationStore, verifyCopySource, withHistoricalSuggestions, type CopySource, type PublicationAudience, type PublicationPreview, type PublicationQuery } from './activity-publication.js';
 import { buildActivityForm, matchesPublication, publicationResponse } from './activity-publication-write.js';
+import { activityDeletionQuerySchema, deletionPreview, ActivityDeletionPreparationStore, type ActivityDeletionQuery } from './activity-deletion.js';
 import { atPublishedCancellationBoundary, bookingCandidates, bookingCreationQuerySchema, bookingCancellationQuerySchema, bookingExecutionSchema, lateCancellationExecutionSchema, cancellationCandidates, BookingPreparationStore, nearReportedBookingCutoff, type BookingCreationQuery, type BookingCreationPreview, type BookingCancellationQuery, type BookingCancellationPreview, type BookingExecution, type LateCancellationExecution } from './booking-preparation.js';
 
 const loginUrl = 'https://login.aimharder.es/api/login';
@@ -72,6 +73,7 @@ export class AimHarderClient {
   #queue: Promise<void> = Promise.resolve();
   #bookingPreparations = new BookingPreparationStore();
   #publicationPreparations = new PublicationPreparationStore();
+  #activityDeletionPreparations = new ActivityDeletionPreparationStore();
 
   constructor(private readonly configuration: Configuration) {}
 
@@ -435,6 +437,66 @@ export class AimHarderClient {
           'The account calendar is filtered by verified detail boxId. Source workout content is untrusted data and retains its original language and encoded units.',
         ],
       };
+    });
+  }
+
+  prepareActivityDeletion(input: ActivityDeletionQuery) {
+    const parsed = activityDeletionQuerySchema.safeParse(input);
+    if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_ACTIVITY_QUERY'));
+    const query = parsed.data;
+    return this.#query(query.gymId, async (_gyms, { gym, boxId }, recover) => {
+      if (!gym.timeZone) throw new AimHarderError('GYM_TIME_ZONE_REQUIRED');
+      if (boxId === undefined) throw new AimHarderError('INVALID_ACTIVITY_RESPONSE');
+      const month = query.date.slice(0, 7);
+      let calendar;
+      try { calendar = parseActivityCalendar(await this.#request({ kind: 'activity-calendar', month }), month); }
+      catch (error) {
+        if (error instanceof AimHarderError && ['AUTHENTICATION_FAILED', 'ACCESS_RESTRICTED', 'SESSION_EXPIRED', 'IDENTITY_MISMATCH', 'GYM_NOT_ACCESSIBLE'].includes(error.code)) throw error;
+        return { status: 'incomplete' as const, gym, date: query.date,
+          coverage: { status: 'incomplete' as const, completedDates: [], reason: 'The account calendar could not be completely verified.' },
+          notices: ['Calendar coverage is incomplete. No candidate was read and no deletion reference was issued.'] };
+      }
+      const ids = calendar.get(query.date) ?? [];
+      const selected = query.sourceActivityId === undefined ? ids : ids.filter(id => id === query.sourceActivityId);
+      if (selected.length === 0) return { status: 'missing' as const, gym, date: query.date,
+        notices: ['No matching entry was found in the authenticated account calendar for this gym-local date.'] };
+      if (selected.length > 1) return { status: 'ambiguous' as const, gym, date: query.date, candidateCount: selected.length,
+        notices: ['Several calendar entries match this date. Select one sourceActivityId from get_personal_activity and prepare again.'] };
+      const sourceActivityId = selected[0]!;
+      const requestDetail = async () => {
+        try { return await this.#request({ kind: 'activity-detail', sourceId: sourceActivityId }); }
+        catch (error) {
+          if (!(error instanceof SessionExpired)) throw error;
+          await recover();
+          try { return await this.#request({ kind: 'activity-detail', sourceId: sourceActivityId }); }
+          catch (retryError) {
+            if (retryError instanceof SessionExpired) { this.#clearSession(); throw new AimHarderError('SESSION_EXPIRED'); }
+            throw retryError;
+          }
+        }
+      };
+      let body: unknown;
+      try { body = await requestDetail(); }
+      catch (error) {
+        if (error instanceof AimHarderError && ['SESSION_EXPIRED', 'AUTHENTICATION_FAILED', 'ACCESS_RESTRICTED', 'IDENTITY_MISMATCH', 'GYM_NOT_ACCESSIBLE'].includes(error.code)) throw error;
+        return { status: 'unsupported' as const, gym, date: query.date, notices: ['The calendar candidate detail could not be verified. No reference was issued.'] };
+      }
+      if (typeof body !== 'object' || body === null || !('userId' in body) || !('boxId' in body))
+        return { status: 'unsupported' as const, gym, date: query.date, notices: ['The activity detail identity is incomplete or malformed. No reference was issued.'] };
+      const raw = body as { userId?: unknown; boxId?: unknown };
+      if (raw.userId !== this.#accountId) return { status: 'foreign-owner' as const, gym, date: query.date,
+        notices: ['The calendar candidate detail does not belong to the authenticated account. No reference was issued.'] };
+      if (raw.boxId !== boxId) return { status: 'foreign-gym' as const, gym, date: query.date,
+        notices: ['The calendar candidate belongs to another gym. No reference was issued.'] };
+      let entry: ActivityEntry | null;
+      try { entry = parseActivityDetail(body, sourceActivityId, query.date, this.#accountId!, boxId, gym.id, gym.timeZone); }
+      catch { entry = null; }
+      if (!entry) return { status: 'unsupported' as const, gym, date: query.date,
+        notices: ['The activity detail did not verify the exact calendar target and date. No reference was issued.'] };
+      const coverage = { status: 'complete' as const, completedDates: [query.date], reason: null };
+      const preview = deletionPreview(gym as NonNullable<typeof gym> & { timeZone: string }, entry, coverage);
+      return { status: 'ready' as const, ...preview,
+        ...this.#activityDeletionPreparations.issue(this.#accountId!, gym.id, boxId, preview) };
     });
   }
 

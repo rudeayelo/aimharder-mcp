@@ -138,6 +138,14 @@ The shared exercise projection also includes `sourceExerciseId` on personal acti
 
 `completedDates` lists dates whose calendar and details were retrieved. Partial results cannot support exact counts; a first-partition failure errors, while later failures/read limits retain entries marked incomplete. Complete coverage means available records for requested dates, not attendance or immutable lifetime history.
 
+## `prepare_activity_deletion` (source checkout)
+
+Input: a gym-local `date` and optionally a `sourceActivityId` from `get_personal_activity`. The ID must also occur in the authenticated account calendar for that date; an arbitrary ID alone is never fetched as a deletion target. With no ID, zero calendar candidates return `missing`, one candidate is verified, and several candidates return `ambiguous` with a count so the account holder can select an ID from the activity query. An invalid, partial-shaped or failed calendar read returns `incomplete` with no detail read or reference; authentication and access failures remain safe errors.
+
+A `ready` response contains the exact verified own entry's date and content, selected gym, RM-mark presence, one-day calendar coverage, and a two-minute single-use reference bound to the authenticated account, membership and exact entry. No reference is issued for incomplete identity, foreign owner/gym, malformed detail, or a detail date that differs from the calendar date. Content from a rejected candidate is not returned. The preview warns that loss may be irreversible, no automatic backup or undo is available, and effects on RM history/progression are unknown. RM marks do not make an otherwise verified own entry ineligible.
+
+Preparation is read-only and never sends `DELETE`. The reference is not confirmation and this tool does not execute deletion. The upstream frontend route and later deletion/read-back behavior remain unverified; see the [API research](api-research.md#candidate-deletion-route-official-frontend-inspection-2026-09-28-and-preparation-implementation-2026-09-29).
+
 ## Questions that combine tools
 
 - **“What is tomorrow's WOD, and when am I booked?”** Resolve “tomorrow” in the selected gym's reported zone, then query the date's classes, published workout and upcoming bookings. Keep workout publications and booking times separate; a matching booking can be confirmed, but absence cannot be established from the upcoming view's unknown date horizon. This is a client composition, not a seventh server tool.

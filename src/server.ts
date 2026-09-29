@@ -13,6 +13,7 @@ import { enrichmentSchema } from './calculated-loads.js';
 import { safeError } from './errors.js';
 import { bookingCreationQuerySchema, bookingCancellationQuerySchema, bookingExecutionSchema, lateCancellationExecutionSchema } from './booking-preparation.js';
 import { publicationExecutionSchema, publicationQuerySchema } from './activity-publication.js';
+import { activityDeletionQuerySchema } from './activity-deletion.js';
 
 const gymSchema = z.object({
   id: gymIdSchema, name: z.string(), timeZone: z.string().nullable(), timeZoneStatus: z.enum(['assumed', 'user-confirmed']),
@@ -264,6 +265,19 @@ export function createServer(environment: Record<string, string | undefined>) {
   }, async (query) => {
     try {
       const result = await client.getPersonalActivity(query);
+      return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
+    } catch (error) {
+      return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };
+    }
+  });
+  server.registerTool('prepare_activity_deletion', {
+    description: 'Prepare a read-only preview for deleting one exact own activity entry. Supply a gym-local date and, when needed, a sourceActivityId obtained from get_personal_activity. The ID must occur in the authenticated account calendar and its detail must verify the account owner, selected gym and date. Shows exact content, incomplete coverage, possible irreversible loss, no automatic backup or undo, and unknown RM-history effects. An entry with RM marks remains eligible. This tool never sends DELETE; its short-lived reference is not confirmation.',
+    inputSchema: activityDeletionQuerySchema,
+    outputSchema: z.object({ status: z.enum(['ready', 'missing', 'ambiguous', 'incomplete', 'foreign-owner', 'foreign-gym', 'unsupported']) }).passthrough(),
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+  }, async (query) => {
+    try {
+      const result = await client.prepareActivityDeletion(query);
       return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
     } catch (error) {
       return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };

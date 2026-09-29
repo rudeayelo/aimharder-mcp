@@ -1,6 +1,6 @@
 # Record activity results: discovery
 
-Status: feature behavior confirmed on 2026-09-28 and published as [issue #42](https://github.com/rudeayelo/aimharder-mcp/issues/42). The source checkout implements the publication slices #44–#47 with anonymized fixture tests; no live activity write is authorized or validated. Deletion, broader upstream contract validation, and final parent-feature acceptance remain pending.
+Status: feature behavior confirmed on 2026-09-28 and published as [issue #42](https://github.com/rudeayelo/aimharder-mcp/issues/42). The source checkout implements publication slices #44–#47 and read-only deletion preparation #48 with anonymized fixture tests; no live activity write or deletion is authorized or validated. Deletion execution, broader upstream contract validation, and final parent-feature acceptance remain pending.
 
 ## Confirmed scope and decisions
 
