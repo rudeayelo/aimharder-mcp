@@ -6,11 +6,14 @@ import { gymIdSchema, type Configuration } from './config.js';
 import { AimHarderError } from './errors.js';
 import { calendarDates, classQuerySchema, parseClassDay, type ClassQuery, type ClassSession } from './classes.js';
 
-import { parseFeed, parseWorkout, workoutQuerySchema, type WorkoutQuery } from './workouts.js';
-import { exercise1RMQuerySchema, parseExercise1RM, parseExerciseProgression, type Exercise1RMQuery } from './exercise-records.js';
+import { parseFeed, parseWorkout, workoutQuerySchema, workoutSchema, type WorkoutQuery } from './workouts.js';
+import { exercise1RMQuerySchema, parseExercise1RM, parseExerciseProgression, parseHistorical1RM, type Exercise1RMQuery } from './exercise-records.js';
 import { exerciseSearchQuerySchema, parseExerciseSearch, type ExerciseSearchQuery } from './exercise-search.js';
-import { calculatePersonalLoad, gymLocalToday, percentageExercise, type PersonalRM } from './calculated-loads.js';
+import { calculatePersonalLoad, gymLocalToday, percentageExercise, type PersonalRM, type Workout } from './calculated-loads.js';
 import { parseUpcomingBookings, parseBookingHistory } from './bookings.js';
+import { parsePublicationAudience, publicationExecutionSchema, publicationPreview, publicationQuerySchema, PublicationPreparationStore, verifyCopySource, withHistoricalSuggestions, type CopySource, type PublicationAudience, type PublicationPreview, type PublicationQuery } from './activity-publication.js';
+import { buildActivityForm, matchesPublication, publicationResponse } from './activity-publication-write.js';
+import { activityDeletionQuerySchema, activityDeletionExecutionSchema, deletionPreview, sameDeletionTarget, ActivityDeletionPreparationStore, type ActivityDeletionQuery, type ActivityDeletionExecution } from './activity-deletion.js';
 import { atPublishedCancellationBoundary, bookingCandidates, bookingCreationQuerySchema, bookingCancellationQuerySchema, bookingExecutionSchema, lateCancellationExecutionSchema, cancellationCandidates, BookingPreparationStore, nearReportedBookingCutoff, type BookingCreationQuery, type BookingCreationPreview, type BookingCancellationQuery, type BookingCancellationPreview, type BookingExecution, type LateCancellationExecution } from './booking-preparation.js';
 
 const loginUrl = 'https://login.aimharder.es/api/login';
@@ -69,6 +72,8 @@ export class AimHarderClient {
   #authenticationFailure: AimHarderError | undefined;
   #queue: Promise<void> = Promise.resolve();
   #bookingPreparations = new BookingPreparationStore();
+  #publicationPreparations = new PublicationPreparationStore();
+  #activityDeletionPreparations = new ActivityDeletionPreparationStore();
 
   constructor(private readonly configuration: Configuration) {}
 
@@ -435,6 +440,159 @@ export class AimHarderClient {
     });
   }
 
+  prepareActivityDeletion(input: ActivityDeletionQuery) {
+    const parsed = activityDeletionQuerySchema.safeParse(input);
+    if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_ACTIVITY_QUERY'));
+    const query = parsed.data;
+    return this.#query(query.gymId, async (_gyms, { gym, boxId }, recover) => {
+      if (!gym.timeZone) throw new AimHarderError('GYM_TIME_ZONE_REQUIRED');
+      if (boxId === undefined) throw new AimHarderError('INVALID_ACTIVITY_RESPONSE');
+      const month = query.date.slice(0, 7);
+      let calendar;
+      try { calendar = parseActivityCalendar(await this.#request({ kind: 'activity-calendar', month }), month); }
+      catch (error) {
+        if (error instanceof AimHarderError && ['AUTHENTICATION_FAILED', 'ACCESS_RESTRICTED', 'SESSION_EXPIRED', 'IDENTITY_MISMATCH', 'GYM_NOT_ACCESSIBLE'].includes(error.code)) throw error;
+        return { status: 'incomplete' as const, gym, date: query.date,
+          coverage: { status: 'incomplete' as const, completedDates: [], reason: 'The account calendar could not be completely verified.' },
+          notices: ['Calendar coverage is incomplete. No candidate was read and no deletion reference was issued.'] };
+      }
+      const ids = calendar.get(query.date) ?? [];
+      const selected = query.sourceActivityId === undefined ? ids : ids.filter(id => id === query.sourceActivityId);
+      if (selected.length === 0) return { status: 'missing' as const, gym, date: query.date,
+        notices: ['No matching entry was found in the authenticated account calendar for this gym-local date.'] };
+      if (selected.length > 1) return { status: 'ambiguous' as const, gym, date: query.date, candidateCount: selected.length,
+        notices: ['Several calendar entries match this date. Select one sourceActivityId from get_personal_activity and prepare again.'] };
+      const sourceActivityId = selected[0]!;
+      const requestDetail = async () => {
+        try { return await this.#request({ kind: 'activity-detail', sourceId: sourceActivityId }); }
+        catch (error) {
+          if (!(error instanceof SessionExpired)) throw error;
+          await recover();
+          try { return await this.#request({ kind: 'activity-detail', sourceId: sourceActivityId }); }
+          catch (retryError) {
+            if (retryError instanceof SessionExpired) { this.#clearSession(); throw new AimHarderError('SESSION_EXPIRED'); }
+            throw retryError;
+          }
+        }
+      };
+      let body: unknown;
+      try { body = await requestDetail(); }
+      catch (error) {
+        if (error instanceof AimHarderError && ['SESSION_EXPIRED', 'AUTHENTICATION_FAILED', 'ACCESS_RESTRICTED', 'IDENTITY_MISMATCH', 'GYM_NOT_ACCESSIBLE'].includes(error.code)) throw error;
+        return { status: 'unsupported' as const, gym, date: query.date, notices: ['The calendar candidate detail could not be verified. No reference was issued.'] };
+      }
+      if (typeof body !== 'object' || body === null || !('userId' in body) || !('boxId' in body))
+        return { status: 'unsupported' as const, gym, date: query.date, notices: ['The activity detail identity is incomplete or malformed. No reference was issued.'] };
+      const raw = body as { userId?: unknown; boxId?: unknown };
+      if (raw.userId !== this.#accountId) return { status: 'foreign-owner' as const, gym, date: query.date,
+        notices: ['The calendar candidate detail does not belong to the authenticated account. No reference was issued.'] };
+      if (raw.boxId !== boxId) return { status: 'foreign-gym' as const, gym, date: query.date,
+        notices: ['The calendar candidate belongs to another gym. No reference was issued.'] };
+      let entry: ActivityEntry | null;
+      try { entry = parseActivityDetail(body, sourceActivityId, query.date, this.#accountId!, boxId, gym.id, gym.timeZone); }
+      catch { entry = null; }
+      if (!entry) return { status: 'unsupported' as const, gym, date: query.date,
+        notices: ['The activity detail did not verify the exact calendar target and date. No reference was issued.'] };
+      const coverage = { status: 'complete' as const, completedDates: [query.date], reason: null };
+      const preview = deletionPreview(gym as NonNullable<typeof gym> & { timeZone: string }, entry, coverage);
+      return { status: 'ready' as const, ...preview,
+        ...this.#activityDeletionPreparations.issue(this.#accountId!, gym.id, boxId, preview) };
+    });
+  }
+
+  executeActivityDeletion(input: ActivityDeletionExecution) {
+    const parsed = activityDeletionExecutionSchema.safeParse(input);
+    if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_ACTIVITY_DELETION_EXECUTION_QUERY'));
+    const query = parsed.data;
+    return this.#query(query.gymId, async (_gyms, { gym, boxId }, recover) => {
+      const stored = this.#activityDeletionPreparations.take(query.actionReference, this.#accountId!, gym.id,
+        boxId ?? -1, query.sourceActivityId);
+      if (!stored) throw new AimHarderError('ACTIVITY_REFERENCE_INVALID');
+      const preview = stored.preview;
+      const stale = (notice: string) => ({ status: 'stale' as const, preview,
+        responseStatus: 'not-sent' as const, observedState: 'unreadable' as const, notices: [notice] });
+      if (gym.timeZoneStatus !== 'user-confirmed' || gym.timeZone !== preview.gym.timeZone
+        || gym.name !== preview.gym.name || boxId !== stored.boxId)
+        return stale('The account, gym, membership, or confirmed time zone changed. No DELETE was sent.');
+      const month = preview.target.date.slice(0, 7);
+      try {
+        const calendar = parseActivityCalendar(await this.#request({ kind: 'activity-calendar', month }), month);
+        if (!calendar.get(preview.target.date)?.includes(query.sourceActivityId))
+          return stale('The exact target is no longer in the account calendar. No DELETE was sent.');
+        const detail = await this.#request({ kind: 'activity-detail', sourceId: query.sourceActivityId });
+        const entry = parseActivityDetail(detail, query.sourceActivityId, preview.target.date, this.#accountId!,
+          boxId!, gym.id, gym.timeZone!);
+        const fresh = entry && deletionPreview(gym as typeof preview.gym, entry, preview.coverage);
+        if (!fresh || !sameDeletionTarget(fresh, preview))
+          return stale('The exact own entry changed after preparation. No DELETE was sent.');
+      } catch {
+        return stale('The account calendar or exact own entry could not be reverified. No DELETE was sent.');
+      }
+
+      let responseStatus: 'http-ok' | 'uncertain' = 'uncertain';
+      try {
+        const response = await this.#request({ kind: 'activity-delete', gymId: gym.id, sourceId: query.sourceActivityId });
+        if (z.record(z.string(), z.unknown()).safeParse(response).success) responseStatus = 'http-ok';
+      } catch { /* A DELETE may have reached AimHarder. Never retry it. */ }
+
+      let observedState: 'absent' | 'still-visible' | 'incomplete' | 'conflicting-identity' = 'incomplete';
+      try {
+        const read = async (operation: { kind: 'activity-calendar'; month: string } | { kind: 'activity-detail'; sourceId: number }) => {
+          try { return await this.#request(operation); }
+          catch (error) {
+            if (!(error instanceof SessionExpired)) throw error;
+            await recover();
+            return this.#request(operation);
+          }
+        };
+        const calendar = parseActivityCalendar(await read({ kind: 'activity-calendar', month }), month);
+        if ([...calendar.entries()].some(([date, ids]) => date !== preview.target.date && ids.includes(query.sourceActivityId)))
+          observedState = 'conflicting-identity';
+        else if (!calendar.get(preview.target.date)?.includes(query.sourceActivityId)) observedState = 'absent';
+        else {
+          const detail = await read({ kind: 'activity-detail', sourceId: query.sourceActivityId });
+          const identity = z.object({ userId: accountIdSchema, boxId: accountIdSchema }).safeParse(detail);
+          if (identity.success && (identity.data.userId !== this.#accountId || identity.data.boxId !== boxId))
+            observedState = 'conflicting-identity';
+          else {
+            try {
+              const entry = parseActivityDetail(detail, query.sourceActivityId, preview.target.date,
+                this.#accountId!, boxId!, gym.id, gym.timeZone!);
+              observedState = entry ? 'still-visible' : 'conflicting-identity';
+            } catch {
+              let changedDate = false;
+              if (identity.success) {
+                try {
+                  const workout = parseWorkout(detail, { id: query.sourceActivityId, wodClass: 'personal-activity' },
+                    gym.id, gym.timeZone!);
+                  changedDate = workout !== null && workout.date !== preview.target.date;
+                } catch { /* Malformed detail is incomplete, not a verified identity conflict. */ }
+              }
+              observedState = changedDate ? 'conflicting-identity' : 'incomplete';
+            }
+          }
+        }
+      } catch { observedState = 'incomplete'; }
+      const status = responseStatus === 'http-ok' && observedState === 'absent' ? 'observed-absent' as const
+        : observedState === 'still-visible' ? 'still-visible' as const
+          : observedState === 'conflicting-identity' ? 'conflicting-identity' as const
+            : observedState === 'incomplete' ? 'incomplete' as const : 'uncertain' as const;
+      const readbackCoverage = observedState === 'absent' || observedState === 'still-visible'
+        ? { status: 'complete' as const, completedDates: [preview.target.date], reason: null }
+        : { status: 'incomplete' as const, completedDates: [], reason: observedState === 'conflicting-identity'
+          ? 'The target identity or date conflicted with the prepared own entry.' : 'The account calendar or target detail could not be completely verified.' };
+      return { status, preview, responseStatus, observedState, readbackCoverage, notices: [
+        'Exactly one DELETE was attempted at the verified gym endpoint. It was not retried.',
+        observedState === 'absent' ? 'The entry was absent from a fresh account calendar view. This does not prove permanent deletion or any effect on RM history.'
+          : observedState === 'still-visible' ? 'The same own entry remains visible in a fresh account calendar and detail view.'
+            : observedState === 'conflicting-identity' ? 'The fresh view has conflicting target identity or date; the deletion outcome is uncertain.'
+              : 'Fresh account coverage is incomplete; the deletion outcome is uncertain.',
+        responseStatus === 'uncertain' ? 'The DELETE transport or response was uncertain. A new attempt requires a new preview and confirmation.'
+          : 'The HTTP response was readable, but its deletion semantics have not been verified.',
+      ] };
+    });
+  }
+
   getPublishedWorkouts(input: WorkoutQuery) {
     const parsed = workoutQuerySchema.safeParse(input);
     if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_WORKOUT_QUERY'));
@@ -523,6 +681,123 @@ export class AimHarderClient {
           'For today and future gym-local dates, eligible %RM values use the latest dated own-account 1RM of the exact source exercise. This is a product calculation, not a verified AimHarder rule. Original prescriptions remain unchanged; no unit conversion or plate rounding is applied. Record gym of origin is unverified.',
         ],
       };
+    });
+  }
+
+  prepareActivityPublication(input: PublicationQuery) {
+    const parsed = publicationQuerySchema.safeParse(input);
+    if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_ACTIVITY_PUBLICATION_QUERY'));
+    const query = parsed.data;
+    return this.#query(query.gymId, async (_gyms, { gym, boxId }) => {
+      if (gym.timeZoneStatus !== 'user-confirmed' || !gym.timeZone) throw new AimHarderError('CONFIRMED_GYM_TIME_ZONE_REQUIRED');
+      if (boxId === undefined) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+      const source = await this.#readPublicationSource(gym, boxId, query.sourceActivityId);
+      if (!source) return { status: 'missing' as const, gym, sourceActivityId: query.sourceActivityId,
+        notices: ['The source was not in the selected gym’s current bounded publication view. An older unavailable source cannot be prepared.'] };
+      const basePreview = publicationPreview(source.workout, source.copy, query,
+        { ...gym, timeZone: gym.timeZone, timeZoneStatus: 'user-confirmed' }, source.audience);
+      if (!basePreview) return { status: 'unsupported' as const, gym,
+        notices: ['The date, variant, score kind, unit, or load target is unsupported. No activity write was prepared.'] };
+      const preview = await this.#withPublicationSuggestions(basePreview, gym.id);
+      let formSnapshot: string;
+      try { formSnapshot = JSON.stringify([...buildActivityForm(source.copy, preview)]); }
+      catch { return { status: 'unsupported' as const, gym,
+        notices: ['The Copy source has unsupported transport fields. No activity write was prepared.'] }; }
+      if (!query.blockResults.length && !query.actualLoads.length)
+        return { status: 'draft' as const, ...preview,
+          notices: [...preview.notices, 'Choose a supported block result or explicitly confirm an actual kilogram load before preparing a write. No action reference was issued.'] };
+      return { status: 'ready' as const, ...preview, ...this.#publicationPreparations.issue(this.#accountId!, boxId, preview, query, formSnapshot) };
+    });
+  }
+
+  async #readPublicationSource(gym: Gym, boxId: number, sourceId: number) {
+    const audience = parsePublicationAudience(await this.#request({ kind: 'account-settings' }));
+    const html = await this.#request({ kind: 'gym-page', gymId: gym.id });
+    if (typeof html !== 'string') throw new AimHarderError('INVALID_WORKOUT_RESPONSE');
+    const publishers = [...html.matchAll(/timeLineContent:\s*7,\s*userID:\s*(\d+)/g)].map(match => Number(match[1]));
+    const publisher = publishers[0];
+    if (!publisher || !Number.isSafeInteger(publisher) || publishers.some(id => id !== publisher)) throw new AimHarderError('INVALID_WORKOUT_RESPONSE');
+    const feed = parseFeed(await this.#request({ kind: 'feed', gymId: gym.id, publisher }));
+    const source = feed.find(post => post.id === sourceId);
+    if (!source) return null;
+    if (!source.wodClass || source.ejerRate === undefined) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+    const workout = parseWorkout(await this.#request({ kind: 'workout', gymId: gym.id, sourceId }), source, gym.id, gym.timeZone!);
+    if (!workout) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+    const verifiedWorkout = workoutSchema.parse(workout);
+    const copy = verifyCopySource(await this.#request({ kind: 'copy-source', gymId: gym.id, sourceId }), publisher, boxId, verifiedWorkout);
+    return { workout: verifiedWorkout, copy, audience };
+  }
+
+  async #withPublicationSuggestions(preview: PublicationPreview, gymId: string) {
+    return withHistoricalSuggestions(preview, async exerciseId => {
+      try {
+        const body = await this.#request({ kind: 'exercise-detail', gymId, exerciseId, accountId: this.#accountId! });
+        return parseHistorical1RM(body, exerciseId, this.#accountId!, preview.activityDate);
+      } catch (error) {
+        if (error instanceof SessionExpired) throw new AimHarderError('SESSION_EXPIRED');
+        if (isFatalPersonalRead(error)) throw error;
+        return { status: 'unavailable' as const, reason: 'personal-read-failed' as const, basis: null };
+      }
+    });
+  }
+
+  executeActivityPublication(input: z.infer<typeof publicationExecutionSchema>) {
+    const parsed = publicationExecutionSchema.safeParse(input);
+    if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_ACTIVITY_PUBLICATION_QUERY'));
+    const query = parsed.data;
+    return this.#query(query.gymId, async (_gyms, { gym, boxId }) => {
+      const stored = this.#publicationPreparations.take(query.actionReference, this.#accountId!, gym.id);
+      if (!stored) throw new AimHarderError('ACTIVITY_REFERENCE_INVALID');
+      const preview = stored.preview;
+      if (boxId !== stored.boxId || gym.timeZoneStatus !== 'user-confirmed' || gym.timeZone !== preview.gym.timeZone)
+        return { status: 'stale' as const, preview, notices: ['Account, gym, membership, or confirmed zone changed. No activity write was sent.'] };
+      let source: { workout: Workout; copy: CopySource; audience: PublicationAudience } | null;
+      try { source = await this.#readPublicationSource(gym, boxId, stored.query.sourceActivityId); }
+      catch { return { status: 'stale' as const, preview, notices: ['The source or account audience could not be reverified. No activity write was sent.'] }; }
+      if (!source) return { status: 'stale' as const, preview, notices: ['The gym source left the supported current view. No activity write was sent.'] };
+      const freshBase = publicationPreview(source.workout, source.copy, stored.query,
+        { ...gym, timeZone: gym.timeZone!, timeZoneStatus: 'user-confirmed' }, source.audience);
+      const fresh = freshBase ? await this.#withPublicationSuggestions(freshBase, gym.id) : null;
+      if (!fresh || JSON.stringify(fresh) !== JSON.stringify(preview))
+        return { status: 'stale' as const, preview, notices: ['The source, audience, target, or activity date changed. No activity write was sent.'] };
+      let form: FormData;
+      try { form = buildActivityForm(source.copy, preview); }
+      catch { return { status: 'stale' as const, preview, notices: ['The Copy payload has unsupported fields. No activity write was sent.'] }; }
+      if (JSON.stringify([...form]) !== stored.formSnapshot)
+        return { status: 'stale' as const, preview, notices: ['The mapped Copy fields changed after preparation. No activity write was sent.'] };
+      let response: ReturnType<typeof publicationResponse> = { status: 'uncertain', id: null };
+      try {
+        response = publicationResponse(await this.#request({ kind: 'activity-post', gymId: gym.id, form }));
+      } catch { /* A POST may have reached AimHarder. Never retry it. */ }
+      let observedEntry: 'matched' | 'missing' | 'unidentified' | 'conflicting' | 'unverified-comment' | 'unreadable' = 'unreadable';
+      try {
+        const month = preview.activityDate.slice(0, 7);
+        const calendar = parseActivityCalendar(await this.#request({ kind: 'activity-calendar', month }), month);
+        if (response.id === null) observedEntry = 'unidentified';
+        else if (!calendar.get(preview.activityDate)?.includes(response.id)) observedEntry = 'missing';
+        else {
+          const detail = await this.#request({ kind: 'activity-detail', sourceId: response.id });
+          const entry = parseActivityDetail(detail, response.id, preview.activityDate, this.#accountId!, boxId,
+            gym.id, gym.timeZone!);
+          observedEntry = entry ? matchesPublication(entry, preview, detail) : 'conflicting';
+        }
+      } catch { observedEntry = 'unreadable'; }
+      const status = response.status === 'accepted' && observedEntry === 'matched' ? 'confirmed' as const
+        : response.status === 'rejected' ? 'rejected' as const : 'uncertain' as const;
+      let sourceProvenance: { status: 'verified' | 'unavailable'; originalPrescription: PublicationPreview['prescription'] | null } =
+        { status: 'unavailable', originalPrescription: null };
+      if (status === 'confirmed') {
+        try {
+          const sourceAfter = await this.#readPublicationSource(gym, boxId!, stored.query.sourceActivityId);
+          if (sourceAfter && JSON.stringify([...buildActivityForm(sourceAfter.copy, preview)]) === stored.formSnapshot)
+            sourceProvenance = { status: 'verified', originalPrescription: preview.prescription };
+        } catch { /* A changed or unreadable gym source cannot establish later provenance. */ }
+      }
+      return { status, preview, responseStatus: response.status, acceptedResponseId: response.id, observedEntry, sourceProvenance,
+        notices: [status === 'confirmed' ? 'A fresh account calendar and detail read matched the submitted results and any requested comment.'
+          : status === 'rejected' ? 'AimHarder rejected the request; a calendar read alone cannot prove absence of a separate entry.'
+            : 'The activity outcome is not confirmed by a fresh own-account read.',
+        'At most one activity POST was attempted. No possibly sent write is retried automatically.'] };
     });
   }
 
@@ -660,7 +935,7 @@ export class AimHarderClient {
     return [...gyms.values()];
   }
 
-  async #request(operation: { kind: 'activity-calendar'; month: string } | { kind: 'activity-detail'; sourceId: number } | 'login' | 'identity' | { kind: 'classes'; gymId: string; boxId: number; date: string } | { kind: 'book-create'; gymId: string; sourceId: number; date: string } | { kind: 'book-cancel'; gymId: string; reservationId: number; late: boolean } | { kind: 'upcoming'; gymId: string; boxId: number } | { kind: 'gym-page'; gymId: string } | { kind: 'feed'; gymId: string; publisher: number } | { kind: 'workout'; gymId: string; sourceId: number } | { kind: 'exercise-detail'; gymId: string; exerciseId: number; accountId: number } | { kind: 'exercise-search'; gymId: string; name: string }): Promise<unknown> {
+  async #request(operation: { kind: 'activity-calendar'; month: string } | { kind: 'activity-detail'; sourceId: number } | { kind: 'activity-delete'; gymId: string; sourceId: number } | 'login' | 'identity' | { kind: 'classes'; gymId: string; boxId: number; date: string } | { kind: 'book-create'; gymId: string; sourceId: number; date: string } | { kind: 'book-cancel'; gymId: string; reservationId: number; late: boolean } | { kind: 'activity-post'; gymId: string; form: FormData } | { kind: 'upcoming'; gymId: string; boxId: number } | { kind: 'gym-page'; gymId: string } | { kind: 'account-settings' } | { kind: 'feed'; gymId: string; publisher: number } | { kind: 'workout'; gymId: string; sourceId: number } | { kind: 'copy-source'; gymId: string; sourceId: number } | { kind: 'exercise-detail'; gymId: string; exerciseId: number; accountId: number } | { kind: 'exercise-search'; gymId: string; name: string }): Promise<unknown> {
     let url: string;
     if (typeof operation === 'string') url = operation === 'login' ? loginUrl : identityUrl;
     else {
@@ -668,9 +943,13 @@ export class AimHarderClient {
       switch (operation.kind) {
         case 'activity-calendar': url = `${origin}/api/activityCalendar?${new URLSearchParams({ month: String(Number(operation.month.slice(5)) - 1), year: operation.month.slice(0, 4) })}`; break;
         case 'activity-detail': url = `${origin}/api/activity/workout?SEID=${operation.sourceId}`; break;
+        case 'activity-delete': url = `${origin}/api/activity/${operation.sourceId}`; break;
         case 'gym-page': url = `${origin}/`; break;
+        case 'account-settings': url = 'https://aimharder.es/settings'; break;
         case 'feed': url = `${origin}/api/activity?${new URLSearchParams({ timeLineFormat: '0', timeLineContent: '7', userID: String(operation.publisher) })}`; break;
         case 'workout': url = `${origin}/api/activity/workout?SEID=${operation.sourceId}`; break;
+        case 'copy-source': url = `${origin}/api/activity/samewod/${operation.sourceId}`; break;
+        case 'activity-post': url = `${origin}/api/activity`; break;
         case 'exercise-detail': url = `${origin}/api/exercise/${operation.exerciseId}/${operation.accountId}`; break;
         case 'exercise-search': url = `${origin}/api/workoutAndEjers?${new URLSearchParams({ search: operation.name, showWODs: '0', byLetter: '', filterType: '0' })}`; break;
         case 'classes': url = `${origin}/api/bookings?${new URLSearchParams({ box: String(operation.boxId), day: operation.date.replaceAll('-', '') })}`; break;
@@ -683,7 +962,8 @@ export class AimHarderClient {
     const cookie = await this.#cookies.getCookieString(url);
     if (cookie) headers.Cookie = cookie;
     const init: RequestInit = {
-      method: operation === 'login' || (typeof operation === 'object' && (operation.kind === 'book-create' || operation.kind === 'book-cancel')) ? 'POST' : 'GET', headers,
+      method: typeof operation === 'object' && operation.kind === 'activity-delete' ? 'DELETE'
+        : operation === 'login' || (typeof operation === 'object' && (operation.kind === 'book-create' || operation.kind === 'book-cancel' || operation.kind === 'activity-post')) ? 'POST' : 'GET', headers,
       redirect: 'error', signal: AbortSignal.timeout(15_000),
     };
     if (operation === 'login') {
@@ -701,6 +981,7 @@ export class AimHarderClient {
       headers['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
       init.body = new URLSearchParams({ id: String(operation.reservationId), late: operation.late ? '1' : '0' }).toString();
     }
+    if (typeof operation === 'object' && operation.kind === 'activity-post') init.body = operation.form;
     try {
       const response = await fetch(url, init);
       if (response.status === 401) {
@@ -719,7 +1000,7 @@ export class AimHarderClient {
       for (const setCookie of response.headers.getSetCookie()) {
         await this.#cookies.setCookie(setCookie, url);
       }
-      return await readResponse(response, typeof operation === 'object' && operation.kind === 'gym-page');
+      return await readResponse(response, typeof operation === 'object' && (operation.kind === 'gym-page' || operation.kind === 'account-settings'));
     } catch (error) {
       if (error instanceof AimHarderError || error instanceof SessionExpired) throw error;
       throw new AimHarderError('REQUEST_FAILED');

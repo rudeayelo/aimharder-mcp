@@ -1,4 +1,9 @@
 const messages = {
+  INVALID_ACTIVITY_DELETION_EXECUTION_QUERY: 'Supply a fresh deletion reference, its exact sourceActivityId, and confirmed: true after account-holder confirmation of the preview.',
+  INVALID_ACTIVITY_PUBLICATION_QUERY: 'Supply one current-view gym workout, a past-or-today activity date, a supported variant, and at least one structured result or confirmed actual load.',
+  INVALID_ACTIVITY_PREFERENCES: 'The account publication audience or WOD TV preference could not be verified. No activity write was prepared.',
+  INVALID_ACTIVITY_SOURCE: 'The gym workout and Copy source did not match in identity, gym, date, or content. No activity write was prepared.',
+  ACTIVITY_REFERENCE_INVALID: 'The activity action reference is expired, already used, or does not match this account and gym. Prepare a fresh action.',
   INVALID_EXERCISE_QUERY: 'Supply one positive source exercise ID and an optional accessible gym ID. Account IDs and arbitrary URLs are not accepted.',
   INVALID_EXERCISE_RESPONSE: 'AimHarder returned unsupported or inconsistent own-account exercise data. No 1RM can be confirmed.',
   INVALID_LATE_CANCELLATION_QUERY: 'Supply a fresh late-cancellation reference and confirmedCreditLoss: true only after a separate account-holder confirmation of possible credit loss. Other selectors are not accepted.',
