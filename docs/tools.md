@@ -1,6 +1,6 @@
 # Tools and results
 
-Version `0.3.0` offers fourteen tools for one configured account: nine read queries, read-only booking previews, and manual booking creation and cancellation actions. It adds `get_exercise_1rm`, `find_exercise_1rm`, and `get_exercise_rm_progression`, and extends workout answers. Exact public artifact verification is recorded separately in [validation](validation.md). An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking action previews and writes require a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
+The source checkout exposes eighteen tools for one configured account, including read queries, booking previews and actions, own-account exercise RM queries, and activity publication/deletion previews and actions. The current published `0.3.0` version has fourteen tools and does not include the activity actions; exact public artifact verification is recorded separately in [validation](validation.md). An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking and activity actions require a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
 
 ## `get_account_context`
 
