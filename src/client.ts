@@ -769,16 +769,17 @@ export class AimHarderClient {
       try {
         response = publicationResponse(await this.#request({ kind: 'activity-post', gymId: gym.id, form }));
       } catch { /* A POST may have reached AimHarder. Never retry it. */ }
-      let observedEntry: 'matched' | 'missing' | 'conflicting' | 'unreadable' = 'unreadable';
+      let observedEntry: 'matched' | 'missing' | 'unidentified' | 'conflicting' | 'unverified-comment' | 'unreadable' = 'unreadable';
       try {
         const month = preview.activityDate.slice(0, 7);
         const calendar = parseActivityCalendar(await this.#request({ kind: 'activity-calendar', month }), month);
-        if (response.id === null || !calendar.get(preview.activityDate)?.includes(response.id)) observedEntry = 'missing';
+        if (response.id === null) observedEntry = 'unidentified';
+        else if (!calendar.get(preview.activityDate)?.includes(response.id)) observedEntry = 'missing';
         else {
           const detail = await this.#request({ kind: 'activity-detail', sourceId: response.id });
           const entry = parseActivityDetail(detail, response.id, preview.activityDate, this.#accountId!, boxId,
             gym.id, gym.timeZone!);
-          observedEntry = entry && matchesPublication(entry, preview, detail) ? 'matched' : 'conflicting';
+          observedEntry = entry ? matchesPublication(entry, preview, detail) : 'conflicting';
         }
       } catch { observedEntry = 'unreadable'; }
       const status = response.status === 'accepted' && observedEntry === 'matched' ? 'confirmed' as const
@@ -793,7 +794,7 @@ export class AimHarderClient {
         } catch { /* A changed or unreadable gym source cannot establish later provenance. */ }
       }
       return { status, preview, responseStatus: response.status, acceptedResponseId: response.id, observedEntry, sourceProvenance,
-        notices: [status === 'confirmed' ? 'A fresh account calendar and detail read matched the submitted structured results.'
+        notices: [status === 'confirmed' ? 'A fresh account calendar and detail read matched the submitted results and any requested comment.'
           : status === 'rejected' ? 'AimHarder rejected the request; a calendar read alone cannot prove absence of a separate entry.'
             : 'The activity outcome is not confirmed by a fresh own-account read.',
         'At most one activity POST was attempted. No possibly sent write is retried automatically.'] };

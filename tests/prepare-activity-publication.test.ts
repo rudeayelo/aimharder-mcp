@@ -209,6 +209,34 @@ test('accepted ID alone, conflicting owner, explicit rejection and transport unc
   expect(activityWrites()).toHaveLength(4);
 });
 
+test('a response without an ID does not turn an unlinked calendar row into an absence claim', async () => {
+  const client = await connect();
+  acceptedReadback({ response: { errors: [], errorWODsID: [], errorWODsType: [], errorEjerID: [] } });
+  const prepared = (await prepare(client)).structuredContent as { actionReference: string };
+  expect((await execute(client, prepared.actionReference)).structuredContent).toMatchObject({
+    status: 'uncertain', responseStatus: 'uncertain', acceptedResponseId: null, observedEntry: 'unidentified',
+  });
+  expect(activityWrites()).toHaveLength(1);
+});
+
+test('a requested comment must match the own detail before publication is confirmed', async () => {
+  const client = await connect();
+  for (const [readback, expected] of [
+    [{ activityDesc: 'A steady session' }, 'confirmed'],
+    [{ activityDesc: 'A different session' }, 'uncertain'],
+    [{}, 'uncertain'],
+  ] as const) {
+    acceptedReadback({ detail: { userId: 42, boxId: 200,
+      ...detail({ TIPOWODs: [{ ...sourceBlock, time: 275 }], ...readback }),
+    } });
+    const prepared = (await prepare(client, { comment: 'A steady session' })).structuredContent as { actionReference: string };
+    const result = await execute(client, prepared.actionReference);
+    expect(result.structuredContent).toMatchObject({ status: expected, observedEntry: expected === 'confirmed' ? 'matched'
+      : 'activityDesc' in readback ? 'conflicting' : 'unverified-comment' });
+  }
+  expect(activityWrites()).toHaveLength(3);
+});
+
 test('unsupported Copy transport fields stop before the write', async () => {
   const client = await connect();
   const prepared = (await prepare(client)).structuredContent as { actionReference: string };

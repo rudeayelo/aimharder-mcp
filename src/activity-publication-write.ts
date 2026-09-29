@@ -128,7 +128,16 @@ export function publicationResponse(body: unknown) {
     : { status: 'uncertain' as const, id: null };
 }
 
-export function matchesPublication(entry: ActivityEntry, preview: PublicationPreview, body: unknown): boolean {
+export function matchesPublication(entry: ActivityEntry, preview: PublicationPreview, body: unknown): 'matched' | 'conflicting' | 'unverified-comment' {
+  if (preview.comment !== null) {
+    const comment = z.object({ activityDesc: z.string() }).safeParse(body);
+    if (!comment.success) return 'unverified-comment';
+    if (comment.data.activityDesc !== preview.comment) return 'conflicting';
+  }
+  return matchesStructuredPublication(entry, preview, body) ? 'matched' : 'conflicting';
+}
+
+function matchesStructuredPublication(entry: ActivityEntry, preview: PublicationPreview, body: unknown): boolean {
   if (entry.date !== preview.activityDate || entry.blocks.length !== preview.prescription.blocks.length) return false;
   const raw = z.object({ TIPOWODs: z.array(z.unknown()), ejerRate: z.array(z.unknown()) }).safeParse(body);
   if (!raw.success) return false;
