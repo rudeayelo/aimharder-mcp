@@ -1,6 +1,6 @@
 # Record activity results: discovery
 
-Status: feature behavior confirmed on 2026-09-28 and published as [issue #42](https://github.com/rudeayelo/aimharder-mcp/issues/42). The source checkout implements publication slices #44–#47 and read-only deletion preparation #48 with anonymized fixture tests; no live activity write or deletion is authorized or validated. Deletion execution, broader upstream contract validation, and final parent-feature acceptance remain pending.
+Status: feature behavior confirmed on 2026-09-28 and published as [issue #42](https://github.com/rudeayelo/aimharder-mcp/issues/42). The source checkout implements publication slices #44–#47 and deletion preparation/execution #48–#49 with anonymized fixture tests; no live activity write or deletion is authorized or validated. Broader upstream contract validation and final parent-feature acceptance remain pending.
 
 ## Confirmed scope and decisions
 
@@ -48,7 +48,7 @@ The existing [`get_personal_activity`](tools.md) path reads the account's calend
 4. After the account holder confirms that exact preview, revalidate the account, gym, source, date, and payload; send one publication request. Do not retry an uncertain write. Read the returned own activity through the account calendar/detail path and report what was actually observed, distinguishing a returned ID from persisted and correctly projected content.
 5. To delete, select one entry from verified own activity for the selected gym and show its date, content, source ID, possible permanent loss, and unknown effect on RM marks in a read-only preview. After separate confirmation, revalidate ownership and target identity, send one delete request, then refresh the calendar/detail view. Report uncertainty rather than treating an AJAX success callback or absent current-view row as proof of permanent deletion.
 
-These steps describe the desired MCP behavior. Exact tool names, write-field serialization, response contracts, and result-state categories require implementation research. No live write follows from this design document.
+These steps describe the desired MCP behavior. The checkout documents its implemented tool names, write-field serialization, and fixture-tested result states in [tool documentation](tools.md); upstream response contracts still require live validation. No live write follows from this design document.
 
 ## Acceptance criteria for implementation
 
@@ -73,7 +73,7 @@ These steps describe the desired MCP behavior. Exact tool names, write-field ser
 - Whether a reliable same-source identifier becomes available on an own entry. The current detail has no verified Copy-source linkage, so date and exercise names alone cannot trigger a duplicate warning.
 - Whether the account's selected publication audience is applied to a new record. The checkout reads `USPRIVACIDADDEF` and separate `USPRIVCAST` settings, with no per-publication audience control.
 - The official frontend sends `DELETE /api/activity/<id>`, but owner authorization, response meaning, and post-delete visibility remain unverified.
-- How a prepared deletion identifies its target and reconciles an uncertain or partially completed outcome.
+- Whether a fresh account view after a real DELETE shows the expected target state; the checkout's reconciliation states remain fixture-verified only.
 - Whether the bounded upstream exercise-detail view omits eligible historical RM points. The checkout applies the date cutoff to returned data and reports limited coverage; complete lifetime history remains unverified.
 - Whether deletion removes or changes RM history, marks, or progression associated with the target entry. This unknown effect does not by itself block the account holder's confirmed deletion decision.
 - Which live write, if any, the account holder will explicitly authorize for contract validation.

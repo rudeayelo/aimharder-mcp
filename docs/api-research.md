@@ -143,6 +143,10 @@ The source checkout implements `prepare_activity_deletion` as a read-only step. 
 
 The 2026-09-28 frontend observation above remains the only upstream deletion evidence. No DELETE request, deletion response, owner authorization, permanent-deletion behavior, or post-delete account read-back has been validated. A prepared reference proves only this checkout's bounded target verification and expires after two minutes; it is not account-holder confirmation or permission to delete.
 
+### Deletion execution and reconciliation contract (issue #49, 2026-09-29)
+
+The source checkout consumes a fresh reference only with `confirmed: true` and the exact previewed source activity ID. It verifies the account, gym, membership, confirmed time zone, calendar membership, detail owner/date/content, then attempts one DELETE at the official frontend's fixed selected-gym route. It does not repeat the write after an HTTP failure, timeout, malformed response, or session expiry. A fresh account calendar/detail read reports target absence, continued visibility, conflicting identity/date, or incomplete coverage. An absent row after an uncertain transport remains an uncertain outcome; even a readable HTTP response plus absence supports only observed current-view absence. No upstream response fields are assigned success semantics or returned raw. MCP/MSW fixtures validate request count, stale rejection, one-use references, reconciliation states, and output sanitization. This is an implementation contract, not a live-verified AimHarder deletion response or permanence guarantee. Any real DELETE still needs the account holder's separate confirmation of the exact own entry.
+
 ## Exercise value and load units (2026-09-24)
 
 Authenticated read-only checks of 23/24 September WOD, GAP and Mobility details and the official renderer established these observed rules:

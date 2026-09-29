@@ -13,7 +13,7 @@ import { enrichmentSchema } from './calculated-loads.js';
 import { safeError } from './errors.js';
 import { bookingCreationQuerySchema, bookingCancellationQuerySchema, bookingExecutionSchema, lateCancellationExecutionSchema } from './booking-preparation.js';
 import { publicationExecutionSchema, publicationQuerySchema } from './activity-publication.js';
-import { activityDeletionQuerySchema } from './activity-deletion.js';
+import { activityDeletionQuerySchema, activityDeletionExecutionSchema } from './activity-deletion.js';
 
 const gymSchema = z.object({
   id: gymIdSchema, name: z.string(), timeZone: z.string().nullable(), timeZoneStatus: z.enum(['assumed', 'user-confirmed']),
@@ -278,6 +278,19 @@ export function createServer(environment: Record<string, string | undefined>) {
   }, async (query) => {
     try {
       const result = await client.prepareActivityDeletion(query);
+      return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
+    } catch (error) {
+      return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };
+    }
+  });
+  server.registerTool('execute_activity_deletion', {
+    description: 'Delete one exact own activity entry using a fresh prepare_activity_deletion reference. The MCP client MUST show the complete preview and obtain the account holder\'s separate confirmation of that exact entry before calling with confirmed: true and its sourceActivityId. Rechecks account, gym, membership, date, ownership and content, sends at most one DELETE to the fixed verified endpoint, then reads the account calendar/detail. A reference or boolean alone does not prove human consent. An absent row does not prove permanent deletion or RM-history effects. An uncertain attempt must never be retried automatically.',
+    inputSchema: activityDeletionExecutionSchema,
+    outputSchema: z.object({ status: z.enum(['stale', 'observed-absent', 'still-visible', 'conflicting-identity', 'incomplete', 'uncertain']) }).passthrough(),
+    annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
+  }, async (query) => {
+    try {
+      const result = await client.executeActivityDeletion(query);
       return { content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: { ...result } };
     } catch (error) {
       return { isError: true, content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }] };

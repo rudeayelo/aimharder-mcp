@@ -144,7 +144,15 @@ Input: a gym-local `date` and optionally a `sourceActivityId` from `get_personal
 
 A `ready` response contains the exact verified own entry's date and content, selected gym, RM-mark presence, one-day calendar coverage, and a two-minute single-use reference bound to the authenticated account, membership and exact entry. No reference is issued for incomplete identity, foreign owner/gym, malformed detail, or a detail date that differs from the calendar date. Content from a rejected candidate is not returned. The preview warns that loss may be irreversible, no automatic backup or undo is available, and effects on RM history/progression are unknown. RM marks do not make an otherwise verified own entry ineligible.
 
-Preparation is read-only and never sends `DELETE`. The reference is not confirmation and this tool does not execute deletion. The upstream frontend route and later deletion/read-back behavior remain unverified; see the [API research](api-research.md#candidate-deletion-route-official-frontend-inspection-2026-09-28-and-preparation-implementation-2026-09-29).
+Preparation is read-only and never sends `DELETE`. The reference is not confirmation. The upstream frontend route and later deletion/read-back behavior remain unverified live; see the [API research](api-research.md#candidate-deletion-route-official-frontend-inspection-2026-09-28).
+
+## `execute_activity_deletion` (source checkout)
+
+Input: the fresh `actionReference`, exact `sourceActivityId` shown by `prepare_activity_deletion`, `confirmed: true`, and optional accessible `gymId`. The MCP client must display the complete preview and obtain the account holder's separate confirmation of that exact entry. A reference or boolean alone is not proof of consent. Missing/false confirmation, a mismatched ID, and expired or reused references send no DELETE.
+
+Execution consumes the reference, rechecks the authenticated account, selected gym, membership, confirmed gym time zone, target's calendar membership, detail owner, date, and content. A changed or unreadable target returns `stale` with no write. It then attempts one `DELETE /api/activity/<sourceActivityId>` on the verified gym origin, without an automatic write retry. A transport error, expiry, or malformed response does not cause a second DELETE. The raw response is never exposed.
+
+The tool rereads the account calendar and, if the ID remains, its detail. `observedState` distinguishes `absent`, `still-visible`, `conflicting-identity`, and `incomplete`; `readbackCoverage` records whether that fresh date was fully verified; `responseStatus` distinguishes a readable HTTP response from an uncertain response. `status: observed-absent` requires both a readable HTTP response and absence in the fresh calendar. Absence after an uncertain response remains `status: uncertain`. These are current-view observations, not proof of permanent deletion or any RM-history effect. A further attempt needs a new preparation and separate confirmation. No live deletion has been authorized or validated.
 
 ## Questions that combine tools
 

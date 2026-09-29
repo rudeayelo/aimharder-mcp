@@ -9,6 +9,11 @@ export const activityDeletionQuerySchema = z.object({
   sourceActivityId: z.number().int().positive().safe().optional(),
 }).strict();
 export type ActivityDeletionQuery = z.infer<typeof activityDeletionQuerySchema>;
+export const activityDeletionExecutionSchema = z.object({
+  gymId: gymIdSchema.optional(), actionReference: z.string().regex(/^[a-f0-9]{64}$/),
+  sourceActivityId: z.number().int().positive().safe(), confirmed: z.literal(true),
+}).strict();
+export type ActivityDeletionExecution = z.infer<typeof activityDeletionExecutionSchema>;
 
 export type DeletionPreview = {
   gym: { id: string; name: string; timeZone: string; timeZoneStatus: 'assumed' | 'user-confirmed' };
@@ -35,6 +40,10 @@ export class ActivityDeletionPreparationStore {
     return entry && entry.expires > Date.now() && entry.accountId === accountId && entry.gymId === gymId
       && entry.boxId === boxId && entry.preview.target.sourceActivityId === sourceActivityId ? entry : null;
   }
+}
+
+export function sameDeletionTarget(a: DeletionPreview, b: DeletionPreview): boolean {
+  return JSON.stringify(a) === JSON.stringify(b);
 }
 
 export function deletionPreview(gym: DeletionPreview['gym'], entry: ActivityEntry, coverage: DeletionPreview['coverage']): DeletionPreview {

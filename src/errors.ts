@@ -1,4 +1,5 @@
 const messages = {
+  INVALID_ACTIVITY_DELETION_EXECUTION_QUERY: 'Supply a fresh deletion reference, its exact sourceActivityId, and confirmed: true after account-holder confirmation of the preview.',
   INVALID_ACTIVITY_PUBLICATION_QUERY: 'Supply one current-view gym workout, a past-or-today activity date, a supported variant, and at least one structured result or confirmed actual load.',
   INVALID_ACTIVITY_PREFERENCES: 'The account publication audience or WOD TV preference could not be verified. No activity write was prepared.',
   INVALID_ACTIVITY_SOURCE: 'The gym workout and Copy source did not match in identity, gym, date, or content. No activity write was prepared.',
