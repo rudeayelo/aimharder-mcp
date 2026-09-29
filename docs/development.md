@@ -17,6 +17,8 @@ pnpm build
 
 `pnpm test` uses anonymized HTTP fixtures through MCP, rejects unexpected requests and checks an isolated package install. Build after source edits.
 
+`pnpm exec vitest run tests/activity-journey.test.ts` runs the source checkout's complete publication and deletion journey through an MCP SDK client and simulated upstream responses. It checks both previews, exact source and target, one write per confirmed action, and fresh read-back states. This is a fixture check and needs no account credentials; it does not perform a live AimHarder write.
+
 ## Run and inspect locally
 
 Supply credentials and any gym-zone override as in [configuration](configuration.md). Run `pnpm start` with variables injected, or `node --env-file=/absolute/path/to/private.env dist/index.js`. The server waits for MCP messages on stdin.

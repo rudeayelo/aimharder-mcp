@@ -1,6 +1,6 @@
 # Personal exercise records and calculated loads: feature specification
 
-Status: feature scope confirmed by the account holder on 2026-09-27. Issues #33–#38 are implemented and closed. Search, progression and one current/future WOD load passed narrow authorized source comparisons. The WOD's separate-field split variants lacked source exercise IDs, so their unavailable status was verified live but calculated split arithmetic still lacks a live example. On 2026-09-28 the account holder accepted this evidence limit and version `0.3.0` was published. The exact registry artifact passed an anonymized MCP check; an authenticated check of that artifact remains pending. See [validation](validation.md#personal-rm-follow-up-2026-09-27-issues-35-38).
+Status: feature scope confirmed by the account holder on 2026-09-27. Issues #33–#38 are implemented and closed. Search, progression and one current/future WOD load passed narrow authorized source comparisons. The WOD's separate-field split variants lacked source exercise IDs, so their unavailable status was verified live but calculated split arithmetic still lacks a live example. On 2026-09-28 the account holder accepted this evidence limit and version `0.3.0` was published. The exact registry artifact passed an anonymized MCP check; an authenticated check of that artifact remains pending. See [validation](validation.md#personal-rm-follow-up-2026-09-27-issues-3538).
 
 ## Purpose and scope
 

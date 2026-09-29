@@ -1,6 +1,6 @@
 # ADR: manual publication and deletion of own activity
 
-Status: accepted for feature scope on 2026-09-28 and specified in [issue #42](https://github.com/rudeayelo/aimharder-mcp/issues/42). Publication preparation/execution and deletion preparation/execution (#48–#49) are implemented in the source checkout with MCP fixture coverage. Live activity-write validation remains pending.
+Status: accepted for feature scope on 2026-09-28 and specified in [issue #42](https://github.com/rudeayelo/aimharder-mcp/issues/42). Publication preparation/execution and deletion preparation/execution (#48–#49) are implemented in the source checkout. Issue #50 verified their complete sequence through an anonymized MCP client and simulated upstream responses. A fresh read-only comparison found a same-date own candidate with kilogram representation but could not link it to the supplied response ID or verify effective audience. Live activity-write validation remains pending.
 
 ## Decision
 
@@ -30,4 +30,4 @@ The feature must be limited to the verified account and gym. The original source
 
 The read-only MVP remains a historical release boundary. The [booking-write decision](2026-09-24-manual-booking-writes.md) is specific to bookings and does not supply activity endpoint semantics or authorize result writes. Activity publication and deletion need their own target identification, previews, confirmation handling, and outcome reconciliation. A deletion may be irreversible or affect a public activity entry; the account holder must see the exact target and consequence before confirming it.
 
-The [feature discovery](../activity-results-spec.md) records unresolved design questions and the [API research](../api-research.md#candidate-deletion-route-official-frontend-inspection-2026-09-28) distinguishes frontend observation and fixture behavior from live validation. Issues #48–#49 are fixture-verified only; delete authorization, response semantics, and read-back remain unverified live.
+The [feature discovery](../activity-results-spec.md) records unresolved design questions and the [API research](../api-research.md#complete-client-journey-issue-50-2026-09-29) distinguishes frontend observation, user-supplied response, simulated MCP journey, and live validation. The complete fixture journey confirms one POST, one DELETE, and the resulting simulated read-back states; it does not change the separate-confirmation decision or establish real authorization, applied audience, numeric kilogram persistence, deletion response semantics, permanence, or RM effects. No new architecture or security decision is made by this validation step.
