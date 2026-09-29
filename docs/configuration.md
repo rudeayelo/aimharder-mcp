@@ -21,7 +21,7 @@ Supply credentials through the client process environment or a secrets manager; 
 
 Date inputs use `YYYY-MM-DD` in the reported gym zone. An assumed zone can make “tomorrow” wrong near midnight. Returned times are local wall times without inferred UTC offsets.
 
-Booking action previews and writes require an explicit mapping for the selected gym in `AIMHARDER_GYM_TIME_ZONES`; the assumed fallback cannot authorize an action reference. Preparation only reads the schedule and does not create or cancel a reservation. Execution requires explicit account-holder confirmation.
+Booking and activity action previews and writes require an explicit mapping for the selected gym in `AIMHARDER_GYM_TIME_ZONES`; the assumed fallback cannot authorize an action reference. Preparation is read-only. Each execution requires separate account-holder confirmation of its exact preview. See the [tool reference](tools.md) for the current activity-write inputs and evidence limits.
 
 ## Version-pinned startup
 
