@@ -1,6 +1,6 @@
 # aimharder-mcp
 
-Ask about your AimHarder classes, workouts, bookings and activity from an AI client. Version `0.3.0` is a local [MCP server](https://modelcontextprotocol.io/) that also supports manual booking creation and cancellation, with a separate confirmation if a late cancellation may lose a credit. One standard Open Box creation/cancellation cycle was observed live at 9NBC; the late branch, other gyms and credit effects remain unverified. This is an independent project, neither affiliated with nor endorsed by AimHarder.
+Ask about your AimHarder classes, workouts, bookings and activity from an AI client. Version `0.4.0` is a local [MCP server](https://modelcontextprotocol.io/) that supports confirmed manual booking actions and own activity publication and deletion. One standard Open Box creation/cancellation cycle was observed live at 9NBC; the late branch, other gyms and credit effects remain unverified. Activity writes have fixture coverage but no live action through this server. This is an independent project, neither affiliated with nor endorsed by AimHarder.
 
 **Data limits:** Live checks used one account at one location (9NBC). Other gyms may differ. Workout and booking views can be incomplete, so an empty result may not mean there is nothing to show. [Details](docs/tools.md#coverage-and-interpretation)
 
@@ -15,7 +15,7 @@ Ask about your AimHarder classes, workouts, bookings and activity from an AI cli
      "mcpServers": {
        "aimharder": {
          "command": "npx",
-         "args": ["--yes", "aimharder-mcp@0.3.0"]
+         "args": ["--yes", "aimharder-mcp@0.4.0"]
        }
      }
    }
@@ -35,7 +35,7 @@ Hermes and Codex CLI have called the account tool through the published package.
 
 ## Tools
 
-The activity publication and deletion tools below are in the source checkout; the pinned `0.3.0` package does not include them.
+Version `0.4.0` includes the activity publication and deletion tools below. Each write requires a separate confirmation of the exact preview.
 
 | Tool | Example question |
 | --- | --- |
@@ -62,7 +62,7 @@ Clients can combine tools for questions about workouts and bookings, or count re
 
 Version `0.3.0` adds source exercise IDs, known-ID and name-based own-account 1RM queries, separate RM progression, and calculated loads for eligible `%RM` prescriptions dated today or later in the gym's reported zone. Original instructions and all publication/variant alternatives remain visible. Search and personal history coverage are limited. Live source comparison passed for search, progression and a calculated load in the 28 September WOD. That WOD's split variant rows lacked valid source exercise IDs, so their original percentages remained visible with unavailable calculation status; split arithmetic remains fixture-verified only. See [validation](docs/validation.md#personal-rm-follow-up-2026-09-27-issues-3538) for the evidence limits.
 
-The source checkout includes `prepare_activity_publication` and a confirmation-gated `execute_activity_publication` for supported structured block results and manually confirmed actual kilogram loads from a current-view gym workout. It also includes `prepare_activity_deletion` and `execute_activity_deletion`: preparation verifies an exact own entry through the account calendar and detail; execution requires separate confirmation, rechecks the target, attempts at most one DELETE, and reports a fresh account view. A read-only publication draft can show historical kilogram suggestions before the account holder chooses an actual load; it cannot be executed. Preparation reads the independently configured account audience. Publication execution rechecks the audience, source, suggestion and exact Copy payload, sends at most one activity POST, then reads the own calendar and detail before reporting confirmation or uncertainty. An [MCP client journey test](tests/activity-journey.test.ts) covers both actions against anonymized upstream fixtures. No live publication or deletion has been performed for this checkout, and these changes are not part of the published `0.3.0` package. To try the checkout, follow the [local build instructions](docs/development.md#checkout-and-local-checks), configure a user-confirmed gym zone, and review each complete preview before providing separate confirmation. The fixture journey does not authorize or establish a real write.
+Version `0.4.0` includes `prepare_activity_publication` and a confirmation-gated `execute_activity_publication` for supported structured block results and manually confirmed actual kilogram loads from a current-view gym workout. It also includes `prepare_activity_deletion` and `execute_activity_deletion`: preparation verifies an exact own entry through the account calendar and detail; execution requires separate confirmation, rechecks the target, attempts at most one DELETE, and reports a fresh account view. A read-only publication draft can show historical kilogram suggestions before the account holder chooses an actual load; it cannot be executed. Preparation reads the independently configured account audience. Publication execution rechecks the audience, source, suggestion and exact Copy payload, sends at most one activity POST, then reads the own calendar and detail before reporting confirmation or uncertainty. An [MCP client journey test](tests/activity-journey.test.ts) covers both actions against anonymized upstream fixtures. No live publication or deletion through this server has been performed. Configure a user-confirmed gym zone and review each complete preview before providing separate confirmation. The fixture journey does not establish a real write outcome.
 
 ## Roadmap
 
