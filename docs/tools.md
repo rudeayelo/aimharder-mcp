@@ -1,6 +1,6 @@
 # Tools and results
 
-The source checkout exposes eighteen tools for one configured account, including read queries, booking previews and actions, own-account exercise RM queries, and activity publication/deletion previews and actions. The current published `0.3.0` version has fourteen tools and does not include the activity actions; exact public artifact verification is recorded separately in [validation](validation.md). An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking and activity actions require a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
+Version `0.4.0` exposes eighteen tools for one configured account, including read queries, booking previews and actions, own-account exercise RM queries, and activity publication/deletion previews and actions. Exact public artifact verification is recorded separately in [validation](validation.md). An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking and activity actions require a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
 
 ## `get_account_context`
 
@@ -76,7 +76,7 @@ For a requested date today or later in the reported gym zone, each `%RM` exercis
 
 Coverage is always `incomplete`: only the current feed page is searched. `unavailable` does **not** prove no publication exists. `unsupported` means source content could not be interpreted; retrieval failures are errors.
 
-## `prepare_activity_publication` (source checkout)
+## `prepare_activity_publication`
 
 Prepare one own activity entry from a workout source ID returned by `get_published_workouts` for the selected gym. With no result or actual load, the tool returns a read-only `draft` with exercise suggestions and no action reference. After choosing a load actually used, prepare again with a supported structured block result or a deliberately confirmed actual kilogram load to obtain a `ready` reference. A general comment alone cannot authorize a publication. Optional `activityDate` defaults to the workout's intended date and must be today or earlier in a configured, user-confirmed gym zone. When several difficulty levels exist, pass exactly one source label in `variantLabel`; a sole level is selected automatically.
 
@@ -90,7 +90,7 @@ A `ready` response includes the verified gym, source, intended and chosen dates,
 
 Preparation is read-only. `missing` means the source was absent from the bounded current gym feed, not that it never existed. `unsupported` and safe errors return no reference for mismatched Copy content, unknown preferences, future dates, invalid variants, or unsupported scores. The current own activity detail provides no reliable Copy-source linkage, so same-date entries alone do not produce a duplicate warning.
 
-## `execute_activity_publication` (source checkout)
+## `execute_activity_publication`
 
 Input: the `actionReference` from one ready preview, `confirmed: true` after the account holder reviews that exact action, and an optional accessible `gymId`. A missing or false confirmation fails before any write. The reference expires after two minutes and is consumed on the first valid execution attempt. Execution rechecks account membership, confirmed gym zone, current account publication and WOD TV preferences, current gym feed, workout, Copy identity, effective variant and all mapped form fields. A change or unsupported Copy field returns `stale` without a POST.
 
@@ -138,7 +138,7 @@ The shared exercise projection also includes `sourceExerciseId` on personal acti
 
 `completedDates` lists dates whose calendar and details were retrieved. Partial results cannot support exact counts; a first-partition failure errors, while later failures/read limits retain entries marked incomplete. Complete coverage means available records for requested dates, not attendance or immutable lifetime history.
 
-## `prepare_activity_deletion` (source checkout)
+## `prepare_activity_deletion`
 
 Input: a gym-local `date` and optionally a `sourceActivityId` from `get_personal_activity`. The ID must also occur in the authenticated account calendar for that date; an arbitrary ID alone is never fetched as a deletion target. With no ID, zero calendar candidates return `missing`, one candidate is verified, and several candidates return `ambiguous` with a count so the account holder can select an ID from the activity query. An invalid, partial-shaped or failed calendar read returns `incomplete` with no detail read or reference; authentication and access failures remain safe errors.
 
@@ -146,7 +146,7 @@ A `ready` response contains the exact verified own entry's date and content, sel
 
 Preparation is read-only and never sends `DELETE`. The reference is not confirmation. The upstream frontend route and later deletion/read-back behavior remain unverified live; see the [API research](api-research.md#candidate-deletion-route-official-frontend-inspection-2026-09-28).
 
-## `execute_activity_deletion` (source checkout)
+## `execute_activity_deletion`
 
 Input: the fresh `actionReference`, exact `sourceActivityId` shown by `prepare_activity_deletion`, `confirmed: true`, and optional accessible `gymId`. The MCP client must display the complete preview and obtain the account holder's separate confirmation of that exact entry. A reference or boolean alone is not proof of consent. Missing/false confirmation, a mismatched ID, and expired or reused references send no DELETE.
 
