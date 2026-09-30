@@ -1,6 +1,6 @@
 # ADR: manual publication and deletion of own activity
 
-Status: accepted for feature scope on 2026-09-28 and specified in [issue #42](https://github.com/rudeayelo/aimharder-mcp/issues/42). Publication preparation/execution and deletion preparation/execution (#48–#49) are implemented in the source checkout. Issue #50 verified their complete sequence through an anonymized MCP client and simulated upstream responses. A fresh read-only comparison found a same-date own candidate with kilogram representation but could not link it to the supplied response ID or verify effective audience. Live activity-write validation remains pending.
+Status: accepted for feature scope on 2026-09-28 and specified in [issue #42](https://github.com/rudeayelo/aimharder-mcp/issues/42). Publication preparation/execution and deletion preparation/execution (#48–#49) are released in npm; the split-kg preparation fix is in `0.4.1`. Issue #50 verified the complete sequence through an anonymized MCP client and simulated upstream responses. A fresh read-only comparison found a same-date own candidate with kilogram representation but could not link it to the supplied response ID or verify effective audience. The exact `0.4.1` artifact prepared a later WOD read-only; live activity-write validation remains pending.
 
 ## Decision
 
