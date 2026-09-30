@@ -1,12 +1,13 @@
 import { z } from 'zod';
 import { AimHarderError } from './errors.js';
 import type { ActivityEntry } from './activity.js';
-import { blockResultField, sameCopyNotes, type CopySource, type PublicationPreview } from './activity-publication.js';
+import { validatedExerciseId } from './workouts.js';
+import { blockResultField, sameCopyLoad, sameCopyLoadAlternatives, sameCopyNotes, type CopySource, type PublicationPreview } from './activity-publication.js';
 
 const scalar = z.union([z.string().max(100_000), z.number().finite(), z.boolean(), z.null()]);
 const sourceExercise = z.object({
-  ejerId: z.number().int().positive().safe().nullish(), ejerName: z.string().max(100_000),
-  tipoWOD: z.number().int().nonnegative().nullable(), formaReg: scalar,
+  ejerId: z.union([z.number().int().positive().safe(), z.string().regex(/^[1-9]\d*$/).refine(value => Number.isSafeInteger(Number(value)))]).nullish(), ejerName: z.string().max(100_000),
+  tipoWOD: z.union([z.number().int().nonnegative().safe(), z.string().regex(/^(?:0|[1-9]\d*)$/).refine(value => Number.isSafeInteger(Number(value)))]).nullish(), formaReg: scalar,
   complex: z.union([z.literal(0), z.literal('0')]).nullish(),
   tipoud: scalar.nullish(), tipoud2: scalar.nullish(),
   valor1: z.array(scalar).max(100).nullish(), valor2: scalar.nullish(), valor2h: scalar.nullish(), valor2m: scalar.nullish(),
@@ -28,7 +29,8 @@ type BlockPayload = Omit<z.infer<typeof sourceBlock>, 'scaledver' | 'selectedsca
 
 function exercisePayload(value: unknown, depth = 0): ExercisePayload {
   const parsed = sourceExercise.safeParse(value);
-  if (!parsed.success || depth > 1) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+  if (!parsed.success || depth > 3 || (depth <= 1 && parsed.data.tipoWOD === undefined))
+    throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
   const { scaledver, ...fields } = parsed.data;
   return { ...fields, ...(scaledver === undefined ? {} : {
     scaledver: scaledver === null ? null : scaledver.map(row => row == null ? null : exercisePayload(row, depth + 1)),
@@ -36,7 +38,7 @@ function exercisePayload(value: unknown, depth = 0): ExercisePayload {
 }
 function blockPayload(value: unknown, depth = 0): BlockPayload {
   const parsed = sourceBlock.safeParse(value);
-  if (!parsed.success || depth > 1) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+  if (!parsed.success || depth > 3) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
   const { scaledver, ...fields } = parsed.data;
   return { ...fields, ...(scaledver === undefined ? {} : {
     scaledver: scaledver === null ? null : scaledver.map(row => row == null ? null : blockPayload(row, depth + 1)),
@@ -51,16 +53,16 @@ function effectiveBlock(block: BlockPayload, label: string | null): BlockPayload
 }
 
 function effectiveExerciseRows(exercises: ExercisePayload[], blocks: BlockPayload[], label: string | null): ExercisePayload[] {
-  if (!label) return exercises.filter(row => row.tipoWOD === null || !blocks[row.tipoWOD]?.deleted);
+  if (!label) return exercises.filter(row => row.tipoWOD == null || !blocks[Number(row.tipoWOD)]?.deleted);
   const rows: ExercisePayload[] = [];
   for (const row of exercises) {
-    if (row.tipoWOD === null) continue;
-    const block = blocks[row.tipoWOD];
+    if (row.tipoWOD == null) continue;
+    const block = blocks[Number(row.tipoWOD)];
     if (!block) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
     const index = block.scaledops?.indexOf(label) ?? -1;
     if (effectiveBlock(block, label).deleted) continue;
     const target = index < 0 ? row : row.scaledver?.[index];
-    if (!target || target.tipoWOD !== row.tipoWOD) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+    if (!target || target.tipoWOD == null || Number(target.tipoWOD) !== Number(row.tipoWOD)) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
     rows.push(target);
   }
   return rows;
@@ -73,8 +75,9 @@ export function buildActivityForm(copy: CopySource, preview: PublicationPreview)
   for (const load of preview.actualLoads) {
     const target = effectiveExercises[load.exerciseIndex];
     const prescribed = preview.prescription.exercises[load.exerciseIndex];
-    if (!target || !prescribed || target.ejerName !== prescribed.name || (target.ejerId ?? null) !== prescribed.sourceExerciseId
-      || ![4, '4'].includes(target.formaReg as string | number) || ![4, '4'].includes(target.tipoud as string | number))
+    if (!target || !prescribed || target.ejerName !== prescribed.name || validatedExerciseId(target.ejerId) !== prescribed.sourceExerciseId
+      || ![4, '4'].includes(target.formaReg as string | number)
+      || ![0, '0', 4, '4'].includes(target.tipoud as string | number))
       throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
     // saveCRW uses valor2 as the personal actual-load input and tipoud=0 for kg.
     // Split source alternatives remain in the Copy payload, as in the observed editor.
@@ -153,12 +156,14 @@ function matchesStructuredPublication(entry: ActivityEntry, preview: Publication
   const rawField = (row: ExercisePayload, field: string) => row[field as keyof ExercisePayload] ?? null;
   if (exercises.some((observed, index) => {
     const expected = preview.prescription.exercises[index]!;
-    if (observed.ejerName !== expected.name || (observed.ejerId ?? null) !== expected.sourceExerciseId
-      || observed.tipoWOD !== expected.blockIndex) return true;
+    if (observed.ejerName !== expected.name || validatedExerciseId(observed.ejerId) !== expected.sourceExerciseId
+      || (observed.tipoWOD == null ? null : Number(observed.tipoWOD)) !== expected.blockIndex) return true;
     const changedLoad = preview.actualLoads.some(load => load.exerciseIndex === index);
-    return ['formaReg', 'tipoud', 'tipoud2', 'valor1', 'valor2', 'valor2h', 'valor2m', 'round', 'roundrepeat']
-      .filter(field => !changedLoad || (field !== 'tipoud' && field !== 'valor2'))
-      .some(field => JSON.stringify(rawField(observed, field)) !== JSON.stringify(expected.prescription[field] ?? null));
+    return ['formaReg', 'tipoud', 'tipoud2', 'valor1', 'round', 'roundrepeat']
+      .filter(field => !changedLoad || field !== 'tipoud')
+      .some(field => JSON.stringify(rawField(observed, field)) !== JSON.stringify(expected.prescription[field] ?? null))
+      || (changedLoad ? !sameCopyLoadAlternatives(observed, expected.prescription)
+        : !sameCopyLoad(observed, expected.prescription));
   })) return false;
   if (blocks.some((base, index) => {
     const observed = effectiveBlock(base, preview.variantLabel);

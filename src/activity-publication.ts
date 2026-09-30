@@ -5,6 +5,7 @@ import { gymIdSchema } from './config.js';
 import { AimHarderError } from './errors.js';
 import { calculatePersonalLoad, gymLocalToday } from './calculated-loads.js';
 import type { Workout } from './calculated-loads.js';
+import { validatedExerciseId } from './workouts.js';
 import type { parseHistorical1RM } from './exercise-records.js';
 
 const positiveId = z.number().int().positive().safe();
@@ -63,13 +64,35 @@ function sameExercise(copyRow: unknown, projected: Workout['exercises'][number])
     valor2: z.unknown().optional(), valor2h: z.unknown().optional(), valor2m: z.unknown().optional(),
   }).safeParse(copyRow);
   if (!row.success || row.data.ejerName !== projected.name) return false;
-  const sourceId = typeof row.data.ejerId === 'number' && Number.isSafeInteger(row.data.ejerId) && row.data.ejerId > 0
-    ? row.data.ejerId : null;
+  const sourceId = validatedExerciseId(row.data.ejerId);
   if (sourceId !== projected.sourceExerciseId) return false;
-  for (const field of ['formaReg', 'tipoud', 'valor2', 'valor2h', 'valor2m'] as const) {
+  for (const field of ['formaReg', 'tipoud'] as const) {
     if (JSON.stringify(row.data[field] ?? null) !== JSON.stringify(projected.prescription[field] ?? null)) return false;
   }
-  return true;
+  return sameCopyLoad(row.data, projected.prescription);
+}
+type SourceLoad = { valor2?: unknown; valor2h?: unknown; valor2m?: unknown };
+function splitSourceLoad(source: SourceLoad) {
+  if (typeof source.valor2 !== 'string') return null;
+  const split = /^((?:0|[1-9]\d*)(?:\.\d+)?)\/((?:0|[1-9]\d*)(?:\.\d+)?)$/.exec(source.valor2);
+  if (!split) return null;
+  const [, first, second] = split;
+  if ((source.valor2h ?? null) !== null || (source.valor2m ?? null) !== null) {
+    if (source.valor2h !== first || source.valor2m !== second) return null;
+  }
+  return { first, second };
+}
+export function sameCopyLoadAlternatives(copy: SourceLoad, source: SourceLoad) {
+  if (JSON.stringify(copy.valor2h ?? null) === JSON.stringify(source.valor2h ?? null)
+    && JSON.stringify(copy.valor2m ?? null) === JSON.stringify(source.valor2m ?? null)) return true;
+  const split = splitSourceLoad(source);
+  return !!split && copy.valor2h === split.first && copy.valor2m === split.second;
+}
+export function sameCopyLoad(copy: SourceLoad, source: SourceLoad) {
+  const fields = ['valor2', 'valor2h', 'valor2m'] as const;
+  if (fields.every(field => JSON.stringify(copy[field] ?? null) === JSON.stringify(source[field] ?? null))) return true;
+  const split = splitSourceLoad(source);
+  return !!split && copy.valor2 === split.first && copy.valor2h === split.first && copy.valor2m === split.second;
 }
 export function sameCopyNotes(copyNotes: unknown, sourceNotes: unknown) {
   if ((copyNotes ?? null) === (sourceNotes ?? null)) return true;
@@ -186,7 +209,9 @@ export async function withHistoricalSuggestions(preview: PublicationPreview, rea
     const exercise = preview.prescription.exercises[load.exerciseIndex]!;
     const split = exercise.prescription.valor2h != null || exercise.prescription.valor2m != null;
     const label = load.sourceAlternative ?? (split ? null : 'single');
-    const calculatedSuggestion = label ? exerciseSuggestions.find(row => row.exerciseIndex === load.exerciseIndex)
+    const calculatedSuggestion = exercise.prescription.loadUnit === 'kg'
+      ? unavailableSuggestion('already-prescribed-in-kilograms')
+      : label ? exerciseSuggestions.find(row => row.exerciseIndex === load.exerciseIndex)
       ?.alternatives.find(row => row.sourceAlternative === label)?.suggestion
       ?? unavailableSuggestion('source-alternative-unavailable') : unavailableSuggestion('source-alternative-not-selected');
     return { ...load, calculatedSuggestion };
@@ -234,7 +259,8 @@ export function publicationPreview(workout: Workout, copy: CopySource, query: Pu
   const actualLoads = [];
   for (const load of query.actualLoads) {
     const exercise = exercises[load.exerciseIndex];
-    if (!exercise || exercise.prescription.loadUnit !== '%RM' || ![4, '4'].includes(exercise.prescription.tipoud as string | number)) return null;
+    if (!exercise || !((exercise.prescription.loadUnit === '%RM' && [4, '4'].includes(exercise.prescription.tipoud as string | number))
+      || (exercise.prescription.loadUnit === 'kg' && [0, '0'].includes(exercise.prescription.tipoud as string | number)))) return null;
     const split = exercise.prescription.valor2h != null || exercise.prescription.valor2m != null;
     if (load.sourceAlternative && (split ? load.sourceAlternative === 'single' : load.sourceAlternative !== 'single')) return null;
     if (load.sourceAlternative === 'male' && exercise.prescription.valor2h == null) return null;

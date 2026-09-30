@@ -61,12 +61,15 @@ function projectExercise({ ejerName, ejerId, tipoWOD, scaledver: _scaledver, ...
     else if (format === 3 || format === 4) valueUnit = 'reps';
     else if (format === 5) valueUnit = 'cal';
   }
-  const sourceExerciseId = typeof ejerId === 'number' && Number.isSafeInteger(ejerId) && ejerId > 0 ? ejerId : null;
-  return { name: ejerName, sourceExerciseId, blockIndex: tipoWOD ?? null, prescription: {
+  return { name: ejerName, sourceExerciseId: validatedExerciseId(ejerId), blockIndex: tipoWOD ?? null, prescription: {
     ...Object.fromEntries(Object.entries(prescription).filter(([, value]) => value !== undefined)),
     ...(valueUnit ? { valueUnit } : {}),
     ...(loadUnit ? { loadUnit } : {}),
   } };
+}
+export function validatedExerciseId(value: unknown): number | null {
+  const id = typeof value === 'string' && /^[1-9]\d*$/.test(value) ? Number(value) : value;
+  return typeof id === 'number' && Number.isSafeInteger(id) && id > 0 ? id : null;
 }
 const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 export function parseWorkout(body: unknown, post: ReturnType<typeof parseFeed>[number], gymId: string, timeZone: string) {

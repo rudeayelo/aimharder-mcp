@@ -21,7 +21,7 @@ A movement named in a workout prescription that may also have the account holder
 _Avoid_: Workout when referring to one movement.
 
 **Source exercise ID**:
-The validated `ejerId` from an AimHarder exercise row. A difficulty-variant replacement can have a different ID from the unselected prescription; similar names do not prove shared identity.
+The validated `ejerId` from an AimHarder exercise row. Published workout variants may supply a canonical positive decimal string for this direct ID; the projection validates it as a safe integer. A difficulty-variant replacement can have a different ID from the unselected prescription; similar names do not prove shared identity.
 _Avoid_: Exercise name as an identity key.
 
 **RM record**:
