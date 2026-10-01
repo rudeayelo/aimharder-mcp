@@ -227,7 +227,7 @@ export function blockResultField(block: Workout['blocks'][number], kind: Publica
   const type = Number(block.prescription.type);
   const textResultType = Number(block.prescription.timecap);
   if (kind === 'time-seconds' && ([1, 10].includes(type) || (type === 11 && textResultType === 1))) return 'time';
-  if (kind === 'rounds' && ([2, 10].includes(type) || (type === 11 && textResultType === 2))) return 'res';
+  if (kind === 'rounds' && ([2, 3, 10].includes(type) || (type === 11 && textResultType === 2))) return 'res';
   if (kind === 'repetitions' && ([2, 10].includes(type) || (type === 11 && textResultType === 2))) return 'reps';
   if (kind === 'repetitions' && (type === 1 || (type === 11 && [1, 5].includes(textResultType)))) return 'res';
   if (kind === 'kilograms' && type === 11 && textResultType === 3) return 'res';

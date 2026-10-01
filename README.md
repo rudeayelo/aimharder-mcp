@@ -6,7 +6,7 @@ Ask about your AimHarder classes, workouts, bookings and activity from an AI cli
 
 ## Get started
 
-The unreleased checkout fixes actual-load entry into an empty Copy field already configured for kilograms. The published `0.4.1` package rejects that case. Read-only MCP preparation now succeeds with the correction; live publication acceptance and persistence remain unverified. See [validation](docs/validation.md#empty-kilogram-input-publication-preparation-2026-10-01).
+The unreleased checkout fixes actual-load entry into an empty Copy field already configured for kilograms. The published `0.4.1` package rejects that case. The checkout also supports EMOM completed-round results and keeps preparations without those results as drafts. Two separately confirmed live publication attempts were rejected; successful acceptance and persistence remain unverified. See [validation](docs/validation.md#empty-kilogram-input-publication-preparation-2026-10-01).
 
 1. Install Node.js **24 or newer**.
 2. Supply `AIMHARDER_USERNAME` and `AIMHARDER_PASSWORD` to the server process through your client or a secrets manager. Keep them out of shared configuration. The server assumes `Europe/Madrid` unless you [configure your gym's time zone](docs/configuration.md).

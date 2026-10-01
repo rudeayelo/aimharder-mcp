@@ -737,3 +737,98 @@ test('Copy editor plain notes match source notes with only HTML tags removed', a
     .toMatchObject({ status: 'confirmed' });
   expect(activityWrites()).toHaveLength(1);
 });
+
+test('each effective EMOM needs an explicit completed-round result even with loads, other scores or copied results', async () => {
+  const blocks = [
+    { ...sourceBlock, type: 3, timecap: 8, rondas: 3, res: '99' },
+    { ...sourceBlock, type: '3', timecap: 6, rondas: 2 },
+    { ...sourceBlock, type: 2, timecap: 20 },
+  ];
+  const row = { ...sourceExercise, tipoud: 0, valor2: null };
+  upstream.use(
+    http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ TIPOWODs: blocks, ejerRate: [row] }))),
+    http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ TIPOWODs: blocks, rates: [row] }))),
+  );
+  const client = await connect();
+  const query = { blockResults: [{ blockIndex: 2, kind: 'repetitions', value: 50 }],
+    actualLoads: [{ exerciseIndex: 0, actualKilograms: '12', confirmedActual: true }] };
+  const first = await prepare(client, query);
+  expect(first.structuredContent).toMatchObject({ status: 'draft', requiredBlockResults: [
+    { blockIndex: 0, kind: 'rounds' }, { blockIndex: 1, kind: 'rounds' },
+  ] });
+  expect(first.structuredContent).not.toHaveProperty('actionReference');
+  const second = await prepare(client, { ...query, blockResults: [
+    ...query.blockResults, { blockIndex: 0, kind: 'rounds', value: 2 },
+  ] });
+  expect(second.structuredContent).toMatchObject({ status: 'draft', requiredBlockResults: [{ blockIndex: 1, kind: 'rounds' }] });
+  expect(second.structuredContent).not.toHaveProperty('actionReference');
+  expect(activityWrites()).toHaveLength(0);
+});
+
+test.each([0, 2])('EMOM completed rounds %s serialize as a result, preserve the prescription and require matching own readback', async value => {
+  const emom = { ...sourceBlock, type: 3, timecap: 8, rondas: 3 };
+  const amrap = { ...sourceBlock, type: 2, timecap: 20 };
+  const blocks = [emom, amrap];
+  const row = { ...sourceExercise, tipoud: 0 };
+  upstream.use(
+    http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ TIPOWODs: blocks, ejerRate: [row] }))),
+    http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ TIPOWODs: blocks, rates: [row] }))),
+  );
+  const client = await connect();
+  const query = { blockResults: [
+    { blockIndex: 0, kind: 'rounds', value }, { blockIndex: 1, kind: 'rounds', value: 1 },
+    { blockIndex: 1, kind: 'repetitions', value: 50 },
+  ] };
+  const ownBlocks = [{ ...emom, res: value }, { ...amrap, res: 1, reps: 50 }];
+  acceptedReadback({ detail: { userId: 42, boxId: 200, ...detail({ TIPOWODs: ownBlocks, ejerRate: [row] }) } });
+  let sent: FormData | undefined;
+  upstream.use(http.post('https://sample-gym.aimharder.es/api/activity', async ({ request }) => {
+    sent = await request.formData();
+    return HttpResponse.json({ errors: [], errorWODsID: [], errorWODsType: [], errorEjerID: [], id: '9001' });
+  }));
+  const prepared = (await prepare(client, query)).structuredContent as { status: string; actionReference: string };
+  expect(prepared.status).toBe('ready');
+  expect((await execute(client, prepared.actionReference)).structuredContent).toMatchObject({ status: 'confirmed', observedEntry: 'matched' });
+  expect(JSON.parse(String(sent!.get('TIPOWODs')))).toEqual([{ ...emom, res: String(value) }, { ...amrap, res: '1', reps: '50' }]);
+  expect(activityWrites()).toHaveLength(1);
+  acceptedReadback({ detail: { userId: 42, boxId: 200,
+    ...detail({ TIPOWODs: [{ ...emom, res: value + 1 }, ownBlocks[1]], ejerRate: [row] }),
+  } });
+  const again = (await prepare(client, query)).structuredContent as { actionReference: string };
+  expect((await execute(client, again.actionReference)).structuredContent).toMatchObject({ status: 'uncertain', observedEntry: 'conflicting' });
+  expect(activityWrites()).toHaveLength(2);
+});
+
+test.each(['time-seconds', 'repetitions', 'kilograms', 'pounds'])('EMOM does not accept %s as its completed-round result', async kind => {
+  const blocks = [{ ...sourceBlock, type: 3, timecap: 8, rondas: 3 }];
+  upstream.use(
+    http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ TIPOWODs: blocks }))),
+    http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ TIPOWODs: blocks }))),
+  );
+  const result = await prepare(await connect(), { blockResults: [{ blockIndex: 0, kind, value: 2 }] });
+  expect(result.structuredContent).toMatchObject({ status: 'unsupported' });
+  expect(result.structuredContent).not.toHaveProperty('actionReference');
+  expect(activityWrites()).toHaveLength(0);
+});
+
+test('EMOM requirements follow the selected effective variant rather than an unselected block type', async () => {
+  const block = { ...sourceBlock, type: 3, scaledops: ['EASY', 'HARD'], scaledver: [
+    sourceBlock, { ...sourceBlock, type: 3, timecap: 8 },
+  ] };
+  const row = { ...sourceExercise, tipoud: 0 };
+  const exercise = { ...row, scaledver: [row, row] };
+  upstream.use(
+    http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ TIPOWODs: [block], ejerRate: [exercise] }))),
+    http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ TIPOWODs: [block], rates: [exercise] }))),
+  );
+  const client = await connect();
+  expect((await prepare(client, { variantLabel: 'EASY' })).structuredContent).toMatchObject({ status: 'ready' });
+  const missing = await prepare(client, { variantLabel: 'HARD', blockResults: [], actualLoads: [
+    { exerciseIndex: 0, actualKilograms: '20', confirmedActual: true },
+  ] });
+  expect(missing.structuredContent).toMatchObject({ status: 'draft', requiredBlockResults: [{ blockIndex: 0, kind: 'rounds' }] });
+  expect(missing.structuredContent).not.toHaveProperty('actionReference');
+  expect((await prepare(client, { variantLabel: 'HARD', blockResults: [{ blockIndex: 0, kind: 'rounds', value: 2 }] }))
+    .structuredContent).toMatchObject({ status: 'ready' });
+  expect(activityWrites()).toHaveLength(0);
+});

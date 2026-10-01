@@ -703,6 +703,13 @@ export class AimHarderClient {
       try { formSnapshot = JSON.stringify([...buildActivityForm(source.copy, preview)]); }
       catch { return { status: 'unsupported' as const, gym,
         notices: ['The Copy source has unsupported transport fields. No activity write was prepared.'] }; }
+      const requiredBlockResults = preview.prescription.blocks.flatMap((block, blockIndex) =>
+        Number(block.prescription.type) === 3
+          && !query.blockResults.some(result => result.blockIndex === blockIndex && result.kind === 'rounds')
+          ? [{ blockIndex, kind: 'rounds' as const }] : []);
+      if (requiredBlockResults.length)
+        return { status: 'draft' as const, ...preview, requiredBlockResults,
+          notices: [...preview.notices, 'Enter completed rounds for each EMOM block before preparing a write. Source round counts are prescriptions, not achieved results. No action reference was issued.'] };
       if (!query.blockResults.length && !query.actualLoads.length)
         return { status: 'draft' as const, ...preview,
           notices: [...preview.notices, 'Choose a supported block result or explicitly confirm an actual kilogram load before preparing a write. No action reference was issued.'] };
