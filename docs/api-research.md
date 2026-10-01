@@ -217,3 +217,9 @@ Three source-labeled variant occurrences supplied separate `valor2h` and `valor2
 ## Remaining research boundaries
 
 Only one account/location has live evidence. Future feed pages, complete booking/history horizons, other account roles/domains/locales, 2FA, rate limits and physical training-session grouping are not established. The assumed `Europe/Madrid` fallback is explicitly a product choice. The single confirmed standard write cycle does not authorize or validate further write branches; each real action still requires its own explicit confirmation.
+
+## Empty kilogram Copy input (2026-10-01)
+
+An authenticated MCP SDK stdio client connected to the exact public `0.4.1` package discovered 18 tools and prepared the current selected-gym WOD without a source mismatch. Adding two actual loads to already populated kilogram rows returned `ready`. Adding a third actual load to a shared repetition/load row returned `unsupported`. The matched source and Copy projection for that shared row had `formaReg=4`, `tipoud=0`, and `valor2=null`; the original prescription correctly had no projected `loadUnit` because it contained no weight.
+
+The preparation gate incorrectly required that projected original-load label even though the existing verified Copy destination was configured for kilograms. The checkout accepts an explicitly confirmed actual load for this narrow field and retains the absent original weight. It does not infer kilograms for another format or unknown input code. The existing editor mapping writes the submitted number into `valor2` with `tipoud=0`; live acceptance and persistence are still pending. All investigation and preparation used authentication and reads only; no activity POST or DELETE was sent.

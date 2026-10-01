@@ -238,6 +238,59 @@ test('a confirmed actual kilogram load replaces only the selected fixed-kg exerc
   expect(activityWrites()).toHaveLength(2);
 });
 
+test.each([{ valor2: null, tipoud: 0 }, { valor2: '', tipoud: '0' }, { valor2: undefined, tipoud: 0 }])(
+  'an empty kilogram load field accepts an actual load and verifies its persisted value (%j)', async fields => {
+    const exercise = { ...sourceExercise, ...fields };
+    upstream.use(
+      http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ ejerRate: [exercise] }))),
+      http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ rates: [exercise] }))),
+    );
+    const client = await connect();
+    const query = { blockResults: [], actualLoads: [{ exerciseIndex: 0, actualKilograms: '12', confirmedActual: true }] };
+    const prepared = await prepare(client, query);
+    expect(prepared.structuredContent).toMatchObject({ status: 'ready', actualLoads: [{
+      actualKilograms: '12', originalPrescription: { formaReg: 4, tipoud: fields.tipoud },
+      calculatedSuggestion: { status: 'unavailable', reason: 'no-relative-load-prescription' },
+    }] });
+    const preview = prepared.structuredContent as { actionReference: string; actualLoads: Array<{ originalPrescription: unknown }> };
+    expect(preview.actualLoads[0]!.originalPrescription).not.toHaveProperty('loadUnit');
+    expect(activityWrites()).toHaveLength(0);
+    expect(requests.filter(row => row.path.startsWith('/api/exercise/'))).toHaveLength(0);
+    let form: FormData | undefined;
+    acceptedReadback({ detail: { userId: 42, boxId: 200, ...detail({ ejerRate: [{ ...exercise, valor2: '12', tipoud: 0 }] }) } });
+    upstream.use(http.post('https://sample-gym.aimharder.es/api/activity', async ({ request }) => {
+      form = await request.formData();
+      return HttpResponse.json({ errors: [], errorWODsID: [], errorWODsType: [], errorEjerID: [], id: '9001' });
+    }));
+    expect((await execute(client, preview.actionReference)).structuredContent)
+      .toMatchObject({ status: 'confirmed', observedEntry: 'matched' });
+    expect(JSON.parse(String(form!.get('ejerRate')))).toEqual([{ ...exercise, valor2: '12', tipoud: 0 }]);
+    expect(activityWrites()).toHaveLength(1);
+    acceptedReadback({ detail: { userId: 42, boxId: 200, ...detail({ ejerRate: [{ ...exercise, valor2: '13', tipoud: 0 }] }) } });
+    const second = await prepare(client, query);
+    expect((await execute(client, (second.structuredContent as { actionReference: string }).actionReference)).structuredContent)
+      .toMatchObject({ status: 'uncertain', observedEntry: 'conflicting' });
+    expect(activityWrites()).toHaveLength(2);
+  },
+);
+
+test.each([{ formaReg: 3, tipoud: 0 }, { formaReg: 4, tipoud: null }, { formaReg: 4, tipoud: 1 },
+  { formaReg: 4, tipoud: 99 }, { formaReg: 6, tipoud: 0 }])(
+  'an empty load still rejects an unsupported kilogram destination (%j)', async fields => {
+    const exercise = { ...sourceExercise, ...fields, valor2: null };
+    upstream.use(
+      http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ ejerRate: [exercise] }))),
+      http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ rates: [exercise] }))),
+    );
+    const result = await prepare(await connect(), { blockResults: [], actualLoads: [
+      { exerciseIndex: 0, actualKilograms: '12', confirmedActual: true },
+    ] });
+    expect(result.structuredContent).toMatchObject({ status: 'unsupported' });
+    expect(result.structuredContent).not.toHaveProperty('actionReference');
+    expect(activityWrites()).toHaveLength(0);
+  },
+);
+
 test('nested Copy variants and decimal-string exercise IDs permit a read-only preview', async () => {
   const labels = ['SCALED', 'INTERMEDIATE', 'RX'];
   const block = { ...sourceBlock, scaledops: labels, scaledver: [sourceBlock, sourceBlock,
