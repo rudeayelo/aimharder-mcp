@@ -120,15 +120,31 @@ const responseSchema = z.object({
   errorWODsType: z.array(z.unknown()).max(100), errorEjerID: z.array(z.unknown()).max(100),
   id: z.union([z.string().regex(/^[1-9]\d*$/).max(16), z.number().int().positive().safe()]).optional(),
 });
-export function publicationResponse(body: unknown) {
+type RejectionDiagnostics = {
+  errorCounts: { general: number; blockReferences: number; blockTypes: number; exerciseReferences: number };
+  blockIndices: number[]; exerciseIndices: number[];
+};
+type PublicationResponse = { status: 'accepted' | 'rejected' | 'uncertain'; id: number | null;
+  rejectionDiagnostics: RejectionDiagnostics | null };
+function boundedErrorIndices(values: unknown[], count: number): number[] {
+  const indices = values.map(value => typeof value === 'string' && /^(?:0|[1-9]\d*)$/.test(value) ? Number(value) : value)
+    .filter((value): value is number => typeof value === 'number' && Number.isSafeInteger(value) && value >= 0 && value < count);
+  return [...new Set(indices)];
+}
+export function publicationResponse(body: unknown, targets: { blockCount: number; exerciseCount: number }): PublicationResponse {
   const parsed = responseSchema.safeParse(body);
-  if (!parsed.success) return { status: 'uncertain' as const, id: null };
+  if (!parsed.success) return { status: 'uncertain', id: null, rejectionDiagnostics: null };
   const row = parsed.data;
   if ([row.errors, row.errorWODsID, row.errorWODsType, row.errorEjerID].some(errors => errors.length))
-    return { status: 'rejected' as const, id: null };
+    return { status: 'rejected', id: null, rejectionDiagnostics: {
+      errorCounts: { general: row.errors.length, blockReferences: row.errorWODsID.length,
+        blockTypes: row.errorWODsType.length, exerciseReferences: row.errorEjerID.length },
+      blockIndices: boundedErrorIndices(row.errorWODsID, targets.blockCount),
+      exerciseIndices: boundedErrorIndices(row.errorEjerID, targets.exerciseCount),
+    } };
   const id = Number(row.id);
-  return Number.isSafeInteger(id) && id > 0 ? { status: 'accepted' as const, id }
-    : { status: 'uncertain' as const, id: null };
+  return Number.isSafeInteger(id) && id > 0 ? { status: 'accepted', id, rejectionDiagnostics: null }
+    : { status: 'uncertain', id: null, rejectionDiagnostics: null };
 }
 
 export function matchesPublication(entry: ActivityEntry, preview: PublicationPreview, body: unknown): 'matched' | 'conflicting' | 'unverified-comment' {

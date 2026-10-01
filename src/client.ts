@@ -765,9 +765,11 @@ export class AimHarderClient {
       catch { return { status: 'stale' as const, preview, notices: ['The Copy payload has unsupported fields. No activity write was sent.'] }; }
       if (JSON.stringify([...form]) !== stored.formSnapshot)
         return { status: 'stale' as const, preview, notices: ['The mapped Copy fields changed after preparation. No activity write was sent.'] };
-      let response: ReturnType<typeof publicationResponse> = { status: 'uncertain', id: null };
+      let response: ReturnType<typeof publicationResponse> = { status: 'uncertain', id: null, rejectionDiagnostics: null };
       try {
-        response = publicationResponse(await this.#request({ kind: 'activity-post', gymId: gym.id, form }));
+        response = publicationResponse(await this.#request({ kind: 'activity-post', gymId: gym.id, form }), {
+          blockCount: source.copy.TIPOWODs.length, exerciseCount: source.copy.rates.length,
+        });
       } catch { /* A POST may have reached AimHarder. Never retry it. */ }
       let observedEntry: 'matched' | 'missing' | 'unidentified' | 'conflicting' | 'unverified-comment' | 'unreadable' = 'unreadable';
       try {
@@ -793,7 +795,8 @@ export class AimHarderClient {
             sourceProvenance = { status: 'verified', originalPrescription: preview.prescription };
         } catch { /* A changed or unreadable gym source cannot establish later provenance. */ }
       }
-      return { status, preview, responseStatus: response.status, acceptedResponseId: response.id, observedEntry, sourceProvenance,
+      return { status, preview, responseStatus: response.status, acceptedResponseId: response.id,
+        rejectionDiagnostics: response.rejectionDiagnostics, observedEntry, sourceProvenance,
         notices: [status === 'confirmed' ? 'A fresh account calendar and detail read matched the submitted results and any requested comment.'
           : status === 'rejected' ? 'AimHarder rejected the request; a calendar read alone cannot prove absence of a separate entry.'
             : 'The activity outcome is not confirmed by a fresh own-account read.',

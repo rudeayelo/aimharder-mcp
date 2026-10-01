@@ -358,6 +358,28 @@ test('confirmed reference sends one allowlisted multipart request and requires o
   expect(activityWrites()).toHaveLength(1);
 });
 
+test('rejection diagnostics retain counts and bounded field indices without private error contents or a retry', async () => {
+  const client = await connect();
+  const prepared = (await prepare(client)).structuredContent as { actionReference: string };
+  acceptedReadback({ response: {
+    errors: ['Private member name and token', { password: 'private-password' }],
+    errorWODsID: [0, '0', 42, -1, 0.5, '01', 'private-block'], errorWODsType: [0, 'private-type'],
+    errorEjerID: ['0', 0, 42, -1, 0.5, '00', { userId: 42 }], id: '9001',
+  } });
+  const result = await execute(client, prepared.actionReference);
+  expect(result.structuredContent).toMatchObject({ status: 'rejected', acceptedResponseId: null,
+    observedEntry: 'unidentified', rejectionDiagnostics: {
+      errorCounts: { general: 2, blockReferences: 7, blockTypes: 2, exerciseReferences: 7 },
+      blockIndices: [0], exerciseIndices: [0],
+    },
+  });
+  expect(JSON.stringify(result)).not.toMatch(/Private member|token|password|private-block|private-type|userId/);
+  expect(activityWrites()).toHaveLength(1);
+  expect(requests.filter(row => row.path === '/api/activityCalendar')).toHaveLength(1);
+  expect((await execute(client, prepared.actionReference)).isError).toBe(true);
+  expect(activityWrites()).toHaveLength(1);
+});
+
 test('missing confirmation, changed preferences, expired and reused references send no write', async () => {
   const client = await connect();
   const one = (await prepare(client)).structuredContent as { actionReference: string };
