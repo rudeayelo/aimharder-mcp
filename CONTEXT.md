@@ -16,6 +16,10 @@ _Avoid_: Workout or booking when referring to the scheduled class itself.
 The prescribed training content, which may be shared by multiple class sessions. A workout published in a gym feed does not necessarily belong to one unique session.
 _Avoid_: Class session when referring to training instructions.
 
+**AMRAP result**:
+The number of complete prescribed exercise rounds plus the scored repetitions completed in the next unfinished round. Repetition scoring follows the workout's convention and can count each completed metre of a distance exercise as one repetition.
+_Avoid_: Requiring every scored repetition to be a movement repetition, or counting partial-round progress as another complete round.
+
 **Exercise**:
 A movement named in a workout prescription that may also have the account holder's recorded performance.
 _Avoid_: Workout when referring to one movement.
