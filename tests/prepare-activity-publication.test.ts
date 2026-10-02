@@ -891,3 +891,78 @@ test('a backend that persists active fields retains selected variant scores and 
   expect(result.structuredContent).toMatchObject({ status: 'confirmed', observedEntry: 'matched' });
   expect(activityWrites()).toHaveLength(1);
 });
+
+function normalizedOwnPublication(calories: string, options: { format?: number; pair?: string } = {}) {
+  const block = { ...sourceBlock, type: '2', timecap: '20', notes: 'First line\nSecond line' };
+  const shared = { ...sourceExercise, tipoud: 0, tipoud2: null, valor2: null, round: '1' };
+  const loaded = { ...shared, ejerId: 102, ejerName: 'Sample weighted movement', tipoud2: '0',
+    valor2: '9', valor2h: '9', valor2m: '7' };
+  const calorieRow = { ...shared, ejerId: 103, ejerName: 'Sample calorie movement', tipoud: null,
+    formaReg: options.format ?? 5, valor1: [options.pair ?? '42/31'] };
+  const rows = [shared, loaded, calorieRow];
+  upstream.use(
+    http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ TIPOWODs: [block], ejerRate: rows }))),
+    http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ TIPOWODs: [block], rates: rows }))),
+  );
+  const own: { TIPOWODs: Array<Record<string, unknown>>; ejerRate: Array<Record<string, unknown>> } = {
+    TIPOWODs: [{ ...block, type: 2, timecap: 20, notes: 'First line<br />\nSecond line', res: 2 }],
+    ejerRate: [
+      { ...shared, ejerId: '101', round: 1, valor2: '12' },
+      { ...loaded, ejerId: '102', round: 1, tipoud2: 0, valor2: '7' },
+      { ...calorieRow, ejerId: '103', round: 1, valor1: [calories] },
+    ],
+  };
+  delete own.ejerRate[1]!.valor2h;
+  delete own.ejerRate[1]!.valor2m;
+  const query = { blockResults: [{ blockIndex: 0, kind: 'rounds', value: 2 }], actualLoads: [
+    { exerciseIndex: 0, actualKilograms: '12', confirmedActual: true },
+    { exerciseIndex: 1, actualKilograms: '7', confirmedActual: true },
+  ] };
+  return { own, query };
+}
+
+test.each(['42', '31'])('confirmed readback tolerates observed formatting, integer transport, removed load alternatives and exact calorie alternative %s', async calories => {
+  const { own, query } = normalizedOwnPublication(calories);
+  acceptedReadback({ detail: { userId: 42, boxId: 200, ...detail(own) } });
+  const client = await connect();
+  const prepared = (await prepare(client, query)).structuredContent as { actionReference: string };
+  const result = await execute(client, prepared.actionReference);
+  expect(result.structuredContent).toMatchObject({ status: 'confirmed', observedEntry: 'matched',
+    sourceProvenance: { status: 'verified', originalPrescription: { exercises: [
+      { prescription: { valor2: null } }, { prescription: { valor2h: '9', valor2m: '7' } },
+      { prescription: { valor1: ['42/31'], valueUnit: 'cal' } },
+    ] } },
+  });
+  expect(activityWrites()).toHaveLength(1);
+});
+
+test.each([
+  ['noncanonical integer', (own: ReturnType<typeof normalizedOwnPublication>['own']) => { own.TIPOWODs[0]!.timecap = '020'; }],
+  ['null changed to zero', (own: ReturnType<typeof normalizedOwnPublication>['own']) => { own.ejerRate[0]!.tipoud2 = 0; }],
+  ['changed note content', (own: ReturnType<typeof normalizedOwnPublication>['own']) => { own.TIPOWODs[0]!.notes = 'First line<br />\nChanged line'; }],
+  ['unknown calorie alternative', (own: ReturnType<typeof normalizedOwnPublication>['own']) => { own.ejerRate[2]!.valor1 = ['40']; }],
+  ['partial load alternatives', (own: ReturnType<typeof normalizedOwnPublication>['own']) => { own.ejerRate[1]!.valor2h = '9'; }],
+  ['wrong actual unit', (own: ReturnType<typeof normalizedOwnPublication>['own']) => { own.ejerRate[1]!.tipoud = 1; }],
+  ['wrong actual load', (own: ReturnType<typeof normalizedOwnPublication>['own']) => { own.ejerRate[1]!.valor2 = '8'; }],
+  ['wrong block score', (own: ReturnType<typeof normalizedOwnPublication>['own']) => { own.TIPOWODs[0]!.res = 3; }],
+] as const)('readback normalization does not confirm %s', async (_reason, mutate) => {
+  const { own, query } = normalizedOwnPublication('42');
+  mutate(own);
+  acceptedReadback({ detail: { userId: 42, boxId: 200, ...detail(own) } });
+  const client = await connect();
+  const prepared = (await prepare(client, query)).structuredContent as { actionReference: string };
+  expect((await execute(client, prepared.actionReference)).structuredContent).toMatchObject({ status: 'uncertain', observedEntry: 'conflicting' });
+  expect(activityWrites()).toHaveLength(1);
+});
+
+test.each([
+  { format: 3, pair: '42/31' },
+  { format: 5, pair: '9007199254740992/31' },
+])('readback cannot resolve a slash prescription with unverified format or unsafe alternatives: %j', async options => {
+  const { own, query } = normalizedOwnPublication('31', options);
+  acceptedReadback({ detail: { userId: 42, boxId: 200, ...detail(own) } });
+  const client = await connect();
+  const prepared = (await prepare(client, query)).structuredContent as { actionReference: string };
+  expect((await execute(client, prepared.actionReference)).structuredContent).toMatchObject({ status: 'uncertain', observedEntry: 'conflicting' });
+  expect(activityWrites()).toHaveLength(1);
+});

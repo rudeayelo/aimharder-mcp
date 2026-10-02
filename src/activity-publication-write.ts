@@ -171,6 +171,44 @@ export function matchesPublication(entry: ActivityEntry, preview: PublicationPre
   return matchesStructuredPublication(entry, preview, body) ? 'matched' : 'conflicting';
 }
 
+function canonicalInteger(value: unknown): number | null {
+  const number = typeof value === 'number' ? value
+    : typeof value === 'string' && /^(?:0|[1-9]\d*)$/.test(value) ? Number(value) : NaN;
+  return Number.isSafeInteger(number) && number >= 0 ? number : null;
+}
+
+function sameRecordedScalar(observed: unknown, expected: unknown): boolean {
+  if (JSON.stringify(observed ?? null) === JSON.stringify(expected ?? null)) return true;
+  const integer = canonicalInteger(observed);
+  return integer !== null && integer === canonicalInteger(expected);
+}
+
+function sameRecordedNotes(observed: unknown, expected: unknown): boolean {
+  if (sameCopyNotes(observed, expected)) return true;
+  // The personal renderer inserts HTML tags into the submitted plain notes.
+  // Preserve every text character and line break; do not normalize content.
+  return typeof observed === 'string' && typeof expected === 'string'
+    && observed.replace(/<[^>]*>/g, '') === expected.replace(/<[^>]*>/g, '');
+}
+
+function sameRecordedValues(observed: unknown, expected: PublicationPreview['prescription']['exercises'][number]): boolean {
+  const values = expected.prescription.valor1;
+  if (JSON.stringify(observed ?? null) === JSON.stringify(values ?? null)) return true;
+  if (expected.prescription.valueUnit !== 'cal' || !Array.isArray(observed)
+    || !Array.isArray(values) || observed.length !== values.length) return false;
+  // The gym editor encodes its two calorie alternatives with a slash; own
+  // detail resolves one source alternative. Never infer an account's sex.
+  return values.every((value, index) => {
+    if (JSON.stringify(observed[index]) === JSON.stringify(value)) return true;
+    const pair = typeof value === 'string' ? /^(0|[1-9]\d*)\/(0|[1-9]\d*)$/.exec(value) : null;
+    const integer = canonicalInteger(observed[index]);
+    const first = pair ? canonicalInteger(pair[1]) : null;
+    const second = pair ? canonicalInteger(pair[2]) : null;
+    return integer !== null && first !== null && second !== null
+      && (integer === first || integer === second);
+  });
+}
+
 function matchesStructuredPublication(entry: ActivityEntry, preview: PublicationPreview, body: unknown): boolean {
   if (entry.date !== preview.activityDate || entry.blocks.length !== preview.prescription.blocks.length) return false;
   const raw = z.object({ TIPOWODs: z.array(z.unknown()), ejerRate: z.array(z.unknown()) }).safeParse(body);
@@ -190,17 +228,19 @@ function matchesStructuredPublication(entry: ActivityEntry, preview: Publication
     if (observed.ejerName !== expected.name || validatedExerciseId(observed.ejerId) !== expected.sourceExerciseId
       || (observed.tipoWOD == null ? null : Number(observed.tipoWOD)) !== expected.blockIndex) return true;
     const changedLoad = preview.actualLoads.some(load => load.exerciseIndex === index);
-    return ['formaReg', 'tipoud', 'tipoud2', 'valor1', 'round', 'roundrepeat']
+    return ['formaReg', 'tipoud', 'tipoud2', 'round', 'roundrepeat']
       .filter(field => !changedLoad || field !== 'tipoud')
-      .some(field => JSON.stringify(rawField(observed, field)) !== JSON.stringify(expected.prescription[field] ?? null))
-      || (changedLoad ? !sameCopyLoadAlternatives(observed, expected.prescription)
+      .some(field => !sameRecordedScalar(rawField(observed, field), expected.prescription[field]))
+      || !sameRecordedValues(observed.valor1, expected)
+      || (changedLoad ? !(sameCopyLoadAlternatives(observed, expected.prescription)
+        || (observed.valor2h == null && observed.valor2m == null))
         : !sameCopyLoad(observed, expected.prescription));
   })) return false;
   if (blocks.some((base, index) => {
     const observed = effectiveBlock(base, preview.variantLabel);
     const expected = preview.prescription.blocks[index]!;
-    return !sameCopyNotes(observed.notes, expected.notes) || ['type', 'timecap', 'timecaptype'].some(field =>
-      JSON.stringify(observed[field as keyof BlockPayload] ?? null) !== JSON.stringify(expected.prescription[field] ?? null));
+    return !sameRecordedNotes(observed.notes, expected.notes) || ['type', 'timecap', 'timecaptype'].some(field =>
+      !sameRecordedScalar(observed[field as keyof BlockPayload], expected.prescription[field]));
   })) return false;
   return preview.blockResults.every(result => {
     const base = blocks[result.blockIndex];
