@@ -209,8 +209,10 @@ export async function withHistoricalSuggestions(preview: PublicationPreview, rea
     const exercise = preview.prescription.exercises[load.exerciseIndex]!;
     const split = exercise.prescription.valor2h != null || exercise.prescription.valor2m != null;
     const label = load.sourceAlternative ?? (split ? null : 'single');
-    const calculatedSuggestion = exercise.prescription.loadUnit === 'kg'
-      ? unavailableSuggestion('already-prescribed-in-kilograms')
+    const calculatedSuggestion = [4, '4'].includes(exercise.prescription.formaReg as string | number)
+      && [0, '0'].includes(exercise.prescription.tipoud as string | number)
+      ? unavailableSuggestion(exercise.prescription.loadUnit === 'kg'
+        ? 'already-prescribed-in-kilograms' : 'no-relative-load-prescription')
       : label ? exerciseSuggestions.find(row => row.exerciseIndex === load.exerciseIndex)
       ?.alternatives.find(row => row.sourceAlternative === label)?.suggestion
       ?? unavailableSuggestion('source-alternative-unavailable') : unavailableSuggestion('source-alternative-not-selected');
@@ -225,7 +227,7 @@ export function blockResultField(block: Workout['blocks'][number], kind: Publica
   const type = Number(block.prescription.type);
   const textResultType = Number(block.prescription.timecap);
   if (kind === 'time-seconds' && ([1, 10].includes(type) || (type === 11 && textResultType === 1))) return 'time';
-  if (kind === 'rounds' && ([2, 10].includes(type) || (type === 11 && textResultType === 2))) return 'res';
+  if (kind === 'rounds' && ([2, 3, 10].includes(type) || (type === 11 && textResultType === 2))) return 'res';
   if (kind === 'repetitions' && ([2, 10].includes(type) || (type === 11 && textResultType === 2))) return 'reps';
   if (kind === 'repetitions' && (type === 1 || (type === 11 && [1, 5].includes(textResultType)))) return 'res';
   if (kind === 'kilograms' && type === 11 && textResultType === 3) return 'res';
@@ -259,8 +261,11 @@ export function publicationPreview(workout: Workout, copy: CopySource, query: Pu
   const actualLoads = [];
   for (const load of query.actualLoads) {
     const exercise = exercises[load.exerciseIndex];
-    if (!exercise || !((exercise.prescription.loadUnit === '%RM' && [4, '4'].includes(exercise.prescription.tipoud as string | number))
-      || (exercise.prescription.loadUnit === 'kg' && [0, '0'].includes(exercise.prescription.tipoud as string | number)))) return null;
+    // An empty prescription has no projected loadUnit, but its Copy input may
+    // still be a verified repetition/load field configured for kilograms.
+    if (!exercise || ![4, '4'].includes(exercise.prescription.formaReg as string | number)
+      || !((exercise.prescription.loadUnit === '%RM' && [4, '4'].includes(exercise.prescription.tipoud as string | number))
+        || [0, '0'].includes(exercise.prescription.tipoud as string | number))) return null;
     const split = exercise.prescription.valor2h != null || exercise.prescription.valor2m != null;
     if (load.sourceAlternative && (split ? load.sourceAlternative === 'single' : load.sourceAlternative !== 'single')) return null;
     if (load.sourceAlternative === 'male' && exercise.prescription.valor2h == null) return null;

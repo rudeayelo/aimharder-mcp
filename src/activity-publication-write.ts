@@ -96,17 +96,32 @@ export function buildActivityForm(copy: CopySource, preview: PublicationPreview)
       target.time = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     } else target[field] = String(result.value);
   }
-  // For a selected label, preserve all other scaledver branches and mark only
-  // that one on blocks that offer it. Shared blocks stay at their base values.
+  // The official editor submits the selected content in the active top-level
+  // fields as well as scaledver. The live backend persisted only active fields.
   for (const block of blocks) effectiveBlock(block, preview.variantLabel);
+  const activeBlocks = blocks.map(block => {
+    const selected = effectiveBlock(block, preview.variantLabel);
+    return selected === block ? block : { ...selected, scaledops: block.scaledops,
+      scaledver: block.scaledver, selectedscaling: block.selectedscaling };
+  });
+  const activeExercises = exercises.map(row => {
+    if (!preview.variantLabel || row.tipoWOD == null) return row;
+    const block = blocks[Number(row.tipoWOD)];
+    if (!block) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+    const index = block.scaledops?.indexOf(preview.variantLabel) ?? -1;
+    if (index < 0 || effectiveBlock(block, preview.variantLabel).deleted) return row;
+    const selected = row.scaledver?.[index];
+    if (!selected) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+    return { ...selected, scaledver: row.scaledver };
+  });
   const form = new FormData();
   form.append('conCom', preview.comment ?? '');
   form.append('conComInside', '');
   form.append('selectedDate', preview.activityDate.replaceAll('-', ''));
   form.append('copyId', String(preview.source.sourceActivityId));
   form.append('imagesCargadas', '[]');
-  form.append('ejerRate', JSON.stringify(exercises));
-  form.append('TIPOWODs', JSON.stringify(blocks));
+  form.append('ejerRate', JSON.stringify(activeExercises));
+  form.append('TIPOWODs', JSON.stringify(activeBlocks));
   form.append('homeVideoID', '-1');
   form.append('boxLocation', String(copy.boxID));
   form.append('valueWithMentions', preview.comment ?? '');
@@ -120,15 +135,31 @@ const responseSchema = z.object({
   errorWODsType: z.array(z.unknown()).max(100), errorEjerID: z.array(z.unknown()).max(100),
   id: z.union([z.string().regex(/^[1-9]\d*$/).max(16), z.number().int().positive().safe()]).optional(),
 });
-export function publicationResponse(body: unknown) {
+type RejectionDiagnostics = {
+  errorCounts: { general: number; blockReferences: number; blockTypes: number; exerciseReferences: number };
+  blockIndices: number[]; exerciseIndices: number[];
+};
+type PublicationResponse = { status: 'accepted' | 'rejected' | 'uncertain'; id: number | null;
+  rejectionDiagnostics: RejectionDiagnostics | null };
+function boundedErrorIndices(values: unknown[], count: number): number[] {
+  const indices = values.map(value => typeof value === 'string' && /^(?:0|[1-9]\d*)$/.test(value) ? Number(value) : value)
+    .filter((value): value is number => typeof value === 'number' && Number.isSafeInteger(value) && value >= 0 && value < count);
+  return [...new Set(indices)];
+}
+export function publicationResponse(body: unknown, targets: { blockCount: number; exerciseCount: number }): PublicationResponse {
   const parsed = responseSchema.safeParse(body);
-  if (!parsed.success) return { status: 'uncertain' as const, id: null };
+  if (!parsed.success) return { status: 'uncertain', id: null, rejectionDiagnostics: null };
   const row = parsed.data;
   if ([row.errors, row.errorWODsID, row.errorWODsType, row.errorEjerID].some(errors => errors.length))
-    return { status: 'rejected' as const, id: null };
+    return { status: 'rejected', id: null, rejectionDiagnostics: {
+      errorCounts: { general: row.errors.length, blockReferences: row.errorWODsID.length,
+        blockTypes: row.errorWODsType.length, exerciseReferences: row.errorEjerID.length },
+      blockIndices: boundedErrorIndices(row.errorWODsID, targets.blockCount),
+      exerciseIndices: boundedErrorIndices(row.errorEjerID, targets.exerciseCount),
+    } };
   const id = Number(row.id);
-  return Number.isSafeInteger(id) && id > 0 ? { status: 'accepted' as const, id }
-    : { status: 'uncertain' as const, id: null };
+  return Number.isSafeInteger(id) && id > 0 ? { status: 'accepted', id, rejectionDiagnostics: null }
+    : { status: 'uncertain', id: null, rejectionDiagnostics: null };
 }
 
 export function matchesPublication(entry: ActivityEntry, preview: PublicationPreview, body: unknown): 'matched' | 'conflicting' | 'unverified-comment' {
@@ -138,6 +169,44 @@ export function matchesPublication(entry: ActivityEntry, preview: PublicationPre
     if (comment.data.activityDesc !== preview.comment) return 'conflicting';
   }
   return matchesStructuredPublication(entry, preview, body) ? 'matched' : 'conflicting';
+}
+
+function canonicalInteger(value: unknown): number | null {
+  const number = typeof value === 'number' ? value
+    : typeof value === 'string' && /^(?:0|[1-9]\d*)$/.test(value) ? Number(value) : NaN;
+  return Number.isSafeInteger(number) && number >= 0 ? number : null;
+}
+
+function sameRecordedScalar(observed: unknown, expected: unknown): boolean {
+  if (JSON.stringify(observed ?? null) === JSON.stringify(expected ?? null)) return true;
+  const integer = canonicalInteger(observed);
+  return integer !== null && integer === canonicalInteger(expected);
+}
+
+function sameRecordedNotes(observed: unknown, expected: unknown): boolean {
+  if (sameCopyNotes(observed, expected)) return true;
+  // The personal renderer inserts HTML tags into the submitted plain notes.
+  // Preserve every text character and line break; do not normalize content.
+  return typeof observed === 'string' && typeof expected === 'string'
+    && observed.replace(/<[^>]*>/g, '') === expected.replace(/<[^>]*>/g, '');
+}
+
+function sameRecordedValues(observed: unknown, expected: PublicationPreview['prescription']['exercises'][number]): boolean {
+  const values = expected.prescription.valor1;
+  if (JSON.stringify(observed ?? null) === JSON.stringify(values ?? null)) return true;
+  if (expected.prescription.valueUnit !== 'cal' || !Array.isArray(observed)
+    || !Array.isArray(values) || observed.length !== values.length) return false;
+  // The gym editor encodes its two calorie alternatives with a slash; own
+  // detail resolves one source alternative. Never infer an account's sex.
+  return values.every((value, index) => {
+    if (JSON.stringify(observed[index]) === JSON.stringify(value)) return true;
+    const pair = typeof value === 'string' ? /^(0|[1-9]\d*)\/(0|[1-9]\d*)$/.exec(value) : null;
+    const integer = canonicalInteger(observed[index]);
+    const first = pair ? canonicalInteger(pair[1]) : null;
+    const second = pair ? canonicalInteger(pair[2]) : null;
+    return integer !== null && first !== null && second !== null
+      && (integer === first || integer === second);
+  });
 }
 
 function matchesStructuredPublication(entry: ActivityEntry, preview: PublicationPreview, body: unknown): boolean {
@@ -159,17 +228,19 @@ function matchesStructuredPublication(entry: ActivityEntry, preview: Publication
     if (observed.ejerName !== expected.name || validatedExerciseId(observed.ejerId) !== expected.sourceExerciseId
       || (observed.tipoWOD == null ? null : Number(observed.tipoWOD)) !== expected.blockIndex) return true;
     const changedLoad = preview.actualLoads.some(load => load.exerciseIndex === index);
-    return ['formaReg', 'tipoud', 'tipoud2', 'valor1', 'round', 'roundrepeat']
+    return ['formaReg', 'tipoud', 'tipoud2', 'round', 'roundrepeat']
       .filter(field => !changedLoad || field !== 'tipoud')
-      .some(field => JSON.stringify(rawField(observed, field)) !== JSON.stringify(expected.prescription[field] ?? null))
-      || (changedLoad ? !sameCopyLoadAlternatives(observed, expected.prescription)
+      .some(field => !sameRecordedScalar(rawField(observed, field), expected.prescription[field]))
+      || !sameRecordedValues(observed.valor1, expected)
+      || (changedLoad ? !(sameCopyLoadAlternatives(observed, expected.prescription)
+        || (observed.valor2h == null && observed.valor2m == null))
         : !sameCopyLoad(observed, expected.prescription));
   })) return false;
   if (blocks.some((base, index) => {
     const observed = effectiveBlock(base, preview.variantLabel);
     const expected = preview.prescription.blocks[index]!;
-    return !sameCopyNotes(observed.notes, expected.notes) || ['type', 'timecap', 'timecaptype'].some(field =>
-      JSON.stringify(observed[field as keyof BlockPayload] ?? null) !== JSON.stringify(expected.prescription[field] ?? null));
+    return !sameRecordedNotes(observed.notes, expected.notes) || ['type', 'timecap', 'timecaptype'].some(field =>
+      !sameRecordedScalar(observed[field as keyof BlockPayload], expected.prescription[field]));
   })) return false;
   return preview.blockResults.every(result => {
     const base = blocks[result.blockIndex];

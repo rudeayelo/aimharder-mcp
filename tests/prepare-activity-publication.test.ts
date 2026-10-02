@@ -172,7 +172,7 @@ test('Copy split-load normalization keeps the exact source alternatives through 
   const reference = (prepared.structuredContent as { actionReference: string }).actionReference;
   expect((await execute(client, reference)).structuredContent).toMatchObject({ status: 'confirmed', observedEntry: 'matched' });
   const sent = JSON.parse(String(form!.get('ejerRate')));
-  expect(sent[0]).toMatchObject({ valor2: '15', valor2h: '15', valor2m: '10' });
+  expect(sent[0]).toMatchObject({ valor2: '22.5', valor2h: '22.5', valor2m: '15' });
   expect(sent[0].scaledver[1]).toMatchObject({ valor2: '22.5', valor2h: '22.5', valor2m: '15' });
   expect(activityWrites()).toHaveLength(1);
   upstream.use(http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({
@@ -221,7 +221,7 @@ test('a confirmed actual kilogram load replaces only the selected fixed-kg exerc
   const reference = (prepared.structuredContent as { actionReference: string }).actionReference;
   expect((await execute(client, reference)).structuredContent).toMatchObject({ status: 'confirmed', observedEntry: 'matched' });
   const sent = JSON.parse(String(form!.get('ejerRate')));
-  expect(sent[0]).toMatchObject({ valor2: '15', valor2h: '15', valor2m: '10' });
+  expect(sent[0]).toMatchObject({ valor2: '15', valor2h: '22.5', valor2m: '15' });
   expect(sent[0].scaledver[0]).toMatchObject({ valor2: '15', valor2h: '15', valor2m: '10' });
   expect(sent[0].scaledver[1]).toMatchObject({ valor2: '15', valor2h: '22.5', valor2m: '15', tipoud: 0 });
   expect(activityWrites()).toHaveLength(1);
@@ -237,6 +237,59 @@ test('a confirmed actual kilogram load replaces only the selected fixed-kg exerc
     .toMatchObject({ status: 'uncertain', observedEntry: 'conflicting' });
   expect(activityWrites()).toHaveLength(2);
 });
+
+test.each([{ valor2: null, tipoud: 0 }, { valor2: '', tipoud: '0' }, { valor2: undefined, tipoud: 0 }])(
+  'an empty kilogram load field accepts an actual load and verifies its persisted value (%j)', async fields => {
+    const exercise = { ...sourceExercise, ...fields };
+    upstream.use(
+      http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ ejerRate: [exercise] }))),
+      http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ rates: [exercise] }))),
+    );
+    const client = await connect();
+    const query = { blockResults: [], actualLoads: [{ exerciseIndex: 0, actualKilograms: '12', confirmedActual: true }] };
+    const prepared = await prepare(client, query);
+    expect(prepared.structuredContent).toMatchObject({ status: 'ready', actualLoads: [{
+      actualKilograms: '12', originalPrescription: { formaReg: 4, tipoud: fields.tipoud },
+      calculatedSuggestion: { status: 'unavailable', reason: 'no-relative-load-prescription' },
+    }] });
+    const preview = prepared.structuredContent as { actionReference: string; actualLoads: Array<{ originalPrescription: unknown }> };
+    expect(preview.actualLoads[0]!.originalPrescription).not.toHaveProperty('loadUnit');
+    expect(activityWrites()).toHaveLength(0);
+    expect(requests.filter(row => row.path.startsWith('/api/exercise/'))).toHaveLength(0);
+    let form: FormData | undefined;
+    acceptedReadback({ detail: { userId: 42, boxId: 200, ...detail({ ejerRate: [{ ...exercise, valor2: '12', tipoud: 0 }] }) } });
+    upstream.use(http.post('https://sample-gym.aimharder.es/api/activity', async ({ request }) => {
+      form = await request.formData();
+      return HttpResponse.json({ errors: [], errorWODsID: [], errorWODsType: [], errorEjerID: [], id: '9001' });
+    }));
+    expect((await execute(client, preview.actionReference)).structuredContent)
+      .toMatchObject({ status: 'confirmed', observedEntry: 'matched' });
+    expect(JSON.parse(String(form!.get('ejerRate')))).toEqual([{ ...exercise, valor2: '12', tipoud: 0 }]);
+    expect(activityWrites()).toHaveLength(1);
+    acceptedReadback({ detail: { userId: 42, boxId: 200, ...detail({ ejerRate: [{ ...exercise, valor2: '13', tipoud: 0 }] }) } });
+    const second = await prepare(client, query);
+    expect((await execute(client, (second.structuredContent as { actionReference: string }).actionReference)).structuredContent)
+      .toMatchObject({ status: 'uncertain', observedEntry: 'conflicting' });
+    expect(activityWrites()).toHaveLength(2);
+  },
+);
+
+test.each([{ formaReg: 3, tipoud: 0 }, { formaReg: 4, tipoud: null }, { formaReg: 4, tipoud: 1 },
+  { formaReg: 4, tipoud: 99 }, { formaReg: 6, tipoud: 0 }])(
+  'an empty load still rejects an unsupported kilogram destination (%j)', async fields => {
+    const exercise = { ...sourceExercise, ...fields, valor2: null };
+    upstream.use(
+      http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ ejerRate: [exercise] }))),
+      http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ rates: [exercise] }))),
+    );
+    const result = await prepare(await connect(), { blockResults: [], actualLoads: [
+      { exerciseIndex: 0, actualKilograms: '12', confirmedActual: true },
+    ] });
+    expect(result.structuredContent).toMatchObject({ status: 'unsupported' });
+    expect(result.structuredContent).not.toHaveProperty('actionReference');
+    expect(activityWrites()).toHaveLength(0);
+  },
+);
 
 test('nested Copy variants and decimal-string exercise IDs permit a read-only preview', async () => {
   const labels = ['SCALED', 'INTERMEDIATE', 'RX'];
@@ -301,6 +354,28 @@ test('confirmed reference sends one allowlisted multipart request and requires o
   expect(JSON.parse(String(form!.get('TIPOWODs')))).toEqual([{ ...sourceBlock, time: '04:35' }]);
   expect(String(form!.get('copyId'))).toBe(String(sourceId));
   expect(JSON.stringify(result)).not.toMatch(/Publisher Private Name|private-image|synthetic-cookie|synthetic-password/);
+  expect((await execute(client, prepared.actionReference)).isError).toBe(true);
+  expect(activityWrites()).toHaveLength(1);
+});
+
+test('rejection diagnostics retain counts and bounded field indices without private error contents or a retry', async () => {
+  const client = await connect();
+  const prepared = (await prepare(client)).structuredContent as { actionReference: string };
+  acceptedReadback({ response: {
+    errors: ['Private member name and token', { password: 'private-password' }],
+    errorWODsID: [0, '0', 42, -1, 0.5, '01', 'private-block'], errorWODsType: [0, 'private-type'],
+    errorEjerID: ['0', 0, 42, -1, 0.5, '00', { userId: 42 }], id: '9001',
+  } });
+  const result = await execute(client, prepared.actionReference);
+  expect(result.structuredContent).toMatchObject({ status: 'rejected', acceptedResponseId: null,
+    observedEntry: 'unidentified', rejectionDiagnostics: {
+      errorCounts: { general: 2, blockReferences: 7, blockTypes: 2, exerciseReferences: 7 },
+      blockIndices: [0], exerciseIndices: [0],
+    },
+  });
+  expect(JSON.stringify(result)).not.toMatch(/Private member|token|password|private-block|private-type|userId/);
+  expect(activityWrites()).toHaveLength(1);
+  expect(requests.filter(row => row.path === '/api/activityCalendar')).toHaveLength(1);
   expect((await execute(client, prepared.actionReference)).isError).toBe(true);
   expect(activityWrites()).toHaveLength(1);
 });
@@ -410,8 +485,8 @@ test('selected variant records actual kilograms in its effective row and preserv
   const result = await execute(client, String((prepared.structuredContent as { actionReference: string }).actionReference));
   expect(result.structuredContent).toMatchObject({ status: 'confirmed', observedEntry: 'matched' });
   const sentRows = JSON.parse(String(sent!.get('ejerRate')));
-  expect(sentRows[0].valor2).toBe('80');
-  expect(sentRows[0].tipoud).toBe(4);
+  expect(sentRows[0].valor2).toBe('72.5');
+  expect(sentRows[0].tipoud).toBe(0);
   expect(sentRows[0].scaledver[0]).toMatchObject({ valor2: '72.5', tipoud: 0, valor2h: '85', valor2m: '75' });
   expect(sentRows[0].scaledver[1]).toMatchObject({ valor2: '90', tipoud: 4 });
   expect(JSON.parse(String(sent!.get('TIPOWODs')))[0].selectedscaling).toBe(0);
@@ -660,5 +735,234 @@ test('Copy editor plain notes match source notes with only HTML tags removed', a
   acceptedReadback();
   expect((await execute(client, String((prepared.structuredContent as { actionReference: string }).actionReference))).structuredContent)
     .toMatchObject({ status: 'confirmed' });
+  expect(activityWrites()).toHaveLength(1);
+});
+
+test('each effective EMOM needs an explicit completed-round result even with loads, other scores or copied results', async () => {
+  const blocks = [
+    { ...sourceBlock, type: 3, timecap: 8, rondas: 3, res: '99' },
+    { ...sourceBlock, type: '3', timecap: 6, rondas: 2 },
+    { ...sourceBlock, type: 2, timecap: 20 },
+  ];
+  const row = { ...sourceExercise, tipoud: 0, valor2: null };
+  upstream.use(
+    http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ TIPOWODs: blocks, ejerRate: [row] }))),
+    http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ TIPOWODs: blocks, rates: [row] }))),
+  );
+  const client = await connect();
+  const query = { blockResults: [{ blockIndex: 2, kind: 'repetitions', value: 50 }],
+    actualLoads: [{ exerciseIndex: 0, actualKilograms: '12', confirmedActual: true }] };
+  const first = await prepare(client, query);
+  expect(first.structuredContent).toMatchObject({ status: 'draft', requiredBlockResults: [
+    { blockIndex: 0, kind: 'rounds' }, { blockIndex: 1, kind: 'rounds' },
+  ] });
+  expect(first.structuredContent).not.toHaveProperty('actionReference');
+  const second = await prepare(client, { ...query, blockResults: [
+    ...query.blockResults, { blockIndex: 0, kind: 'rounds', value: 2 },
+  ] });
+  expect(second.structuredContent).toMatchObject({ status: 'draft', requiredBlockResults: [{ blockIndex: 1, kind: 'rounds' }] });
+  expect(second.structuredContent).not.toHaveProperty('actionReference');
+  expect(activityWrites()).toHaveLength(0);
+});
+
+test.each([0, 2])('EMOM completed rounds %s serialize as a result, preserve the prescription and require matching own readback', async value => {
+  const emom = { ...sourceBlock, type: 3, timecap: 8, rondas: 3 };
+  const amrap = { ...sourceBlock, type: 2, timecap: 20 };
+  const blocks = [emom, amrap];
+  const row = { ...sourceExercise, tipoud: 0 };
+  upstream.use(
+    http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ TIPOWODs: blocks, ejerRate: [row] }))),
+    http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ TIPOWODs: blocks, rates: [row] }))),
+  );
+  const client = await connect();
+  const query = { blockResults: [
+    { blockIndex: 0, kind: 'rounds', value }, { blockIndex: 1, kind: 'rounds', value: 1 },
+    { blockIndex: 1, kind: 'repetitions', value: 50 },
+  ] };
+  const ownBlocks = [{ ...emom, res: value }, { ...amrap, res: 1, reps: 50 }];
+  acceptedReadback({ detail: { userId: 42, boxId: 200, ...detail({ TIPOWODs: ownBlocks, ejerRate: [row] }) } });
+  let sent: FormData | undefined;
+  upstream.use(http.post('https://sample-gym.aimharder.es/api/activity', async ({ request }) => {
+    sent = await request.formData();
+    return HttpResponse.json({ errors: [], errorWODsID: [], errorWODsType: [], errorEjerID: [], id: '9001' });
+  }));
+  const prepared = (await prepare(client, query)).structuredContent as { status: string; actionReference: string };
+  expect(prepared.status).toBe('ready');
+  expect((await execute(client, prepared.actionReference)).structuredContent).toMatchObject({ status: 'confirmed', observedEntry: 'matched' });
+  expect(JSON.parse(String(sent!.get('TIPOWODs')))).toEqual([{ ...emom, res: String(value) }, { ...amrap, res: '1', reps: '50' }]);
+  expect(activityWrites()).toHaveLength(1);
+  acceptedReadback({ detail: { userId: 42, boxId: 200,
+    ...detail({ TIPOWODs: [{ ...emom, res: value + 1 }, ownBlocks[1]], ejerRate: [row] }),
+  } });
+  const again = (await prepare(client, query)).structuredContent as { actionReference: string };
+  expect((await execute(client, again.actionReference)).structuredContent).toMatchObject({ status: 'uncertain', observedEntry: 'conflicting' });
+  expect(activityWrites()).toHaveLength(2);
+});
+
+test.each(['time-seconds', 'repetitions', 'kilograms', 'pounds'])('EMOM does not accept %s as its completed-round result', async kind => {
+  const blocks = [{ ...sourceBlock, type: 3, timecap: 8, rondas: 3 }];
+  upstream.use(
+    http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ TIPOWODs: blocks }))),
+    http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ TIPOWODs: blocks }))),
+  );
+  const result = await prepare(await connect(), { blockResults: [{ blockIndex: 0, kind, value: 2 }] });
+  expect(result.structuredContent).toMatchObject({ status: 'unsupported' });
+  expect(result.structuredContent).not.toHaveProperty('actionReference');
+  expect(activityWrites()).toHaveLength(0);
+});
+
+test('EMOM requirements follow the selected effective variant rather than an unselected block type', async () => {
+  const block = { ...sourceBlock, type: 3, scaledops: ['EASY', 'HARD'], scaledver: [
+    sourceBlock, { ...sourceBlock, type: 3, timecap: 8 },
+  ] };
+  const row = { ...sourceExercise, tipoud: 0 };
+  const exercise = { ...row, scaledver: [row, row] };
+  upstream.use(
+    http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ TIPOWODs: [block], ejerRate: [exercise] }))),
+    http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ TIPOWODs: [block], rates: [exercise] }))),
+  );
+  const client = await connect();
+  expect((await prepare(client, { variantLabel: 'EASY' })).structuredContent).toMatchObject({ status: 'ready' });
+  const missing = await prepare(client, { variantLabel: 'HARD', blockResults: [], actualLoads: [
+    { exerciseIndex: 0, actualKilograms: '20', confirmedActual: true },
+  ] });
+  expect(missing.structuredContent).toMatchObject({ status: 'draft', requiredBlockResults: [{ blockIndex: 0, kind: 'rounds' }] });
+  expect(missing.structuredContent).not.toHaveProperty('actionReference');
+  expect((await prepare(client, { variantLabel: 'HARD', blockResults: [{ blockIndex: 0, kind: 'rounds', value: 2 }] }))
+    .structuredContent).toMatchObject({ status: 'ready' });
+  expect(activityWrites()).toHaveLength(0);
+});
+
+test('a backend that persists active fields retains selected variant scores and loads without variant metadata', async () => {
+  const emom = { ...sourceBlock, type: 3, timecap: 8, rondas: 3 };
+  const scaled = { ...sourceBlock, type: 2, timecap: 10, notes: 'Scaled prescription' };
+  const rx = { ...scaled, timecap: 20, notes: 'RX prescription' };
+  const amrap = { ...scaled, scaledops: ['SCALED', 'RX'], scaledver: [scaled, rx] };
+  const shared = { ...sourceExercise, ejerName: 'Shared kettlebell movement', tipoud: 0, valor2: null };
+  const baseWall = { ...sourceExercise, ejerId: 102, ejerName: 'Scaled wall ball', tipoWOD: 1, tipoud: 0, valor2: '5' };
+  const rxWall = { ...baseWall, ejerName: 'RX wall ball', valor2: '9', valor2h: '9', valor2m: '7' };
+  const wall = { ...baseWall, scaledver: [baseWall, rxWall] };
+  const baseThruster = { ...baseWall, ejerId: 103, ejerName: 'Scaled thruster', valor2: '10' };
+  const rxThruster = { ...baseThruster, ejerName: 'RX thruster', valor2: '20', valor2h: '20', valor2m: '15' };
+  const thruster = { ...baseThruster, scaledver: [baseThruster, rxThruster] };
+  const blocks = [emom, amrap], rows = [shared, wall, thruster];
+  upstream.use(
+    http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ TIPOWODs: blocks, ejerRate: rows }))),
+    http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ TIPOWODs: blocks, rates: rows }))),
+  );
+  const client = await connect();
+  const prepared = await prepare(client, { variantLabel: 'RX', blockResults: [
+    { blockIndex: 0, kind: 'rounds', value: 2 }, { blockIndex: 1, kind: 'rounds', value: 2 },
+  ], actualLoads: [
+    { exerciseIndex: 0, actualKilograms: '12', confirmedActual: true },
+    { exerciseIndex: 1, actualKilograms: '7', confirmedActual: true },
+    { exerciseIndex: 2, actualKilograms: '20', confirmedActual: true },
+  ] });
+  expect(prepared.structuredContent).toMatchObject({ status: 'ready', variantLabel: 'RX' });
+  expect(activityWrites()).toHaveLength(0);
+  let persistedBlocks: unknown[], persistedRows: unknown[];
+  acceptedReadback();
+  upstream.use(
+    http.post('https://sample-gym.aimharder.es/api/activity', async ({ request }) => {
+      const form = await request.formData();
+      const sentBlocks = JSON.parse(String(form.get('TIPOWODs')));
+      const sentRows = JSON.parse(String(form.get('ejerRate')));
+      expect(sentBlocks[1]).toMatchObject({ notes: 'RX prescription', timecap: 20, res: '2', selectedscaling: 1 });
+      expect(sentBlocks[1].scaledver[0]).toEqual(scaled);
+      expect(sentBlocks[1].scaledver[1]).toMatchObject({ res: '2', notes: 'RX prescription' });
+      expect(sentRows[0]).toMatchObject({ valor2: '12', tipoud: 0 });
+      expect(sentRows[1]).toMatchObject({ ejerName: 'RX wall ball', valor2: '7', tipoud: 0 });
+      expect(sentRows[1].scaledver[0]).toEqual(baseWall);
+      expect(sentRows[1].scaledver[1]).toMatchObject({ valor2: '7' });
+      expect(sentRows[2]).toMatchObject({ ejerName: 'RX thruster', valor2: '20', tipoud: 0 });
+      expect(sentRows[2].scaledver[0]).toEqual(baseThruster);
+      // This fixture models the observed backend, which returned active fields
+      // and discarded variant containers and the selectedscaling marker.
+      persistedBlocks = sentBlocks.map(({ scaledops: _labels, scaledver: _variants, selectedscaling: _selection, ...active }: Record<string, unknown>) =>
+        ({ ...active, res: Number(active.res) }));
+      persistedRows = sentRows.map(({ scaledver: _variants, ...active }: Record<string, unknown>) => active);
+      return HttpResponse.json({ errors: [], errorWODsID: [], errorWODsType: [], errorEjerID: [], id: '9001' });
+    }),
+    http.get('https://aimharder.es/api/activity/workout', () => HttpResponse.json({ userId: 42, boxId: 200,
+      ...detail({ TIPOWODs: persistedBlocks, ejerRate: persistedRows }),
+    })),
+  );
+  const result = await execute(client, String((prepared.structuredContent as { actionReference: string }).actionReference));
+  expect(result.structuredContent).toMatchObject({ status: 'confirmed', observedEntry: 'matched' });
+  expect(activityWrites()).toHaveLength(1);
+});
+
+function normalizedOwnPublication(calories: string, options: { format?: number; pair?: string } = {}) {
+  const block = { ...sourceBlock, type: '2', timecap: '20', notes: 'First line\nSecond line' };
+  const shared = { ...sourceExercise, tipoud: 0, tipoud2: null, valor2: null, round: '1' };
+  const loaded = { ...shared, ejerId: 102, ejerName: 'Sample weighted movement', tipoud2: '0',
+    valor2: '9', valor2h: '9', valor2m: '7' };
+  const calorieRow = { ...shared, ejerId: 103, ejerName: 'Sample calorie movement', tipoud: null,
+    formaReg: options.format ?? 5, valor1: [options.pair ?? '42/31'] };
+  const rows = [shared, loaded, calorieRow];
+  upstream.use(
+    http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ TIPOWODs: [block], ejerRate: rows }))),
+    http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ TIPOWODs: [block], rates: rows }))),
+  );
+  const own: { TIPOWODs: Array<Record<string, unknown>>; ejerRate: Array<Record<string, unknown>> } = {
+    TIPOWODs: [{ ...block, type: 2, timecap: 20, notes: 'First line<br />\nSecond line', res: 2 }],
+    ejerRate: [
+      { ...shared, ejerId: '101', round: 1, valor2: '12' },
+      { ...loaded, ejerId: '102', round: 1, tipoud2: 0, valor2: '7' },
+      { ...calorieRow, ejerId: '103', round: 1, valor1: [calories] },
+    ],
+  };
+  delete own.ejerRate[1]!.valor2h;
+  delete own.ejerRate[1]!.valor2m;
+  const query = { blockResults: [{ blockIndex: 0, kind: 'rounds', value: 2 }], actualLoads: [
+    { exerciseIndex: 0, actualKilograms: '12', confirmedActual: true },
+    { exerciseIndex: 1, actualKilograms: '7', confirmedActual: true },
+  ] };
+  return { own, query };
+}
+
+test.each(['42', '31'])('confirmed readback tolerates observed formatting, integer transport, removed load alternatives and exact calorie alternative %s', async calories => {
+  const { own, query } = normalizedOwnPublication(calories);
+  acceptedReadback({ detail: { userId: 42, boxId: 200, ...detail(own) } });
+  const client = await connect();
+  const prepared = (await prepare(client, query)).structuredContent as { actionReference: string };
+  const result = await execute(client, prepared.actionReference);
+  expect(result.structuredContent).toMatchObject({ status: 'confirmed', observedEntry: 'matched',
+    sourceProvenance: { status: 'verified', originalPrescription: { exercises: [
+      { prescription: { valor2: null } }, { prescription: { valor2h: '9', valor2m: '7' } },
+      { prescription: { valor1: ['42/31'], valueUnit: 'cal' } },
+    ] } },
+  });
+  expect(activityWrites()).toHaveLength(1);
+});
+
+test.each([
+  ['noncanonical integer', (own: ReturnType<typeof normalizedOwnPublication>['own']) => { own.TIPOWODs[0]!.timecap = '020'; }],
+  ['null changed to zero', (own: ReturnType<typeof normalizedOwnPublication>['own']) => { own.ejerRate[0]!.tipoud2 = 0; }],
+  ['changed note content', (own: ReturnType<typeof normalizedOwnPublication>['own']) => { own.TIPOWODs[0]!.notes = 'First line<br />\nChanged line'; }],
+  ['unknown calorie alternative', (own: ReturnType<typeof normalizedOwnPublication>['own']) => { own.ejerRate[2]!.valor1 = ['40']; }],
+  ['partial load alternatives', (own: ReturnType<typeof normalizedOwnPublication>['own']) => { own.ejerRate[1]!.valor2h = '9'; }],
+  ['wrong actual unit', (own: ReturnType<typeof normalizedOwnPublication>['own']) => { own.ejerRate[1]!.tipoud = 1; }],
+  ['wrong actual load', (own: ReturnType<typeof normalizedOwnPublication>['own']) => { own.ejerRate[1]!.valor2 = '8'; }],
+  ['wrong block score', (own: ReturnType<typeof normalizedOwnPublication>['own']) => { own.TIPOWODs[0]!.res = 3; }],
+] as const)('readback normalization does not confirm %s', async (_reason, mutate) => {
+  const { own, query } = normalizedOwnPublication('42');
+  mutate(own);
+  acceptedReadback({ detail: { userId: 42, boxId: 200, ...detail(own) } });
+  const client = await connect();
+  const prepared = (await prepare(client, query)).structuredContent as { actionReference: string };
+  expect((await execute(client, prepared.actionReference)).structuredContent).toMatchObject({ status: 'uncertain', observedEntry: 'conflicting' });
+  expect(activityWrites()).toHaveLength(1);
+});
+
+test.each([
+  { format: 3, pair: '42/31' },
+  { format: 5, pair: '9007199254740992/31' },
+])('readback cannot resolve a slash prescription with unverified format or unsafe alternatives: %j', async options => {
+  const { own, query } = normalizedOwnPublication('31', options);
+  acceptedReadback({ detail: { userId: 42, boxId: 200, ...detail(own) } });
+  const client = await connect();
+  const prepared = (await prepare(client, query)).structuredContent as { actionReference: string };
+  expect((await execute(client, prepared.actionReference)).structuredContent).toMatchObject({ status: 'uncertain', observedEntry: 'conflicting' });
   expect(activityWrites()).toHaveLength(1);
 });

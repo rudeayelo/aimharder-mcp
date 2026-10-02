@@ -703,6 +703,13 @@ export class AimHarderClient {
       try { formSnapshot = JSON.stringify([...buildActivityForm(source.copy, preview)]); }
       catch { return { status: 'unsupported' as const, gym,
         notices: ['The Copy source has unsupported transport fields. No activity write was prepared.'] }; }
+      const requiredBlockResults = preview.prescription.blocks.flatMap((block, blockIndex) =>
+        Number(block.prescription.type) === 3
+          && !query.blockResults.some(result => result.blockIndex === blockIndex && result.kind === 'rounds')
+          ? [{ blockIndex, kind: 'rounds' as const }] : []);
+      if (requiredBlockResults.length)
+        return { status: 'draft' as const, ...preview, requiredBlockResults,
+          notices: [...preview.notices, 'Enter completed rounds for each EMOM block before preparing a write. Source round counts are prescriptions, not achieved results. No action reference was issued.'] };
       if (!query.blockResults.length && !query.actualLoads.length)
         return { status: 'draft' as const, ...preview,
           notices: [...preview.notices, 'Choose a supported block result or explicitly confirm an actual kilogram load before preparing a write. No action reference was issued.'] };
@@ -765,9 +772,11 @@ export class AimHarderClient {
       catch { return { status: 'stale' as const, preview, notices: ['The Copy payload has unsupported fields. No activity write was sent.'] }; }
       if (JSON.stringify([...form]) !== stored.formSnapshot)
         return { status: 'stale' as const, preview, notices: ['The mapped Copy fields changed after preparation. No activity write was sent.'] };
-      let response: ReturnType<typeof publicationResponse> = { status: 'uncertain', id: null };
+      let response: ReturnType<typeof publicationResponse> = { status: 'uncertain', id: null, rejectionDiagnostics: null };
       try {
-        response = publicationResponse(await this.#request({ kind: 'activity-post', gymId: gym.id, form }));
+        response = publicationResponse(await this.#request({ kind: 'activity-post', gymId: gym.id, form }), {
+          blockCount: source.copy.TIPOWODs.length, exerciseCount: source.copy.rates.length,
+        });
       } catch { /* A POST may have reached AimHarder. Never retry it. */ }
       let observedEntry: 'matched' | 'missing' | 'unidentified' | 'conflicting' | 'unverified-comment' | 'unreadable' = 'unreadable';
       try {
@@ -793,7 +802,8 @@ export class AimHarderClient {
             sourceProvenance = { status: 'verified', originalPrescription: preview.prescription };
         } catch { /* A changed or unreadable gym source cannot establish later provenance. */ }
       }
-      return { status, preview, responseStatus: response.status, acceptedResponseId: response.id, observedEntry, sourceProvenance,
+      return { status, preview, responseStatus: response.status, acceptedResponseId: response.id,
+        rejectionDiagnostics: response.rejectionDiagnostics, observedEntry, sourceProvenance,
         notices: [status === 'confirmed' ? 'A fresh account calendar and detail read matched the submitted results and any requested comment.'
           : status === 'rejected' ? 'AimHarder rejected the request; a calendar read alone cannot prove absence of a separate entry.'
             : 'The activity outcome is not confirmed by a fresh own-account read.',
