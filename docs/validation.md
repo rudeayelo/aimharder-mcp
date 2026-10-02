@@ -366,3 +366,9 @@ Node 24.14.0 passed `pnpm typecheck`, `pnpm build` and the complete `pnpm test`:
 This validates the corrected payload and read-back for one selected source. Other sources and score formats, live percentage-to-kilogram conversion, applied audience, general DELETE response meaning, permanence and RM effects remain unverified. The activity ADR records the bounded reconciliation amendment; domain terminology, architecture, authentication, fixed origins and the original MVP scope are unchanged. Further writes still require a new exact preview and separate confirmation.
 
 For this delivery, `git diff --check` and all 55 local Markdown file targets in the touched files passed.
+
+## Additional-distance investigation (2026-10-02)
+
+The account holder reported deleting the preceding correct publication and supplied a request from a separate fictitious workout, also reported deleted. Inspection of only allowlisted multipart body fields corroborated numeric `res`/`reps` transport, including active and selected replacement blocks. The capture contains no additional-distance unit or verified metre-valued result; it includes no accepted response or later own-detail evidence. The existing public MCP regression already covers simultaneous rounds and leftover repetitions. No runtime behavior, input schema or write mapping was changed, so no new implementation tests were required.
+
+A fresh independent authenticated full-month account calendar found the previous accepted entry absent and zero entries on the intended past date. This is a read-only observation after an account-holder deletion, not an MCP deletion attempt or proof of permanence/RM effects. No new POST or DELETE was sent. Representation of the additional distance remains pending an explicit account-holder choice and a fresh exact preview. Architecture, domain terminology, security and the activity ADR's structured-result and separate-confirmation decisions remain unchanged.
