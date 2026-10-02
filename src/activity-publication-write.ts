@@ -96,17 +96,32 @@ export function buildActivityForm(copy: CopySource, preview: PublicationPreview)
       target.time = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     } else target[field] = String(result.value);
   }
-  // For a selected label, preserve all other scaledver branches and mark only
-  // that one on blocks that offer it. Shared blocks stay at their base values.
+  // The official editor submits the selected content in the active top-level
+  // fields as well as scaledver. The live backend persisted only active fields.
   for (const block of blocks) effectiveBlock(block, preview.variantLabel);
+  const activeBlocks = blocks.map(block => {
+    const selected = effectiveBlock(block, preview.variantLabel);
+    return selected === block ? block : { ...selected, scaledops: block.scaledops,
+      scaledver: block.scaledver, selectedscaling: block.selectedscaling };
+  });
+  const activeExercises = exercises.map(row => {
+    if (!preview.variantLabel || row.tipoWOD == null) return row;
+    const block = blocks[Number(row.tipoWOD)];
+    if (!block) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+    const index = block.scaledops?.indexOf(preview.variantLabel) ?? -1;
+    if (index < 0 || effectiveBlock(block, preview.variantLabel).deleted) return row;
+    const selected = row.scaledver?.[index];
+    if (!selected) throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
+    return { ...selected, scaledver: row.scaledver };
+  });
   const form = new FormData();
   form.append('conCom', preview.comment ?? '');
   form.append('conComInside', '');
   form.append('selectedDate', preview.activityDate.replaceAll('-', ''));
   form.append('copyId', String(preview.source.sourceActivityId));
   form.append('imagesCargadas', '[]');
-  form.append('ejerRate', JSON.stringify(exercises));
-  form.append('TIPOWODs', JSON.stringify(blocks));
+  form.append('ejerRate', JSON.stringify(activeExercises));
+  form.append('TIPOWODs', JSON.stringify(activeBlocks));
   form.append('homeVideoID', '-1');
   form.append('boxLocation', String(copy.boxID));
   form.append('valueWithMentions', preview.comment ?? '');
