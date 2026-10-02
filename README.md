@@ -17,7 +17,7 @@ Publication accepts explicit actual kilograms in a verified Copy kilogram field 
      "mcpServers": {
        "aimharder": {
          "command": "npx",
-         "args": ["--yes", "aimharder-mcp@0.4.1"]
+         "args": ["--yes", "aimharder-mcp@0.4.2"]
        }
      }
    }
