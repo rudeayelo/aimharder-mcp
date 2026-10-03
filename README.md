@@ -1,12 +1,10 @@
 # aimharder-mcp
 
-Ask about your AimHarder classes, workouts, bookings and activity from an AI client. This local [MCP server](https://modelcontextprotocol.io/) supports confirmed manual booking actions and own activity publication and deletion. One standard booking cycle and a structured activity publication were verified at 9NBC. A confirmed deletion was followed by observed calendar absence; its response meaning, permanence and RM effects remain uncertain. This is an independent project, neither affiliated with nor endorsed by AimHarder.
+Ask about your AimHarder classes, workouts, bookings, activity and personal RMs from an AI client. This local [MCP server](https://modelcontextprotocol.io/) also supports confirmed manual booking actions and publication and deletion of your own activity. This is an independent project, neither affiliated with nor endorsed by AimHarder.
 
-**Data limits:** Live checks used one account at one location (9NBC). Other gyms may differ. Workout and booking views can be incomplete, so an empty result may not mean there is nothing to show. [Details](docs/tools.md#coverage-and-interpretation)
+**Data limits:** Live checks used one account at one location (9NBC). Other gyms may differ, and an empty result from an incomplete view does not prove absence. Activity audience, deletion permanence and RM effects remain unverified. See [coverage and interpretation](docs/tools.md#coverage-and-interpretation) and [validation evidence](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/validation.md).
 
 ## Get started
-
-Publication accepts explicit actual kilograms in a verified Copy kilogram field even when its original weight is empty. EMOM blocks require explicit completed rounds; AMRAP results can include both complete rounds and additional repetitions. The selected variant's results and loads are sent in active payload fields and verified through a fresh own calendar/detail read. A separately confirmed live execution returned `confirmed` with matching scores and all submitted loads. The earlier `0.4.1` package lacks these fixes. See [validation](docs/validation.md#confirmed-publication-with-additional-amrap-repetitions-2026-10-02) for the observed source and remaining limits.
 
 1. Install Node.js **24 or newer**.
 2. Supply `AIMHARDER_USERNAME` and `AIMHARDER_PASSWORD` to the server process through your client or a secrets manager. Keep them out of shared configuration. The server assumes `Europe/Madrid` unless you [configure your gym's time zone](docs/configuration.md).
@@ -37,7 +35,7 @@ Hermes and Codex CLI have called the account tool through the published package.
 
 ## Tools
 
-Version `0.4.0` includes the activity publication and deletion tools below. Each write requires a separate confirmation of the exact preview.
+Each write requires a separate confirmation of the exact preview and a user-confirmed gym time zone. The server checks the current account state after each attempted write and never automatically retries an uncertain write.
 
 | Tool | Example question |
 | --- | --- |
@@ -62,20 +60,20 @@ Version `0.4.0` includes the activity publication and deletion tools below. Each
 
 Clients can combine tools for questions about workouts and bookings, or count recent **activity entries**. An activity entry does not establish attendance or one distinct training session. See [tool inputs and coverage](docs/tools.md).
 
-Version `0.3.0` adds source exercise IDs, known-ID and name-based own-account 1RM queries, separate RM progression, and calculated loads for eligible `%RM` prescriptions dated today or later in the gym's reported zone. Original instructions and all publication/variant alternatives remain visible. Search and personal history coverage are limited. Live source comparison passed for search, progression and a calculated load in the 28 September WOD. That WOD's split variant rows lacked valid source exercise IDs, so their original percentages remained visible with unavailable calculation status; split arithmetic remains fixture-verified only. See [validation](docs/validation.md#personal-rm-follow-up-2026-09-27-issues-3538) for the evidence limits.
+Personal RM queries show the latest dated record and progression separately. Eligible `%RM` prescriptions for today or later can include calculated loads while preserving the original workout instructions. Search and history coverage are limited; see [tool details](docs/tools.md).
 
-Version `0.4.0` includes `prepare_activity_publication` and a confirmation-gated `execute_activity_publication` for supported structured block results and manually confirmed actual kilogram loads from a current-view gym workout. It also includes `prepare_activity_deletion` and `execute_activity_deletion`: preparation verifies an exact own entry through the account calendar and detail; execution requires separate confirmation, rechecks the target, attempts at most one DELETE, and reports a fresh account view. A read-only publication draft can show historical kilogram suggestions before the account holder chooses an actual load; it cannot be executed. Preparation reads the independently configured account audience. Publication execution rechecks the audience, source, suggestion and exact Copy payload, sends at most one activity POST, then reads the own calendar and detail before reporting confirmation or uncertainty. An [MCP client journey test](tests/activity-journey.test.ts) covers both actions against anonymized upstream fixtures. Two individually confirmed publication attempts were rejected on 2026-10-01, and an accepted attempt on 2026-10-02 had conflicting content. One separately confirmed DELETE on 2026-10-02 was followed by complete calendar reads showing the target absent and the earlier own entry retained; its transport/response stayed uncertain. A fourth separately confirmed POST preserved both scores and all three actual loads. Its original execution reported a formatting conflict; after a comparator correction, a fresh independent read matched the same entry without another POST. A fifth separately confirmed execution from the corrected checkout returned `confirmed` with a matched fresh own calendar/detail read, including both completed-round results, additional AMRAP repetitions and all actual loads; the gym source was independently reverified by the execution path. Effective audience, deletion permanence and RM effects remain unverified. Configure a user-confirmed gym zone and review each complete preview before providing separate confirmation. The fixture journey does not establish a real write outcome.
+Activity publication starts from a verified gym workout and supports structured block results and manually confirmed actual kilogram loads. EMOM results require completed rounds; AMRAP results can include complete rounds and additional repetitions. Review the selected variant, results, loads and audience settings in the preview before confirming. See [publication inputs](docs/tools.md#prepare_activity_publication).
 
 ## Roadmap
 
 Planned capabilities, without committed dates or versions:
 
-- [ ] Compare a calculable split `%RM` source example against the MCP when one becomes available; the current release decision accepts fixture-only evidence for that arithmetic path.
-- [ ] [Validate own activity results](docs/activity-results-spec.md) ([specified in #42](https://github.com/rudeayelo/aimharder-mcp/issues/42); source implementation and fixture journey complete, broader live contracts pending).
 - [ ] Expand compatibility to more AimHarder gyms.
 - [ ] Explore compatibility with mobile apps.
 
 ## Contributing
+
+The server runs locally over stdio with one account per instance and no persistent storage. The TypeScript API client is separate from the MCP layer; see the [architecture decision](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/adr/2026-09-21-api-client-separated-from-interfaces.md).
 
 Report bugs or propose changes in [GitHub Issues](https://github.com/rudeayelo/aimharder-mcp/issues). Keep credentials and private activity out of reports. See the [development guide](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/development.md) to contribute code.
 
