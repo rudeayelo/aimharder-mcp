@@ -1,5 +1,11 @@
 # aimharder-mcp
 
+## 0.4.3
+
+### Patch Changes
+
+- 9b48e81: Simplify the README around current setup and capabilities, link to detailed validation evidence, and remove accepted validation gaps from the roadmap.
+
 ## 0.4.2
 
 ### Patch Changes
