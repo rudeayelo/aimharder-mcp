@@ -398,3 +398,9 @@ A second clean installation of the same exact registry version passed source-spe
 The internal release procedure, feature status and activity ADR record these results. Distribution policy, architecture, authentication and domain terminology are unchanged; the registry checks apply the existing release-validation decision. This evidence-only update requires no Changeset and no additional implementation tests.
 
 For this evidence-only delivery, `git diff --check` and all 40 local Markdown file targets in the touched documents passed.
+
+## Parent feature acceptance and closure (2026-10-03)
+
+After accepting the confirmed live publication and the exact-registry verification of `aimharder-mcp@0.4.2`, the account holder requested closure of parent issue #42. All implementation/validation children #44–#50 and follow-up #53 were already closed. The parent was closed as completed at `2026-10-03T20:45:21Z` with a summary of delivered confirmation-gated publication/deletion, matched scores/actual loads and source provenance, observed deletion absence with uncertain response, 471-test CI/release gates and the exact npm artifact's authenticated read-only checks. See the [closeout](https://github.com/rudeayelo/aimharder-mcp/issues/42#issuecomment-5973320491).
+
+Closure records the account holder's acceptance with the documented evidence boundaries retained: effective audience, broader source/result formats, live percentage conversion, general DELETE response meaning, permanence and RM effects remain unverified. No new AimHarder request or write, implementation change or npm release followed from closure. Feature status and the existing activity ADR now reflect acceptance. API research, packaged consumer guidance, tool behavior, architecture, authentication and domain terminology remain unchanged; broader validation work listed in the roadmap remains applicable. This internal documentation update needs no Changeset or additional implementation tests.
