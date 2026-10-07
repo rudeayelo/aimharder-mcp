@@ -13,7 +13,7 @@ Claude Desktop configures local stdio servers in `mcpServers` JSON. Its [officia
      "mcpServers": {
        "aimharder": {
          "command": "npx",
-         "args": ["--yes", "aimharder-mcp@0.4.3"]
+         "args": ["--yes", "aimharder-mcp@0.5.0"]
        }
      }
    }
