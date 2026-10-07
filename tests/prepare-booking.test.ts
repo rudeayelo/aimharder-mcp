@@ -52,17 +52,24 @@ async function prepare(client: Client, extra: Record<string, unknown> = {}) {
 }
 const writes = () => requests.filter(({ method }) => method === 'POST');
 
-test('prepares one exact class through read-only MCP calls and discloses credit uncertainty', async () => {
-  const result = await prepare(await connect());
+test('prepares one exact class through read-only MCP calls without a credit warning', async () => {
+  const client = await connect();
+  const { tools } = await client.listTools();
+  for (const name of ['prepare_booking_creation', 'execute_booking_creation']) {
+    const tool = tools.find(tool => tool.name === name)!;
+    expect(tool.description).toContain('one explicit account-holder confirmation');
+    expect(JSON.stringify(tool)).not.toMatch(/credit/i);
+  }
+  const result = await prepare(client);
   expect(result.isError).not.toBe(true);
   expect(result.structuredContent).toMatchObject({
     status: 'ready', action: 'create', gym: { id: 'sample-gym', timeZoneStatus: 'user-confirmed' },
     target: { className: 'Open Box', date: '2026-09-26', startTime: '10:00', endTime: '11:00' },
-    currentState: 'unbooked', credit: { balance: null, entitlementPeriod: null },
+    currentState: 'unbooked',
     actionReference: expect.any(String), expiresAt: expect.any(String),
   });
   expect((result.structuredContent as { actionReference: string }).actionReference).toMatch(/^[a-f0-9]{64}$/);
-  expect(JSON.stringify(result)).not.toMatch(/sourceId|accountId|boxId|familyId/);
+  expect(JSON.stringify(result)).not.toMatch(/sourceId|accountId|boxId|familyId|credit/i);
   expect(requests.map(({ method, pathname }) => [method, pathname])).toEqual([
     ['POST', '/api/login'], ['GET', '/api/whoami'], ['GET', '/api/bookings'],
   ]);
@@ -92,6 +99,7 @@ test.each([
   expect(result.structuredContent).toMatchObject({ status });
   expect(result.structuredContent).not.toHaveProperty('actionReference');
   expect(JSON.stringify(result)).not.toContain('currently offers this class');
+  expect(JSON.stringify(result)).not.toMatch(/credit/i);
 });
 
 test('prepares a class when the optional source hidden flag is absent', async () => {
@@ -117,7 +125,7 @@ test('preserves gym-local wall times at DST boundaries without inventing an inst
   }
 });
 
-test('discloses a possible 9NBC credit use while still preparing an offered class', async () => {
+test('prepares an offered 9NBC class without a credit warning', async () => {
   upstream.use(
     http.get('https://aimharder.es/api/whoami', () => HttpResponse.json({ data: [{ id: 42, roles: [
       { role: 'client', boid: 200, gym: 'Sample Gym', centre_url: 'noubarriscrosstraining.aimharder.es' },
@@ -125,7 +133,8 @@ test('discloses a possible 9NBC credit use while still preparing an offered clas
     http.get('https://noubarriscrosstraining.aimharder.es/api/bookings', () => HttpResponse.json(day([row()]))),
   );
   const result = await prepare(await connect({ AIMHARDER_GYM_TIME_ZONES: '{"noubarriscrosstraining":"Europe/Madrid"}' }));
-  expect(result.structuredContent).toMatchObject({ status: 'ready', credit: { possibleUse: expect.stringContaining('one credit'), balance: null } });
+  expect(result.structuredContent).toMatchObject({ status: 'ready', currentState: 'unbooked' });
+  expect(JSON.stringify(result)).not.toMatch(/credit/i);
   expect(requests.some(({ pathname }) => pathname === '/api/book')).toBe(false);
 });
 
@@ -154,7 +163,7 @@ test('action references bind the preview, account, gym and action and are single
   const store = new BookingPreparationStore();
   const preview: BookingCreationPreview = { action: 'create', gym: { id: 'sample-gym', name: 'Sample Gym', timeZone: 'Europe/Madrid', timeZoneStatus: 'user-confirmed' },
     target: { className: 'Open Box', date: '2026-09-26', startTime: '10:00', endTime: '11:00' },
-    currentState: 'unbooked', credit: { possibleUse: 'Possible credit use', balance: null, entitlementPeriod: null }, notices: [] };
+    currentState: 'unbooked', notices: [] };
   const first = store.issue(42, 200, 501, preview);
   preview.target.className = 'Changed';
   expect(store.take(first.actionReference, 'create', 42, 'sample-gym')).toMatchObject({

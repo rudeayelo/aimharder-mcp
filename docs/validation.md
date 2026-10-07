@@ -424,3 +424,11 @@ The local Node 24.14.0 `scripts/registry-check.mjs 0.4.3` check completed before
 This patch changes packaged documentation only. Earlier live write evidence and its remaining limits still apply; API research, tool behavior, architecture, scope, authentication and domain terminology are unchanged. Existing ADRs require no amendment. This internal release-evidence update needs no Changeset or additional implementation tests.
 
 For this release-evidence update, `git diff --check` and all 27 Markdown file targets and anchors in the touched documents passed.
+
+## Booking creation credit-warning removal (2026-10-07, issue #64)
+
+At the account holder's request, the checkout removes credit-use notices and the `credit` object from creation preparation/execution responses and their MCP output schemas. Both tool descriptions require one explicit confirmation of the exact gym, class and gym-local date/time.
+
+Node 24.14.0 `pnpm typecheck`, `pnpm build` and `pnpm test` passed (18 files, 471 tests). `pnpm test:package` also passed isolated archive installation, MCP initialization, 18-tool availability, anonymized account selection and sanitized errors with empty server stderr. All 44 local links in the affected documentation resolved, and `git diff --check` passed. The MCP SDK in-memory client and anonymized HTTP fixtures verify that creation tool metadata and ready previews at both a sample gym and 9NBC contain no credit warning or field; unavailable targets, confirmed execution and an incomplete-response outcome also omit them. Existing cases retain the confirmation gate, reference expiry/single use, stale-target and duplicate checks, one-write execution and fresh read-back. Cancellation and late-credit-loss fixtures also passed.
+
+No authenticated AimHarder request or real booking was made for this change. A particular client app's prompt count and permission dialogs have not been checked. Upstream API contracts and observed credit effects are unchanged; the historical API research and original MVP acceptance evidence remain applicable. Consumer tool docs, affected ADRs and a minor changeset record the output-contract change; publication is pending.

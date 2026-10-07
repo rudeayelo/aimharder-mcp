@@ -121,7 +121,6 @@ export type BookingCreationPreview = {
   action: 'create'; gym: { id: string; name: string; timeZone: string; timeZoneStatus: 'user-confirmed' };
   target: Omit<BookingCandidate, 'currentState' | 'eligibility'>;
   currentState: 'unbooked';
-  credit: { possibleUse: string; balance: null; entitlementPeriod: null };
   notices: string[];
 };
 export type BookingCancellationPreview = {

@@ -134,7 +134,6 @@ export class AimHarderClient {
           : candidate.eligibility === 'offered' ? 'ready' as const : 'unsupported' as const;
       const notices = [
         'This is a read-only schedule snapshot. Preparation does not reserve a place or prove final eligibility.',
-        'A booking may use a credit. No verified available balance or entitlement period is available.',
         ...(status === 'ready' && gym.id === 'noubarriscrosstraining' && nearReportedBookingCutoff(query.date, query.startTime, gym.timeZone)
           ? ['This class is near 9NBC’s reported one-hour booking cutoff by gym-local wall time. The actual eligibility is decided by AimHarder; this warning does not reject the request.'] : []),
       ];
@@ -142,10 +141,7 @@ export class AimHarderClient {
       const preview: BookingCreationPreview = {
         action: 'create', gym: { ...gym, timeZone: gym.timeZone, timeZoneStatus: 'user-confirmed' },
         target: base.target, currentState: 'unbooked',
-        credit: { possibleUse: gym.id === 'noubarriscrosstraining'
-          ? 'The account holder reports that a confirmed booking uses one credit at 9NBC; the actual charge is not verified for this request.'
-          : 'A booking may use a credit; the actual charge is not verified for this request.',
-        balance: null, entitlementPeriod: null }, notices,
+        notices,
       };
       return { status, ...preview, alternatives, ...this.#bookingPreparations.issue(this.#accountId!, boxId, candidate.sourceId, preview) };
     });
@@ -161,7 +157,7 @@ export class AimHarderClient {
       if (!entry) throw new AimHarderError('BOOKING_REFERENCE_INVALID');
       const { preview } = entry;
       const target = preview.target;
-      const base = { action: 'create' as const, gym, target, credit: preview.credit };
+      const base = { action: 'create' as const, gym, target };
       if (boxId !== entry.boxId || gym.timeZoneStatus !== 'user-confirmed' || gym.timeZone !== preview.gym.timeZone || gym.name !== preview.gym.name) {
         return { ...base, status: 'stale' as const, observedState: 'unknown' as const, notices: ['Account, gym, or confirmed time zone changed. No booking request was sent.'] };
       }
@@ -213,7 +209,7 @@ export class AimHarderClient {
           : status === 'waitlisted' ? 'A fresh schedule read reported a waitlist state; no further write was sent.'
             : status === 'rejected' ? 'The source returned a denial indication and the fresh schedule remains unbooked. Denial semantics remain unverified live.'
               : 'The outcome is uncertain. Check the booking directly before preparing a new action; no automatic write retry was sent.',
-        ...(writeIssue ? ['The write response was incomplete; do not infer a credit change.'] : []),
+        ...(writeIssue ? ['The write response was incomplete; use fresh booking reads to assess the outcome.'] : []),
         ...(reconciliationIssue ? ['A follow-up view could not be read completely; booking state remains uncertain.'] : []),
       ] };
     });

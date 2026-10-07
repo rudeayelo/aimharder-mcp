@@ -72,7 +72,7 @@ test('one confirmed action writes once and confirms from fresh schedule and upco
   expect(new URLSearchParams(requestBody).get('id')).toBe('501');
   expect(new URLSearchParams(requestBody).get('day')).toBe('20260926');
   expect(requestBody).not.toMatch(/family|insist|box/i);
-  expect(JSON.stringify(result)).not.toMatch(/sourceId|accountId|boxId/);
+  expect(JSON.stringify(result)).not.toMatch(/sourceId|accountId|boxId|credit/i);
   expect((await execute(client, reference)).isError).toBe(true);
   expect(writeCount).toBe(1);
 });
@@ -135,7 +135,9 @@ test('explicit denial and unchanged fresh state are reported as rejected', async
 test('malformed or lost responses reconcile without another write', async () => {
   response = () => new HttpResponse('malformed', { status: 200 });
   const client = await connect();
-  expect((await execute(client, await prepare(client))).structuredContent).toMatchObject({ status: 'uncertain' });
+  const result = await execute(client, await prepare(client));
+  expect(result.structuredContent).toMatchObject({ status: 'uncertain' });
+  expect(JSON.stringify(result)).not.toMatch(/credit/i);
   expect(writeCount).toBe(1);
 });
 
