@@ -42,7 +42,7 @@ Each write requires a separate confirmation of the exact preview and a user-conf
 | `get_account_context` | Which gyms can I query? |
 | `get_class_sessions` | What classes are available this week? |
 | `prepare_booking_creation` | Preview booking this exact class without reserving it. |
-| `execute_booking_creation` | Book the exact preview after explicit account-holder confirmation. |
+| `execute_booking_creation` | Book the exact preview after one explicit account-holder confirmation. |
 | `prepare_booking_cancellation` | Preview cancelling one existing booking without changing it. |
 | `execute_booking_cancellation` | Cancel the exact preview after explicit account-holder confirmation. |
 | `execute_late_booking_cancellation` | After a warning, attempt late cancellation only with separate confirmation of possible credit loss. |

@@ -58,13 +58,12 @@ export function createServer(environment: Record<string, string | undefined>) {
     }
   });
   server.registerTool('prepare_booking_creation', {
-    description: 'Read the current daily schedule and prepare one exact class booking for the configured account. Requires a user-confirmed gym IANA zone and exact class name, date, start and end time. Ambiguous, missing, already booked, waitlisted or unsupported targets receive no action reference. The short-lived reference does not book a class. Show the full preview and obtain explicit account-holder confirmation before execute_booking_creation. Possible credit use and the unverified balance are disclosed.',
+    description: 'Read the current daily schedule and prepare one exact class booking for the configured account. Requires a user-confirmed gym IANA zone and exact class name, date, start and end time. Ambiguous, missing, already booked, waitlisted or unsupported targets receive no action reference. The short-lived reference does not book a class. Show the full preview and obtain one explicit account-holder confirmation of the exact booking before execute_booking_creation.',
     inputSchema: bookingCreationQuerySchema,
     outputSchema: z.object({ action: z.literal('create'), status: z.enum(['ready', 'ambiguous', 'missing', 'already-booked', 'waitlisted', 'unsupported']),
       gym: gymSchema, target: z.object({ className: z.string(), date: dateSchema, startTime: z.string(), endTime: z.string() }),
       alternatives: z.array(z.object({ className: z.string(), date: dateSchema, startTime: z.string(), endTime: z.string(), currentState: z.enum(['unbooked', 'booked', 'waitlisted', 'unknown']), eligibility: z.enum(['offered', 'unsupported']) })),
       currentState: z.enum(['unbooked', 'booked', 'waitlisted', 'unknown']).optional(),
-      credit: z.object({ possibleUse: z.string(), balance: z.null(), entitlementPeriod: z.null() }).optional(),
       actionReference: z.string().optional(), expiresAt: z.string().optional(), notices: z.array(z.string()),
     }),
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: true },
@@ -77,12 +76,12 @@ export function createServer(environment: Record<string, string | undefined>) {
     }
   });
   server.registerTool('execute_booking_creation', {
-    description: 'Create exactly one booking from a fresh prepare_booking_creation reference. The MCP client MUST show the exact gym, class, local date/time and credit uncertainty from that preview and obtain explicit account-holder confirmation before calling with confirmed: true. A reference alone does not prove consent. Rechecks the target and sends at most one standard write, then reconciles with fresh reads. One standard creation was observed at 9NBC; other response branches remain unverified live. An uncertain result requires manual inspection before a new action.',
+    description: 'Create exactly one booking from a fresh prepare_booking_creation reference. The MCP client MUST show the exact gym, class and local date/time from that preview and obtain one explicit account-holder confirmation before calling with confirmed: true. A reference alone does not prove consent. Rechecks the target and sends at most one standard write, then reconciles with fresh reads. One standard creation was observed at 9NBC; other response branches remain unverified live. An uncertain result requires manual inspection before a new action.',
     inputSchema: bookingExecutionSchema,
     outputSchema: z.object({ action: z.literal('create'), status: z.enum(['confirmed', 'rejected', 'waitlisted', 'uncertain', 'stale']),
       gym: gymSchema, target: z.object({ className: z.string(), date: dateSchema, startTime: z.string(), endTime: z.string() }),
       observedState: z.enum(['unbooked', 'booked', 'waitlisted', 'unknown']),
-      credit: z.object({ possibleUse: z.string(), balance: z.null(), entitlementPeriod: z.null() }), notices: z.array(z.string()),
+      notices: z.array(z.string()),
     }),
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
   }, async (query) => {
