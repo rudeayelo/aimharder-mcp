@@ -4,6 +4,38 @@ AimHarder organizes scheduled classes, workout content, personal bookings, and p
 
 ## Language
 
+**Pilot participant**:
+A person invited to use the hosted AimHarder service with their own AimHarder account.
+_Avoid_: Gym administrator or another member's account holder as an implied role.
+
+**Portal account**:
+A participant's identity in the hosted service, distinct from their AimHarder account and their identities in AI clients.
+_Avoid_: AimHarder account when referring to portal access.
+
+**Service administrator**:
+A portal account holder with the `admin` role who manages the pilot and feature availability by role. This role is distinct from an administrator of an AimHarder gym.
+_Avoid_: Gym administrator as a synonym for service administrator.
+
+**Pilot user**:
+A portal account holder with the `user` role who participates in the invited pilot using their own AimHarder account.
+_Avoid_: Using user to imply administrative privileges in the hosted service.
+
+**Suspended portal account**:
+A portal account whose access to the service is blocked by the administrator while its configuration is retained for possible reactivation. Suspension is distinct from deleting the account.
+_Avoid_: Deleted account or disconnected AimHarder account as synonyms for suspension.
+
+**AimHarder connection**:
+The association between a portal account and its holder's linked AimHarder account. One connection can provide access to several gyms when that AimHarder account has those memberships.
+_Avoid_: A separate AimHarder account for each gym.
+
+**MCP client connection**:
+A participant's authorization for an AI client, such as ChatGPT or Hermes, to use the hosted service on their behalf. Revoking it is distinct from disconnecting their AimHarder account.
+_Avoid_: AimHarder connection when referring to a client's access to the service.
+
+**AimHarder account**:
+The participant's identity and access rights in AimHarder, distinct from their identity in the hosted service or an AI client.
+_Avoid_: Using an unqualified account when the service identity and AimHarder identity could be confused.
+
 **Class type**:
 A category of class, such as WOD, Metcon, or Open Box.
 _Avoid_: Workout when referring to a class category.

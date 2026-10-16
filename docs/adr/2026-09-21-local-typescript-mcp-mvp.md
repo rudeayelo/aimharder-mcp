@@ -4,6 +4,8 @@ Status: accepted by the user on 2026-09-21; validation clarified the same day to
 
 Distribution status: the repository-only distribution decision below was superseded on 2026-09-22 by [npm distribution as the final MVP milestone](2026-09-22-npm-distribution-for-mvp.md). Other decisions remain in effect. The historical distribution wording describes the initial delivery.
 
+Hosted-service extension: the [2026-10-15 pilot decision](2026-10-15-invited-hosted-mcp-pilot.md) accepts a separate invitation-only hosted product direction with the existing feature scope. The user confirmed that design on 2026-10-16; its linked hosted identity and runtime decisions govern the new scope and credential custody. The historical MVP and local package remain unchanged; exact hosted runtime feasibility remains unvalidated.
+
 ## Context
 
 Personal exploration evolved into a reusable MCP server. The definition interview settled scope, format, operation, validation, and future development. This supersedes the provisional scope of [the initial pause](2026-09-21-initial-scope-and-project-pause.md); the user subsequently authorized implementation of issue #2. Account/gym discovery is implemented; see the [implementation ADR](2026-09-21-account-discovery-and-local-runtime.md).

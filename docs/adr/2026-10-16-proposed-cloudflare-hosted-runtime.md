@@ -1,0 +1,44 @@
+# ADR: Cloudflare hosted runtime candidate
+
+Status: accepted on 2026-10-16 as the candidate to validate for the [hosted pilot](2026-10-15-invited-hosted-mcp-pilot.md), including service-operated maintained authentication. Exact runtime/state design and interoperability remain unvalidated; not implemented or deployed. The user confirmed the design on 2026-10-16. Canonical specification: [issue #69](https://github.com/rudeayelo/aimharder-mcp/issues/69); design record: [issue #68](https://github.com/rudeayelo/aimharder-mcp/issues/68).
+
+## Context
+
+The accepted pilot targets at most 20 participants and EUR 10/month, with Google and email/password login, explicit account linking, authenticated MCP access and recoverable AimHarder credential custody. The [hosted identity decision](2026-10-15-hosted-identity-and-credential-custody.md) defines the product requirements. The existing package remains Node/stdin-based, with one AimHarder client and in-memory state per instance. Source compatibility with Workers and remote clients is unverified.
+
+## Candidate decision
+
+Use Cloudflare Workers for portal/authentication routes and an authenticated Streamable HTTP MCP endpoint, D1 for portal identity/configuration, invitations, OAuth state and encrypted upstream credentials, and maintained Better Auth components for portal identity and MCP OAuth. Hold credential-encryption keys separately from database contents in platform-managed secrets. Preserve the separate API client and local stdio entry point.
+
+An ordinary Durable Object keyed by the verified, stable portal account ID is a candidate boundary for each account's upstream session and explicit operation queue. It is not an MCP transport/session or the deprecated `McpAgent`. Decide the exact coordination and persistence mechanism after compatibility investigation; D1 atomic transitions are an alternative requiring their own concurrency design. Do not depend on process memory surviving a restart or on network awaits being implicitly serialized.
+
+The service, rather than a paid identity SaaS, will operate the selected maintained authentication library, schemas, recovery/email flows and upgrades. The user accepted this maintenance responsibility on 2026-10-16. Better Auth does not itself supply a complete per-user AimHarder credential vault.
+
+## Evidence and alternatives
+
+- [Cloudflare transport guidance](https://developers.cloudflare.com/agents/model-context-protocol/protocol/transport/) recommends stateless Streamable HTTP for new servers. Application sessions and action state still need an explicit account boundary.
+- Better Auth documents [Workers/D1](https://better-auth.com/docs/concepts/database), [Google](https://better-auth.com/docs/authentication/google), [password recovery](https://better-auth.com/docs/authentication/email-password) and [explicit identity linking](https://better-auth.com/docs/concepts/users-accounts#account-linking). These are documented capabilities, not evidence that the selected combination works here.
+- Its current [MCP integration](https://better-auth.com/docs/plugins/mcp) uses `@better-auth/mcp` and MCP SDK v2. This repository uses SDK v1. The documented Node CIMD helper is not a demonstrated Workers implementation; metadata/client-registration security and actual client compatibility need investigation. No dependency migration is accepted by this proposal alone.
+- An external managed identity service remains an alternative. [Auth0 pricing](https://auth0.com/pricing) currently excludes native account linking from Free and displays Essentials at USD 35/month. That standard route exceeds the pilot target before hosting; implementing custom linking is not an established substitute.
+- [Workers pricing](https://developers.cloudflare.com/workers/platform/pricing/) starts Paid at USD 5/month. Included D1 allowances are described in [D1 pricing](https://developers.cloudflare.com/d1/platform/pricing/). This is a baseline, not a verified all-in EUR 10/month estimate. Email, tax/currency, CPU and any coordination/storage usage remain unmeasured.
+
+## Required invariants
+
+- Derive tenant routing from verified portal/OAuth identity, never a caller-supplied participant ID. Recheck current account status and activity permissions on invocation.
+- Isolate AimHarder cookies, verified identity, authentication-failure state, queues and action references by portal account and upstream connection revision. Account replacement keeps MCP grants but invalidates old upstream state/preparations, as already accepted.
+- Preserve exact previews, separate user confirmation, fresh eligibility checks, at-most-one upstream write and fresh read-back. Consume action references before sending a write; a restart, timeout or repeated reference must never automatically replay it. If preparation state is lost, require a new preparation rather than reconstructing an authorization to execute.
+- Serialize replacement/disconnect with account operations. A possibly sent operation belongs to its original verified identity and must be reconciled there; it must never be retried or interpreted against the replacement account.
+- Store only service/authentication data and minimal state needed for safe operation. This proposal does not introduce a persistent copy of training history, raw upstream responses or conversation transcripts.
+
+## Accepted validation requirements
+
+1. Verify released/pinned dependency combinations, Workers bundling/runtime, password hashing, encrypted credential handling and safe OAuth metadata/client registration.
+2. Verify Google/password verification, explicit linking, invitation gating on both paths and recovery without changing portal identity or bypassing admission.
+3. Exercise two anonymized accounts concurrently through the remote MCP boundary: isolation, activity roles, stale references, disconnect/replacement, repeated calls, restarts and uncertain-write handling. These checks use simulated upstream responses, not real credentials.
+4. The user accepted complete real-client journeys in both ChatGPT and Hermes as pilot acceptance requirements: connection, OAuth/callback, refresh/revocation, queries and booking actions with confirmation. Independently verify activity permissions and account isolation. Automated coverage must also include concurrent users, suspension/reactivation, restart, repeated or expired references, replacement and uncertain-write handling. Activity publication/deletion remain in scope for admin-level verification; do not describe their complete real-client journey as observed until performed. Each real upstream write requires the account holder's separate confirmation; design approval is not that confirmation.
+5. Verify authorized AimHarder connectivity from the target runtime and measure operating costs, including email. Preserve unverified upstream limitations from the current project.
+6. Verify immediate access revocation/active-data deletion, a maximum 30-day retention for earlier encrypted backups, and restoration that preserves subsequent deletions and revocations. Treat provider retention and restore semantics as evidence gates, not assumed properties.
+
+## Consequences
+
+The accepted candidate does not select exact SDK versions, storage schemas, key rotation, grant lifetimes or a deployment domain. Backup retention is capped at 30 days by the accepted identity/lifecycle decision; its technical enforcement remains to be validated. Compatibility investigation may require revisiting this candidate; acceptance here establishes direction and maintenance/validation requirements, not demonstrated feasibility. Those implementation details must agree with the accepted product/security decisions. The user confirmed shared understanding on 2026-10-16 and requested publication of the complete specification. The agent-ready issue defines the implementation and testing scope; hosted implementation and validation are still pending. Remaining engineering choices must satisfy the accepted requirements, rather than introduce silent scope changes. Existing local behavior, authentication contracts and validation claims remain unchanged.
