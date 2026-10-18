@@ -126,4 +126,6 @@ The later [personal RM feature](personal-rm-spec.md) has confirmed scope outside
 
 See [API research](api-research.md) for observed contracts and [validation](validation.md) for live results and their limits. Feed/history horizons and physical-session grouping remain unverified; grouping is outside the clarified entry-based #9/#10 acceptance.
 
+The [Google sign-in/linking implementation](hosted-google.md) adds local #72 policy coverage through real workerd/D1/Better Auth HTTP with synthetic external Google/Resend responses. Verified invited Google admission, explicit current-session linking and fresh-proof password addition preserve the portal identity; actual provider setup/login/linking acceptance remains pending. This hosted-only slice changes no local stdio feature or AimHarder API contract.
+
 The later hosted [MCP authorization slice](hosted-mcp-authorization.md) adds browser consent, trusted operator client provisioning and immediate participant client revocation, verified with an actual SDK over HTTP/workerd/D1. This does not change the local MVP or establish real ChatGPT/Hermes acceptance.

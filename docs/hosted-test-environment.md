@@ -99,3 +99,7 @@ Account token and zone are active. Workers account-settings read succeeded with 
 - [Worker secrets](https://developers.cloudflare.com/workers/configuration/secrets/) and the [released Wrangler 4.151.1 metadata](https://registry.npmjs.org/wrangler/4.151.1).
 
 These document supported operations. The evidence above states what actually ran; documented provider capability is not a completed acceptance check.
+
+## Google stage preparation
+
+The subsequent [Google runbook](hosted-google.md) defines the reviewed production code, `0003-account-method-uniqueness.sql`, two optional platform secrets and exact test callback/origin. Its local policy checks do not establish actual provider configuration, Testing admission or owner login/linking. Preserve existing mail/auth bindings and apply only the new index after verifying the existing schema; the initial direct-API migrations must not be replayed through an empty Wrangler ledger.
