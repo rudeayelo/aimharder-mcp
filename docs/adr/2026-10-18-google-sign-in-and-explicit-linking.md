@@ -1,6 +1,6 @@
 # ADR: Google sign-in and explicit portal account linking
 
-Status: accepted local implementation decision on 2026-10-18 for [ticket #72](https://github.com/rudeayelo/aimharder-mcp/issues/72). Complements [hosted identity requirements](2026-10-15-hosted-identity-and-credential-custody.md), [invited password admission](2026-10-18-invited-password-admission.md) and [Resend delivery](2026-10-18-resend-transactional-delivery.md). Actual Google setup/login/linking acceptance remains pending; the [runbook](../hosted-google.md) separates it from synthetic evidence.
+Status: accepted local implementation decision on 2026-10-18 for [ticket #72](https://github.com/rudeayelo/aimharder-mcp/issues/72). Complements [hosted identity requirements](2026-10-15-hosted-identity-and-credential-custody.md), [invited password admission](2026-10-18-invited-password-admission.md) and [Resend delivery](2026-10-18-resend-transactional-delivery.md). Exact provider origin/callback update has separate operator evidence in the runbook; runtime integration and actual Google login/linking acceptance remain pending; the [runbook](../hosted-google.md) separates it from synthetic evidence.
 
 ## Context
 
