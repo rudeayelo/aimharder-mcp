@@ -1,5 +1,5 @@
 import type { HostedEnvironment } from './auth.js';
-import { createAuth } from './auth.js';
+import { createAuth, googleConfigured } from './auth.js';
 import { participant } from './admission.js';
 import { handleInvitations, listInvitations } from './invitations.js';
 
@@ -70,7 +70,7 @@ export async function handlePortal(request: Request, env: HostedEnvironment, aut
     return success;
   }
   if (request.method !== 'GET') return null;
-  if (url.pathname === '/sign-in') return page('Sign in', '<p>Use your portal password. Your AimHarder password belongs to the separate account connection.</p><form method="post" action="/portal/sign-in"><label>Email<input name="email" type="email" required autocomplete="username"></label><label>Portal password<input name="password" type="password" required autocomplete="current-password"></label><button>Sign in</button></form><p><a href="/recover">Forgot password?</a> · <a href="/resend-verification">Resend verification email</a></p>');
+  if (url.pathname === '/sign-in') return page('Sign in', (googleConfigured(env) ? `<form method="post" action="/portal/google"><input type="hidden" name="oauth_query" value="${escape(url.searchParams.toString())}"><button>Continue with Google</button></form>` : '') + '<p>Use your portal password. Your AimHarder password belongs to the separate account connection.</p><form method="post" action="/portal/sign-in"><label>Email<input name="email" type="email" required autocomplete="username"></label><label>Portal password<input name="password" type="password" required autocomplete="current-password"></label><button>Sign in</button></form><p><a href="/recover">Forgot password?</a> · <a href="/resend-verification">Resend verification email</a></p>');
   if (url.pathname === '/recover' || url.pathname === '/resend-verification') {
     const recovering = url.pathname === '/recover';
     return page(recovering ? 'Recover portal access' : 'Verify your email', `<form method="post" action="/portal/${recovering ? 'recovery' : 'send-verification'}"><label>Email<input name="email" type="email" required autocomplete="email"></label><button>Send link</button></form><p><a href="/sign-in">Sign in</a></p>`);
@@ -88,11 +88,11 @@ export async function handlePortal(request: Request, env: HostedEnvironment, aut
     const invitations = await listInvitations(env);
     return page('Manage invitations', `<p>Invite a participant by their portal email. Invitations expire after seven days and grant the user role.</p><form method="post" action="/portal/invitations"><label>Participant email<input name="email" type="email" required></label><button>Send invitation</button></form><table><thead><tr><th>Email</th><th>Status</th><th>Expires</th><th>Action</th></tr></thead><tbody>${invitations.map(item => `<tr><td>${escape(item.email)}</td><td>${item.status}</td><td>${new Date(item.expiresAt).toISOString().slice(0,10)}</td><td>${item.status === 'pending' ? `<form method="post" action="/portal/invitations/${escape(item.id)}/revoke"><button>Revoke</button></form>` : ''}</td></tr>`).join('')}</tbody></table>`);
   }
-  if (url.pathname === '/accept-invitation') return page('Accept invitation', `<p>Use the email address that received your invitation. Your portal password is separate from your AimHarder password.</p><form method="post" action="/portal/sign-up"><input type="hidden" name="invitation" value="${escape(url.searchParams.get('token') ?? '')}"><label>Name<input name="name" required autocomplete="name" maxlength="100"></label><label>Email<input name="email" type="email" required autocomplete="email"></label><label>Portal password<input name="password" type="password" minlength="8" required autocomplete="new-password"></label><button>Create account</button></form>`);
+  if (url.pathname === '/accept-invitation') return page('Accept invitation', `${googleConfigured(env) ? `<form method="post" action="/portal/google"><input type="hidden" name="invitation" value="${escape(url.searchParams.get('token') ?? '')}"><button>Accept with Google</button></form><p>Google must verify the same email address that received this invitation. Existing password accounts should sign in and link Google from Account access.</p>` : ''}<p>Use the email address that received your invitation. Your portal password is separate from your AimHarder password.</p><form method="post" action="/portal/sign-up"><input type="hidden" name="invitation" value="${escape(url.searchParams.get('token') ?? '')}"><label>Name<input name="name" required autocomplete="name" maxlength="100"></label><label>Email<input name="email" type="email" required autocomplete="email"></label><label>Portal password<input name="password" type="password" minlength="8" required autocomplete="new-password"></label><button>Create account</button></form>`);
   if (url.pathname === '/') {
     const session = await auth.api.getSession({ headers: request.headers });
     const actor = session && await participant(env, session.user.id);
-    return page('AimHarder MCP', actor ? `<p>You are signed in.</p>${actor.role === 'admin' ? '<a href="/admin/invitations">Manage invitations</a>' : ''}<form method="post" action="/portal/sign-out"><button>Sign out</button></form>` : '<p>An invitation is required to join this pilot.</p><a href="/sign-in">Sign in</a>');
+    return page('AimHarder MCP', actor ? `<p>You are signed in.</p><p><a href="/account">Account access</a></p>${actor.role === 'admin' ? '<a href="/admin/invitations">Manage invitations</a>' : ''}<form method="post" action="/portal/sign-out"><button>Sign out</button></form>` : '<p>An invitation is required to join this pilot.</p><a href="/sign-in">Sign in</a>');
   }
   return null;
 }

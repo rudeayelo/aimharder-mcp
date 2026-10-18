@@ -35,18 +35,21 @@ export async function admitVerifiedIdentity(env: HostedEnvironment, userId: stri
     'SELECT invitationId FROM portal_verification_delivery WHERE tokenDigest=? AND userId=? AND expiresAt>?'
   ).bind(await digest(token), userId, Date.now()).first<{ invitationId: string }>();
   if (!delivered) denyAdmission();
+  await claimInvitation(env, userId, delivered.invitationId);
+}
+export async function claimInvitation(env: HostedEnvironment, userId: string, invitationId: string) {
   const now = Date.now();
   // D1 batch is atomic. Claim and revoke share the invitation row as their linearization point.
   await env.AUTH_DB.batch([
     env.AUTH_DB.prepare(
       'UPDATE portal_invitation SET acceptedUserId=?,acceptedAt=COALESCE(acceptedAt,?) WHERE id=? AND revokedAt IS NULL AND expiresAt>? AND (acceptedUserId IS NULL OR acceptedUserId=?)'
-    ).bind(userId, now, delivered.invitationId, now, userId),
+    ).bind(userId, now, invitationId, now, userId),
     env.AUTH_DB.prepare(
       'INSERT OR IGNORE INTO portal_participant (userId,invitationId,role,admittedAt) SELECT ?,id,role,? FROM portal_invitation WHERE id=? AND acceptedUserId=? AND revokedAt IS NULL'
-    ).bind(userId, now, delivered.invitationId, userId),
+    ).bind(userId, now, invitationId, userId),
   ]);
   const admitted = await env.AUTH_DB.prepare('SELECT userId FROM portal_participant WHERE userId=? AND invitationId=?')
-    .bind(userId, delivered.invitationId).first();
+    .bind(userId, invitationId).first();
   if (!admitted) denyAdmission();
 }
 export async function canRecover(env: HostedEnvironment, userId: string) {

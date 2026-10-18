@@ -26,3 +26,7 @@
   // The separately authorized mail stage needs a verified MAIL_FROM and a restricted
   // RESEND_API_KEY platform secret. Never place that key in this manifest.
 }
+
+// Google stage: inject GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET as platform
+// secrets after exact provider callback setup; preserve all existing mail/auth
+// secrets. See ../docs/hosted-google.md. No values belong in this manifest.
