@@ -6,15 +6,16 @@ import { handleInvitations, listInvitations } from './invitations.js';
 function escape(value: string): string {
   return value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]!);
 }
-export function page(title: string, body: string, status = 200, allowGoogleAuthorization = false): Response {
+export function page(title: string, body: string, status = 200, allowGoogleAuthorization = false, mcpCallbackOrigin?: string): Response {
   return new Response(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escape(title)} · AimHarder MCP</title><style>body{font:18px system-ui;max-width:42rem;margin:3rem auto;padding:0 1.2rem;color:#172f37;background:#f6faf9}h1{line-height:1.15}label{display:block;margin:1rem 0}input,button{font:inherit;padding:.6rem;max-width:100%;box-sizing:border-box}input{display:block;width:100%}button{background:#145d54;color:white;border:0;border-radius:.3rem;cursor:pointer}a{color:#145d54}td,th{padding:.5rem;text-align:left}table{display:block;overflow:auto}nav{margin-bottom:2rem}</style></head><body><nav><a href="/">AimHarder MCP</a></nav><main><h1>${escape(title)}</h1>${body}</main></body></html>`, {
     status, headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store',
       // Origin-only referrers keep capabilities private without causing browser
       // form POSTs to serialize their Origin as null under no-referrer.
       'referrer-policy': 'strict-origin', 'x-content-type-options': 'nosniff',
       // Chrome applies form-action to the entire submission redirect chain.
-      // Only pages with Google forms allow its fixed authorization origin.
-      'content-security-policy': `default-src 'none'; style-src 'unsafe-inline'; form-action 'self'${allowGoogleAuthorization ? ' https://accounts.google.com' : ''}; frame-ancestors 'none'; base-uri 'none'` },
+      // Google forms opt into its fixed origin; MCP consent separately allows
+      // only the exact registered client's supported callback origin.
+      'content-security-policy': `default-src 'none'; style-src 'unsafe-inline'; form-action 'self'${allowGoogleAuthorization ? ' https://accounts.google.com' : ''}${mcpCallbackOrigin ? ` ${mcpCallbackOrigin}` : ''}; frame-ancestors 'none'; base-uri 'none'` },
   });
 }
 export async function handlePortal(request: Request, env: HostedEnvironment, auth: ReturnType<typeof createAuth>): Promise<Response | null> {
@@ -37,7 +38,8 @@ export async function handlePortal(request: Request, env: HostedEnvironment, aut
         break;
       case '/portal/sign-in':
         path = '/sign-in/email'; body = { email: field('email'), password: field('password') };
-        success = new Response(null, { status: 303, headers: { location: '/' } });
+        success = new Response(null, { status: 303, headers: { location: new URLSearchParams(field('oauth_query')).has('client_id')
+          ? `/api/auth/oauth2/authorize?${new URLSearchParams(field('oauth_query'))}` : '/' } });
         break;
       case '/portal/recovery':
         path = '/request-password-reset'; body = { email: field('email'), redirectTo: `${env.BASE_URL}/reset-password` };
@@ -72,7 +74,7 @@ export async function handlePortal(request: Request, env: HostedEnvironment, aut
     return success;
   }
   if (request.method !== 'GET') return null;
-  if (url.pathname === '/sign-in') return page('Sign in', (googleConfigured(env) ? `<form method="post" action="/portal/google"><input type="hidden" name="oauth_query" value="${escape(url.searchParams.toString())}"><button>Continue with Google</button></form>` : '') + '<p>Use your portal password. Your AimHarder password belongs to the separate account connection.</p><form method="post" action="/portal/sign-in"><label>Email<input name="email" type="email" required autocomplete="username"></label><label>Portal password<input name="password" type="password" required autocomplete="current-password"></label><button>Sign in</button></form><p><a href="/recover">Forgot password?</a> · <a href="/resend-verification">Resend verification email</a></p>', 200, googleConfigured(env));
+  if (url.pathname === '/sign-in') return page('Sign in', (googleConfigured(env) ? `<form method="post" action="/portal/google"><input type="hidden" name="oauth_query" value="${escape(url.searchParams.toString())}"><button>Continue with Google</button></form>` : '') + '<p>Use your portal password. Your AimHarder password belongs to the separate account connection.</p><form method="post" action="/portal/sign-in">' + (url.searchParams.has('client_id') ? `<input name="oauth_query" type="hidden" value="${escape(url.search.slice(1))}">` : '') + '<label>Email<input name="email" type="email" required autocomplete="username"></label><label>Portal password<input name="password" type="password" required autocomplete="current-password"></label><button>Sign in</button></form><p><a href="/recover">Forgot password?</a> · <a href="/resend-verification">Resend verification email</a></p>', 200, googleConfigured(env));
   if (url.pathname === '/recover' || url.pathname === '/resend-verification') {
     const recovering = url.pathname === '/recover';
     return page(recovering ? 'Recover portal access' : 'Verify your email', `<form method="post" action="/portal/${recovering ? 'recovery' : 'send-verification'}"><label>Email<input name="email" type="email" required autocomplete="email"></label><button>Send link</button></form><p><a href="/sign-in">Sign in</a></p>`);
@@ -94,7 +96,7 @@ export async function handlePortal(request: Request, env: HostedEnvironment, aut
   if (url.pathname === '/') {
     const session = await auth.api.getSession({ headers: request.headers });
     const actor = session && await participant(env, session.user.id);
-    return page('AimHarder MCP', actor ? `<p>You are signed in.</p><p><a href="/account">Account access</a></p>${actor.role === 'admin' ? '<a href="/admin/invitations">Manage invitations</a>' : ''}<form method="post" action="/portal/sign-out"><button>Sign out</button></form>` : '<p>An invitation is required to join this pilot.</p><a href="/sign-in">Sign in</a>');
+    return page('AimHarder MCP', actor ? `<p>You are signed in.</p><p><a href="/account">Account access</a></p><p><a href="/connections">Connected MCP clients</a> · <a href="/connect-clients">Connect ChatGPT or Hermes</a></p>${actor.role === 'admin' ? '<a href="/admin/invitations">Manage invitations</a>' : ''}<form method="post" action="/portal/sign-out"><button>Sign out</button></form>` : '<p>An invitation is required to join this pilot.</p><a href="/sign-in">Sign in</a>');
   }
   return null;
 }

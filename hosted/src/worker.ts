@@ -9,7 +9,8 @@ import { createAuth, type HostedEnvironment } from './auth.js';
 import { handleIdentity } from './identity.js';
 import { handlePortal } from './portal.js';
 import { handleInvitations } from './invitations.js';
-import { participant } from './admission.js';
+import { currentGrant, grantClaim } from './oauth-grants.js';
+import { handleConnections } from './connections.js';
 
 /** The vault resolves only the verified portal subject, never a tool argument. */
 export type ResolveConnection = (portalAccountId: string) => Promise<Configuration | null>;
@@ -20,12 +21,12 @@ export async function handleHostedRequest(
   resolveConnection: ResolveConnection
 ): Promise<Response> {
   const auth = createAuth(env);
-  if (new URL(request.url).pathname !== '/mcp') return await handleIdentity(request, env, auth) ?? await handleInvitations(request, env, auth) ?? await handlePortal(request, env, auth) ?? auth.handler(request);
+  if (new URL(request.url).pathname !== '/mcp') return await handleConnections(request, env, auth) ?? await handleIdentity(request, env, auth) ?? await handleInvitations(request, env, auth) ?? await handlePortal(request, env, auth) ?? auth.handler(request);
   if (request.method !== 'POST') return new Response(null, { status: 405, headers: { allow: 'POST' } });
   return requireMcpAuth(
     auth,
     async (authenticatedRequest, claims) => {
-      if (!claims.sub || !await participant(env, claims.sub)) return new Response(null, { status: 403 });
+      if (!await currentGrant(env, claims[grantClaim], claims.sub, claims.client_id)) return new Response(null, { status: 401, headers: { 'www-authenticate': `Bearer error="invalid_token", resource_metadata="${env.BASE_URL}/.well-known/oauth-protected-resource/mcp"` } });
       const handler = createMcpHandler(
         () => {
           const server = new McpServer(
@@ -78,7 +79,7 @@ export async function handleHostedRequest(
       );
       return handler.fetch(authenticatedRequest);
     },
-    { resource: `${env.BASE_URL}/mcp`, requiredScopes: ['mcp:read'] }
+    { resource: `${env.BASE_URL}/mcp`, requiredScopes: ['mcp:access'] }
   )(request);
 }
 

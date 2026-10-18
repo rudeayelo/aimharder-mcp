@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { randomBytes } from 'node:crypto';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import { buildWorker } from '../build.mjs';
@@ -16,7 +16,7 @@ const worker = new Miniflare(convertV4MiniflareOptions({
 }));
 await worker.ready;
 const database = await worker.getD1Database('AUTH_DB');
-for (const file of ['0001-auth.sql', '0002-invitations.sql', '0003-account-method-uniqueness.sql'])
+for (const file of (await readdir('migrations')).filter(name => /^\d+.*\.sql$/.test(name)).sort())
   await database.exec((await readFile(`migrations/${file}`, 'utf8')).replaceAll('\n', ' '));
 console.info(`Anonymous portal preview listening on http://127.0.0.1:${port}`);
 for (const signal of ['SIGINT', 'SIGTERM'] as const)

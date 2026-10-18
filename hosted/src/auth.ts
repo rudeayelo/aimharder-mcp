@@ -3,6 +3,7 @@ import { jwt } from 'better-auth/plugins';
 import { mcp } from '@better-auth/mcp';
 import { APIError, createAuthMiddleware, addOAuthServerContext, getOAuthState, getSessionFromCtx } from 'better-auth/api';
 import { admitVerifiedIdentity, claimInvitation, canRecover, denyAdmission, digest, invited, participant, pendingInvitation, verificationLifetimeSeconds } from './admission.js';
+import { issueGrantClaim, readIssuingGrant } from './oauth-grants.js';
 import { mailConfigured, sendPortalMail } from './mail.js';
 
 export interface HostedEnvironment {
@@ -23,8 +24,11 @@ async function invitationToken(headers?: Headers): Promise<string | null> {
   const token = state?.serverContext?.portalInvitation;
   return typeof token === 'string' ? token : headers?.get('x-portal-invitation') ?? null;
 }
+// Request scoped: delivery outcome and issuing grant must never cross requests.
 export function createAuth(env: HostedEnvironment) {
+  let authorizationSnapshot: { userId: string; generations: Map<string, number> } | undefined;
   let deliveryFailed = false;
+  let issuingGrant: Awaited<ReturnType<typeof readIssuingGrant>> | undefined;
   async function deliver(message: Parameters<typeof sendPortalMail>[1]) {
     try { await sendPortalMail(env, message); }
     catch { deliveryFailed = true; }
@@ -95,6 +99,28 @@ export function createAuth(env: HostedEnvironment) {
     },
     hooks: {
       before: createAuthMiddleware(async ctx => {
+        let authorizationPrompt: string | undefined;
+        if (['/oauth2/authorize', '/oauth2/consent', '/oauth2/continue'].includes(ctx.path)) {
+          if (ctx.path === '/oauth2/authorize' && !authorizationSnapshot) {
+            // Fresh authorizations always need an explicit decision. A stale
+            // consent write must not silently reconnect after revocation.
+            const prompts = new Set(String(ctx.query?.prompt ?? '').split(/\s+/).filter(Boolean));
+            prompts.add('consent');
+            authorizationPrompt = [...prompts].join(' ');
+          }
+          const session = await getSessionFromCtx(ctx);
+          if (session && !await participant(env, session.user.id)) denyAdmission();
+          if (session && !authorizationSnapshot) {
+            // Snapshot before the maintained handler can read consent. A code
+            // minted later must not adopt a revocation committed in between.
+            const rows = await env.AUTH_DB.prepare('SELECT clientId,generation FROM portal_mcp_revocation WHERE userId=?')
+              .bind(session.user.id).all<{ clientId: string; generation: number }>();
+            authorizationSnapshot = { userId: session.user.id,
+              generations: new Map(rows.results.map(row => [row.clientId, row.generation])) };
+          }
+        }
+        if (ctx.path === '/oauth2/token') issuingGrant = await readIssuingGrant(env, ctx.body);
+
         if (ctx.path === '/sign-in/social' || ctx.path === '/link-social') {
           if (!googleConfigured(env)) throw new APIError('SERVICE_UNAVAILABLE', { code: 'GOOGLE_UNAVAILABLE', message: 'Google sign-in is unavailable.' });
           // Only redirect-based sign-in is supported. Keep scopes fixed to identity.
@@ -122,6 +148,7 @@ export function createAuth(env: HostedEnvironment) {
           const reset = token && await ctx.context.internalAdapter.findVerificationValue(`reset-password:${token}`);
           if (!reset || !await canRecover(env, reset.value)) denyAdmission();
         }
+        if (authorizationPrompt) return { context: { query: { ...ctx.query, prompt: authorizationPrompt } } };
       }),
       after: createAuthMiddleware(async ctx => {
         // Better Auth intentionally catches background email callback failures.
@@ -131,6 +158,15 @@ export function createAuth(env: HostedEnvironment) {
       }),
     },
     databaseHooks: {
+      verification: { create: { before: async verification => {
+        let value;
+        try { value = JSON.parse(verification.value); }
+        catch { return; /* Other verification formats belong to maintained flows. */ }
+        if (value?.type !== 'authorization_code') return;
+        if (!authorizationSnapshot || authorizationSnapshot.userId !== value.userId || typeof value.query?.client_id !== 'string') denyAdmission();
+        return { data: { ...verification, value: JSON.stringify({ ...value,
+          portalMcpGeneration: authorizationSnapshot.generations.get(value.query.client_id) ?? 0 }) } };
+      } } },
       user: {
         create: {
           before: async (user, ctx) => {
@@ -157,13 +193,18 @@ export function createAuth(env: HostedEnvironment) {
       jwt(),
       mcp({
         loginPage: '/sign-in',
+        storeTokens: { hash: digest },
+        customAccessTokenClaims: ({ user }) => issueGrantClaim(env, issuingGrant, user?.id),
         consentPage: '/consent',
         resource: `${env.BASE_URL}/mcp`,
-        scopes: ['openid', 'profile', 'offline_access', 'mcp:read'],
+        resources: [{ identifier: `${env.BASE_URL}/mcp`, name: 'AimHarder MCP', allowedScopes: ['mcp:access'] }],
+        resourceSeedMode: 'merge',
+        scopes: ['openid', 'profile', 'offline_access', 'mcp:access'],
         grantTypes: ['authorization_code', 'refresh_token'],
         allowDynamicClientRegistration: false,
         allowUnauthenticatedClientRegistration: false,
         clientPrivileges: () => false,
+        validateRedirectUri: (uri, registeredUris) => registeredUris.includes(uri),
       }),
     ],
   });

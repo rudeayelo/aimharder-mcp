@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { afterAll, beforeAll, expect, test } from 'vitest';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import { buildWorker } from '../build.mjs';
@@ -54,7 +54,7 @@ beforeAll(async () => {
   }));
   await worker.ready;
   const database = await worker.getD1Database('AUTH_DB');
-  for (const migration of ['0001-auth.sql', '0002-invitations.sql', '0003-account-method-uniqueness.sql'])
+  for (const migration of (await readdir('migrations')).filter(name => /^\d+.*\.sql$/.test(name)).sort())
     await database.exec((await readFile(`migrations/${migration}`, 'utf8')).replaceAll('\n', ' '));
   await worker.dispatchFetch(origin + '/__fixture');
 });
@@ -299,7 +299,7 @@ test('the production entry has no fixture routes and disables enrollment and rec
   try {
     await unconfigured.ready;
     const db = await unconfigured.getD1Database('AUTH_DB');
-    for (const file of ['0001-auth.sql', '0002-invitations.sql', '0003-account-method-uniqueness.sql'])
+    for (const file of (await readdir('migrations')).filter(name => /^\d+.*\.sql$/.test(name)).sort())
       await db.exec((await readFile(`migrations/${file}`, 'utf8')).replaceAll('\n', ' '));
     for (const path of ['/__fixture', '/__mail', '/api/portal/bootstrap'])
       expect((await unconfigured.dispatchFetch(origin + path)).status).toBe(404);
@@ -372,7 +372,7 @@ test('partial Resend configuration closes enrollment and recovery without making
     try {
       await partial.ready;
       const db = await partial.getD1Database('AUTH_DB');
-      for (const file of ['0001-auth.sql', '0002-invitations.sql', '0003-account-method-uniqueness.sql'])
+      for (const file of (await readdir('migrations')).filter(name => /^\d+.*\.sql$/.test(name)).sort())
         await db.exec((await readFile(`migrations/${file}`, 'utf8')).replaceAll('\n', ' '));
       for (const path of ['/api/auth/sign-up/email', '/api/auth/request-password-reset']) {
         const response = await partial.dispatchFetch(origin + path, {

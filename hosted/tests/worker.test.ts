@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { afterAll, beforeAll, expect, test } from 'vitest';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
@@ -56,7 +56,7 @@ beforeAll(async () => {
   );
   await worker.ready;
   const database = await worker.getD1Database('AUTH_DB');
-  for (const file of ['0001-auth.sql', '0002-invitations.sql', '0003-account-method-uniqueness.sql'])
+  for (const file of (await readdir('migrations')).filter(name => /^\d+.*\.sql$/.test(name)).sort())
     await database.exec((await readFile(`migrations/${file}`, 'utf8')).replaceAll('\n', ' '));
 });
 afterAll(async () => {
@@ -103,7 +103,7 @@ test('a signed-in participant authorizes a PKCE client and queries their synthet
     response_type: 'code',
     code_challenge: challenge,
     code_challenge_method: 'S256',
-    scope: 'openid profile offline_access mcp:read',
+    scope: 'openid profile offline_access mcp:access',
     state: 'synthetic-state',
     resource: 'http://localhost:8787/mcp',
   });

@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { afterAll, beforeAll, expect, test } from 'vitest';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import { buildWorker } from '../build.mjs';
@@ -81,7 +81,7 @@ beforeAll(async () => {
   }));
   await worker.ready;
   const db = await worker.getD1Database('AUTH_DB');
-  for (const file of ['0001-auth.sql', '0002-invitations.sql', '0003-account-method-uniqueness.sql'])
+  for (const file of (await readdir('migrations')).filter(name => /^\d+.*\.sql$/.test(name)).sort())
     await db.exec((await readFile(`migrations/${file}`, 'utf8')).replaceAll('\n', ' '));
   await worker.dispatchFetch(origin + '/__fixture');
   expect((await post('/api/auth/sign-up/email', { email: 'owner@example.invalid', name: 'Owner', password }, '', 'synthetic-owner-invitation')).status).toBe(200);
