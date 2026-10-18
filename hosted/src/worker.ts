@@ -79,7 +79,7 @@ export async function handleHostedRequest(
       );
       return handler.fetch(authenticatedRequest);
     },
-    { resource: `${env.BASE_URL}/mcp`, requiredScopes: ['mcp:read'] }
+    { resource: `${env.BASE_URL}/mcp`, requiredScopes: ['mcp:access'] }
   )(request);
 }
 

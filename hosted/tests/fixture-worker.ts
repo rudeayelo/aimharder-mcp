@@ -35,7 +35,7 @@ export default {
           JSON.stringify(['authorization_code', 'refresh_token']),
           JSON.stringify(['code']),
           1,
-          JSON.stringify(['openid', 'profile', 'offline_access', 'mcp:read']),
+          JSON.stringify(['openid', 'profile', 'offline_access', 'mcp:access']),
           0
         ),
         env.AUTH_DB.prepare(
@@ -44,7 +44,7 @@ export default {
           'fixture-resource',
           `${env.BASE_URL}/mcp`,
           'MCP account queries',
-          JSON.stringify(['mcp:read'])
+          JSON.stringify(['mcp:access'])
         ),
         env.AUTH_DB.prepare('INSERT INTO oauthClientResource (id,clientId,resourceId) VALUES (?,?,?)').bind(
           'fixture-client-resource',

@@ -57,7 +57,7 @@ class ParticipantClient implements OAuthClientProvider {
   readonly expectedState = crypto.randomUUID();
   readonly redirectUrl = 'http://127.0.0.1:9999/callback';
   readonly clientMetadata = { redirect_uris: [this.redirectUrl], token_endpoint_auth_method: 'none' as const,
-    grant_types: ['authorization_code', 'refresh_token'], response_types: ['code'], scope: 'openid profile offline_access mcp:read' };
+    grant_types: ['authorization_code', 'refresh_token'], response_types: ['code'], scope: 'openid profile offline_access mcp:access' };
   authorizationUrl?: URL;
   savedTokens?: StoredOAuthTokens;
   verifier = '';
@@ -91,6 +91,7 @@ async function browserCallback(provider: ParticipantClient, accept = true) {
 }
 test('SDK discovery, browser consent, PKCE callback, protected MCP and refresh work before AimHarder is connected', async () => {
   expect(await authorizeSdk(sdk, { serverUrl: origin + '/mcp', scope: sdk.clientMetadata.scope })).toBe('REDIRECT');
+  expect(sdk.discovery?.resourceMetadata?.scopes_supported).toEqual(['mcp:access']);
   const callback = await browserCallback(sdk);
   expect(callback.origin).toBe('http://127.0.0.1:9999');
   expect(callback.searchParams.get('state')).toBe(sdk.state());
@@ -249,4 +250,18 @@ test('a concurrent refresh cannot revive a revoked client, and a fresh grant doe
       body: new URLSearchParams({ grant_type: 'refresh_token', client_id: fresh.id, refresh_token: tokens.refresh_token, resource: origin + '/mcp' }) });
     expect(retry.status).toBe(400);
   }
+});
+
+test('client registration allows only the exact approved callback, including its loopback port', async () => {
+  const fresh = new ParticipantClient('other-client');
+  await authorizeSdk(fresh, { serverUrl: origin + '/mcp', forceReauthorization: true });
+  fresh.authorizationUrl!.searchParams.set('redirect_uri', 'http://127.0.0.1:9988/callback');
+  const response = await fetch(fresh.authorizationUrl!, { headers: { cookie, accept: 'application/json' }, redirect: 'manual' });
+  const result = await response.json() as { url?: string };
+  if (result.url) {
+    const target = new URL(result.url, origin);
+    expect(target.searchParams.has('code')).toBe(false);
+    expect(target.pathname).not.toBe('/consent');
+    expect(target.searchParams.get('error')).toBeTruthy();
+  } else expect(response.status).toBeGreaterThanOrEqual(400);
 });

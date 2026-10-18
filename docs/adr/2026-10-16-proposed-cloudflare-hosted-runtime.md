@@ -56,3 +56,7 @@ On 2026-10-18, a separate read-only operator inspection verified the existing ac
 ## Local feasibility evidence (2026-10-18)
 
 The [isolated Worker authentication slice](2026-10-18-isolated-worker-authentication-feasibility.md) proves maintained Better Auth sign-in/OAuth and SDK v2 account querying in workerd with disposable D1 and synthetic AimHarder HTTP. The separate local SDK v1 package remains supported. [Evidence and conditional costs](../hosted-feasibility.md) distinguish this gate from production reachability, safe real-client registration, per-account coordination, email/provider delivery and actual ChatGPT/Hermes acceptance. No deployment or provider mutation occurred during that local gate; the subsequent isolated deployment is recorded under its separate authorization above.
+
+## MCP client authorization evidence (2026-10-18)
+
+The later [client authorization decision](2026-10-18-hosted-mcp-client-authorization.md) retains the maintained provider and isolated SDK v2 boundary, implements browser consent and current per-client grant revocation, and selects trusted exact-callback provisioning with DCR/CIMD disabled. The [runbook](../hosted-mcp-authorization.md) records actual SDK/HTTP/workerd/D1 evidence, the general service-access scope and remaining ChatGPT/Hermes acceptance. It adds no upstream write route or provider deployment by itself.

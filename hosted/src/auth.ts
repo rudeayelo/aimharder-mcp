@@ -24,6 +24,7 @@ async function invitationToken(headers?: Headers): Promise<string | null> {
   const token = state?.serverContext?.portalInvitation;
   return typeof token === 'string' ? token : headers?.get('x-portal-invitation') ?? null;
 }
+// Request scoped: delivery outcome and issuing grant must never cross requests.
 export function createAuth(env: HostedEnvironment) {
   let deliveryFailed = false;
   let issuingGrant: Awaited<ReturnType<typeof readIssuingGrant>> | undefined;
@@ -177,11 +178,12 @@ export function createAuth(env: HostedEnvironment) {
         customAccessTokenClaims: ({ user }) => issueGrantClaim(env, issuingGrant, user?.id),
         consentPage: '/consent',
         resource: `${env.BASE_URL}/mcp`,
-        scopes: ['openid', 'profile', 'offline_access', 'mcp:read'],
+        scopes: ['openid', 'profile', 'offline_access', 'mcp:access'],
         grantTypes: ['authorization_code', 'refresh_token'],
         allowDynamicClientRegistration: false,
         allowUnauthenticatedClientRegistration: false,
         clientPrivileges: () => false,
+        validateRedirectUri: (uri, registeredUris) => registeredUris.includes(uri),
       }),
     ],
   });

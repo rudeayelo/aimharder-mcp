@@ -72,6 +72,8 @@ Planned capabilities, without committed dates or versions:
 - [ ] Explore compatibility with mobile apps.
 - [ ] Complete the invitation-only hosted portal for ChatGPT and Hermes ([specification #69](https://github.com/rudeayelo/aimharder-mcp/issues/69)); [authentication feasibility](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-feasibility.md) and the [invited password portal](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-admission.md) are checked locally with synthetic data. An [isolated Cloudflare test environment](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-test-environment.md) is deployed with verified Resend sending configured, under separate authorization without purchases or plan changes. The verified current Workers plan is Free. An owner-supplied Resend token replaces native email without a plan change; the owner confirmed all three email receipts, verified password login and successful password recovery. Ticket #71 acceptance is complete; [Google admission and explicit linking](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-google.md) now have synthetic HTTP coverage, with actual Google setup/login/linking pending. The broader hosted specification remains in progress. No production pilot is deployed.
 
+The hosted [MCP authorization runbook](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-mcp-authorization.md) covers maintained OAuth, trusted client provisioning and independent participant revocation. Actual ChatGPT/Hermes journeys remain pending final pilot acceptance.
+
 ## Contributing
 
 The server runs locally over stdio with one account per instance and no persistent storage. The TypeScript API client is separate from the MCP layer; see the [architecture decision](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/adr/2026-09-21-api-client-separated-from-interfaces.md).
@@ -81,5 +83,3 @@ Report bugs or propose changes in [GitHub Issues](https://github.com/rudeayelo/a
 ## License
 
 [MIT](LICENSE).
-
-The hosted [MCP authorization runbook](docs/hosted-mcp-authorization.md) covers maintained OAuth, trusted client provisioning and independent participant revocation. Actual ChatGPT/Hermes journeys remain pending final pilot acceptance.

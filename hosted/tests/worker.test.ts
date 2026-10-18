@@ -103,7 +103,7 @@ test('a signed-in participant authorizes a PKCE client and queries their synthet
     response_type: 'code',
     code_challenge: challenge,
     code_challenge_method: 'S256',
-    scope: 'openid profile offline_access mcp:read',
+    scope: 'openid profile offline_access mcp:access',
     state: 'synthetic-state',
     resource: 'http://localhost:8787/mcp',
   });

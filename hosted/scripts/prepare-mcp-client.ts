@@ -27,11 +27,11 @@ await mkdir(directory, { mode: 0o700 });
 const clientId = `aimharder-${kind}-${randomUUID()}`;
 const name = kind === 'chatgpt' ? 'ChatGPT' : 'Hermes';
 const resource = `${base.origin}/mcp`;
-const scopes = ['openid', 'profile', 'offline_access', 'mcp:read'];
+const scopes = ['openid', 'profile', 'offline_access', 'mcp:access'];
 const q = (value: string) => `'${value.replaceAll("'", "''")}'`;
 const sql = [
   `INSERT INTO oauthClient (id,clientId,name,redirectUris,tokenEndpointAuthMethod,applicationType,grantTypes,responseTypes,requirePKCE,scopes,skipConsent,subjectType) VALUES (${q(clientId)},${q(clientId)},${q(name)},${q(JSON.stringify([callback.href]))},'none','${kind === 'hermes' ? 'native' : 'web'}','["authorization_code","refresh_token"]','["code"]',1,${q(JSON.stringify(scopes))},0,'public');`,
-  `INSERT OR IGNORE INTO oauthResource (id,identifier,name,allowedScopes) VALUES (${q(randomUUID())},${q(resource)},'AimHarder MCP', '["mcp:read"]');`,
+  `INSERT OR IGNORE INTO oauthResource (id,identifier,name,allowedScopes) VALUES (${q(randomUUID())},${q(resource)},'AimHarder MCP', '["mcp:access"]');`,
   `INSERT INTO oauthClientResource (id,clientId,resourceId) VALUES (${q(randomUUID())},${q(clientId)},${q(resource)});`,
 ].join('\n') + '\n';
 await writeFile(resolve(directory, 'mcp-client.sql'), sql, { flag: 'wx', mode: 0o600 });
