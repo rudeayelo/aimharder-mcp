@@ -70,7 +70,17 @@ It uses no credentials, cookies or real recipient data and prints only check lab
 
 For local testing, set `HOSTED_SMOKE_BASE_URL` to the loopback origin used by `pnpm preview`. Keep shared browser review accessible through Tailscale as described in the [preview instructions](hosted-admission.md#local-checks-and-anonymous-preview). Share a Tailscale-routed review link; the deployed origin separately supplies actual Cloudflare HTTPS evidence.
 
-The initial native-mail blocker below is historical. The [Resend sender runbook](hosted-admission.md#required-runtime-and-sender-setup) now replaces that selection using the owner-supplied existing credential; actual sender activation and mailbox/authentication flows remain pending.
+The initial native-mail blocker below is historical. The [Resend sender runbook](hosted-admission.md#required-runtime-and-sender-setup) now replaces that selection using the owner-supplied existing credential; actual sender activation and the first owner invitation now have the separate evidence below; mailbox receipt and verification/recovery authentication flows remain pending.
+
+## Configured Resend deployment stage
+
+The operator subsequently configured the owner-supplied existing Resend service without changing Workers Free, purchasing capacity or expanding permissions. The `ahmcp.link` sending domain was created in `eu-west-1`. Exactly four provider-returned DNS records were added and matched public DNS: DKIM TXT at `resend._domainkey`, MX and TXT at `send`, and CNAME at `rsend`. The domain and every record were subsequently read back as verified. Open/click tracking read back as disabled. An enforced-TLS update returned success; domain reads omit that setting, so persistent read-back is not established. Root receiving MX and unrelated DNS were preserved.
+
+The reviewed production bundle was deployed with a verified `MAIL_FROM` and `RESEND_API_KEY` platform secret, preserving the original `AUTH_SECRET`, database and base origin. Settings read-back confirmed five bindings with the expected database/plain-text/secret-text types. Temporary secret-upload files were removed. All eleven configured-stage anonymous HTTPS checks passed. This stage deliberately omits enrollment and recovery probes and sends no smoke email.
+
+The operator applied one private owner-bootstrap invitation insert. One invitation was accepted by Resend with HTTP 200; a fresh outgoing-message read later reported `last_event: delivered`. Provider delivery is distinct from mailbox receipt/read and successful authentication. At the last pre-owner-flow database read there were zero users, verified identities and participants. No administrator identity is created by the bootstrap invitation alone. Actual owner invitation receipt, verification and recovery mailbox flows, password sign-in and Free CPU suitability remain unobserved. Keep #71 open. No real AimHarder credentials or upstream actions were involved.
+
+The evidence below records the original anonymous deployment stage, before this configured-mail follow-up.
 
 ## Evidence and remaining gate
 
