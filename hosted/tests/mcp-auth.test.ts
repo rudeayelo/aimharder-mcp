@@ -8,6 +8,14 @@ let worker: Miniflare;
 let cookie = '';
 let callbackServer: Server;
 const pendingClients = new Map<string, ParticipantClient>();
+function barrier() {
+  let resolve!: () => void;
+  const promise = new Promise<void>(done => { resolve = done; });
+  return { promise, resolve };
+}
+let codeWriteBarrier: { ready: ReturnType<typeof barrier>; resume: ReturnType<typeof barrier> } | undefined;
+let revocationBatchBarrier: typeof codeWriteBarrier;
+let consentWriteBarrier: typeof codeWriteBarrier;
 beforeAll(async () => {
   await buildWorker('tests/mcp-auth-fixture-worker.ts', 'dist/mcp-auth-fixture-worker.js');
   worker = new Miniflare(convertV4MiniflareOptions({ modules: true, scriptPath: 'dist/mcp-auth-fixture-worker.js',
@@ -15,6 +23,21 @@ beforeAll(async () => {
     d1Databases: ['AUTH_DB'], bindings: { AUTH_SECRET: 'synthetic-auth-secret-with-at-least-thirty-two-characters', BASE_URL: origin },
     outboundService: async request => {
       if (new URL(request.url).origin === origin) return worker.dispatchFetch(request);
+      if (request.url === 'https://synthetic-scheduler.invalid/code-write' && codeWriteBarrier) {
+        codeWriteBarrier.ready.resolve();
+        await codeWriteBarrier.resume.promise;
+        return new Response(null);
+      }
+      if (request.url === 'https://synthetic-scheduler.invalid/revocation-batch' && revocationBatchBarrier) {
+        revocationBatchBarrier.ready.resolve();
+        await revocationBatchBarrier.resume.promise;
+        return new Response(null);
+      }
+      if (request.url === 'https://synthetic-scheduler.invalid/consent-write' && consentWriteBarrier) {
+        consentWriteBarrier.ready.resolve();
+        await consentWriteBarrier.resume.promise;
+        return new Response(null);
+      }
       throw new Error('Unexpected external request');
     },
   }));
@@ -281,4 +304,109 @@ test('client registration allows only the exact approved callback, including its
     expect(target.pathname).not.toBe('/consent');
     expect(target.searchParams.get('error')).toBeTruthy();
   } else expect(response.status).toBeGreaterThanOrEqual(400);
+});
+
+test('an authorization that already read consent cannot restore a client revoked before code issuance', async () => {
+  const existing = new ParticipantClient('fixture-client');
+  await grant(existing);
+  await authorizeSdk(existing, { serverUrl: origin + '/mcp', forceReauthorization: true });
+  const authorization = await fetch(existing.authorizationUrl!, { headers: { cookie, accept: 'application/json' }, redirect: 'manual' });
+  const consent = new URL((await authorization.json() as { url: string }).url, origin);
+  expect(consent.pathname).toBe('/consent');
+  codeWriteBarrier = { ready: barrier(), resume: barrier() };
+  const issuance = fetch(origin + '/api/auth/oauth2/consent', {
+    method: 'POST', headers: { origin, cookie, 'content-type': 'application/json', 'x-fixture-pause-code': 'true' },
+    body: JSON.stringify({ accept: true, oauth_query: consent.search.slice(1) }),
+  });
+  try {
+    await codeWriteBarrier.ready.promise;
+    expect((await fetch(origin + '/api/portal/connections/fixture-client/revoke', { method: 'POST', headers: { origin, cookie } })).status).toBe(204);
+    codeWriteBarrier.resume.resolve();
+    const response = await issuance;
+    expect(response.status).toBe(200);
+    const callback = new URL((await response.json() as { url: string }).url, origin);
+    expect(callback.searchParams.get('code')).toBeTruthy();
+    const exchange = await fetch(origin + '/api/auth/oauth2/token', { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ grant_type: 'authorization_code', client_id: existing.id, code: callback.searchParams.get('code')!,
+        code_verifier: existing.verifier, redirect_uri: existing.redirectUrl, resource: origin + '/mcp' }) });
+    expect(exchange.status).toBe(400);
+    expect((await probe(existing.savedTokens!.access_token)).status).toBe(401);
+    // Only a later authorization with a fresh explicit consent may reconnect.
+    await grant(existing);
+    const reconnected = new Client({ name: 'reconnected-client', version: '1' }, { versionNegotiation: { mode: { pin: '2026-07-28' } } });
+    try {
+      await reconnected.connect(new StreamableHTTPClientTransport(new URL(origin + '/mcp'), { authProvider: existing }));
+      expect((await reconnected.listTools()).tools.map(tool => tool.name)).toEqual(['get_account_context']);
+    } finally { await reconnected.close(); }
+  } finally {
+    codeWriteBarrier.resume.resolve();
+    await issuance;
+    codeWriteBarrier = undefined;
+  }
+});
+
+test('an authorization started while revocation awaits its atomic batch cannot survive that batch', async () => {
+  const existing = new ParticipantClient('fixture-client');
+  await grant(existing);
+  await authorizeSdk(existing, { serverUrl: origin + '/mcp', forceReauthorization: true });
+  const authorization = await fetch(existing.authorizationUrl!, { headers: { cookie, accept: 'application/json' }, redirect: 'manual' });
+  const consent = new URL((await authorization.json() as { url: string }).url, origin);
+  expect(consent.pathname).toBe('/consent');
+  revocationBatchBarrier = { ready: barrier(), resume: barrier() };
+  const revocation = fetch(origin + '/api/portal/connections/fixture-client/revoke', {
+    method: 'POST', headers: { origin, cookie, 'x-fixture-pause-revocation': 'true' },
+  });
+  try {
+    await revocationBatchBarrier.ready.promise;
+    const response = await fetch(origin + '/api/auth/oauth2/consent', { method: 'POST', headers: { origin, cookie, 'content-type': 'application/json' },
+      body: JSON.stringify({ accept: true, oauth_query: consent.search.slice(1) }) });
+    const callback = new URL((await response.json() as { url: string }).url, origin);
+    expect(callback.searchParams.get('code')).toBeTruthy();
+    revocationBatchBarrier.resume.resolve();
+    expect((await revocation).status).toBe(204);
+    const exchange = await fetch(origin + '/api/auth/oauth2/token', { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ grant_type: 'authorization_code', client_id: existing.id, code: callback.searchParams.get('code')!,
+        code_verifier: existing.verifier, redirect_uri: existing.redirectUrl, resource: origin + '/mcp' }) });
+    expect(exchange.status).toBe(400);
+    expect((await probe(existing.savedTokens!.access_token)).status).toBe(401);
+  } finally {
+    revocationBatchBarrier.resume.resolve();
+    await revocation;
+    revocationBatchBarrier = undefined;
+  }
+});
+
+test('a consent write delayed past revocation cannot make a later authorization skip fresh consent', async () => {
+  const existing = new ParticipantClient('fixture-client');
+  expect((await fetch(origin + '/api/portal/connections/fixture-client/revoke', { method: 'POST', headers: { origin, cookie } })).status).toBe(204);
+  await authorizeSdk(existing, { serverUrl: origin + '/mcp', forceReauthorization: true });
+  const started = await fetch(existing.authorizationUrl!, { headers: { cookie, accept: 'application/json' }, redirect: 'manual' });
+  const consent = new URL((await started.json() as { url: string }).url, origin);
+  expect(consent.pathname).toBe('/consent');
+  consentWriteBarrier = { ready: barrier(), resume: barrier() };
+  const staleConsent = fetch(origin + '/api/auth/oauth2/consent', { method: 'POST',
+    headers: { origin, cookie, 'content-type': 'application/json', 'x-fixture-pause-consent-write': 'true' },
+    body: JSON.stringify({ accept: true, oauth_query: consent.search.slice(1) }) });
+  try {
+    await consentWriteBarrier.ready.promise;
+    expect((await fetch(origin + '/api/portal/connections/fixture-client/revoke', { method: 'POST', headers: { origin, cookie } })).status).toBe(204);
+    consentWriteBarrier.resume.resolve();
+    const stale = await staleConsent;
+    expect(stale.status).toBe(200);
+    const callback = new URL((await stale.json() as { url: string }).url, origin);
+    const exchange = await fetch(origin + '/api/auth/oauth2/token', { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ grant_type: 'authorization_code', client_id: existing.id, code: callback.searchParams.get('code')!,
+        code_verifier: existing.verifier, redirect_uri: existing.redirectUrl, resource: origin + '/mcp' }) });
+    expect(exchange.status).toBe(400);
+    await authorizeSdk(existing, { serverUrl: origin + '/mcp', forceReauthorization: true });
+    existing.authorizationUrl!.searchParams.delete('prompt');
+    const restart = await fetch(existing.authorizationUrl!, { headers: { cookie, accept: 'application/json' }, redirect: 'manual' });
+    const next = new URL((await restart.json() as { url: string }).url, origin);
+    expect(next.pathname).toBe('/consent');
+    expect(next.searchParams.has('code')).toBe(false);
+  } finally {
+    consentWriteBarrier.resume.resolve();
+    await staleConsent;
+    consentWriteBarrier = undefined;
+  }
 });

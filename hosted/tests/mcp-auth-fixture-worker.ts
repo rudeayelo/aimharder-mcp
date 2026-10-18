@@ -2,6 +2,36 @@
 import feasibilityFixture from './fixture-worker.js';
 import { handleHostedRequest } from '../src/worker.js';
 import type { HostedEnvironment } from '../src/auth.js';
+function pauseBeforeRevocationBatch(database: D1Database): D1Database {
+  return new Proxy(database, { get(target, property) {
+    if (property === 'batch') return async (statements: D1PreparedStatement[]) => {
+      await fetch('https://synthetic-scheduler.invalid/revocation-batch');
+      return target.batch(statements);
+    };
+    const value = Reflect.get(target, property);
+    return typeof value === 'function' ? value.bind(target) : value;
+  } });
+}
+// Scheduling only: pause at real D1 writes, never replace authorization data.
+function pauseBeforeAuthorizationWrite(database: D1Database, kind: 'consent' | 'code'): D1Database {
+  const insert = kind === 'consent' ? /\binsert\s+into\s+["`]?oauthConsent["`]?/i : /\binsert\s+into\s+["`]?verification["`]?/i;
+  function statementProxy(statement: D1PreparedStatement, sql: string): D1PreparedStatement {
+    return new Proxy(statement, { get(target, property) {
+      if (property === 'bind') return (...values: unknown[]) => statementProxy(target.bind(...values), sql);
+      const value = Reflect.get(target, property);
+      if (typeof value !== 'function') return value;
+      return async (...args: unknown[]) => {
+        if (insert.test(sql)) await fetch(`https://synthetic-scheduler.invalid/${kind}-write`);
+        return Reflect.apply(value, target, args);
+      };
+    } });
+  }
+  return new Proxy(database, { get(target, property) {
+    if (property === 'prepare') return (sql: string) => statementProxy(target.prepare(sql), sql);
+    const value = Reflect.get(target, property);
+    return typeof value === 'function' ? value.bind(target) : value;
+  } });
+}
 export default {
   async fetch(request: Request, env: HostedEnvironment) {
     if (new URL(request.url).pathname === '/__fixture') {
@@ -17,6 +47,10 @@ export default {
       ]);
       return result;
     }
-    return handleHostedRequest(request, env, async () => null);
+    const delayedCode = new URL(request.url).pathname === '/api/auth/oauth2/consent' && request.headers.has('x-fixture-pause-code');
+    const delayedRevoke = new URL(request.url).pathname.endsWith('/revoke') && request.headers.has('x-fixture-pause-revocation');
+    const delayedConsent = new URL(request.url).pathname === '/api/auth/oauth2/consent' && request.headers.has('x-fixture-pause-consent-write');
+    const database = delayedCode ? pauseBeforeAuthorizationWrite(env.AUTH_DB, 'code') : delayedRevoke ? pauseBeforeRevocationBatch(env.AUTH_DB) : delayedConsent ? pauseBeforeAuthorizationWrite(env.AUTH_DB, 'consent') : env.AUTH_DB;
+    return handleHostedRequest(request, { ...env, AUTH_DB: database }, async () => null);
   },
 };
