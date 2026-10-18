@@ -125,3 +125,5 @@ The later [personal RM feature](personal-rm-spec.md) has confirmed scope outside
 ## Technical validation
 
 See [API research](api-research.md) for observed contracts and [validation](validation.md) for live results and their limits. Feed/history horizons and physical-session grouping remain unverified; grouping is outside the clarified entry-based #9/#10 acceptance.
+
+The later hosted [MCP authorization slice](hosted-mcp-authorization.md) adds browser consent, trusted operator client provisioning and immediate participant client revocation, verified with an actual SDK over HTTP/workerd/D1. This does not change the local MVP or establish real ChatGPT/Hermes acceptance.

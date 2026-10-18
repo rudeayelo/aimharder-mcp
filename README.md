@@ -81,3 +81,5 @@ Report bugs or propose changes in [GitHub Issues](https://github.com/rudeayelo/a
 ## License
 
 [MIT](LICENSE).
+
+The hosted [MCP authorization runbook](docs/hosted-mcp-authorization.md) covers maintained OAuth, trusted client provisioning and independent participant revocation. Actual ChatGPT/Hermes journeys remain pending final pilot acceptance.

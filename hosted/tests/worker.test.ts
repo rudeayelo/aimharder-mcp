@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { afterAll, beforeAll, expect, test } from 'vitest';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
@@ -56,7 +56,7 @@ beforeAll(async () => {
   );
   await worker.ready;
   const database = await worker.getD1Database('AUTH_DB');
-  for (const file of ['0001-auth.sql', '0002-invitations.sql'])
+  for (const file of (await readdir('migrations')).filter(name => /^\d+.*\.sql$/.test(name)).sort())
     await database.exec((await readFile(`migrations/${file}`, 'utf8')).replaceAll('\n', ' '));
 });
 afterAll(async () => {

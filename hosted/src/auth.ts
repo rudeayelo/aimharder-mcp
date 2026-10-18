@@ -1,8 +1,9 @@
 import { betterAuth } from 'better-auth';
 import { jwt } from 'better-auth/plugins';
 import { mcp } from '@better-auth/mcp';
-import { APIError, createAuthMiddleware } from 'better-auth/api';
+import { APIError, createAuthMiddleware, getSessionFromCtx } from 'better-auth/api';
 import { admitVerifiedIdentity, canRecover, denyAdmission, digest, invited, participant, pendingInvitation, verificationLifetimeSeconds } from './admission.js';
+import { issueGrantClaim, readIssuingGrant } from './oauth-grants.js';
 import { mailConfigured, sendPortalMail } from './mail.js';
 
 export interface HostedEnvironment {
@@ -15,6 +16,7 @@ export interface HostedEnvironment {
 
 export function createAuth(env: HostedEnvironment) {
   let deliveryFailed = false;
+  let issuingGrant: Awaited<ReturnType<typeof readIssuingGrant>> | undefined;
   async function deliver(message: Parameters<typeof sendPortalMail>[1]) {
     try { await sendPortalMail(env, message); }
     catch { deliveryFailed = true; }
@@ -61,6 +63,12 @@ export function createAuth(env: HostedEnvironment) {
     },
     hooks: {
       before: createAuthMiddleware(async ctx => {
+        if (['/oauth2/authorize', '/oauth2/consent', '/oauth2/continue'].includes(ctx.path)) {
+          const session = await getSessionFromCtx(ctx);
+          if (session && !await participant(env, session.user.id)) denyAdmission();
+        }
+        if (ctx.path === '/oauth2/token') issuingGrant = await readIssuingGrant(env, ctx.body);
+
         if (['/sign-up/email', '/send-verification-email', '/request-password-reset'].includes(ctx.path) && !mailConfigured(env)) {
           throw new APIError('SERVICE_UNAVAILABLE', { code: 'EMAIL_UNAVAILABLE', message: 'Email delivery is unavailable. Please try later.' });
         }
@@ -87,6 +95,14 @@ export function createAuth(env: HostedEnvironment) {
       }),
     },
     databaseHooks: {
+      verification: { create: { before: async verification => {
+        try {
+          if (JSON.parse(verification.value)?.type === 'authorization_code') {
+            // Preserve millisecond ordering against client-revocation cutoffs.
+            return { data: { ...verification, createdAt: new Date() } };
+          }
+        } catch { /* Other verification formats belong to their maintained flows. */ }
+      } } },
       user: {
         create: {
           before: async (user, ctx) => {
@@ -106,6 +122,8 @@ export function createAuth(env: HostedEnvironment) {
       jwt(),
       mcp({
         loginPage: '/sign-in',
+        storeTokens: { hash: digest },
+        customAccessTokenClaims: ({ user }) => issueGrantClaim(env, issuingGrant, user?.id),
         consentPage: '/consent',
         resource: `${env.BASE_URL}/mcp`,
         scopes: ['openid', 'profile', 'offline_access', 'mcp:read'],

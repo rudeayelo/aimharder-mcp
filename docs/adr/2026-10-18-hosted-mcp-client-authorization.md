@@ -1,0 +1,27 @@
+# ADR: hosted MCP client authorization and revocation
+
+Status: accepted engineering implementation for [#73](https://github.com/rudeayelo/aimharder-mcp/issues/73), locally verified on 2026-10-18. Complements the [hosted identity decision](2026-10-15-hosted-identity-and-credential-custody.md), [runtime candidate](2026-10-16-proposed-cloudflare-hosted-runtime.md) and [isolated feasibility boundary](2026-10-18-isolated-worker-authentication-feasibility.md). Actual ChatGPT/Hermes and production-pilot acceptance remain outstanding.
+
+## Context
+
+The feasibility slice proved the maintained OAuth/JWT/SDK combination, but had no browser consent UI, operator registration workflow or participant client controls. The maintained resource wrapper verifies JWT cryptography and claims without consulting application admission/revocation. Deleting provider consent alone leaves signed access tokens usable. Revoking one client must preserve other clients and the stable portal identity, and a concurrent refresh must not revive revoked authorization.
+
+## Decision
+
+Keep Better Auth/MCP 1.7.10, its maintained sign-in, signed OAuth query, PKCE, code exchange, refresh rotation and JWT verification. Keep the private SDK v2 HTTP package separate from SDK v1/local stdio. Add browser consent, fixed-origin login continuation, a participant connection list and same-origin individual revocation.
+
+Provision public PKCE clients offline through trusted operator review of an exact ChatGPT or Hermes callback and the configured environment's resource. No shared client secret is needed. Keep DCR and all client-creation privileges disabled; do not install CIMD or fetch arbitrary metadata URLs. Current official [OpenAI authentication](https://developers.openai.com/plugins/build/auth), [provided-client manifest](https://developers.openai.com/plugins/build/plugins) and [Hermes configuration](https://hermes-agent.nousresearch.com/docs/user-guide/features/mcp) document this setup direction. A particular real UI/version must still be validated. If a supported client cannot use this path, leave compatibility unresolved rather than silently weaken network/registration policy. A public client name/ID is not software attestation.
+
+Use the provider's configurable token-storage hook with SHA-256 hexadecimal digests for authorization codes/refresh tokens. Add an application grant ledger keyed by the original code digest. The maintained token hook resolves a verified user and original grant; refresh retains that grant identity. Signed access tokens include a namespaced grant ID in addition to provider-owned subject/client/audience claims. Keep millisecond authorization-code creation timestamps through the maintained database hook for ordering against revocations. Password hashing and non-OAuth verification formats remain maintained defaults.
+
+Check current verified active admission, client enablement and matching unrevoked grant on every protected MCP request after maintained JWT verification. Revocation atomically marks this participant/client's grants revoked, records an old-code cutoff, and removes its provider refresh/access tokens and consent. Tombstones are never reset by issuance; a racing refresh can at most issue an unusable token tied to its revoked original grant. Fresh authorization gets a new identity, preserving denial of previous JWTs. Portal account identity and other clients are untouched. Grant/cutoff records cascade with portal identity deletion; later lifecycle/restore work must preserve revocation beyond backups.
+
+Expose only the account-context tracer until the vault/coordination/tool slices. Return a safe unconnected outcome without shared upstream credentials or write tools. The [client runbook](../hosted-mcp-authorization.md) records routes, setup, library lifetimes/refresh overlap and evidence boundaries.
+
+## Consequences
+
+Migration `0004-mcp-grants.sql` is required before this version handles OAuth. Older feasibility tokens lack the grant claim and must be reauthorized; existing portal identity, passwords, verification and invitations remain intact. The already initialized test D1 requires explicit reviewed migration application, not replay of its initial schema or unadopted Wrangler migrations.
+
+The ledger adds authoritative D1 reads and minimal grant/revocation state. It provides application client revocation beyond a stateless JWT's remaining lifetime. Immediate revocation is the portal operation; local cache deletion or consent deletion alone is not equivalent. OAuth authorization policy is separate from AimHarder connection replacement, which must continue preserving current client grants while invalidating upstream sessions/actions under later tickets.
+
+Eight new actual HTTP/workerd/D1/SDK tests cover the accepted authorization seam, including a real loopback callback listener, current admission, invalid state/resource/verifier and concurrent refresh/revoke. There are no auth mocks or real credentials. Actual ChatGPT/Hermes callbacks, supported plans/settings, full query/action journeys, provider deployment, load/cost and lifecycle restoration remain separate acceptance gates. This decision authorizes no purchases, plan changes, production launch or AimHarder writes.

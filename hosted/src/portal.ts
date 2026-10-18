@@ -35,7 +35,8 @@ export async function handlePortal(request: Request, env: HostedEnvironment, aut
         break;
       case '/portal/sign-in':
         path = '/sign-in/email'; body = { email: field('email'), password: field('password') };
-        success = new Response(null, { status: 303, headers: { location: '/' } });
+        success = new Response(null, { status: 303, headers: { location: new URLSearchParams(field('oauth_query')).has('client_id')
+          ? `/api/auth/oauth2/authorize?${new URLSearchParams(field('oauth_query'))}` : '/' } });
         break;
       case '/portal/recovery':
         path = '/request-password-reset'; body = { email: field('email'), redirectTo: `${env.BASE_URL}/reset-password` };
@@ -70,7 +71,7 @@ export async function handlePortal(request: Request, env: HostedEnvironment, aut
     return success;
   }
   if (request.method !== 'GET') return null;
-  if (url.pathname === '/sign-in') return page('Sign in', '<p>Use your portal password. Your AimHarder password belongs to the separate account connection.</p><form method="post" action="/portal/sign-in"><label>Email<input name="email" type="email" required autocomplete="username"></label><label>Portal password<input name="password" type="password" required autocomplete="current-password"></label><button>Sign in</button></form><p><a href="/recover">Forgot password?</a> · <a href="/resend-verification">Resend verification email</a></p>');
+  if (url.pathname === '/sign-in') return page('Sign in', '<p>Use your portal password. Your AimHarder password belongs to the separate account connection.</p><form method="post" action="/portal/sign-in">' + (url.searchParams.has('client_id') ? `<input name="oauth_query" type="hidden" value="${escape(url.search.slice(1))}">` : '') + '<label>Email<input name="email" type="email" required autocomplete="username"></label><label>Portal password<input name="password" type="password" required autocomplete="current-password"></label><button>Sign in</button></form><p><a href="/recover">Forgot password?</a> · <a href="/resend-verification">Resend verification email</a></p>');
   if (url.pathname === '/recover' || url.pathname === '/resend-verification') {
     const recovering = url.pathname === '/recover';
     return page(recovering ? 'Recover portal access' : 'Verify your email', `<form method="post" action="/portal/${recovering ? 'recovery' : 'send-verification'}"><label>Email<input name="email" type="email" required autocomplete="email"></label><button>Send link</button></form><p><a href="/sign-in">Sign in</a></p>`);
@@ -92,7 +93,7 @@ export async function handlePortal(request: Request, env: HostedEnvironment, aut
   if (url.pathname === '/') {
     const session = await auth.api.getSession({ headers: request.headers });
     const actor = session && await participant(env, session.user.id);
-    return page('AimHarder MCP', actor ? `<p>You are signed in.</p>${actor.role === 'admin' ? '<a href="/admin/invitations">Manage invitations</a>' : ''}<form method="post" action="/portal/sign-out"><button>Sign out</button></form>` : '<p>An invitation is required to join this pilot.</p><a href="/sign-in">Sign in</a>');
+    return page('AimHarder MCP', actor ? `<p>You are signed in.</p><p><a href="/connections">Connected MCP clients</a> · <a href="/connect-clients">Connect ChatGPT or Hermes</a></p>${actor.role === 'admin' ? '<a href="/admin/invitations">Manage invitations</a>' : ''}<form method="post" action="/portal/sign-out"><button>Sign out</button></form>` : '<p>An invitation is required to join this pilot.</p><a href="/sign-in">Sign in</a>');
   }
   return null;
 }
