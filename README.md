@@ -70,6 +70,7 @@ Planned capabilities, without committed dates or versions:
 
 - [ ] Expand compatibility to more AimHarder gyms.
 - [ ] Explore compatibility with mobile apps.
+- [ ] Complete the invitation-only hosted portal for ChatGPT and Hermes ([specification #69](https://github.com/rudeayelo/aimharder-mcp/issues/69)); a [local authentication feasibility slice](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-feasibility.md) is checked with synthetic data. No hosted service is deployed.
 
 ## Contributing
 

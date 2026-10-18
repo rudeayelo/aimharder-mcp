@@ -114,7 +114,7 @@ The [hosted identity decision](adr/2026-10-15-hosted-identity-and-credential-cus
 
 Only activity publication and deletion have role-based controls, initially disabled for `user` and enabled for `admin`; all other features, including booking creation/cancellation, have no switches. Administration shows users, roles and connection status, without diagnostics or private sporting data. The administrator may suspend/reactivate participants, with fresh MCP authorization after reactivation.
 
-The user confirmed the complete product design on 2026-10-16; [issue #69](https://github.com/rudeayelo/aimharder-mcp/issues/69) is the agent-ready implementation specification. Actual ChatGPT/Hermes journeys, role/isolation checks, concurrency/restart coverage, retention enforcement, exact runtime/storage design and measured cost remain outstanding. This is not an implemented or deployed service and does not alter the historical MVP below.
+The user confirmed the complete product design on 2026-10-16; [issue #69](https://github.com/rudeayelo/aimharder-mcp/issues/69) is the agent-ready implementation specification. Actual ChatGPT/Hermes journeys, role/isolation checks, concurrency/restart coverage, retention enforcement, exact runtime/storage design and measured cost remain outstanding. A [local Worker authentication feasibility slice](hosted-feasibility.md) now exercises one synthetic account query; the full portal is not implemented or deployed. This does not alter the historical MVP below.
 
 The original MVP scope excluded booking writes, automation, exercise/progress analysis, a UI and a remote service. Manual booking writes were added later under the [separate scope decision](adr/2026-09-24-manual-booking-writes.md).
 

@@ -30,3 +30,15 @@ jobs:
       - run: pnpm test
       - run: pnpm build
       - run: pnpm test:package
+      - name: Install hosted feasibility dependencies
+        working-directory: hosted
+        run: pnpm install --frozen-lockfile
+      - name: Check hosted Worker types
+        working-directory: hosted
+        run: pnpm typecheck
+      - name: Exercise authenticated Worker journey
+        working-directory: hosted
+        run: pnpm test
+      - name: Build hosted Worker
+        working-directory: hosted
+        run: pnpm build

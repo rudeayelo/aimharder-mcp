@@ -19,6 +19,10 @@ pnpm build
 
 `pnpm exec vitest run tests/activity-journey.test.ts` runs the source checkout's complete publication and deletion journey through an MCP SDK client and simulated upstream responses. It checks both previews, exact source and target, one write per confirmed action, and fresh read-back states. This is a fixture check and needs no account credentials; it does not perform a live AimHarder write.
 
+## Hosted feasibility checks
+
+The private [hosted package](../hosted/README.md) has a separate lockfile and test command. After the root installation, run `pnpm install --frozen-lockfile`, `pnpm typecheck`, `pnpm test` and `pnpm build` from `hosted/`. Its harness executes real workerd and local D1, substitutes external HTTP, and needs no credentials or provider access. Root tests intentionally cover only `tests/`; CI also runs the hosted commands. See [the feasibility evidence](hosted-feasibility.md) for what the small slice proves and what remains pending.
+
 ## Run and inspect locally
 
 Supply credentials and any gym-zone override as in [configuration](configuration.md). Run `pnpm start` with variables injected, or `node --env-file=/absolute/path/to/private.env dist/index.js`. The server waits for MCP messages on stdin.
