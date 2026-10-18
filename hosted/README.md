@@ -1,6 +1,6 @@
 # Hosted portal work
 
-This private package contains the local Worker feasibility slice for [issue #70](https://github.com/rudeayelo/aimharder-mcp/issues/70) and the invited password portal's local implementation for [issue #71](https://github.com/rudeayelo/aimharder-mcp/issues/71), part of [the hosted specification](https://github.com/rudeayelo/aimharder-mcp/issues/69). It is not a deployed pilot or a complete portal. Real email configuration/delivery remains pending; #71 cannot be closed from synthetic checks.
+This private package contains the local Worker feasibility slice for [issue #70](https://github.com/rudeayelo/aimharder-mcp/issues/70) and the invited password portal's local implementation for [issue #71](https://github.com/rudeayelo/aimharder-mcp/issues/71), part of [the hosted specification](https://github.com/rudeayelo/aimharder-mcp/issues/69). It is not a deployed pilot or a complete portal. The current Workers plan is verified as Free; native Email Sending requires Paid and plan changes are excluded, so real email configuration/delivery remains blocked. #71 cannot be closed from synthetic checks.
 
 From the repository root, install the local package with `pnpm install --frozen-lockfile`. Then, from this directory:
 
