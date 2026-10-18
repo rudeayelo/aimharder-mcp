@@ -8,6 +8,8 @@ const origin = 'http://localhost:8787';
 const messages: { to: string; subject: string; text: string }[] = [];
 const failedMailRecipients: string[] = [];
 let mailFails = false;
+let mailFailureStatus = 503;
+let mailAcknowledgement = '{"id":"synthetic-message"}';
 const password = 'synthetic-password-strong';
 function post(path: string, body: unknown, headers: Record<string, string> = {}) {
   return worker.dispatchFetch(origin + path, {
@@ -30,16 +32,22 @@ beforeAll(async () => {
     compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'],
     d1Databases: ['AUTH_DB'],
     bindings: { AUTH_SECRET: 'synthetic-local-auth-secret-at-least-32-characters', BASE_URL: origin,
-      MAIL_FROM: 'noreply@example.invalid' },
+      MAIL_FROM: 'noreply@example.invalid', RESEND_API_KEY: 'synthetic-resend-key' },
     outboundService: async request => {
-      if (request.url === 'https://synthetic-mail.invalid/send' && request.method === 'POST') {
-        const message = await request.json() as typeof messages[number];
+      if (request.url === 'https://api.resend.com/emails' && request.method === 'POST') {
+        expect(request.headers.get('authorization')).toBe('Bearer synthetic-resend-key');
+        expect(request.headers.get('content-type')).toBe('application/json');
+        const body = await request.json() as { from: string; to: string[]; subject: string; text: string };
+        expect(body.from).toBe('noreply@example.invalid');
+        expect(body.to).toHaveLength(1);
+        const message = { ...body, to: body.to[0]! };
         if (mailFails) {
           failedMailRecipients.push(message.to);
-          return new Response(null, { status: 503 });
+          return new Response('synthetic-private-provider-error', { status: mailFailureStatus,
+            headers: { location: 'https://untrusted-mail.invalid/redirect' } });
         }
         messages.push(message);
-        return Response.json({ id: 'synthetic-message' });
+        return new Response(mailAcknowledgement, { headers: { 'content-type': 'application/json' } });
       }
       throw new Error('Unexpected external request');
     },
@@ -333,4 +341,58 @@ test('configured recovery sender failure gives indistinguishable native and HTML
     }
     expect(failedMailRecipients.slice(failedAttemptsBefore)).toEqual(['owner@example.invalid', 'owner@example.invalid']);
   } finally { mailFails = false; }
+});
+
+test('Resend redirects, credential errors and rate limits fail safely without following or retrying the send', async () => {
+  mailFails = true;
+  try {
+    for (const status of [302, 401, 429, 503]) {
+      mailFailureStatus = status;
+      const before = failedMailRecipients.length;
+      const response = await post('/api/portal/invitations', { email: `failure-${status}@example.invalid` }, { cookie: adminCookie });
+      expect(response.status).toBe(503);
+      expect(await response.text()).toBe('{"message":"The invitation could not be delivered. Please try later."}');
+      expect(failedMailRecipients.length - before).toBe(1);
+    }
+  } finally { mailFails = false; mailFailureStatus = 503; }
+});
+
+test('partial Resend configuration closes enrollment and recovery without making external requests', async () => {
+  for (const configuration of [
+    { MAIL_FROM: 'noreply@example.invalid' },
+    { RESEND_API_KEY: 'synthetic-key' },
+    { RESEND_API_KEY: ' ', MAIL_FROM: 'noreply@example.invalid' },
+    { RESEND_API_KEY: 'synthetic-key', MAIL_FROM: 'noreply@example.invalid\r\nBcc: hidden@example.invalid' },
+  ]) {
+    const partial = new Miniflare(convertV4MiniflareOptions({
+      modules: true, scriptPath: 'dist/worker.js', compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'],
+      d1Databases: ['AUTH_DB'], bindings: { AUTH_SECRET: 'synthetic-partial-secret-at-least-32-characters', BASE_URL: origin, ...configuration },
+      outboundService: () => { throw new Error('Partial mail configuration must not reach external services'); },
+    }));
+    try {
+      await partial.ready;
+      const db = await partial.getD1Database('AUTH_DB');
+      for (const file of ['0001-auth.sql', '0002-invitations.sql'])
+        await db.exec((await readFile(`migrations/${file}`, 'utf8')).replaceAll('\n', ' '));
+      for (const path of ['/api/auth/sign-up/email', '/api/auth/request-password-reset']) {
+        const response = await partial.dispatchFetch(origin + path, {
+          method: 'POST', headers: { origin, 'content-type': 'application/json' },
+          body: JSON.stringify({ email: 'closed@example.invalid', name: 'Closed', password }),
+        });
+        expect(response.status).toBe(503);
+        expect(await response.text()).toContain('Email delivery is unavailable');
+      }
+    } finally { await partial.dispose(); }
+  }
+});
+
+test('a successful provider status without a bounded message acknowledgement is unavailable to the participant', async () => {
+  try {
+    for (const [index, body] of ['{}', 'not-json', '{"id":"' + 'x'.repeat(5000) + '"}'].entries()) {
+      mailAcknowledgement = body;
+      const response = await post('/api/portal/invitations', { email: `bad-ack-${index}@example.invalid` }, { cookie: adminCookie });
+      expect(response.status).toBe(503);
+      expect(await response.text()).not.toContain(body);
+    }
+  } finally { mailAcknowledgement = '{"id":"synthetic-message"}'; }
 });

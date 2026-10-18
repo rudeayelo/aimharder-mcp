@@ -4,6 +4,8 @@ Status: accepted implementation decision on 2026-10-18 for the local portion of 
 
 Subsequent authorization: the user approved creating an isolated Cloudflare test environment without purchases or plan changes. The [test-environment decision](2026-10-18-isolated-cloudflare-test-environment.md) records that separate boundary; actual sender setup/delivery is still unresolved and is not implied by a disabled-mail deployment.
 
+The native Cloudflare email-provider selection below is superseded by the [Resend delivery decision](2026-10-18-resend-transactional-delivery.md). All admission, maintained authentication and recovery-uniformity decisions remain accepted. The provider description and pricing below preserve the historical choice.
+
 ## Context
 
 Better Auth owns password hashing, verification tokens, sign-in, recovery and session revocation. A separate application admission record must prevent public signup, wrong-email acceptance, expired/revoked invitations and recovery-based admission. D1 has atomic batches, without interactive transactions. Better Auth 1.7.10 defers `user.create.after` until signup completes and catches email-callback errors; neither behavior can be treated as a transactional admission grant or a delivery acknowledgement.

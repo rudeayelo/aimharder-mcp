@@ -22,5 +22,7 @@
     }
   ]
   // AUTH_SECRET must be supplied as a platform secret through a trusted operator
-  // context. This anonymous stage has no EMAIL binding, MAIL_FROM, Google or vault.
+  // context. This anonymous stage has no RESEND_API_KEY secret, MAIL_FROM, Google or vault.
+  // The separately authorized mail stage needs a verified MAIL_FROM and a restricted
+  // RESEND_API_KEY platform secret. Never place that key in this manifest.
 }
