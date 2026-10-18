@@ -51,6 +51,8 @@ The Google console visibly confirmed client creation and offered Download JSON. 
 
 This is administrative setup evidence only. Google sign-in, email verification, client linking, test-user admission, Google scope handling, callback reachability and the hosted MCP remain unvalidated. No public application publication, Cloudflare deployment, billing change or AimHarder operation was performed. The existing hosted credential-custody decision still applies; no new security ADR is needed for this preparation.
 
+On 2026-10-18, a separate read-only operator inspection verified the existing account-owned Cloudflare token and active `ahmcp.link` zone, with successful Workers/D1/routes/DNS reads. The proposed isolated test resources are absent; the zone has no DNS records/routes. Subscription and Email Sending queries are denied, so the actual plan and sender access remain unknown. No permissions, resources, DNS or billing were changed. The [readiness record](../hosted-admission.md#read-only-provider-readiness-2026-10-18) separates these observations from the still-unauthorized test-environment proposal.
+
 ## Local feasibility evidence (2026-10-18)
 
 The [isolated Worker authentication slice](2026-10-18-isolated-worker-authentication-feasibility.md) proves maintained Better Auth sign-in/OAuth and SDK v2 account querying in workerd with disposable D1 and synthetic AimHarder HTTP. The separate local SDK v1 package remains supported. [Evidence and conditional costs](../hosted-feasibility.md) distinguish this gate from production reachability, safe real-client registration, per-account coordination, email/provider delivery and actual ChatGPT/Hermes acceptance. No deployment or provider mutation occurred.

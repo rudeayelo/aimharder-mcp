@@ -39,6 +39,25 @@ In a separately authorized environment:
 
 The selected [pricing](https://developers.cloudflare.com/email-service/platform/pricing/) includes 3,000 outbound messages/month on Workers Paid, then USD 0.35/1,000. The pilot estimate allows at most 200/month; the beta's actual account eligibility, quotas, abuse protections, taxes/currency, bill and deliverability are not measured. This is USD 0 incremental within the inclusion, not a verified cost or spending cap. A material eligibility/cost failure requires revisiting the sender choice.
 
+## Read-only provider readiness (2026-10-18)
+
+After the local implementation, a separate operator check used the existing 1Password service-account environment and Cloudflare credential in memory. Only metadata and Cloudflare GET requests were used; secret values, account/zone identifiers and raw provider responses were not retained in repository evidence. The account-owned token is active, verified through the account-token endpoint. The user-token verification endpoint is inapplicable to this token type.
+
+| Boundary | Observed result |
+| --- | --- |
+| Account and `ahmcp.link` zone discovery | HTTP 200; the intended account matches and the zone is active, not paused |
+| Workers subdomain and script listing | HTTP 200; subdomain configured, three existing scripts, no proposed test worker |
+| D1 lookup for proposed test database | HTTP 200; no matching database |
+| Zone Worker routes and DNS listing | HTTP 200; no routes or DNS records in this zone |
+| Account subscriptions | HTTP 403 / code 10000; paid-plan and billing status remain unknown |
+| Email Sending subdomain listing | HTTP 403 / code 10000; sender configuration and effective email access remain unknown |
+
+Successful reads do not prove creation, deployment, secret injection or DNS-write permissions. No token permission was expanded, resource created, DNS changed, email sent or billing enabled. Sender/DNS setup and real delivery still require the authorized environment and sufficient provider access. The [subscription API](https://developers.cloudflare.com/api/resources/accounts/subresources/subscriptions/methods/get/) requires Billing Read or Write; read-only visibility is sufficient for the prerequisite plan check. Email Sending access must be checked against the account's current capability rather than inferred from generic DNS access.
+
+The concrete proposed test environment is a new Worker `aimharder-mcp-pilot-test`, a dedicated D1 database `aimharder-mcp-pilot-test-auth`, and HTTPS origin `https://pilot-test.ahmcp.link`. It would apply the two committed migrations, use a fresh platform-secret `AUTH_SECRET`, and bind only the owner-approved email sender. `noreply@ahmcp.link` is the proposed sender; the receiving owner mailbox still needs explicit identification. Existing scripts and the root service origin would remain outside this test environment. Real upstream credentials, Google integration and MCP client onboarding belong to later tickets.
+
+This is a reviewable proposal, not an authorized deployment. Before creating it, obtain environment authorization, establish the actual plan without purchases, and resolve the email-access denial. Any paid activation or broader token grant needs its own precise owner approval. The test must then observe invitation, verification and recovery receipt; provider acceptance alone is insufficient.
+
 ## Trusted owner bootstrap
 
 There is no HTTP bootstrap endpoint. From a trusted local checkout, set `PORTAL_OWNER_EMAIL`, the fixed HTTPS `BASE_URL` and an absolute `OWNER_BOOTSTRAP_OUTPUT_DIR` outside the checkout, then run `pnpm owner:prepare` from `hosted/`. Its trusted parent directory must already exist. Use securely supplied environment configuration; do not paste real values into shared commands/logs. The command requires a fresh output directory and creates files with mode `0600` under a directory created with mode `0700`; existing output directories are rejected without writing or changing their permissions:
@@ -68,4 +87,4 @@ The workerd/D1 HTTP harness uses real Better Auth handlers and durable admission
 
 Limited native Chrome QA separately checked the anonymous sign-in layout and recovery form through Tailscale HTTPS. The actual form submission reaches the safe unavailable-email result. Pages use origin-only `strict-origin` referrers: this protects URL capabilities while preserving same-origin form POST Origin headers; null/foreign origins remain rejected. No verified browser login was performed.
 
-The automated journeys remain synthetic local checks, not actual provider/mailbox, Google, ChatGPT, Hermes, deployment or live AimHarder acceptance. The root stdio package remains separately checked. Remaining ticket #71 acceptance is actual sender/DNS setup and all three real email receipts in an authorized environment. Subsequent tickets retain Google/linking, vault/configuration, full MCP OAuth/client journeys, role/lifecycle controls and deployed cost/security validation. No external environment or secrets manager was accessed and no real email was sent.
+The automated journeys remain synthetic local checks, not actual provider/mailbox, Google, ChatGPT, Hermes, deployment or live AimHarder acceptance. The root stdio package remains separately checked. Remaining ticket #71 acceptance is actual sender/DNS setup and all three real email receipts in an authorized environment. Subsequent tickets retain Google/linking, vault/configuration, full MCP OAuth/client journeys, role/lifecycle controls and deployed cost/security validation. The separate read-only provider inspection above establishes limited access and zone state; no remote environment was created and no real email was sent.
