@@ -247,3 +247,33 @@ test('old sessions and changed session owners cannot approve linking or add a Go
   expect((await finishGoogle(pending, 'owner@example.invalid', { cookie: replaced })).headers.get('location')).toContain('error=');
   expect((await identity(admin))?.user.name).toBe('Owner');
 });
+
+test('Google form pages permit the fixed Google authorization redirect while unrelated pages stay self-only', async () => {
+  const googleOrigin = 'https://accounts.google.com';
+  const email = 'google-csp@example.invalid';
+  const invitation = await invite(email);
+  expect((await post('/api/auth/sign-up/email', { email, name: 'CSP Participant', password }, '', invitation.token)).status).toBe(200);
+  await worker.dispatchFetch(messageUrl(email, 'Verify your email'), { redirect: 'manual' });
+  const unlinkedCookie = cookies(await post('/api/auth/sign-in/email', { email, password }));
+  for (const [path, cookie] of [['/sign-in', ''], ['/accept-invitation?token=synthetic-preview', ''], ['/account', unlinkedCookie]]) {
+    const response = await worker.dispatchFetch(origin + path, { headers: { cookie } });
+    expect(response.status).toBe(200);
+    expect(response.headers.get('content-security-policy')).toContain("form-action 'self' " + googleOrigin + ';');
+    const html = await response.text();
+    expect(html).toContain('/portal/' + (path === '/account' ? 'link-google' : 'google'));
+  }
+  const linkedAccount = await worker.dispatchFetch(origin + '/account', { headers: { cookie: admin } });
+  expect(linkedAccount.headers.get('content-security-policy')).not.toContain(googleOrigin);
+  const link = await worker.dispatchFetch(origin + '/portal/link-google', { method: 'POST', redirect: 'manual',
+    headers: { origin, cookie: unlinkedCookie, 'content-type': 'application/x-www-form-urlencoded' }, body: '' });
+  expect(link.status).toBe(303);
+  const authorization = new URL(link.headers.get('location')!);
+  expect(authorization.origin + authorization.pathname).toBe(googleOrigin + '/o/oauth2/v2/auth');
+  expect(authorization.searchParams.get('redirect_uri')).toBe(origin + '/api/auth/callback/google');
+  expect(authorization.searchParams.get('code_challenge_method')).toBe('S256');
+  for (const path of ['/recover', '/reset-password', '/google-result']) {
+    const response = await worker.dispatchFetch(origin + path);
+    expect(response.headers.get('content-security-policy')).toContain("form-action 'self';");
+    expect(response.headers.get('content-security-policy')).not.toContain(googleOrigin);
+  }
+});
