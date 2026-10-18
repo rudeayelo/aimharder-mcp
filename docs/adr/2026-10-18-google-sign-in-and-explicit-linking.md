@@ -1,6 +1,6 @@
 # ADR: Google sign-in and explicit portal account linking
 
-Status: accepted local implementation decision on 2026-10-18 for [ticket #72](https://github.com/rudeayelo/aimharder-mcp/issues/72). Complements [hosted identity requirements](2026-10-15-hosted-identity-and-credential-custody.md), [invited password admission](2026-10-18-invited-password-admission.md) and [Resend delivery](2026-10-18-resend-transactional-delivery.md). Exact provider origin/callback update has separate operator evidence in the runbook; runtime integration and actual Google login/linking acceptance remain pending; the [runbook](../hosted-google.md) separates it from synthetic evidence.
+Status: accepted local implementation decision on 2026-10-18 for [ticket #72](https://github.com/rudeayelo/aimharder-mcp/issues/72). Complements [hosted identity requirements](2026-10-15-hosted-identity-and-credential-custody.md), [invited password admission](2026-10-18-invited-password-admission.md) and [Resend delivery](2026-10-18-resend-transactional-delivery.md). Exact provider configuration, unique-index migration and isolated runtime activation have separate operator evidence in the runbook; actual Google login/linking acceptance remains pending; the [runbook](../hosted-google.md) separates it from synthetic evidence.
 
 ## Context
 
@@ -24,4 +24,8 @@ Google and password methods share the existing portal ID. Profile preservation i
 
 The new unique index requires migration review before activation and does not merge/delete existing accounts. Maintained Google access/refresh token encryption uses the existing auth secret; this is distinct from the future AimHarder vault/key-rotation design. Native password hash parameters and local stdio behavior remain unchanged.
 
-Public HTTP tests use real workerd/D1/Better Auth with synthetic external Google and Resend responses. They prove policy and stable identity, not actual Google setup or owner consent. Exact callback read-back, Testing eligibility, real Google sign-in and explicit linking remain separate required #72 evidence. Full client, vault, lifecycle and deployed feasibility gates remain current.
+Public HTTP tests use real workerd/D1/Better Auth with synthetic external Google and Resend responses. They prove policy and stable identity, not actual Google setup or owner consent. Exact callback read-back, External/Testing configuration and isolated deployment now have separate operator evidence. Actual Google admission, real Google sign-in and explicit linking remain separate required #72 evidence. Full client, vault, lifecycle and deployed feasibility gates remain current.
+
+## Browser form-action correction
+
+The owner's first actual link attempt exposed Chrome's form-action enforcement over the Google redirect chain. Keep the default self-only policy, but permit the exact Google authorization origin for form actions on pages rendering a Google form. This scoped allowance replaces the insufficient self-only policy for those pages and preserves all other CSP and auth checks. The public HTTP regression verifies policy/redirect output; actual browser navigation and owner OAuth outcomes remain separate evidence.
