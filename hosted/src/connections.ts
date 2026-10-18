@@ -21,9 +21,18 @@ export async function handleConnections(request: Request, env: HostedEnvironment
     return url.pathname.startsWith('/api/') ? new Response(null, { status: 204 }) : new Response(null, { status: 303, headers: { location: '/connections' } });
   }
   if (url.pathname === '/consent' && request.method === 'GET') {
-    const client = await env.AUTH_DB.prepare('SELECT name FROM oauthClient WHERE clientId=? AND COALESCE(disabled,0)=0').bind(url.searchParams.get('client_id') ?? '').first<{ name: string }>();
-    if (!client) return page('Client unavailable', '<p>Start again from your MCP client.</p>', 400);
-    return page('Authorize MCP client', `<p>${escape(client.name)} requests access to your AimHarder MCP portal account. Your AimHarder password will not be shared with the client.</p><p>This authorizes service access. Booking and activity actions, when available, require their exact preview and separate confirmation.</p><p>Scopes: ${escape(url.searchParams.get('scope') ?? '')}</p><form method="post" action="/portal/oauth/consent"><input type="hidden" name="oauth_query" value="${escape(url.search.slice(1))}"><button name="accept" value="true">Authorize</button> <button name="accept" value="false">Deny</button></form>`);
+    const client = await env.AUTH_DB.prepare('SELECT name,redirectUris FROM oauthClient WHERE clientId=? AND COALESCE(disabled,0)=0').bind(url.searchParams.get('client_id') ?? '').first<{ name: string; redirectUris: string }>();
+    const redirectUri = url.searchParams.get('redirect_uri') ?? '';
+    let callback: URL;
+    try {
+      const registered = client && JSON.parse(client.redirectUris);
+      if (!client || !Array.isArray(registered) || !registered.includes(redirectUri)) throw new Error();
+      callback = new URL(redirectUri);
+      const chatgpt = callback.origin === 'https://chatgpt.com';
+      const hermes = callback.protocol === 'http:' && ['127.0.0.1', 'localhost'].includes(callback.hostname) && Boolean(callback.port);
+      if ((!chatgpt && !hermes) || callback.username || callback.password || callback.hash) throw new Error();
+    } catch { return page('Client unavailable', '<p>Start again from your MCP client.</p>', 400); }
+    return page('Authorize MCP client', `<p>${escape(client.name)} requests access to your AimHarder MCP portal account. Your AimHarder password will not be shared with the client.</p><p>This authorizes service access. Booking and activity actions, when available, require their exact preview and separate confirmation.</p><p>Scopes: ${escape(url.searchParams.get('scope') ?? '')}</p><form method="post" action="/portal/oauth/consent"><input type="hidden" name="oauth_query" value="${escape(url.search.slice(1))}"><button name="accept" value="true">Authorize</button> <button name="accept" value="false">Deny</button></form>`, 200, false, callback.origin);
   }
   if (url.pathname === '/portal/oauth/consent' && request.method === 'POST') {
     if (request.headers.get('origin') !== new URL(env.BASE_URL).origin) return new Response(null, { status: 403 });

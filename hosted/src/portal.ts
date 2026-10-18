@@ -6,15 +6,16 @@ import { handleInvitations, listInvitations } from './invitations.js';
 function escape(value: string): string {
   return value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]!);
 }
-export function page(title: string, body: string, status = 200, allowGoogleAuthorization = false): Response {
+export function page(title: string, body: string, status = 200, allowGoogleAuthorization = false, mcpCallbackOrigin?: string): Response {
   return new Response(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escape(title)} · AimHarder MCP</title><style>body{font:18px system-ui;max-width:42rem;margin:3rem auto;padding:0 1.2rem;color:#172f37;background:#f6faf9}h1{line-height:1.15}label{display:block;margin:1rem 0}input,button{font:inherit;padding:.6rem;max-width:100%;box-sizing:border-box}input{display:block;width:100%}button{background:#145d54;color:white;border:0;border-radius:.3rem;cursor:pointer}a{color:#145d54}td,th{padding:.5rem;text-align:left}table{display:block;overflow:auto}nav{margin-bottom:2rem}</style></head><body><nav><a href="/">AimHarder MCP</a></nav><main><h1>${escape(title)}</h1>${body}</main></body></html>`, {
     status, headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store',
       // Origin-only referrers keep capabilities private without causing browser
       // form POSTs to serialize their Origin as null under no-referrer.
       'referrer-policy': 'strict-origin', 'x-content-type-options': 'nosniff',
       // Chrome applies form-action to the entire submission redirect chain.
-      // Only pages with Google forms allow its fixed authorization origin.
-      'content-security-policy': `default-src 'none'; style-src 'unsafe-inline'; form-action 'self'${allowGoogleAuthorization ? ' https://accounts.google.com' : ''}; frame-ancestors 'none'; base-uri 'none'` },
+      // Google forms opt into its fixed origin; MCP consent separately allows
+      // only the exact registered client's supported callback origin.
+      'content-security-policy': `default-src 'none'; style-src 'unsafe-inline'; form-action 'self'${allowGoogleAuthorization ? ' https://accounts.google.com' : ''}${mcpCallbackOrigin ? ` ${mcpCallbackOrigin}` : ''}; frame-ancestors 'none'; base-uri 'none'` },
   });
 }
 export async function handlePortal(request: Request, env: HostedEnvironment, auth: ReturnType<typeof createAuth>): Promise<Response | null> {

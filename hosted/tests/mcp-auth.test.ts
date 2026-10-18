@@ -82,6 +82,13 @@ async function browserCallback(provider: ParticipantClient, accept = true) {
   expect(target.pathname).toBe('/consent');
   const screen = await fetch(target, { headers: { cookie } });
   expect(screen.status).toBe(200);
+  expect(screen.headers.get('content-security-policy')).toContain("form-action 'self' http://127.0.0.1:9999;");
+  expect(screen.headers.get('content-security-policy')).not.toContain('accounts.google.com');
+  const tamperedCallback = new URL(target);
+  tamperedCallback.searchParams.set('redirect_uri', 'https://attacker.invalid/callback');
+  const rejectedPage = await fetch(tamperedCallback, { headers: { cookie } });
+  expect(rejectedPage.status).toBe(400);
+  expect(rejectedPage.headers.get('content-security-policy')).not.toContain('attacker.invalid');
   const html = await screen.text();
   expect(html).toContain(provider.id === 'fixture-client' ? 'Synthetic MCP harness' : 'Other synthetic client');
   expect(html).toContain('Authorize');
