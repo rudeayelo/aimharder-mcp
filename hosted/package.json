@@ -6,6 +6,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "build": "node build.mjs",
+    "preview": "node scripts/preview.ts",
+    "owner:prepare": "node scripts/prepare-owner.ts",
     "schema:generate": "node scripts/generate-auth-schema.ts"
   },
   "dependencies": {

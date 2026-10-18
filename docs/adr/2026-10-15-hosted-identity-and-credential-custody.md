@@ -2,6 +2,8 @@
 
 Status: accepted requirements on 2026-10-15 for the [hosted pilot](2026-10-15-invited-hosted-mcp-pilot.md); invitation, role-control, disconnect, identity-linking and administrator visibility requirements clarified on 2026-10-16. Product lifecycle requirements are settled; provider integration, storage, key-management and enforcement design remain to be implemented and validated. Not implemented or deployed. Shared understanding was confirmed on 2026-10-16; the canonical specification is [issue #69](https://github.com/rudeayelo/aimharder-mcp/issues/69). The interview remains in [issue #68](https://github.com/rudeayelo/aimharder-mcp/issues/68).
 
+Implementation update, 2026-10-18: the [invited password admission decision](2026-10-18-invited-password-admission.md) implements the local password/invitation portion with synthetic mail. Actual email delivery, Google/linking and the remaining lifecycle/custody requirements remain pending. The historical status above describes the original requirements decision; no hosted service is deployed.
+
 ## Context
 
 The portal must distinguish signing in to the service from authenticating to AimHarder and authorizing an MCP client. The existing AimHarder client uses password login and an in-memory cookie session. Session-only custody would require participants to return to the portal when a session can no longer be used; retaining recoverable credentials allows the service to authenticate again.

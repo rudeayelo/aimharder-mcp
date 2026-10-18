@@ -56,7 +56,8 @@ beforeAll(async () => {
   );
   await worker.ready;
   const database = await worker.getD1Database('AUTH_DB');
-  await database.exec((await readFile('migrations/0001-auth.sql', 'utf8')).replaceAll('\n', ' '));
+  for (const file of ['0001-auth.sql', '0002-invitations.sql'])
+    await database.exec((await readFile(`migrations/${file}`, 'utf8')).replaceAll('\n', ' '));
 });
 afterAll(async () => {
   await worker?.dispose();
