@@ -1,8 +1,8 @@
 import { betterAuth } from 'better-auth';
 import { jwt } from 'better-auth/plugins';
 import { mcp } from '@better-auth/mcp';
-import { APIError, createAuthMiddleware } from 'better-auth/api';
-import { admitVerifiedIdentity, canRecover, denyAdmission, digest, invited, participant, pendingInvitation, verificationLifetimeSeconds } from './admission.js';
+import { APIError, createAuthMiddleware, addOAuthServerContext, getOAuthState, getSessionFromCtx } from 'better-auth/api';
+import { admitVerifiedIdentity, claimInvitation, canRecover, denyAdmission, digest, invited, participant, pendingInvitation, verificationLifetimeSeconds } from './admission.js';
 import { mailConfigured, sendPortalMail } from './mail.js';
 
 export interface HostedEnvironment {
@@ -11,8 +11,18 @@ export interface HostedEnvironment {
   BASE_URL: string;
   RESEND_API_KEY?: string;
   MAIL_FROM?: string;
+  GOOGLE_CLIENT_ID?: string;
+  GOOGLE_CLIENT_SECRET?: string;
 }
 
+export function googleConfigured(env: HostedEnvironment): boolean {
+  return Boolean(env.GOOGLE_CLIENT_ID?.trim() && env.GOOGLE_CLIENT_SECRET?.trim());
+}
+async function invitationToken(headers?: Headers): Promise<string | null> {
+  const state = await getOAuthState();
+  const token = state?.serverContext?.portalInvitation;
+  return typeof token === 'string' ? token : headers?.get('x-portal-invitation') ?? null;
+}
 export function createAuth(env: HostedEnvironment) {
   let deliveryFailed = false;
   async function deliver(message: Parameters<typeof sendPortalMail>[1]) {
@@ -25,6 +35,30 @@ export function createAuth(env: HostedEnvironment) {
     database: env.AUTH_DB,
     logger: { disabled: true },
     telemetry: { enabled: false },
+    socialProviders: googleConfigured(env) ? { google: {
+      clientId: env.GOOGLE_CLIENT_ID!, clientSecret: env.GOOGLE_CLIENT_SECRET!,
+      requireEmailVerification: true, prompt: 'select_account',
+    } } : {},
+    account: { accountLinking: { enabled: true, disableImplicitLinking: true,
+      requireLocalEmailVerified: true, allowDifferentEmails: false, updateUserInfoOnLink: false },
+      encryptOAuthTokens: true },
+    user: { validateUserInfo: async ({ user, source }, ctx) => {
+      if (source.method !== 'oauth') return;
+      if (source.oauth?.providerId !== 'google' || user.emailVerified !== true) denyAdmission();
+      if (source.action === 'link-account') {
+        const state = await getOAuthState();
+        const session = await getSessionFromCtx(ctx, { disableCookieCache: true });
+        if (!session || !state?.link || state.serverContext?.linkSession !== session.session.id ||
+          state.link.userId !== session.user.id || !await participant(env, session.user.id) ||
+          Date.now() - new Date(session.session.createdAt).getTime() > 5 * 60_000) denyAdmission();
+      }
+      if (source.action === 'create-user') await invited(env, await invitationToken(), String(user.email));
+      else if (source.action === 'sign-in') {
+        const local = await env.AUTH_DB.prepare('SELECT email FROM user WHERE id=?').bind(String(user.id)).first<{email: string}>();
+        if (!local || local.email !== String(user.email).toLowerCase()) denyAdmission();
+        if (!await participant(env, String(user.id))) await invited(env, await invitationToken(), local.email);
+      }
+    } },
     emailAndPassword: {
       enabled: true, requireEmailVerification: true, autoSignIn: false,
       revokeSessionsOnPasswordReset: true,
@@ -61,6 +95,16 @@ export function createAuth(env: HostedEnvironment) {
     },
     hooks: {
       before: createAuthMiddleware(async ctx => {
+        if (ctx.path === '/sign-in/social' || ctx.path === '/link-social') {
+          if (!googleConfigured(env)) throw new APIError('SERVICE_UNAVAILABLE', { code: 'GOOGLE_UNAVAILABLE', message: 'Google sign-in is unavailable.' });
+          // Only redirect-based sign-in is supported. Keep scopes fixed to identity.
+          if (ctx.body.provider !== 'google' || ctx.body.idToken || ctx.body.scopes?.length || ctx.body.additionalParams) denyAdmission();
+          const session = ctx.path === '/link-social' ? await getSessionFromCtx(ctx, { disableCookieCache: true }) : null;
+          if (ctx.path === '/link-social' && (!session || !await participant(env, session.user.id) ||
+            Date.now() - new Date(session.session.createdAt).getTime() > 5 * 60_000)) denyAdmission();
+          await addOAuthServerContext({ portalInvitation: ctx.headers?.get('x-portal-invitation') ?? null,
+            linkSession: session?.session.id ?? null });
+        }
         if (['/sign-up/email', '/send-verification-email', '/request-password-reset'].includes(ctx.path) && !mailConfigured(env)) {
           throw new APIError('SERVICE_UNAVAILABLE', { code: 'EMAIL_UNAVAILABLE', message: 'Email delivery is unavailable. Please try later.' });
         }
@@ -90,16 +134,23 @@ export function createAuth(env: HostedEnvironment) {
       user: {
         create: {
           before: async (user, ctx) => {
-            await invited(env, ctx?.request?.headers.get('x-portal-invitation') ?? ctx?.headers?.get('x-portal-invitation') ?? null, user.email);
+            await invited(env, await invitationToken(ctx?.request?.headers ?? ctx?.headers), user.email);
           },
           after: async (user, ctx) => {
-            const invitation = await invited(env, ctx?.request?.headers.get('x-portal-invitation') ?? ctx?.headers?.get('x-portal-invitation') ?? null, user.email);
+            if ((await getOAuthState())?.serverContext) return;
+            const invitation = await invited(env, await invitationToken(ctx?.request?.headers ?? ctx?.headers), user.email);
             await env.AUTH_DB.prepare('INSERT OR IGNORE INTO portal_pending_admission (userId,invitationId) VALUES (?,?)').bind(user.id, invitation.id).run();
           },
         },
       },
       session: { create: { before: async session => {
-        if (!await participant(env, session.userId)) denyAdmission();
+        if (!await participant(env, session.userId)) {
+          const state = await getOAuthState();
+          const user = await env.AUTH_DB.prepare('SELECT email,emailVerified FROM user WHERE id=?').bind(session.userId).first<{email: string; emailVerified: number}>();
+          if (!state?.serverContext || !user?.emailVerified) denyAdmission();
+          const invitation = await invited(env, await invitationToken(), user.email);
+          await claimInvitation(env, session.userId, invitation.id);
+        }
       } } },
     },
     plugins: [

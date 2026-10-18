@@ -16,7 +16,7 @@ const worker = new Miniflare(convertV4MiniflareOptions({
 }));
 await worker.ready;
 const database = await worker.getD1Database('AUTH_DB');
-for (const file of ['0001-auth.sql', '0002-invitations.sql'])
+for (const file of ['0001-auth.sql', '0002-invitations.sql', '0003-account-method-uniqueness.sql'])
   await database.exec((await readFile(`migrations/${file}`, 'utf8')).replaceAll('\n', ' '));
 console.info(`Anonymous portal preview listening on http://127.0.0.1:${port}`);
 for (const signal of ['SIGINT', 'SIGTERM'] as const)

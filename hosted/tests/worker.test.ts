@@ -56,7 +56,7 @@ beforeAll(async () => {
   );
   await worker.ready;
   const database = await worker.getD1Database('AUTH_DB');
-  for (const file of ['0001-auth.sql', '0002-invitations.sql'])
+  for (const file of ['0001-auth.sql', '0002-invitations.sql', '0003-account-method-uniqueness.sql'])
     await database.exec((await readFile(`migrations/${file}`, 'utf8')).replaceAll('\n', ' '));
 });
 afterAll(async () => {
