@@ -8,6 +8,8 @@ if (target.username || target.password || target.pathname !== '/' || target.sear
   throw new Error('Smoke target must be the isolated test HTTPS origin or a local HTTP loopback origin.');
 
 const results: { check: string; status: number; result: 'passed' }[] = [];
+const mailStage = process.env.HOSTED_SMOKE_MAIL_STAGE ?? 'disabled';
+if (!['disabled', 'configured'].includes(mailStage)) throw new Error('Smoke mail stage must be disabled or configured.');
 async function check(path: string, expected: number, contains?: string, init?: RequestInit) {
   const response = await fetch(new URL(path, target), {
     ...init, redirect: 'manual', credentials: 'omit', signal: AbortSignal.timeout(10_000),
@@ -27,13 +29,16 @@ const deniedMcp = await check('/mcp', 401, undefined, { method: 'POST' });
 if (!deniedMcp.headers.get('www-authenticate')?.includes('oauth-protected-resource'))
   throw new Error('Anonymous MCP challenge is missing.');
 await check('/.well-known/oauth-protected-resource/mcp', 200, `${target.origin}/mcp`);
-for (const path of ['/api/auth/sign-up/email', '/api/auth/request-password-reset'])
-  await check(path, 503, 'Email delivery is unavailable.', {
-    method: 'POST', headers: { origin: target.origin, 'content-type': 'application/json' },
-    body: JSON.stringify({ email: 'smoke@example.invalid', name: 'Anonymous Smoke', password: 'synthetic-unused-password' }),
-  });
+// Never probe enrollment/recovery when mail is configured: those are delivery-capable writes.
+if (mailStage === 'disabled') {
+  for (const path of ['/api/auth/sign-up/email', '/api/auth/request-password-reset'])
+    await check(path, 503, 'Email delivery is unavailable.', {
+      method: 'POST', headers: { origin: target.origin, 'content-type': 'application/json' },
+      body: JSON.stringify({ email: 'smoke@example.invalid', name: 'Anonymous Smoke', password: 'synthetic-unused-password' }),
+    });
+}
 await check('/portal/recovery', 403, 'Request rejected', {
   method: 'POST', headers: { origin: 'https://untrusted.example.invalid', 'content-type': 'application/x-www-form-urlencoded' },
   body: 'email=smoke%40example.invalid',
 });
-console.info(JSON.stringify({ target: loopback ? 'local-loopback' : 'isolated-test', checks: results }));
+console.info(JSON.stringify({ target: loopback ? 'local-loopback' : 'isolated-test', mailStage, checks: results }));

@@ -8,11 +8,6 @@ export default {
         .bind('owner-bootstrap', 'owner@example.invalid', digest, Date.now() + 86_400_000, 'admin', Date.now()).run();
       return new Response(null);
     }
-    return entry.fetch(request, { ...env, EMAIL: {
-      async send(message) {
-        const response = await fetch('https://synthetic-mail.invalid/send', { method: 'POST', body: JSON.stringify(message) });
-        if (!response.ok) throw new Error('Synthetic mail delivery unavailable');
-      },
-    } });
+    return entry.fetch(request, env);
   },
 };

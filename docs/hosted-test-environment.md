@@ -1,6 +1,6 @@
 # Isolated Cloudflare test environment
 
-Operator setup for the local [invited password portal](hosted-admission.md), [ticket #71](https://github.com/rudeayelo/aimharder-mcp/issues/71). On 2026-10-18 the user authorized creating this test environment without purchases or plan changes. This is not authorization for a production launch, billing activation, broader token permissions, a new mail provider or real AimHarder actions. The [test-environment decision](adr/2026-10-18-isolated-cloudflare-test-environment.md) records the boundary.
+Operator setup for the local [invited password portal](hosted-admission.md), [ticket #71](https://github.com/rudeayelo/aimharder-mcp/issues/71). On 2026-10-18 the user authorized creating this test environment without purchases or plan changes. This is not authorization for a production launch, billing activation, broader token permissions, a new mail provider or real AimHarder actions. The user subsequently supplied an existing Resend token for this mail gate; the [Resend decision](adr/2026-10-18-resend-transactional-delivery.md) records that additional authorization. The [test-environment decision](adr/2026-10-18-isolated-cloudflare-test-environment.md) records the boundary.
 
 ## Fixed boundary
 
@@ -12,7 +12,7 @@ Operator setup for the local [invited password portal](hosted-admission.md), [ti
 | Entry | The production `hosted/dist/worker.js`, never a fixture entry |
 | Runtime | Compatibility date `2026-10-12`, `nodejs_compat` |
 | Secret | Fresh `AUTH_SECRET`, injected securely by the operator; never a repository value |
-| Email / identity / vault | No `EMAIL` binding, `MAIL_FROM`, Google configuration, owner bootstrap or upstream credentials in the anonymous stage |
+| Email / identity / vault | No `RESEND_API_KEY`, `MAIL_FROM`, Google configuration, owner bootstrap or upstream credentials in the anonymous stage |
 | Alternate public origins | `workers_dev: false`, `preview_urls: false` |
 | Logging | Library logger and telemetry remain disabled; Worker observability disabled |
 
@@ -66,9 +66,11 @@ From `hosted/`, the following script targets only the fixed test HTTPS origin by
 pnpm smoke:test-environment
 ```
 
-It uses no credentials, cookies or real recipient data and prints only check labels/statuses. It checks public page content, anonymous administrator denial, absent fixture/bootstrap routes, the maintained MCP challenge/resource discovery, same-origin enrollment/recovery's safe missing-sender outcome, and foreign-origin form rejection. The synthetic `.invalid` inputs cannot establish a participant or send mail in this disabled stage. The script intentionally fails if mail is enabled: review the next acceptance stage before changing its assumptions. It does not verify login, real email, Google, MCP client onboarding or AimHarder connectivity.
+It uses no credentials, cookies or real recipient data and prints only check labels/statuses. It checks public page content, anonymous administrator denial, absent fixture/bootstrap routes, the maintained MCP challenge/resource discovery, same-origin enrollment/recovery's safe missing-sender outcome, and foreign-origin form rejection. The synthetic `.invalid` inputs cannot establish a participant or send mail in this disabled stage. The default `HOSTED_SMOKE_MAIL_STAGE=disabled` explicitly checks missing-mail outcomes and fails if mail is enabled. Once mail is configured, use `HOSTED_SMOKE_MAIL_STAGE=configured pnpm smoke:test-environment`: this runs eleven safe checks and omits both enrollment/recovery probes. It never tests a recipient, creates a pending identity or requests mail in the configured stage. The stage flag is an operator assertion, not proof of provider readiness. It does not verify login, real email, Google, MCP client onboarding or AimHarder connectivity.
 
 For local testing, set `HOSTED_SMOKE_BASE_URL` to the loopback origin used by `pnpm preview`. Keep shared browser review accessible through Tailscale as described in the [preview instructions](hosted-admission.md#local-checks-and-anonymous-preview). Share a Tailscale-routed review link; the deployed origin separately supplies actual Cloudflare HTTPS evidence.
+
+The initial native-mail blocker below is historical. The [Resend sender runbook](hosted-admission.md#required-runtime-and-sender-setup) now replaces that selection using the owner-supplied existing credential; actual sender activation and mailbox/authentication flows remain pending.
 
 ## Evidence and remaining gate
 

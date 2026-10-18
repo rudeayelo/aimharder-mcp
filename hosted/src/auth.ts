@@ -3,13 +3,13 @@ import { jwt } from 'better-auth/plugins';
 import { mcp } from '@better-auth/mcp';
 import { APIError, createAuthMiddleware } from 'better-auth/api';
 import { admitVerifiedIdentity, canRecover, denyAdmission, digest, invited, participant, pendingInvitation, verificationLifetimeSeconds } from './admission.js';
-import { mailConfigured, sendPortalMail, type EmailSender } from './mail.js';
+import { mailConfigured, sendPortalMail } from './mail.js';
 
 export interface HostedEnvironment {
   AUTH_DB: D1Database;
   AUTH_SECRET: string;
   BASE_URL: string;
-  EMAIL?: EmailSender;
+  RESEND_API_KEY?: string;
   MAIL_FROM?: string;
 }
 
