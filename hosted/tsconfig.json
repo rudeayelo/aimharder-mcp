@@ -11,5 +11,5 @@
     "allowJs": true,
     "types": ["node", "@cloudflare/workers-types"]
   },
-  "include": ["src/**/*.ts", "tests/**/*.ts", "scripts/prepare-owner.ts", "scripts/preview.ts", "build.mjs"]
+  "include": ["src/**/*.ts", "tests/**/*.ts", "scripts/prepare-owner.ts", "scripts/preview.ts", "scripts/smoke-test-environment.ts", "build.mjs"]
 }

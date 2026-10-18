@@ -8,23 +8,25 @@
     "build": "node build.mjs",
     "preview": "node scripts/preview.ts",
     "owner:prepare": "node scripts/prepare-owner.ts",
+    "smoke:test-environment": "node scripts/smoke-test-environment.ts",
     "schema:generate": "node scripts/generate-auth-schema.ts"
   },
   "dependencies": {
-    "better-auth": "1.7.10",
     "@better-auth/mcp": "1.7.10",
     "@modelcontextprotocol/server": "2.3.1",
+    "better-auth": "1.7.10",
     "tough-cookie": "6.0.2",
     "zod": "4.6.5"
   },
   "devDependencies": {
-    "@modelcontextprotocol/client": "2.3.1",
     "@cloudflare/workers-types": "5.20261018.1",
+    "@modelcontextprotocol/client": "2.3.1",
+    "@types/node": "24.13.6",
     "esbuild": "0.28.0",
     "miniflare": "5.20261012.1-beta",
     "typescript": "7.0.2",
     "vitest": "5.0.1",
-    "@types/node": "24.13.6"
+    "wrangler": "4.151.1"
   },
   "packageManager": "pnpm@12.5.1"
 }
