@@ -70,7 +70,7 @@ Planned capabilities, without committed dates or versions:
 
 - [ ] Expand compatibility to more AimHarder gyms.
 - [ ] Explore compatibility with mobile apps.
-- [ ] Complete the invitation-only hosted portal for ChatGPT and Hermes ([specification #69](https://github.com/rudeayelo/aimharder-mcp/issues/69)); [authentication feasibility](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-feasibility.md) and the [invited password portal](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-admission.md) are checked locally with synthetic data. Real email delivery remains pending. No hosted service is deployed.
+- [ ] Complete the invitation-only hosted portal for ChatGPT and Hermes ([specification #69](https://github.com/rudeayelo/aimharder-mcp/issues/69)); [authentication feasibility](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-feasibility.md) and the [invited password portal](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-admission.md) are checked locally with synthetic data. An [isolated Cloudflare test environment](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-test-environment.md) is deployed with mail disabled, under separate authorization without purchases or plan changes. Real email delivery remains pending; no production pilot is deployed.
 
 ## Contributing
 
