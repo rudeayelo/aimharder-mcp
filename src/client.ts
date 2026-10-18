@@ -970,7 +970,7 @@ export class AimHarderClient {
     const init: RequestInit = {
       method: typeof operation === 'object' && operation.kind === 'activity-delete' ? 'DELETE'
         : operation === 'login' || (typeof operation === 'object' && (operation.kind === 'book-create' || operation.kind === 'book-cancel' || operation.kind === 'activity-post')) ? 'POST' : 'GET', headers,
-      redirect: 'error', signal: AbortSignal.timeout(15_000),
+      redirect: 'manual', signal: AbortSignal.timeout(15_000),
     };
     if (operation === 'login') {
       headers['Content-Type'] = 'application/json';

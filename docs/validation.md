@@ -2,6 +2,14 @@
 
 This page records what was checked against AimHarder, what was checked only with anonymized fixtures, and what remains unknown. Live checks used one account at one location (9NBC). They do not establish behavior for every gym. The user defined recent and period activity questions in terms of **activity entries**; earlier physical-session grouping blockers were superseded by [the entry semantics decision](adr/2026-09-22-activity-entry-query-semantics.md).
 
+## Worker authentication feasibility (2026-10-18, issue #70)
+
+The private [hosted package](../hosted/README.md) passed typecheck, three public HTTP/MCP behavioral tests and the Worker bundle build using Better Auth/MCP 1.7.10, SDK v2 2.3.1, Miniflare 5.20261012.1-beta and workerd 1.20261012.1 on host Node 26.12.0. Disposable D1 uses the generated auth schema. The SDK client talks over actual local HTTP; maintained password sign-in, consent and S256 PKCE yield the audience-bound bearer token used by the real AimHarder client's synthetic login/identity query. Missing/invalid authorization and unknown client metadata cannot reach the external account. DCR and CIMD remain disabled. No live provider, identity-provider, email or AimHarder request was performed.
+
+The production bundle is 4,594,572 bytes (806,277 bytes gzip) in this local build, with the maintained native scrypt export selected. Representative local workerd wall times were 31.0ms for hash creation and 38.3ms for password sign-in, not deployed CPU/memory or billing measurements. See [full evidence, costs and limits](hosted-feasibility.md). Invitation admission, vault/coordination/lifecycle, full hosted tools and actual ChatGPT/Hermes acceptance remain pending; the production entry remains unconnected until a vault is supplied.
+
+After the shared Fetch redirect portability correction, the existing local 471 tests across eighteen files, `pnpm typecheck`, `pnpm build` and the separate `pnpm test:package` all passed. The isolated package still exposes eighteen tools and passes account selection/privacy checks. Its runtime was Node 26.12.0. CI now runs hosted checks separately from local checks; that configuration has not yet been observed on GitHub for this commit. No new upstream contract observation was made and existing live limitations remain unchanged.
+
 ## Published exercise IDs (2026-09-27, issue #33)
 
 The local checkout's public `get_published_workouts` MCP seam passed 25 anonymized fixture tests in `tests/workouts.test.ts`, including positive source IDs on unselected and variant exercises, shared source rows, absent and malformed IDs, name collisions, and multiple publication alternatives. `pnpm typecheck` and `pnpm build` passed on Node 24.14.0. These tests establish local projection behavior only.

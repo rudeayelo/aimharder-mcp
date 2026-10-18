@@ -1,6 +1,6 @@
 # ADR: Cloudflare hosted runtime candidate
 
-Status: accepted on 2026-10-16 as the candidate to validate for the [hosted pilot](2026-10-15-invited-hosted-mcp-pilot.md), including service-operated maintained authentication. Exact runtime/state design and interoperability remain unvalidated; not implemented or deployed. The user confirmed the design on 2026-10-16. Canonical specification: [issue #69](https://github.com/rudeayelo/aimharder-mcp/issues/69); design record: [issue #68](https://github.com/rudeayelo/aimharder-mcp/issues/68).
+Status: accepted on 2026-10-16 as the candidate to validate for the [hosted pilot](2026-10-15-invited-hosted-mcp-pilot.md), including service-operated maintained authentication. A local synthetic authentication/account-query slice is now validated under the [isolated feasibility decision](2026-10-18-isolated-worker-authentication-feasibility.md). Full runtime/state design, remote interoperability and deployment remain unvalidated. The user confirmed the design on 2026-10-16. Canonical specification: [issue #69](https://github.com/rudeayelo/aimharder-mcp/issues/69); design record: [issue #68](https://github.com/rudeayelo/aimharder-mcp/issues/68).
 
 ## Context
 
@@ -50,3 +50,7 @@ At the user's request, Google Auth Platform was configured in the aimharder-mcp 
 The Google console visibly confirmed client creation and offered Download JSON. The user will download that credential file and store it in 1Password; the agent did not copy/download the credentials or put them in the repository. The existing Cloudflare API token is separately held in the user's secrets manager. No token or client-secret value is recorded here.
 
 This is administrative setup evidence only. Google sign-in, email verification, client linking, test-user admission, Google scope handling, callback reachability and the hosted MCP remain unvalidated. No public application publication, Cloudflare deployment, billing change or AimHarder operation was performed. The existing hosted credential-custody decision still applies; no new security ADR is needed for this preparation.
+
+## Local feasibility evidence (2026-10-18)
+
+The [isolated Worker authentication slice](2026-10-18-isolated-worker-authentication-feasibility.md) proves maintained Better Auth sign-in/OAuth and SDK v2 account querying in workerd with disposable D1 and synthetic AimHarder HTTP. The separate local SDK v1 package remains supported. [Evidence and conditional costs](../hosted-feasibility.md) distinguish this gate from production reachability, safe real-client registration, per-account coordination, email/provider delivery and actual ChatGPT/Hermes acceptance. No deployment or provider mutation occurred.
