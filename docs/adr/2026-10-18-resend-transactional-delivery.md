@@ -16,6 +16,12 @@ Verify the authorized sending domain with exact provider-returned DNS records, p
 
 Exercise production mail HTTP through the public portal and real workerd/D1 authentication policy, substituting only external provider responses. Configured-mail anonymous smoke checks omit enrollment/recovery probes entirely. Keep the original disabled-mail stage explicit rather than attempting real sends to synthetic addresses.
 
+## Observed isolated activation
+
+The operator created the authorized sending domain in `eu-west-1`, installed exactly four provider-returned DNS records and read back the domain/all records as verified. Open/click tracking read back disabled; an enforced-TLS update succeeded but its GET read-back is unavailable. Root receiving MX and unrelated records were preserved. The reviewed bundle and Resend configuration are deployed on unchanged Workers Free, with the existing authentication secret preserved and eleven configured-mail anonymous HTTPS checks passing.
+
+One private owner invitation was acknowledged with HTTP 200 and later read back as provider-delivered. No owner mailbox receipt or verified identity is established by that event. Actual verification/recovery mail and password flows remain pending. No purchase, plan change or permission expansion occurred. See [operator evidence](../hosted-admission.md#configured-resend-stage-2026-10-18).
+
 ## Consequences
 
 The sender can be configured without enabling Cloudflare Paid or changing maintained authentication. The provider receives recipient addresses and capability-bearing message content; tracking, token scope, retention and deletion remain material security/acceptance concerns. Real invitation, verification and recovery mailbox receipts and successful public auth flows remain required for #71. Workers Free's CPU suitability for default scrypt, measured full-pilot cost, Google, client onboarding and later isolation/lifecycle gates remain unresolved. No local stdio or upstream AimHarder contract changes.
