@@ -42,11 +42,9 @@ For a fresh installation only, after an exact-name lookup proves the dedicated d
 
 ```sh
 WRANGLER_SEND_METRICS=false pnpm exec wrangler d1 create aimharder-mcp-pilot-test-auth --location weur
-WRANGLER_SEND_METRICS=false pnpm exec wrangler d1 migrations list AUTH_DB --remote --config "$TEST_WORKER_CONFIG"
-WRANGLER_SEND_METRICS=false pnpm exec wrangler d1 migrations apply AUTH_DB --remote --config "$TEST_WORKER_CONFIG"
 ```
 
-`weur` is a placement hint, not a hard jurisdiction or residency guarantee. Apply `0001-auth.sql` then `0002-invitations.sql` only to the dedicated, initially empty database. Wrangler records applied migrations; read back the expected schema and zero identities/participants before activation. Equivalent direct-API application must likewise read back the committed schema rather than assume a successful request applied everything.
+`weur` is a placement hint, not a hard jurisdiction or residency guarantee. On a new, empty database only, apply `0001-auth.sql` then `0002-invitations.sql` in order and read back the expected schema and zero identities/participants before activation. Wrangler normally records applied migrations in its ledger. In this environment both SQL files were instead applied through the direct D1 API and their resulting schema was read back. That operation does not create Wrangler migration-ledger entries. Do not run `wrangler d1 migrations apply` against this already-initialized database: it would attempt to replay the initial `CREATE` statements. Verify and explicitly adopt the existing schema into a reviewed migration ledger before using Wrangler for later migrations; ledger adoption is separate from applying the initial SQL again.
 
 Inject a fresh `AUTH_SECRET` as a platform secret in the same initial upload as the production bundle and D1 binding. The pinned Wrangler supports `deploy --secrets-file`: prepare a fresh mode-0600 JSON file outside the checkout from a cryptographically secure value in a trusted operator process, pass only its private path as `TEST_WORKER_SECRETS_FILE`, and delete it in a `finally` cleanup after the command finishes. Do not print its contents or place the value in command arguments, a manifest or a `.vars` file. Discard Wrangler debug output rather than persisting raw upload metadata; keep its telemetry disabled. There is no public bootstrap path.
 
