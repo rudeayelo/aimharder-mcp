@@ -35,6 +35,8 @@ beforeAll(async () => {
   const database = await worker.getD1Database('AUTH_DB');
   for (const name of (await readdir('migrations')).filter(name => /^\d+.*\.sql$/.test(name)).sort())
     await database.exec((await readFile(`migrations/${name}`, 'utf8')).replaceAll('\n', ' '));
+  await database.prepare('INSERT INTO oauthResource (id,identifier,name,allowedScopes) VALUES (?,?,?,?)')
+    .bind('old-feasibility-resource', origin + '/mcp', 'Previous feasibility resource', '["mcp:read"]').run();
   expect((await fetch(origin + '/__fixture')).status).toBe(200);
   const signIn = await fetch(origin + '/api/auth/sign-in/email', { method: 'POST',
     headers: { origin, 'content-type': 'application/json' },
@@ -138,6 +140,14 @@ test('revoking one client immediately rejects its JWT and refresh while preservi
   const refresh = await fetch(origin + '/api/auth/oauth2/token', { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({ grant_type: 'refresh_token', client_id: sdk.id, refresh_token: sdk.savedTokens!.refresh_token!, resource: origin + '/mcp' }) });
   expect(refresh.status).toBe(400);
+  const originalIdentity = await (await fetch(origin + '/api/auth/get-session', { headers: { cookie } })).json() as { user: { id: string } };
+  expect(originalIdentity.user.id).toBe('portal-fixture');
+  const otherLogin = await fetch(origin + '/api/auth/sign-in/email', { method: 'POST', headers: { origin, 'content-type': 'application/json' }, body: JSON.stringify({ email: 'other@example.invalid', password: 'synthetic-portal-password' }) });
+  expect(otherLogin.status).toBe(200);
+  const foreignCookie = otherLogin.headers.getSetCookie().map(value => value.split(';')[0]).join('; ');
+  const foreignList = await fetch(origin + '/api/portal/connections', { headers: { cookie: foreignCookie } });
+  expect(await foreignList.json()).toEqual({ connections: [] });
+  expect((await fetch(origin + '/api/portal/connections/other-client/revoke', { method: 'POST', headers: { origin, cookie: foreignCookie } })).status).toBe(204);
   const remainingClient = new Client({ name: 'remaining-client', version: '1' }, { versionNegotiation: { mode: { pin: '2026-07-28' } } });
   try {
     await remainingClient.connect(new StreamableHTTPClientTransport(new URL(origin + '/mcp'), { requestInit: { headers: { authorization: `Bearer ${other.savedTokens!.access_token}` } } }));
