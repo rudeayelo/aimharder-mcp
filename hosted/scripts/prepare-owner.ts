@@ -1,6 +1,6 @@
 import { randomBytes, createHash } from 'node:crypto';
 import { mkdir, realpath, writeFile } from 'node:fs/promises';
-import { isAbsolute, relative, resolve, sep } from 'node:path';
+import { basename, dirname, isAbsolute, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
 
@@ -11,12 +11,14 @@ if (base.protocol !== 'https:' || base.username || base.password || base.pathnam
   throw new Error('BASE_URL must be an HTTPS origin.');
 const output = process.env.OWNER_BOOTSTRAP_OUTPUT_DIR;
 if (!output || !isAbsolute(output)) throw new Error('Set an absolute OWNER_BOOTSTRAP_OUTPUT_DIR outside the checkout.');
-await mkdir(output, { recursive: true, mode: 0o700 });
-const privateDirectory = await realpath(output);
+// Resolve the existing parent before creation so symlinks cannot put artifacts
+// inside the checkout. Never reuse or chmod an existing caller-owned directory.
+const privateDirectory = resolve(await realpath(dirname(resolve(output))), basename(resolve(output)));
 const checkout = await realpath(fileURLToPath(new URL('../..', import.meta.url)));
 const location = relative(checkout, privateDirectory);
 if (!location.startsWith(`..${sep}`) && location !== '..' && !isAbsolute(location))
   throw new Error('Owner bootstrap output must be outside the checkout.');
+await mkdir(privateDirectory, { mode: 0o700 });
 const token = randomBytes(32).toString('base64url');
 const digest = createHash('sha256').update(token).digest('hex');
 const now = Date.now();

@@ -39,7 +39,7 @@ export async function handlePortal(request: Request, env: HostedEnvironment, aut
         break;
       case '/portal/recovery':
         path = '/request-password-reset'; body = { email: field('email'), redirectTo: `${env.BASE_URL}/reset-password` };
-        success = page('Check your email', '<p>If this address belongs to a verified participant with a portal password, a recovery link will arrive shortly.</p><a href="/sign-in">Sign in</a>');
+        success = page('Recovery requested', '<p>If this address is eligible and email delivery is available, follow the recovery email. If no message arrives, try again later or contact the administrator.</p><a href="/sign-in">Sign in</a>');
         break;
       case '/portal/reset-password':
         path = '/reset-password'; body = { token: field('token'), newPassword: field('password') };

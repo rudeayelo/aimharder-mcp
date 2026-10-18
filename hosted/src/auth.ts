@@ -79,10 +79,11 @@ export function createAuth(env: HostedEnvironment) {
           if (!reset || !await canRecover(env, reset.value)) denyAdmission();
         }
       }),
-      after: createAuthMiddleware(async () => {
+      after: createAuthMiddleware(async ctx => {
         // Better Auth intentionally catches background email callback failures.
-        // This request-local flag restores an honest public unavailable outcome.
-        if (deliveryFailed) throw new APIError('SERVICE_UNAVAILABLE', { code: 'EMAIL_UNAVAILABLE', message: 'Email delivery is unavailable. Please try later.' });
+        // Recovery must remain generic even if only an eligible recipient reaches
+        // a failing sender. Global missing configuration is rejected uniformly above.
+        if (deliveryFailed && ctx.path !== '/request-password-reset') throw new APIError('SERVICE_UNAVAILABLE', { code: 'EMAIL_UNAVAILABLE', message: 'Email delivery is unavailable. Please try later.' });
       }),
     },
     databaseHooks: {
