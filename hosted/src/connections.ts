@@ -45,7 +45,12 @@ export async function handleConnections(request: Request, env: HostedEnvironment
     return new Response(null, { status: 303, headers: { location: result.url, 'cache-control': 'no-store', 'referrer-policy': 'no-referrer' } });
   }
   if (request.method !== 'GET' || !['/api/portal/connections', '/connections'].includes(url.pathname)) return new Response(null, { status: 405 });
-  const rows = await env.AUTH_DB.prepare('SELECT c.clientId,c.name FROM oauthConsent o JOIN oauthClient c ON c.clientId=o.clientId WHERE o.userId=? AND COALESCE(c.disabled,0)=0 GROUP BY c.clientId').bind(session.user.id).all();
+  const rows = await env.AUTH_DB.prepare(`SELECT c.clientId,c.name FROM oauthConsent o
+    JOIN oauthClient c ON c.clientId=o.clientId
+    JOIN portal_mcp_grant g ON g.userId=o.userId AND g.clientId=o.clientId
+    WHERE o.userId=? AND COALESCE(c.disabled,0)=0 AND g.revokedAt IS NULL
+    AND g.revocationGeneration=COALESCE((SELECT generation FROM portal_mcp_revocation r WHERE r.userId=g.userId AND r.clientId=g.clientId),0)
+    GROUP BY c.clientId`).bind(session.user.id).all();
   if (url.pathname === '/connections') return page('Connected MCP clients', `<p>Revoking a client stops its access and refresh. Your portal account and other clients stay connected.</p>${rows.results.map(item => `<p>${escape(String(item.name))}</p><form method="post" action="/portal/connections/${encodeURIComponent(String(item.clientId))}/revoke"><button>Revoke</button></form>`).join('') || '<p>No clients are connected.</p>'}`);
   return Response.json({ connections: rows.results }, { headers: { 'cache-control': 'no-store' } });
 }

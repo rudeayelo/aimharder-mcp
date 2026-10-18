@@ -127,6 +127,8 @@ test('SDK discovery, browser consent, PKCE callback, protected MCP and refresh w
   const callback = await browserCallback(sdk);
   expect(callback.origin).toBe('http://127.0.0.1:9999');
   expect(callback.searchParams.get('state')).toBe(sdk.state());
+  const pendingApproval = await fetch(origin + '/api/portal/connections', { headers: { cookie } });
+  expect(await pendingApproval.json()).toEqual({ connections: [] });
   expect((await fetch(callback)).status).toBe(200);
   expect(sdk.savedTokens?.access_token).toBeTruthy();
   const client = new Client({ name: 'synthetic-oauth-sdk', version: '1' }, { versionNegotiation: { mode: { pin: '2026-07-28' } } });
@@ -398,6 +400,12 @@ test('a consent write delayed past revocation cannot make a later authorization 
       body: new URLSearchParams({ grant_type: 'authorization_code', client_id: existing.id, code: callback.searchParams.get('code')!,
         code_verifier: existing.verifier, redirect_uri: existing.redirectUrl, resource: origin + '/mcp' }) });
     expect(exchange.status).toBe(400);
+    const listed = await fetch(origin + '/api/portal/connections', { headers: { cookie } });
+    expect((await listed.json() as { connections: { clientId: string }[] }).connections)
+      .not.toContainEqual(expect.objectContaining({ clientId: existing.id }));
+    const html = await (await fetch(origin + '/connections', { headers: { cookie } })).text();
+    expect(html).not.toContain('Synthetic MCP harness');
+    expect(html).not.toContain('/portal/connections/fixture-client/revoke');
     await authorizeSdk(existing, { serverUrl: origin + '/mcp', forceReauthorization: true });
     existing.authorizationUrl!.searchParams.delete('prompt');
     const restart = await fetch(existing.authorizationUrl!, { headers: { cookie, accept: 'application/json' }, redirect: 'manual' });
