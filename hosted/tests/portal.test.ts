@@ -6,6 +6,7 @@ import { buildWorker } from '../build.mjs';
 let worker: Miniflare;
 const origin = 'http://localhost:8787';
 const messages: { to: string; subject: string; text: string }[] = [];
+const failedMailRecipients: string[] = [];
 let mailFails = false;
 const password = 'synthetic-password-strong';
 function post(path: string, body: unknown, headers: Record<string, string> = {}) {
@@ -32,8 +33,12 @@ beforeAll(async () => {
       MAIL_FROM: 'noreply@example.invalid' },
     outboundService: async request => {
       if (request.url === 'https://synthetic-mail.invalid/send' && request.method === 'POST') {
-        if (mailFails) return new Response(null, { status: 503 });
-        messages.push(await request.json() as typeof messages[number]);
+        const message = await request.json() as typeof messages[number];
+        if (mailFails) {
+          failedMailRecipients.push(message.to);
+          return new Response(null, { status: 503 });
+        }
+        messages.push(message);
         return Response.json({ id: 'synthetic-message' });
       }
       throw new Error('Unexpected external request');
@@ -202,7 +207,7 @@ test('verification and revoke races have one durable outcome, including simultan
   expect((await post('/api/auth/sign-in/email', { email: 'simultaneous@example.invalid', password })).status).toBe(200);
 });
 
-test('mail delivery failures report unavailable and revoke undelivered invitations without exposing provider details', async () => {
+test('invitation and verification delivery failures report unavailable while recovery stays generic', async () => {
   const pending = await issueInvitation('mail-retry@example.invalid');
   mailFails = true;
   try {
@@ -210,7 +215,7 @@ test('mail delivery failures report unavailable and revoke undelivered invitatio
     expect(failedInvite.status).toBe(503);
     expect((await signup('mail-retry@example.invalid', pending.token)).status).toBe(503);
     const recovery = await post('/api/auth/request-password-reset', { email: 'owner@example.invalid', redirectTo: origin + '/reset-password' });
-    expect(recovery.status).toBe(503);
+    expect(recovery.status).toBe(200);
   } finally { mailFails = false; }
   const resend = await post('/api/auth/send-verification-email', { email: 'mail-retry@example.invalid', callbackURL: origin + '/verification-result' });
   expect(resend.status).toBe(200);
@@ -299,4 +304,33 @@ test('the production entry has no fixture routes and disables enrollment and rec
       expect(await denied.text()).toContain('Email delivery is unavailable');
     }
   } finally { await unconfigured.dispose(); }
+});
+
+test('configured recovery sender failure gives indistinguishable native and HTML outcomes for every eligibility class', async () => {
+  const failedAttemptsBefore = failedMailRecipients.length;
+  mailFails = true;
+  try {
+    const nativeOutcomes: { status: number; body: string }[] = [];
+    const formOutcomes: { status: number; body: string }[] = [];
+    for (const email of ['owner@example.invalid', 'unknown@example.invalid', 'pending@example.invalid', 'social@example.invalid']) {
+      const native = await post('/api/auth/request-password-reset', { email, redirectTo: origin + '/reset-password' });
+      nativeOutcomes.push({ status: native.status, body: await native.text() });
+      const form = await worker.dispatchFetch(origin + '/portal/recovery', {
+        method: 'POST', headers: { origin, 'content-type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ email }).toString(),
+      });
+      formOutcomes.push({ status: form.status, body: await form.text() });
+    }
+    for (const outcome of nativeOutcomes) {
+      expect(outcome.status).toBe(200);
+      expect(outcome).toEqual(nativeOutcomes[1]);
+    }
+    for (const outcome of formOutcomes) {
+      expect(outcome.status).toBe(200);
+      expect(outcome).toEqual(formOutcomes[1]);
+      expect(outcome.body).toContain('If no message arrives');
+      expect(outcome.body).not.toContain('will arrive');
+    }
+    expect(failedMailRecipients.slice(failedAttemptsBefore)).toEqual(['owner@example.invalid', 'owner@example.invalid']);
+  } finally { mailFails = false; }
 });
