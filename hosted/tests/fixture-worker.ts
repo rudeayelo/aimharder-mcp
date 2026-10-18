@@ -18,6 +18,12 @@ export default {
           'INSERT INTO account (id,accountId,providerId,userId,password,createdAt,updatedAt) VALUES (?,?,?,?,?,?,?)'
         ).bind('fixture-password', 'portal-fixture', 'credential', 'portal-fixture', hash, now, now),
         env.AUTH_DB.prepare(
+          'INSERT INTO portal_invitation (id,email,tokenDigest,expiresAt,createdAt,acceptedAt,acceptedUserId) VALUES (?,?,?,?,?,?,?)'
+        ).bind('fixture-invitation', 'participant@example.invalid', 'synthetic-not-a-capability', now, now, now, 'portal-fixture'),
+        env.AUTH_DB.prepare(
+          'INSERT INTO portal_participant (userId,invitationId,role,admittedAt) VALUES (?,?,?,?)'
+        ).bind('portal-fixture', 'fixture-invitation', 'user', now),
+        env.AUTH_DB.prepare(
           'INSERT INTO oauthClient (id,clientId,name,redirectUris,tokenEndpointAuthMethod,applicationType,grantTypes,responseTypes,requirePKCE,scopes,skipConsent) VALUES (?,?,?,?,?,?,?,?,?,?,?)'
         ).bind(
           'fixture-client',
