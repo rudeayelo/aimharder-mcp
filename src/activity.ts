@@ -45,7 +45,8 @@ export const activityCoverageSchema = z.object({ status: z.enum(['complete', 'in
 const ratesSchema = z.object({ ids: z.array(z.number().int().positive().safe()).max(500), colors: z.array(z.string().nullable()).optional() })
   .catchall(z.array(z.unknown()))
   .refine(row => Object.keys(row).every(key => key === 'ids' || key === 'colors' || /^[1-9]\d*$/.test(key)));
-const calendarSchema = z.object({ workouts: z.union([z.array(z.never()), z.record(dateSchema, z.object({ rates: ratesSchema, TIPOWODs: z.record(z.string().regex(/^[1-9]\d*$/), z.unknown()) }).strict())]) }).strict();
+// This calendar container is not projected; rates.ids and verified details select entries.
+const calendarSchema = z.object({ workouts: z.union([z.array(z.never()), z.record(dateSchema, z.object({ rates: ratesSchema, TIPOWODs: z.record(z.string(), z.unknown()) }).strict())]) }).strict();
 export function parseActivityCalendar(body: unknown, month: string) {
   const parsed = calendarSchema.safeParse(body);
   if (!parsed.success) throw new AimHarderError('INVALID_ACTIVITY_RESPONSE');
