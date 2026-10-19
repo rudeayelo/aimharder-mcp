@@ -1,0 +1,140 @@
+import { readFile, readdir, mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { afterAll, beforeAll, expect, test } from 'vitest';
+import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
+import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
+import { buildWorker } from '../build.mjs';
+const origin = 'http://localhost:8796';
+const syntheticKey = Buffer.alloc(32, 17).toString('base64');
+let worker: Miniflare;
+let directory: string;
+const logins: string[] = [];
+const identities: string[] = [];
+const profiles = new Map([
+  ['upstream-a@example.invalid', { id: 42, cookie: 'synthetic-a', gyms: [{ role: 'client', gym: 'A gym', centre_url: 'shared-gym.aimharder.es', boid: 200 }] }],
+  ['upstream-b@example.invalid', { id: 73, cookie: 'synthetic-b', gyms: [{ role: 'client', gym: 'B gym', centre_url: 'shared-gym.aimharder.es', boid: 200 }] }],
+]);
+const portalCookies = new Map<string,string>();
+function post(path: string, body: unknown, cookie = '', requestOrigin = origin) {
+  return worker.dispatchFetch(origin + path, { method: 'POST', headers: { origin: requestOrigin, cookie, 'content-type': 'application/json' }, body: JSON.stringify(body), redirect: 'manual' });
+}
+async function start() {
+  worker = new Miniflare(convertV4MiniflareOptions({ modules: true, scriptPath: 'dist/account-connection-fixture-worker.js', port: 8796,
+    compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'], d1Databases: ['AUTH_DB'], d1Persist: directory,
+    durableObjects: { ACCOUNT_CONNECTIONS: { className: 'AccountConnection', useSQLite: true } }, durableObjectsPersist: directory + '/objects',
+    bindings: { BASE_URL: origin, AUTH_SECRET: 'synthetic-account-connection-auth-secret-long-enough',
+      VAULT_KEYS: JSON.stringify({ first: syntheticKey }), VAULT_ACTIVE_KEY_ID: 'first' },
+    outboundService: async request => {
+      if (new URL(request.url).origin === origin) return worker.dispatchFetch(request);
+      if (request.url === 'https://login.aimharder.es/api/login' && request.method === 'POST') {
+        const body = await request.json() as { username: string; password: string };
+        logins.push(body.username);
+        const profile = profiles.get(body.username);
+        if (!profile || body.password !== 'synthetic-upstream-password') return Response.json({ data: { auth: { authOK: false } } });
+        return Response.json({ data: { userData: { id: profile.id }, auth: { authOK: true } } }, {
+          headers: { 'set-cookie': `amhrdrauth=${profile.cookie}; Domain=.aimharder.es; Path=/; HttpOnly` },
+        });
+      }
+      if (request.url === 'https://aimharder.es/api/whoami' && request.method === 'GET') {
+        const cookie = request.headers.get('cookie')!;
+        identities.push(cookie);
+        const profile = [...profiles.values()].find(value => cookie === `amhrdrauth=${value.cookie}`);
+        if (!profile) throw new Error('Unknown synthetic upstream cookie');
+        return Response.json({ data: [{ id: profile.id, roles: profile.gyms }] });
+      }
+      throw new Error('Unexpected connection test upstream request');
+    },
+  }));
+  await worker.ready;
+}
+async function token(cookie: string) {
+  const verifier = 'synthetic-account-verifier-more-than-forty-three-characters';
+  const challenge = Buffer.from(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier))).toString('base64url');
+  const query = new URLSearchParams({ client_id: 'fixture-client', redirect_uri: 'http://127.0.0.1:9999/callback', response_type: 'code',
+    code_challenge: challenge, code_challenge_method: 'S256', scope: 'openid profile offline_access mcp:access', state: 'synthetic-state', resource: origin+'/mcp', prompt: 'consent' });
+  const authorize = await worker.dispatchFetch(origin + '/api/auth/oauth2/authorize?' + query, { headers: { cookie }, redirect: 'manual' });
+  expect(authorize.status).toBe(200);
+  const url = new URL((await authorize.json() as {url: string}).url, origin);
+  const consent = await post('/api/auth/oauth2/consent', { accept: true, oauth_query: url.search.slice(1) }, cookie);
+  expect(consent.status).toBe(200);
+  const callback = new URL((await consent.json() as {url: string}).url);
+  const response = await worker.dispatchFetch(origin+'/api/auth/oauth2/token', { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ grant_type: 'authorization_code', client_id: 'fixture-client', redirect_uri: 'http://127.0.0.1:9999/callback',
+      code: callback.searchParams.get('code')!, code_verifier: verifier, resource: origin+'/mcp' }).toString() });
+  expect(response.status).toBe(200);
+  return (await response.json() as {access_token: string}).access_token;
+}
+async function context(cookie: string, gymId?: string) {
+  const bearer = await token(cookie);
+  const client = new Client({ name: 'synthetic-account-connection', version: '1' }, { versionNegotiation: { mode: { pin: '2026-07-28' } } });
+  try {
+    await client.connect(new StreamableHTTPClientTransport(new URL(origin+'/mcp'), { requestInit: { headers: { authorization: `Bearer ${bearer}` } } }));
+    expect((await client.listTools()).tools.map(tool=>tool.name)).toEqual(['get_account_context']);
+    return await client.callTool({ name: 'get_account_context', arguments: gymId ? {gymId} : {} });
+  } finally { await client.close(); }
+}
+beforeAll(async () => {
+  await buildWorker('tests/account-connection-fixture-worker.ts', 'dist/account-connection-fixture-worker.js');
+  directory = await mkdtemp(join(tmpdir(),'aimharder-vault-synthetic-'));
+  await start();
+  const db = await worker.getD1Database('AUTH_DB');
+  for (const file of (await readdir('migrations')).filter(name=>/^\d+.*\.sql$/.test(name)).sort())
+    await db.exec((await readFile('migrations/'+file,'utf8')).replaceAll('\n',' '));
+  expect((await worker.dispatchFetch(origin+'/__fixture')).status).toBe(200);
+  for (const email of ['participant@example.invalid','other@example.invalid']) {
+    const response = await post('/api/auth/sign-in/email', {email,password:'synthetic-portal-password'});
+    expect(response.status).toBe(200);
+    portalCookies.set(email,response.headers.getSetCookie().map(value=>value.split(';')[0]).join('; '));
+  }
+});
+afterAll(async()=>{ await worker?.dispose(); if(directory)await rm(directory,{recursive:true,force:true}); });
+
+test('an admitted participant connects a different upstream email and queries only their verified account through HTTP MCP', async () => {
+  const cookie = portalCookies.get('participant@example.invalid')!;
+  const connect = await post('/api/portal/aimharder', {username:'upstream-a@example.invalid',password:'synthetic-upstream-password'},cookie);
+  expect(connect.status).toBe(200);
+  expect(await connect.json()).toMatchObject({status:'connected',gyms:[{id:'shared-gym',name:'A gym',timeZoneStatus:'assumed'}]});
+  const result = await context(cookie);
+  expect(result.isError).not.toBe(true);
+  expect(result.structuredContent).toMatchObject({account:{authenticated:true},selectedGym:{id:'shared-gym',name:'A gym',timeZoneStatus:'assumed'}});
+  for(const secret of ['upstream-a@example.invalid','synthetic-upstream-password','synthetic-a',syntheticKey]) expect(JSON.stringify(result)).not.toContain(secret);
+  expect(logins).toEqual(['upstream-a@example.invalid']);
+});
+
+test('multiple verified gyms require an explicit default and preserve confirmed zones without borrowing another participant session', async () => {
+  const cookie = portalCookies.get('other@example.invalid')!;
+  profiles.get('upstream-b@example.invalid')!.gyms.push({ role:'client', gym:'Second gym', centre_url:'second-gym.aimharder.es', boid:201 });
+  const credentials = {username:'upstream-b@example.invalid', password:'synthetic-upstream-password'};
+  const missing = await post('/api/portal/aimharder', credentials, cookie);
+  expect(missing.status).toBe(422);
+  expect(await missing.json()).toMatchObject({status:'default-gym-required',gyms:[{id:'shared-gym',name:'B gym'},{id:'second-gym',name:'Second gym'}]});
+  const connect = await post('/api/portal/aimharder', {...credentials,defaultGym:'second-gym',gymTimeZones:{'shared-gym':'America/New_York','second-gym':'Europe/London'}},cookie);
+  expect(connect.status).toBe(200);
+  const results = await Promise.all([context(portalCookies.get('participant@example.invalid')!),context(cookie),context(cookie,'shared-gym')]);
+  expect(results[0]!.structuredContent).toMatchObject({selectedGym:{id:'shared-gym',name:'A gym',timeZone:'Europe/Madrid',timeZoneStatus:'assumed'}});
+  expect(results[1]!.structuredContent).toMatchObject({selectedGym:{id:'second-gym',timeZone:'Europe/London',timeZoneStatus:'user-confirmed'}});
+  expect(results[2]!.structuredContent).toMatchObject({selectedGym:{id:'shared-gym',name:'B gym',timeZone:'America/New_York',timeZoneStatus:'user-confirmed'}});
+  expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'}},cookie)).status).toBe(200);
+  expect((await context(cookie)).structuredContent).toMatchObject({selectedGym:{id:'shared-gym',name:'B gym',timeZone:'Europe/Madrid',timeZoneStatus:'user-confirmed'}});
+});
+
+test('browser settings expose verified gym choices and reject foreign origins, invalid zones and replacement without exposing credentials', async () => {
+  const cookie = portalCookies.get('participant@example.invalid')!;
+  expect((await post('/api/portal/aimharder',{})).status).toBe(401);
+  expect((await post('/api/portal/aimharder',{},cookie,'https://attacker.invalid')).status).toBe(403);
+  const before = logins.length;
+  const replacement = await post('/api/portal/aimharder',{username:'upstream-b@example.invalid',password:'private-replacement-canary'},cookie);
+  expect(replacement.status).toBe(409);
+  expect(await replacement.text()).not.toContain('private-replacement-canary');
+  expect(logins.length).toBe(before);
+  expect((await post('/api/portal/aimharder/settings',{defaultGym:'foreign-gym',gymTimeZones:{}},cookie)).status).toBe(400);
+  expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Not/AZone'}},cookie)).status).toBe(400);
+  const page = await worker.dispatchFetch(origin+'/aimharder',{headers:{cookie}});
+  const html = await page.text();
+  expect(html).toContain('A gym');
+  expect(html).toContain('action="/portal/aimharder/settings"');
+  expect(html).toContain('name="zone:shared-gym"');
+  expect(html).not.toContain('upstream-a@example.invalid');
+  expect(html).not.toContain('synthetic-upstream-password');
+});

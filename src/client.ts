@@ -75,7 +75,31 @@ export class AimHarderClient {
   #publicationPreparations = new PublicationPreparationStore();
   #activityDeletionPreparations = new ActivityDeletionPreparationStore();
 
-  constructor(private readonly configuration: Configuration) {}
+  constructor(private readonly configuration: Configuration, private expectedAccountId?: number) {}
+
+  /** Trusted connection setup: identity stays inside the service, outside MCP results. */
+  verifyConnection(): Promise<{ identity: number; gyms: Gym[] }> {
+    const result = this.#queue.then(async () => {
+      if (this.#authenticationFailure) throw this.#authenticationFailure;
+      if (this.#accountId === undefined) await this.#authenticate();
+      for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+          const gyms = (await this.#discoverGyms()).map(entry => entry.gym);
+          this.expectedAccountId ??= this.#accountId;
+          return { identity: this.#accountId!, gyms };
+        }
+        catch (error) {
+          if (!(error instanceof SessionExpired)) throw error;
+          this.#clearSession();
+          if (attempt === 1) throw new AimHarderError('SESSION_EXPIRED');
+          await this.#authenticate();
+        }
+      }
+      throw new AimHarderError('SESSION_EXPIRED');
+    });
+    this.#queue = result.then(() => undefined, () => undefined);
+    return result;
+  }
 
   getAccountContext(gymId?: string): Promise<AccountContext> {
     return this.#query(gymId, async (gyms, selected) => ({
@@ -920,7 +944,7 @@ export class AimHarderClient {
     if (!parsed.success) throw new AimHarderError('INVALID_RESPONSE');
     const account = parsed.data.data[0];
     if (!account) throw new SessionExpired();
-    if (account.id !== this.#accountId) {
+    if (account.id !== this.#accountId || (this.expectedAccountId !== undefined && account.id !== this.expectedAccountId)) {
       this.#clearSession();
       throw new AimHarderError('IDENTITY_MISMATCH');
     }

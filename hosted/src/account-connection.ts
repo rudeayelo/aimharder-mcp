@@ -1,0 +1,87 @@
+import { z } from 'zod';
+import { AimHarderClient, type AccountContext } from '../../src/client.js';
+import { readConfiguration, type Configuration } from '../../src/config.js';
+import { safeError } from '../../src/errors.js';
+import type { HostedEnvironment } from './auth.js';
+import { participant } from './admission.js';
+import { decryptConnection, encryptConnection, type ConnectionRow } from './vault.js';
+
+export function accountOperation(env: HostedEnvironment, subject: string, operation: object) {
+  if (!env.ACCOUNT_CONNECTIONS) return Promise.resolve(Response.json({ status: 'unavailable' }, { status: 503 }));
+  return env.ACCOUNT_CONNECTIONS.get(env.ACCOUNT_CONNECTIONS.idFromName(subject)).fetch('https://account.internal/', {
+    method: 'POST', headers: { 'content-type': 'application/json', 'x-portal-subject': subject }, body: JSON.stringify(operation),
+  });
+}
+const input = z.object({ username: z.string().min(1).max(512), password: z.string().min(1).max(4096),
+  defaultGym: z.string().optional(), gymTimeZones: z.record(z.string(), z.string()).optional() }).strict();
+function configuration(value: z.infer<typeof input>): Configuration {
+  return readConfiguration({ AIMHARDER_USERNAME: value.username, AIMHARDER_PASSWORD: value.password,
+    AIMHARDER_DEFAULT_GYM: value.defaultGym, AIMHARDER_GYM_TIME_ZONES: JSON.stringify(value.gymTimeZones ?? {}) });
+}
+export class AccountConnection {
+  #queue: Promise<void> = Promise.resolve();
+  #client: { revision: string; envelope: string; client: AimHarderClient } | undefined;
+  constructor(private readonly state: DurableObjectState, private readonly env: HostedEnvironment) {}
+  fetch(request: Request): Promise<Response> {
+    const result = this.#queue.then(() => this.#handle(request));
+    this.#queue = result.then(() => undefined, () => undefined);
+    return result;
+  }
+  async #handle(request: Request): Promise<Response> {
+    const subject = request.headers.get('x-portal-subject');
+    if (!subject || !await participant(this.env, subject)) return Response.json({ status: 'unavailable' }, { status: 403 });
+    const owner = await this.state.storage.get<string>('owner');
+    if (owner && owner !== subject) return Response.json({ status: 'unavailable' }, { status: 403 });
+    if (!owner) await this.state.storage.put('owner', subject);
+    try {
+      const operation = await request.json() as { kind: string; input?: unknown; gymId?: string };
+      const row = await this.env.AUTH_DB.prepare('SELECT userId,revision,envelope FROM portal_aimharder_connection WHERE userId=?').bind(subject).first<ConnectionRow>();
+      if (operation.kind === 'connect') {
+        if (row) return Response.json({ status: 'already-connected', message: 'An AimHarder account is already connected. Replacement is not available yet.' }, { status: 409 });
+        const parsed = input.safeParse(operation.input);
+        if (!parsed.success) return Response.json({ status: 'invalid-settings' }, { status: 400 });
+        const config = configuration(parsed.data);
+        const candidate = new AimHarderClient(config);
+        const verified = await candidate.verifyConnection();
+        const ids = new Set(verified.gyms.map(gym => gym.id));
+        if (Object.keys(config.gymTimeZones).some(id => !ids.has(id)) || config.defaultGym && !ids.has(config.defaultGym)) return Response.json({ status: 'invalid-settings', gyms: verified.gyms }, { status: 400 });
+        if (verified.gyms.length > 1 && !config.defaultGym) return Response.json({ status: 'default-gym-required', gyms: verified.gyms }, { status: 422 });
+        const context = await candidate.getAccountContext();
+        const revision = crypto.randomUUID();
+        const envelope = await encryptConnection(this.env, subject, revision, { configuration: config, identity: verified.identity });
+        const saved = await this.env.AUTH_DB.prepare('INSERT OR IGNORE INTO portal_aimharder_connection (userId,revision,envelope,updatedAt) VALUES (?,?,?,?)').bind(subject, revision, envelope, Date.now()).run();
+        if (!saved.meta.changes) return Response.json({ status: 'already-connected' }, { status: 409 });
+        this.#client = { revision, envelope, client: candidate };
+        return Response.json({ status: 'connected', ...context });
+      }
+      if (!row) { this.#client = undefined; return Response.json({ status: 'not-connected' }); }
+      // Authenticate the current durable envelope even when memory is warm.
+      const payload = await decryptConnection(this.env, row);
+      if (!this.#client || this.#client.revision !== row.revision || this.#client.envelope !== row.envelope) this.#client = { revision: row.revision, envelope: row.envelope, client: new AimHarderClient(payload.configuration, payload.identity) };
+      if (operation.kind === 'settings') {
+        const settings = z.object({ defaultGym: z.string().optional(), gymTimeZones: z.record(z.string(), z.string()) }).strict().safeParse(operation.input);
+        if (!settings.success) return Response.json({ status: 'invalid-settings' }, { status: 400 });
+        const config = configuration({ username: payload.configuration.username, password: payload.configuration.password, ...settings.data });
+        const verified = await this.#client.client.verifyConnection();
+        const ids = new Set(verified.gyms.map(gym => gym.id));
+        if ((config.defaultGym && !ids.has(config.defaultGym)) || Object.keys(config.gymTimeZones).some(id => !ids.has(id))) return Response.json({ status: 'invalid-settings' }, { status: 400 });
+        if (ids.size > 1 && !config.defaultGym) return Response.json({ status: 'default-gym-required', gyms: verified.gyms }, { status: 422 });
+        const candidate = new AimHarderClient(config, payload.identity);
+        const context = await candidate.getAccountContext();
+        const revision = crypto.randomUUID();
+        const envelope = await encryptConnection(this.env, subject, revision, { configuration: config, identity: payload.identity });
+        const saved = await this.env.AUTH_DB.prepare('UPDATE portal_aimharder_connection SET revision=?,envelope=?,updatedAt=? WHERE userId=? AND revision=? AND envelope=?')
+          .bind(revision, envelope, Date.now(), subject, row.revision, row.envelope).run();
+        if (!saved.meta.changes) return Response.json({ status: 'connection-changed' }, { status: 409 });
+        this.#client = { revision, envelope, client: candidate };
+        return Response.json({ status: 'connected', ...context });
+      }
+      if (operation.kind !== 'context' && operation.kind !== 'status') return Response.json({ status: 'unsupported' }, { status: 404 });
+      const context: AccountContext = await this.#client.client.getAccountContext(operation.gymId);
+      return Response.json({ status: 'connected', ...context });
+    } catch (error) {
+      const safe = safeError(error);
+      return Response.json({ status: ['AUTHENTICATION_FAILED', 'IDENTITY_MISMATCH', 'SESSION_EXPIRED', 'ACCESS_RESTRICTED'].includes(safe.code) ? 'authentication-required' : 'unavailable', error: safe }, { status: 503 });
+    }
+  }
+}

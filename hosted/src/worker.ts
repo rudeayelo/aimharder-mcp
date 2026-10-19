@@ -11,6 +11,9 @@ import { handlePortal } from './portal.js';
 import { handleInvitations } from './invitations.js';
 import { currentGrant, grantClaim } from './oauth-grants.js';
 import { handleConnections } from './connections.js';
+import { accountOperation } from './account-connection.js';
+import { handleAimHarderSettings } from './aimharder-settings.js';
+export { AccountConnection } from './account-connection.js';
 
 /** The vault resolves only the verified portal subject, never a tool argument. */
 export type ResolveConnection = (portalAccountId: string) => Promise<Configuration | null>;
@@ -18,10 +21,10 @@ export type ResolveConnection = (portalAccountId: string) => Promise<Configurati
 export async function handleHostedRequest(
   request: Request,
   env: HostedEnvironment,
-  resolveConnection: ResolveConnection
+  resolveConnection?: ResolveConnection
 ): Promise<Response> {
   const auth = createAuth(env);
-  if (new URL(request.url).pathname !== '/mcp') return await handleConnections(request, env, auth) ?? await handleIdentity(request, env, auth) ?? await handleInvitations(request, env, auth) ?? await handlePortal(request, env, auth) ?? auth.handler(request);
+  if (new URL(request.url).pathname !== '/mcp') return await handleAimHarderSettings(request, env, auth) ?? await handleConnections(request, env, auth) ?? await handleIdentity(request, env, auth) ?? await handleInvitations(request, env, auth) ?? await handlePortal(request, env, auth) ?? auth.handler(request);
   if (request.method !== 'POST') return new Response(null, { status: 405, headers: { allow: 'POST' } });
   return requireMcpAuth(
     auth,
@@ -49,6 +52,13 @@ export async function handleHostedRequest(
             async ({ gymId }) => {
               try {
                 if (!claims.sub) throw new Error('Missing subject');
+                if (!resolveConnection) {
+                  const response = await accountOperation(env, claims.sub, { kind: 'context', ...(gymId ? { gymId } : {}) });
+                  const result = await response.json() as Record<string, unknown>;
+                  if (!response.ok || result.status !== 'connected') return { isError: true, content: [{ type: 'text', text: JSON.stringify(result) }] };
+                  const { status: _status, ...context } = result;
+                  return { content: [{ type: 'text', text: JSON.stringify(context) }], structuredContent: context };
+                }
                 const connection = await resolveConnection(claims.sub);
                 if (!connection)
                   return {
@@ -83,7 +93,6 @@ export async function handleHostedRequest(
   )(request);
 }
 
-// The feasibility gate has no live credential vault or deployment entry configuration.
 export default {
-  fetch: (request: Request, env: HostedEnvironment) => handleHostedRequest(request, env, async () => null),
+  fetch: (request: Request, env: HostedEnvironment) => handleHostedRequest(request, env),
 };
