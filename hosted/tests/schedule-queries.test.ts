@@ -78,7 +78,7 @@ async function call(cookie: string, name: string, args: Record<string, unknown> 
   const client = new Client({ name: 'synthetic-account-connection', version: '1' }, { versionNegotiation: { mode: { pin: '2026-07-28' } } });
   try {
     await client.connect(new StreamableHTTPClientTransport(new URL(origin+'/mcp'), { requestInit: { headers: { authorization: `Bearer ${bearer}` } } }));
-    
+
     return await client.callTool({ name, arguments: args });
   } finally { await client.close(); }
 }
