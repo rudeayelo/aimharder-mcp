@@ -1,3 +1,4 @@
+import { acquireRecoveryLease, releaseRecoveryLease, recoveryEpoch, deletedIdentity } from './recovery-authority.js';
 import { z } from 'zod';
 import { AimHarderClient, type ActivityDeletionDispatch, type AccountContext, publicationRecoveryFacts, type ActivityPublicationRecovery, type BookingCancellationDispatch, type BookingCreationDispatch } from '../../src/client.js';
 import { gymIdSchema, readConfiguration, type Configuration } from '../../src/config.js';
@@ -21,7 +22,7 @@ import { decryptConnection, encryptConnection, type ConnectionRow } from './vaul
 export function accountOperation(env: HostedEnvironment, subject: string, operation: object) {
   if (!env.ACCOUNT_CONNECTIONS) return Promise.resolve(Response.json({ status: 'unavailable' }, { status: 503 }));
   return env.ACCOUNT_CONNECTIONS.get(env.ACCOUNT_CONNECTIONS.idFromName(subject)).fetch('https://account.internal/', {
-    method: 'POST', headers: { 'content-type': 'application/json', 'x-portal-subject': subject }, body: JSON.stringify(operation),
+    method: 'POST', headers: { 'content-type': 'application/json', 'x-portal-subject': subject, 'x-recovery-lease':env.RECOVERY_LEASE??'' }, body: JSON.stringify(operation),
   });
 }
 const input = z.object({ username: z.string().min(1).max(512), password: z.string().min(1).max(4096),
@@ -32,10 +33,11 @@ function configuration(value: z.infer<typeof input>): Configuration {
 }
 export class AccountConnection {
   #queue: Promise<void> = Promise.resolve();
+  #recoveryEpoch:number|undefined;
   #client: { revision: string; envelope: string; client: AimHarderClient } | undefined;
   readonly #actions:AccountActionCoordinator;
   constructor(private readonly state: DurableObjectState, private readonly env: HostedEnvironment) {this.#actions=new AccountActionCoordinator(state.storage,env);}
-  alarm():Promise<void>{const result=this.#queue.then(async()=>{const subject=await this.state.storage.get<string>('owner');if(subject)await this.#actions.sweep(subject);});this.#queue=result.catch(()=>undefined);return result;}
+  alarm():Promise<void>{const result=this.#queue.then(async()=>{const lease=await acquireRecoveryLease(this.env);if(!lease)return;try{const subject=await this.state.storage.get<string>('owner');if(subject)await this.#actions.sweep(subject);}finally{await releaseRecoveryLease(this.env,lease);}});this.#queue=result.catch(()=>undefined);return result;}
   fetch(request: Request): Promise<Response> {
     const result = this.#queue.then(() => this.#handle(request));
     this.#queue = result.then(() => undefined, () => undefined);
@@ -43,6 +45,14 @@ export class AccountConnection {
   }
   async #handle(request: Request): Promise<Response> {
     const subject = request.headers.get('x-portal-subject');
+    const lease=request.headers.get('x-recovery-lease');
+    if(lease)this.env.RECOVERY_LEASE=lease;else delete this.env.RECOVERY_LEASE;
+    const epoch=await recoveryEpoch(this.env);
+    if(this.#recoveryEpoch!==epoch){this.#actions.discardPreparations();this.#client=undefined;this.#recoveryEpoch=epoch;}
+    if(subject && await deletedIdentity(this.env,subject)){
+      this.#client=undefined;this.#actions.discardPreparations();await this.state.storage.deleteAll();
+      return Response.json({status:'unavailable'},{status:403});
+    }
     if (!subject || !await participant(this.env, subject)) return Response.json({ status: 'unavailable' }, { status: 403 });
     const owner = await this.state.storage.get<string>('owner');
     if (owner && owner !== subject) return Response.json({ status: 'unavailable' }, { status: 403 });

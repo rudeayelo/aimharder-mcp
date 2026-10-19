@@ -1,3 +1,4 @@
+import { seedRecovery } from './recovery-fixture.js';
 // Disposable synthetic setup only; never included in the deployed Worker.
 import feasibilityFixture from './fixture-worker.js';
 import { handleHostedRequest } from '../src/worker.js';
@@ -35,6 +36,7 @@ function pauseBeforeAuthorizationWrite(database: D1Database, kind: 'consent' | '
 export default {
   async fetch(request: Request, env: HostedEnvironment) {
     if (new URL(request.url).pathname === '/__fixture') {
+      await seedRecovery(env);
       const result = await feasibilityFixture.fetch(request, env);
       const now = Date.now();
       await env.AUTH_DB.batch([

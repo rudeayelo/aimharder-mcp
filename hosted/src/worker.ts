@@ -7,6 +7,8 @@ import { gymIdSchema, type Configuration } from '../../src/config.js';
 import { safeError } from '../../src/errors.js';
 import { createAuth, type HostedEnvironment } from './auth.js';
 import { handleActivityPolicy } from './activity-policy.js';
+import { handleAccountDeletion } from './account-deletion.js';
+import { acquireRecoveryLease, releaseRecoveryLease } from './recovery-authority.js';
 import { handleIdentity } from './identity.js';
 import { handlePortal } from './portal.js';
 import { handleInvitations } from './invitations.js';
@@ -25,13 +27,13 @@ export { AccountConnection } from './account-connection.js';
 /** Retained feasibility-harness adapter; production uses the private account object. */
 export type ResolveConnection = (portalAccountId: string) => Promise<Configuration | null>;
 
-export async function handleHostedRequest(
+async function dispatchHostedRequest(
   request: Request,
   env: HostedEnvironment,
   resolveConnection?: ResolveConnection
 ): Promise<Response> {
   const auth = createAuth(env);
-  if (new URL(request.url).pathname !== '/mcp') return await handleActivityPolicy(request, env, auth) ?? await handleAimHarderSettings(request, env, auth) ?? await handleConnections(request, env, auth) ?? await handleIdentity(request, env, auth) ?? await handleInvitations(request, env, auth) ?? await handlePortal(request, env, auth) ?? auth.handler(request);
+  if (new URL(request.url).pathname !== '/mcp') return await handleAccountDeletion(request, env, auth) ?? await handleActivityPolicy(request, env, auth) ?? await handleAimHarderSettings(request, env, auth) ?? await handleConnections(request, env, auth) ?? await handleIdentity(request, env, auth) ?? await handleInvitations(request, env, auth) ?? await handlePortal(request, env, auth) ?? auth.handler(request);
   if (request.method !== 'POST') return new Response(null, { status: 405, headers: { allow: 'POST' } });
   return requireMcpAuth(
     auth,
@@ -108,6 +110,13 @@ export async function handleHostedRequest(
   )(request);
 }
 
+export async function handleHostedRequest(request:Request,env:HostedEnvironment,resolveConnection?:ResolveConnection):Promise<Response>{
+  let lease:string|null;
+  try{lease=await acquireRecoveryLease(env);}catch{return Response.json({error:'Service recovery is unavailable.'},{status:503});}
+  if(!lease)return Response.json({error:'Service recovery is unavailable.'},{status:503});
+  try{return await dispatchHostedRequest(request,{...env,RECOVERY_LEASE:lease},resolveConnection);}
+  finally{await releaseRecoveryLease(env,lease);}
+}
 export default {
   fetch: (request: Request, env: HostedEnvironment) => handleHostedRequest(request, env),
 };

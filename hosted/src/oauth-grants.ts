@@ -1,3 +1,4 @@
+import { recoveryAdmission } from './recovery-authority.js';
 import { APIError } from 'better-auth/api';
 import type { HostedEnvironment } from './auth.js';
 import { digest, participant } from './admission.js';
@@ -38,6 +39,7 @@ export async function issueGrantClaim(env: HostedEnvironment, grant: Grant | und
 }
 export async function currentGrant(env: HostedEnvironment, id: unknown, userId: unknown, clientId: unknown, connectionRevision?: string, activityFeature?: 'publication'|'deletion'): Promise<boolean> {
   if (typeof id !== 'string' || typeof userId !== 'string' || typeof clientId !== 'string') return false;
+  if(!await recoveryAdmission(env,userId))return false;
   return Boolean(await env.AUTH_DB.prepare(`SELECT g.id FROM portal_mcp_grant g JOIN oauthClient c ON c.clientId=g.clientId
     JOIN portal_participant p ON p.userId=g.userId JOIN user u ON u.id=p.userId
     WHERE p.status='active' AND u.emailVerified=1 AND g.id=? AND g.userId=? AND g.clientId=? AND g.revokedAt IS NULL AND COALESCE(c.disabled,0)=0

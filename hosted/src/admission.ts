@@ -1,4 +1,5 @@
 import { APIError } from 'better-auth/api';
+import { recoveryAdmission, invitationAllowed } from './recovery-authority.js';
 import type { HostedEnvironment } from './auth.js';
 
 export const invitationLifetime = 7 * 24 * 60 * 60 * 1000;
@@ -17,10 +18,11 @@ export async function invited(env: HostedEnvironment, token: string | null, emai
   const row = await env.AUTH_DB.prepare(
     'SELECT id,email,role FROM portal_invitation WHERE tokenDigest=? AND email=? AND revokedAt IS NULL AND acceptedAt IS NULL AND expiresAt>?'
   ).bind(await digest(token), normalizeEmail(email), Date.now()).first<Invitation>();
-  if (!row) denyAdmission();
+  if (!row || !await invitationAllowed(env,row.id)) denyAdmission();
   return row;
 }
 export async function participant(env: HostedEnvironment, userId: string) {
+  if(!await recoveryAdmission(env,userId))return null;
   return env.AUTH_DB.prepare(
     'SELECT p.userId,p.role FROM portal_participant p JOIN user u ON u.id=p.userId WHERE p.userId=? AND p.status=\'active\' AND u.emailVerified=1'
   ).bind(userId).first<{ userId: string; role: 'admin' | 'user' }>();
