@@ -22,7 +22,7 @@ export function registerActivityQueries(server: McpServer, env: HostedEnvironmen
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
   }, query => runAccountQuery(env, subject, 'find-exercise-1rm', query));
   server.registerTool('get_exercise_1rm', {
-    description: 'Read the authenticated account latest dated 1RM for one source exercise ID at a verified gym. Units need matching history evidence; lbs alone is not a unit. Other RM and WOD series remain separate limited context. No member selector is accepted.',
+    description: 'Read the authenticated account holder’s latest dated 1RM for one source exercise ID at a verified gym. Units need matching history evidence; lbs alone is not a unit. Other RM and WOD series remain separate limited context. No member selector is accepted.',
     inputSchema: exercise1RMQuerySchema, outputSchema: exercise1RMResultSchema,
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
   }, query => runAccountQuery(env, subject, 'exercise-1rm', query));
