@@ -24,6 +24,14 @@ _Avoid_: Using user to imply administrative privileges in the hosted service.
 A portal account whose access to the service is blocked by the administrator while its configuration is retained for possible reactivation. Suspension is distinct from deleting the account.
 _Avoid_: Deleted account or disconnected AimHarder account as synonyms for suspension.
 
+**Deleted portal account**:
+A former participant's portal identity whose service access and active associated data have been removed. Minimal opaque denial records prevent old backups from restoring that identity's access.
+_Avoid_: Suspension or AimHarder disconnection as a synonym for deletion.
+
+**Controlled restoration**:
+Operator recovery of service data that preserves later deletions and revocations before access resumes. Earlier copies do not acquire a new retention deadline through restoration.
+_Avoid_: Restoring access merely because an old credential or authorization exists in a backup.
+
 **AimHarder connection**:
 The association between a portal account and its holder's linked AimHarder account. One connection can provide access to several gyms when that AimHarder account has those memberships.
 _Avoid_: A separate AimHarder account for each gym.

@@ -1,7 +1,7 @@
 // Synthetic-only operator seam; excluded from production build.
 import setup from './account-connection-fixture-worker.js';
 import type { HostedEnvironment } from '../src/auth.js';
-import { closeRecovery, sealRecovery, reconcileRecovery, openRecovery } from '../src/recovery-operator.js';
+import { closeRecovery, sealRecovery, authorizeRestorePoint, reconcileRecovery, openRecovery } from '../src/recovery-operator.js';
 export { AccountConnection } from '../src/account-connection.js';
 export default {async fetch(request:Request,env:HostedEnvironment){
  const path=new URL(request.url).pathname;
@@ -12,7 +12,8 @@ export default {async fetch(request:Request,env:HostedEnvironment){
    const checkpoint=(await env.RECOVERY_DB!.prepare('SELECT checkpoint FROM recovery_head').first<{checkpoint:string}>())!.checkpoint;
    const command=path.split('/').at(-1);
    try{
-     const result=command==='close'?await closeRecovery(env,checkpoint):command==='seal'?await sealRecovery(env,checkpoint):command==='reconcile'?await reconcileRecovery(env,checkpoint):command==='open'?await openRecovery(env,checkpoint):null;
+     const target=command==='authorize'?await request.json() as {bookmark:string;targetAt:number}:null;
+     const result=command==='authorize'?await authorizeRestorePoint(env,checkpoint,target!.bookmark,target!.targetAt):command==='close'?await closeRecovery(env,checkpoint):command==='seal'?await sealRecovery(env,checkpoint):command==='reconcile'?await reconcileRecovery(env,checkpoint):command==='open'?await openRecovery(env,checkpoint):null;
      return Response.json(result);
    }catch{return Response.json({error:'Recovery precondition failed'},{status:409});}
  }

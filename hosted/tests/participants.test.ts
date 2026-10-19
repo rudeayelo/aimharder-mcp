@@ -1,3 +1,4 @@
+import { initializeTestRecovery } from './recovery-fixture.js';
 import { readFile, readdir, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -30,9 +31,9 @@ function post(path: string, body: unknown, cookie = '', requestOrigin = origin) 
 }
 async function start(keys: Record<string,string> = {first:syntheticKey}, active = 'first') {
   worker = new Miniflare(convertV4MiniflareOptions({ modules: true, scriptPath: 'dist/participants-fixture-worker.js', port: 8807,
-    compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'], d1Databases: ['AUTH_DB'], resourcePersistencePath: directory,
+    compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'], d1Databases: ['AUTH_DB','RECOVERY_DB'], resourcePersistencePath: directory,
     durableObjects: { ACCOUNT_CONNECTIONS: { className: 'AccountConnection', useSQLite: true } },
-    bindings: { BASE_URL: origin, AUTH_SECRET: 'synthetic-account-connection-auth-secret-long-enough',
+    bindings: { RECOVERY_AUTHORITY_ID:'synthetic-authority', BASE_URL: origin, AUTH_SECRET: 'synthetic-account-connection-auth-secret-long-enough',
       VAULT_KEYS: JSON.stringify(keys), VAULT_ACTIVE_KEY_ID: active },
     outboundService: async request => {
       if(new URL(request.url).origin==='https://synthetic-scheduler.invalid'){if(scheduled?.path===new URL(request.url).pathname){scheduled.entered();await scheduled.release;}const matches=new URL(request.url).pathname===interrupt;const hit=matches&&interruptSkip--<=0;if(hit){interrupt=undefined;interruptSkip=0;}return new Response(null,{status:hit?503:204});}
@@ -58,7 +59,7 @@ async function start(keys: Record<string,string> = {first:syntheticKey}, active 
       return synthetic(request);
     },
   }));
-  await worker.ready;
+  await worker.ready; await initializeTestRecovery(worker);
 }
 const verifier = 'synthetic-account-verifier-more-than-forty-three-characters';
 async function code(cookie:string,clientId='fixture-client',schedule?:string) {

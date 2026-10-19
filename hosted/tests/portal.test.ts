@@ -1,3 +1,4 @@
+import { initializeTestRecovery } from './recovery-fixture.js';
 import { readFile, readdir } from 'node:fs/promises';
 import { afterAll, beforeAll, expect, test } from 'vitest';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
@@ -30,8 +31,8 @@ beforeAll(async () => {
   worker = new Miniflare(convertV4MiniflareOptions({
     modules: true, scriptPath: 'dist/portal-fixture-worker.js',
     compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'],
-    d1Databases: ['AUTH_DB'],
-    bindings: { AUTH_SECRET: 'synthetic-local-auth-secret-at-least-32-characters', BASE_URL: origin,
+    d1Databases: ['AUTH_DB','RECOVERY_DB'],
+    bindings: { RECOVERY_AUTHORITY_ID:'synthetic-authority', AUTH_SECRET: 'synthetic-local-auth-secret-at-least-32-characters', BASE_URL: origin,
       MAIL_FROM: 'noreply@example.invalid', RESEND_API_KEY: 'synthetic-resend-key' },
     outboundService: async request => {
       if (request.url === 'https://api.resend.com/emails' && request.method === 'POST') {
@@ -52,7 +53,7 @@ beforeAll(async () => {
       throw new Error('Unexpected external request');
     },
   }));
-  await worker.ready;
+  await worker.ready; await initializeTestRecovery(worker);
   const database = await worker.getD1Database('AUTH_DB');
   for (const migration of (await readdir('migrations')).filter(name => /^\d+.*\.sql$/.test(name)).sort())
     await database.exec((await readFile(`migrations/${migration}`, 'utf8')).replaceAll('\n', ' '));
@@ -293,11 +294,11 @@ test('the production entry has no fixture routes and disables enrollment and rec
   await buildWorker();
   const unconfigured = new Miniflare(convertV4MiniflareOptions({
     modules: true, scriptPath: 'dist/worker.js', compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'],
-    d1Databases: ['AUTH_DB'], bindings: { AUTH_SECRET: 'synthetic-unconfigured-secret-at-least-32-characters', BASE_URL: origin },
+    d1Databases: ['AUTH_DB','RECOVERY_DB'], bindings: { RECOVERY_AUTHORITY_ID:'synthetic-authority', AUTH_SECRET: 'synthetic-unconfigured-secret-at-least-32-characters', BASE_URL: origin },
     outboundService: () => { throw new Error('Unconfigured runtime must not send email'); },
   }));
   try {
-    await unconfigured.ready;
+    await unconfigured.ready; await initializeTestRecovery(unconfigured);
     const db = await unconfigured.getD1Database('AUTH_DB');
     for (const file of (await readdir('migrations')).filter(name => /^\d+.*\.sql$/.test(name)).sort())
       await db.exec((await readFile(`migrations/${file}`, 'utf8')).replaceAll('\n', ' '));
@@ -366,11 +367,11 @@ test('partial Resend configuration closes enrollment and recovery without making
   ]) {
     const partial = new Miniflare(convertV4MiniflareOptions({
       modules: true, scriptPath: 'dist/worker.js', compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'],
-      d1Databases: ['AUTH_DB'], bindings: { AUTH_SECRET: 'synthetic-partial-secret-at-least-32-characters', BASE_URL: origin, ...configuration },
+      d1Databases: ['AUTH_DB','RECOVERY_DB'], bindings: { RECOVERY_AUTHORITY_ID:'synthetic-authority', AUTH_SECRET: 'synthetic-partial-secret-at-least-32-characters', BASE_URL: origin, ...configuration },
       outboundService: () => { throw new Error('Partial mail configuration must not reach external services'); },
     }));
     try {
-      await partial.ready;
+      await partial.ready; await initializeTestRecovery(partial);
       const db = await partial.getD1Database('AUTH_DB');
       for (const file of (await readdir('migrations')).filter(name => /^\d+.*\.sql$/.test(name)).sort())
         await db.exec((await readFile(`migrations/${file}`, 'utf8')).replaceAll('\n', ' '));

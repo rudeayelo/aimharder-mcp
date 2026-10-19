@@ -41,7 +41,8 @@ async function dispatchHostedRequest(
     const session = await auth.api.getSession({ headers: request.headers });
     if (session && !await participant(env, session.user.id)) return Response.json({ message: 'Portal access is unavailable.' }, { status: 403, headers: { 'cache-control': 'no-store' } });
   }
-  if (new URL(request.url).pathname !== '/mcp') return await handleAccountDeletion(request, env, auth) ?? await handleParticipants(request, env, auth) ?? await handleActivityPolicy(request, env, auth) ?? await handleAimHarderSettings(request, env, auth) ?? await handleConnections(request, env, auth) ?? await handleIdentity(request, env, auth) ?? await handleInvitations(request, env, auth) ?? await handlePortal(request, env, auth) ?? auth.handler(request);  if (request.method !== 'POST') return new Response(null, { status: 405, headers: { allow: 'POST' } });
+  if (new URL(request.url).pathname !== '/mcp') return await handleAccountDeletion(request, env, auth) ?? await handleParticipants(request, env, auth) ?? await handleActivityPolicy(request, env, auth) ?? await handleAimHarderSettings(request, env, auth) ?? await handleConnections(request, env, auth) ?? await handleIdentity(request, env, auth) ?? await handleInvitations(request, env, auth) ?? await handlePortal(request, env, auth) ?? auth.handler(request);
+  if (request.method !== 'POST') return new Response(null, { status: 405, headers: { allow: 'POST' } });
   return requireMcpAuth(
     auth,
     async (authenticatedRequest, claims) => {

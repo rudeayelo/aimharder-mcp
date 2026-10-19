@@ -1,13 +1,8 @@
 /** Trusted operator module; not an HTTP route. Provider API may execute its SQL plan. */
 import type { HostedEnvironment } from './auth.js';
 import { recoveryAvailable } from './recovery-authority.js';
-import { eraseDeletedProjection } from './account-deletion.js';
 interface Head {authorityId:string;epoch:number;gate:'open'|'closed';closedAt:number|null;checkpoint:string;}
-interface SecuritySnapshot {
-  users:{userId:string;role:'admin'|'user';status:'active'|'suspended';accessGeneration:number;revision:string|null}[];
-  policies:{role:'admin'|'user';publication:number;deletion:number}[];
-  clients:{clientId:string;disabled:number|null}[];
-}
+import { projectionPlan, securitySnapshotSchema, type SecuritySnapshot } from './recovery-plan.js';
 async function head(env:HostedEnvironment):Promise<Head>{
   if(!await recoveryAvailable(env))throw new Error('Independent authority unavailable');
   const value=await env.RECOVERY_DB!.prepare('SELECT * FROM recovery_head WHERE authorityId=?').bind(env.RECOVERY_AUTHORITY_ID).first<Head>();
@@ -34,31 +29,27 @@ export async function sealRecovery(env:HostedEnvironment,checkpoint:string){
   const users=(await env.AUTH_DB.prepare(`SELECT p.userId,p.role,p.status,p.accessGeneration,c.revision FROM portal_participant p LEFT JOIN portal_aimharder_connection c ON c.userId=p.userId`).all<SecuritySnapshot['users'][number]>()).results;
   const policies=(await env.AUTH_DB.prepare('SELECT role,publication,deletion FROM portal_activity_policy').all<SecuritySnapshot['policies'][number]>()).results;
   const clients=(await env.AUTH_DB.prepare('SELECT clientId,disabled FROM oauthClient').all<SecuritySnapshot['clients'][number]>()).results;
-  await env.RECOVERY_DB!.prepare('INSERT OR REPLACE INTO recovery_snapshot(checkpoint,value) VALUES (?,?)').bind(checkpoint,JSON.stringify({users,policies,clients})).run();
+  await env.RECOVERY_DB!.prepare('INSERT INTO recovery_snapshot(checkpoint,value) VALUES (?,?)').bind(checkpoint,JSON.stringify({users,policies,clients})).run();
   return {checkpoint,participants:users.length};
+}
+export async function authorizeRestorePoint(env:HostedEnvironment,checkpoint:string,bookmark:string,targetAt:number){
+  const value=await drained(env,checkpoint);const now=Date.now();
+  const seal=await env.RECOVERY_DB!.prepare('SELECT checkpoint FROM recovery_snapshot WHERE checkpoint=?').bind(checkpoint).first();
+  const dirty=await env.RECOVERY_DB!.prepare('SELECT epoch FROM recovery_interval WHERE closedAt<=? AND (openedAt IS NULL OR openedAt>=?)').bind(targetAt,targetAt).first();
+  if(!seal||!bookmark||bookmark.length>256||!Number.isSafeInteger(targetAt)||targetAt>now||targetAt<now-7*86400000||targetAt>=value.closedAt!||dirty)throw new Error('Restore point is outside a clean retained interval');
+  await env.RECOVERY_DB!.prepare('INSERT INTO recovery_restore(checkpoint,bookmark,targetAt,authorizedAt) VALUES (?,?,?,?)').bind(checkpoint,bookmark,targetAt,now).run();
+  return {checkpoint,bookmark,targetAt};
 }
 export async function reconcileRecovery(env:HostedEnvironment,checkpoint:string){
   const value=await drained(env,checkpoint);
   const sealed=await env.RECOVERY_DB!.prepare('SELECT value FROM recovery_snapshot WHERE checkpoint=?').bind(checkpoint).first<{value:string}>();
   if(!sealed)throw new Error('Latest pre-restore security snapshot unavailable');
-  const snapshot=JSON.parse(sealed.value) as SecuritySnapshot;
+  if(!await env.RECOVERY_DB!.prepare('SELECT checkpoint FROM recovery_restore WHERE checkpoint=?').bind(checkpoint).first())throw new Error('Native restore point has not been authorized');
+  const snapshot=securitySnapshotSchema.parse(JSON.parse(sealed.value));
   const deletions=(await env.RECOVERY_DB!.prepare('SELECT userId FROM recovery_deleted').all<{userId:string}>()).results;
-  const forbidden=new Set(deletions.map(row=>row.userId));
-  const permitted=new Map(snapshot.users.filter(row=>!forbidden.has(row.userId)).map(row=>[row.userId,row]));
-  const restored=(await env.AUTH_DB.prepare('SELECT id FROM user').all<{id:string}>()).results;
-  for(const user of restored)if(!permitted.has(user.id))await eraseDeletedProjection(env,user.id);
-  // All restored executable authentication capabilities require fresh proof.
-  const statements=[
-    ...['session','verification','oauthAccessToken','oauthRefreshToken','oauthConsent','portal_mcp_grant','portal_mcp_revocation','portal_action_journal','portal_pending_admission','portal_verification_delivery'].map(table=>env.AUTH_DB.prepare(`DELETE FROM ${table}`)),
-    env.AUTH_DB.prepare("UPDATE account SET password=CASE WHEN providerId='credential' THEN 'recovery-proof-required' ELSE password END,accessToken=NULL,refreshToken=NULL,idToken=NULL"),
-    env.AUTH_DB.prepare('UPDATE portal_invitation SET revokedAt=COALESCE(revokedAt,?) WHERE acceptedAt IS NULL').bind(Date.now()),
-    ...snapshot.users.filter(row=>permitted.has(row.userId)).map(row=>env.AUTH_DB.prepare('UPDATE portal_participant SET role=?,status=?,accessGeneration=? WHERE userId=?').bind(row.role,row.status,row.accessGeneration+1,row.userId)),
-    ...snapshot.policies.map(row=>env.AUTH_DB.prepare('UPDATE portal_activity_policy SET publication=?,deletion=? WHERE role=?').bind(row.publication,row.deletion,row.role)),
-    ...snapshot.clients.map(row=>env.AUTH_DB.prepare('UPDATE oauthClient SET disabled=? WHERE clientId=?').bind(row.disabled,row.clientId)),
-    ...snapshot.users.map(row=>env.AUTH_DB.prepare('DELETE FROM portal_aimharder_connection WHERE userId=? AND (? IS NULL OR revision<>?)').bind(row.userId,row.revision,row.revision)),
-    env.AUTH_DB.prepare('INSERT OR REPLACE INTO portal_recovery_checkpoint(id,epoch,checkpoint) VALUES (1,?,?)').bind(value.epoch+1,checkpoint),
-  ];
-  await env.AUTH_DB.batch(statements);
+  const invitations=(await env.RECOVERY_DB!.prepare('SELECT id FROM recovery_invitation').all<{id:string}>()).results;
+  const statements=projectionPlan(snapshot,deletions.map(row=>row.userId),invitations.map(row=>row.id),value.epoch,checkpoint);
+  await env.AUTH_DB.batch(statements.map(statement=>env.AUTH_DB.prepare(statement.sql).bind(...statement.params)));
   return {checkpoint,nextEpoch:value.epoch+1};
 }
 export async function openRecovery(env:HostedEnvironment,checkpoint:string){

@@ -6,3 +6,9 @@ export async function seedRecovery(env:HostedEnvironment){
   for(const sql of recoverySchema)await env.RECOVERY_DB.prepare(sql.replace('CREATE TABLE ','CREATE TABLE IF NOT EXISTS ')).run();
   await env.RECOVERY_DB.prepare("INSERT OR IGNORE INTO recovery_head(authorityId,epoch,gate,checkpoint) VALUES ('synthetic-authority',0,'open','synthetic-initial')").run();
 }
+
+export async function initializeTestRecovery(runtime:import('miniflare').Miniflare){
+ const database=await runtime.getD1Database('RECOVERY_DB');
+ for(const sql of recoverySchema)await database.exec(sql.replace('CREATE TABLE ','CREATE TABLE IF NOT EXISTS '));
+ await database.prepare("INSERT OR IGNORE INTO recovery_head(authorityId,epoch,gate,checkpoint) VALUES ('synthetic-authority',0,'open','synthetic-initial')").run();
+}

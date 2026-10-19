@@ -1,5 +1,5 @@
 {
-  // Copy outside the checkout. Resolve the two operational IDs there, and make
+  // Copy outside the checkout. Resolve the operational IDs there, and make
   // main/migrations_dir absolute before using the external config file.
   "name": "aimharder-mcp-pilot-test",
   "account_id": "REPLACE_WITH_ACCOUNT_ID",
@@ -12,13 +12,18 @@
   "send_metrics": false,
   "observability": { "enabled": false },
   "routes": [{ "pattern": "pilot-test.ahmcp.link", "custom_domain": true }],
-  "vars": { "BASE_URL": "https://pilot-test.ahmcp.link" },
+  "vars": { "BASE_URL": "https://pilot-test.ahmcp.link", "RECOVERY_AUTHORITY_ID": "REPLACE_WITH_PINNED_AUTHORITY_ID" },
   "d1_databases": [
     {
       "binding": "AUTH_DB",
       "database_name": "aimharder-mcp-pilot-test-auth",
       "database_id": "REPLACE_WITH_TEST_DATABASE_ID",
       "migrations_dir": "./migrations"
+    },
+    {
+      "binding": "RECOVERY_DB",
+      "database_name": "REPLACE_WITH_INDEPENDENT_RECOVERY_DATABASE_NAME",
+      "database_id": "REPLACE_WITH_INDEPENDENT_RECOVERY_DATABASE_ID"
     }
   ],
   "durable_objects": {
@@ -38,3 +43,7 @@
 // and VAULT_ACTIVE_KEY_ID as protected platform secrets. Namespace creation is
 // an operator deployment action; retain SQLite (not legacy new_classes).
 // See ../docs/hosted-aimharder-connection.md. Never put keys in this manifest.
+
+// Deletion/restore stage: RECOVERY_DB is independent and MUST NOT be restored
+// with AUTH_DB. Bootstrap its pinned head through the trusted operator process;
+// missing bindings/head fail closed. See ../docs/hosted-account-deletion.md.
