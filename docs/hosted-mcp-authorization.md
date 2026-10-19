@@ -8,6 +8,8 @@ Current implementation status (2026-10-19): tickets #70–#83 now supply all 18 
 
 ## Boundary and behavior
 
+The production Worker configuration must include `global_fetch_strictly_public` alongside `nodejs_compat`. The maintained JWT verifier fetches the configured canonical `/api/auth/jwks`; [Cloudflare's flag contract](https://developers.cloudflare.com/workers/configuration/compatibility-flags/#global-fetch-strictly-public) routes an own-zone global `fetch()` through the public front door, permitting it to re-enter the same custom-domain Worker. Without the flag, that fetch can target the zone origin while an ordinary external JWKS request succeeds. Retain canonical issuer/audience/key verification, current-grant checks and exact resource policy; this routing setting does not supply authentication or bypass it. Local tests with a same-origin outbound adapter do not establish the deployed front-door path.
+
 | Public boundary | Behavior |
 | --- | --- |
 | `POST /mcp` without usable authorization | Maintained 401 challenge advertises protected resource discovery. Current-grant failures also return 401 with discovery. |
@@ -82,6 +84,12 @@ On 2026-10-18, Node 24 and the pinned real workerd/D1 runtime passed twelve new 
 Offline preparation was separately checked for private file/directory modes, safe callback rejection and application of its generated SQL to a disposable SQLite schema. All hosted tests, typecheck and build results are recorded in [validation](validation.md). Local tests do not prove internet client interoperability, deployed CPU/cost, live upstream connectivity, account coordination, backup/restore enforcement, full role controls or production launch. The local implementation performed no provider action, real OAuth grant, email or AimHarder operation. The later isolated deployment is recorded separately below.
 
 ## Isolated deployment evidence
+
+### Actual ChatGPT discovery defect and proposed routing correction (2026-10-19)
+
+The owner completed actual ChatGPT OAuth and the operator observed maintained consent/refresh/current-grant records. Subsequent ChatGPT tool refresh repeatedly failed: a bounded provider trace classified `POST /mcp` as an HTTP 500 exception with `Jwks failed: <none>`, while an external request to the canonical JWKS endpoint returned 200 with one key. A credential-free probe creates a fresh ephemeral synthetic EdDSA key and token with an unknown key ID, then requests discovery. It reproduced 500 instead of the required 401 rejection, reaching the maintained verification path without owner tokens or any sporting call. This is a routing/authentication infrastructure failure, not evidence of a protocol or schema incompatibility.
+
+The minimal candidate adds only the documented compatibility flag to the deployment template; it changes no JWT/grant verifier, registration policy, public endpoint or transport mode. **Actual corrected deployment, the same negative probe returning 401 and ChatGPT tool-refresh success remain pending.** A successful negative probe alone would establish rejection after key retrieval, not full positive client discovery/query/refresh acceptance. Preserve the already-authorized environment, bindings, keys, recovery authority and no-purchase boundary during the operator's separate rollout.
 
 The operator then applied exactly the reviewed `0004-mcp-grants.sql` once to the isolated D1. Read-back confirmed both application tables and the exact generation columns, zero initial grant/revocation rows and an empty `foreign_key_check`. The existing initial migrations were not replayed; the direct-API/manual migration history, including the prior account-method index, still requires explicit ledger adoption before Wrangler migration commands. Reviewed integration `58354e4` was deployed as a code-only update with pinned Wrangler 4.151.1. Deployment succeeded; the reported 137 ms Worker startup is not authentication/request CPU, load or billing evidence. All eleven configured-mail anonymous HTTPS checks passed. Fresh actual metadata matched the isolated issuer/authorization/token endpoints and MCP resource, advertising `mcp:access`, S256 and refresh without DCR/CIMD; anonymous `/mcp` remained 401.
 
