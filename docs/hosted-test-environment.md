@@ -48,6 +48,8 @@ The named existing Workers and the root service origin are outside this environm
 
 ## Standard pinned deployment setup
 
+Current deployment requirement: preserve compatibility date `2026-10-12` and include **both** `nodejs_compat` and `global_fetch_strictly_public` in the private effective configuration. The latter is the [canonical self-JWKS routing correction](hosted-mcp-authorization.md#actual-chatgpt-discovery-defect-and-proposed-routing-correction-2026-10-19); verify actual deployed flags independently of the template/build. The newly proposed flag has not yet passed its provider rollout and original discovery repro. Earlier activation and anonymous checks did not exercise that authenticated own-zone fetch path.
+
 The private hosted package pins official Wrangler `4.151.1`, matching the Miniflare version already exercised by the Worker feasibility gate. Use its ordinary commands, not a separate deployment framework. Install root and hosted dependencies with their frozen lockfiles, then run from `hosted/`:
 
 ```sh
