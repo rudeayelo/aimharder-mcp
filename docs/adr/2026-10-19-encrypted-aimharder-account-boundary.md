@@ -1,6 +1,6 @@
 # ADR: encrypted AimHarder connections and an account operation boundary
 
-Status: accepted implementation decision on 2026-10-19 for [issue #74](https://github.com/rudeayelo/aimharder-mcp/issues/74). Local synthetic validation is recorded in the [connection runbook](../hosted-aimharder-connection.md). Platform key custody, deployed namespace activation and actual target-runtime AimHarder access remain separate operator gates.
+Status: accepted implementation decision on 2026-10-19 for [issue #74](https://github.com/rudeayelo/aimharder-mcp/issues/74). Local synthetic validation and subsequent owner-managed key custody/isolated namespace activation are recorded separately in the [connection runbook](../hosted-aimharder-connection.md). Actual target-runtime AimHarder access and controlled platform rotation/recovery remain operator gates.
 
 ## Context
 
@@ -28,4 +28,4 @@ A module-global client cache cannot provide a reliable tenant/operation boundary
 
 This decision partially implements the earlier runtime/custody requirements; it does not supersede their lifecycle, role, backup or real-client requirements. Preparation state, dispatch fencing, durable action consumption and original-account reconciliation must be added before any hosted sporting write. Replacement, disconnection, suspension/deletion and restoration that preserves later revocations remain later tickets. Losing in-memory state requires fresh authentication/preparation, never reconstruction of write permission. Key-only rewrap may drop the in-memory session safely; it does not change client grants.
 
-The maintained portal/Google/Resend/MCP authorization implementation remains intact. SQLite-backed object availability on Free does not establish this account’s successful deployment, usage/cost or the EUR 10 target. No purchase, plan change, namespace deployment, live credential submission or upstream write is established by local validation.
+The maintained portal/Google/Resend/MCP authorization implementation remains intact. SQLite-backed object availability on Free does not establish usage/cost or the EUR 10 target. Local validation alone establishes no purchase, plan change, namespace deployment, live credential submission or upstream write. The separate operator activation record establishes this isolated account’s key custody and namespace/schema/code deployment without changing this decision; upstream connection and controlled rotation/recovery remain pending.
