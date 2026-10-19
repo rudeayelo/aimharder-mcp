@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { AimHarderClient, type AccountContext, publicationRecoveryFacts, type ActivityPublicationRecovery, type BookingCancellationDispatch, type BookingCreationDispatch } from '../../src/client.js';
+import { AimHarderClient, type ActivityDeletionDispatch, type AccountContext, publicationRecoveryFacts, type ActivityPublicationRecovery, type BookingCancellationDispatch, type BookingCreationDispatch } from '../../src/client.js';
 import { gymIdSchema, readConfiguration, type Configuration } from '../../src/config.js';
 import { exerciseSearchQuerySchema } from '../../src/exercise-search.js';
 import { exercise1RMQuerySchema } from '../../src/exercise-records.js';
@@ -9,6 +9,7 @@ import { classQuerySchema } from '../../src/classes.js';
 import { bookingCancellationQuerySchema, lateCancellationExecutionSchema, bookingCreationQuerySchema, bookingExecutionSchema } from '../../src/booking-preparation.js';
 import { publicationQuerySchema, publicationExecutionSchema } from '../../src/activity-publication.js';
 import { requireActivityPermission } from './activity-policy.js';
+import { activityDeletionQuerySchema, activityDeletionExecutionSchema } from '../../src/activity-deletion.js';
 import { AccountActionCoordinator } from './action-coordination.js';
 import { AimHarderError } from '../../src/errors.js';
 import { safeError } from '../../src/errors.js';
@@ -83,6 +84,7 @@ export class AccountConnection {
       }
       if (!row) {
         this.#client = undefined;
+        if(operation.kind==='execute-activity-deletion'&&await this.#actions.hasPossibleDispatch(subject,activityDeletionExecutionSchema.parse(operation.input).actionReference))throw new AimHarderError('ACTION_OUTCOME_UNCERTAIN');
         if(['execute-activity-publication','execute-booking-creation','execute-booking-cancellation','execute-late-booking-cancellation'].includes(operation.kind)&&await this.#actions.hasPossibleDispatch(subject,(operation.kind==='execute-activity-publication'?publicationExecutionSchema:operation.kind==='execute-late-booking-cancellation'?lateCancellationExecutionSchema:bookingExecutionSchema).parse(operation.input).actionReference))throw new AimHarderError('ACTION_OUTCOME_UNCERTAIN');
         return Response.json({ status: 'not-connected' });
       }
@@ -164,6 +166,28 @@ export class AccountConnection {
             catch{return {action:'cancel' as const,gym:facts.preview.gym,target:facts.preview.target,credit:facts.preview.credit,status:'uncertain' as const,observedState:'unknown' as const,notices:['The original cancellation may have been sent. Original-account read-back is unavailable; inspect it before preparing a new action. No write was retried.']};}
           }});
         if('actionReference' in result&&typeof result.actionReference==='string'&&'expiresAt' in result&&typeof result.expiresAt==='string')this.#actions.remember(result.actionReference,{action:'booking-cancel-late',revision:row.revision,identity:payload.identity,expires:Date.parse(result.expiresAt),gymId:result.gym.id});
+        return Response.json({status:'queried',result});
+      }
+      if(operation.kind==='prepare-activity-deletion'){
+        await requireActivityPermission(this.env,subject,'deletion');
+        const result=await this.#client.client.prepareActivityDeletion(activityDeletionQuerySchema.parse(operation.input));
+        await requireActivityPermission(this.env,subject,'deletion');
+        if('actionReference' in result&&result.actionReference)this.#actions.remember(result.actionReference,{action:'activity-delete',revision:row.revision,identity:payload.identity,expires:Date.parse(result.expiresAt),gymId:result.gym.id});
+        return Response.json({status:'queried',result});
+      }
+      if(operation.kind==='execute-activity-deletion'){
+        const query=activityDeletionExecutionSchema.parse(operation.input);const client=this.#client.client;
+        await requireActivityPermission(this.env,subject,'deletion');
+        const authorize=async()=>{
+          if(!await currentGrant(this.env,operation.authorization?.grantId,subject,operation.authorization?.clientId,row.revision,'deletion'))throw new Error('Execution authorization unavailable');
+        };
+        const result=await this.#actions.execute<Awaited<ReturnType<AimHarderClient['executeActivityDeletion']>>|Awaited<ReturnType<AimHarderClient['reconcileActivityDeletion']>>,ActivityDeletionDispatch>({action:'activity-delete',invalidReference:'ACTIVITY_REFERENCE_INVALID',subject,revision:row.revision,identity:payload.identity,reference:query.actionReference,...(query.gymId?{gymId:query.gymId}:{}),authorize,
+          dispatch:(beforeDispatch:(facts:ActivityDeletionDispatch)=>Promise<void>,afterDispatch)=>client.executeActivityDeletion(query,{beforeDispatch,afterDispatch}),
+          recover:async(facts:ActivityDeletionDispatch,originalRevision)=>{
+            if(query.sourceActivityId!==facts.preview.target.sourceActivityId||(query.gymId!==undefined&&query.gymId!==facts.preview.gym.id))throw new AimHarderError('ACTIVITY_REFERENCE_INVALID');
+            try{if(originalRevision!==row.revision||facts.identity!==payload.identity)throw new AimHarderError('IDENTITY_MISMATCH');return await client.reconcileActivityDeletion(facts);}
+            catch{return {status:'uncertain' as const,preview:facts.preview,responseStatus:facts.outcome?.responseStatus??'uncertain' as const,observedState:'incomplete' as const,readbackCoverage:{status:'incomplete' as const,completedDates:[],reason:'Original-account read-back is unavailable.'},notices:['The original deletion may have been sent. Original-account read-back is unavailable. Inspect it before preparing another deletion; no write was retried.']};}
+          }});
         return Response.json({status:'queried',result});
       }
       if(operation.kind==='prepare-booking-creation'){

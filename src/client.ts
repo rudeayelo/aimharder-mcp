@@ -13,7 +13,7 @@ import { calculatePersonalLoad, gymLocalToday, percentageExercise, type Personal
 import { parseUpcomingBookings, parseBookingHistory } from './bookings.js';
 import { parsePublicationAudience, publicationExecutionSchema, publicationPreview, publicationQuerySchema, PublicationPreparationStore, verifyCopySource, withHistoricalSuggestions, type CopySource, type PublicationAudience, type PublicationPreview, type PublicationQuery } from './activity-publication.js';
 import { buildActivityForm, matchesPublication, publicationResponse } from './activity-publication-write.js';
-import { activityDeletionQuerySchema, activityDeletionExecutionSchema, deletionPreview, sameDeletionTarget, ActivityDeletionPreparationStore, type ActivityDeletionQuery, type ActivityDeletionExecution } from './activity-deletion.js';
+import { activityDeletionQuerySchema, activityDeletionExecutionSchema, deletionPreview, sameDeletionTarget, ActivityDeletionPreparationStore, type ActivityDeletionQuery, type ActivityDeletionExecution, type DeletionPreview } from './activity-deletion.js';
 import { atPublishedCancellationBoundary, bookingCandidates, bookingCreationQuerySchema, bookingCancellationQuerySchema, bookingExecutionSchema, lateCancellationExecutionSchema, cancellationCandidates, BookingPreparationStore, nearReportedBookingCutoff, type BookingCreationQuery, type BookingCreationPreview, type BookingCancellationQuery, type BookingCancellationPreview, type BookingExecution, type LateCancellationExecution } from './booking-preparation.js';
 
 const loginUrl = 'https://login.aimharder.es/api/login';
@@ -81,6 +81,7 @@ function publicationSourceIntentDigest(preview:PublicationPreview,copy:CopySourc
   const originalForm=[...buildActivityForm(copy,{...preview,blockResults:[],actualLoads:[]})];
   return createHash('sha256').update(JSON.stringify({source:preview.source,prescription,originalForm})).digest('hex');
 }
+export interface ActivityDeletionDispatch { identity:number; boxId:number; preview:Pick<DeletionPreview,'gym'> & {target:Pick<DeletionPreview['target'],'sourceActivityId'|'date'>}; outcome?:{responseStatus:'http-ok'|'uncertain'}; }
 export interface ActionExecutionCoordination<F = BookingCreationDispatch> { beforeDispatch(facts: F): Promise<void>; afterDispatch?(facts: F): Promise<void>; }
 
 /** One account, an in-memory session, and a closed set of upstream operations. */
@@ -591,7 +592,7 @@ export class AimHarderClient {
     });
   }
 
-  executeActivityDeletion(input: ActivityDeletionExecution) {
+  executeActivityDeletion(input: ActivityDeletionExecution, coordination?: ActionExecutionCoordination<ActivityDeletionDispatch>) {
     const parsed = activityDeletionExecutionSchema.safeParse(input);
     if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_ACTIVITY_DELETION_EXECUTION_QUERY'));
     const query = parsed.data;
@@ -621,11 +622,33 @@ export class AimHarderClient {
       }
 
       let responseStatus: 'http-ok' | 'uncertain' = 'uncertain';
+      let dispatchAuthorized = coordination === undefined;
+      const facts: ActivityDeletionDispatch = {identity:this.#accountId!,boxId:boxId!,preview:{gym:preview.gym,target:{sourceActivityId:query.sourceActivityId,date:preview.target.date}}};
       try {
-        const response = await this.#request({ kind: 'activity-delete', gymId: gym.id, sourceId: query.sourceActivityId });
+        const response = await this.#request({ kind: 'activity-delete', gymId: gym.id, sourceId: query.sourceActivityId },coordination ? async()=>{
+          await coordination.beforeDispatch(structuredClone(facts));dispatchAuthorized=true;
+        }:undefined);
         if (z.record(z.string(), z.unknown()).safeParse(response).success) responseStatus = 'http-ok';
-      } catch { /* A DELETE may have reached AimHarder. Never retry it. */ }
+      } catch(error) { if(!dispatchAuthorized)throw error; /* A possibly sent DELETE is never retried. */ }
+      facts.outcome={responseStatus};
+      let recoveryIssue=false;
+      try{await coordination?.afterDispatch?.(facts);}catch{recoveryIssue=true;}
+      const result=await this.#reconcileActivityDeletion(facts,recover);
+      return {...result,preview,...(recoveryIssue?{notices:[...result.notices,'Recovery details could not be saved. Inspect the original entry before preparing another deletion; no write was retried.']}: {})};
+    });
+  }
 
+  /** Trusted read-only recovery. Minimal target facts cannot authorize another DELETE. */
+  reconcileActivityDeletion(facts:ActivityDeletionDispatch) {
+    return this.#query(facts.preview.gym.id,async(_gyms,{gym,boxId},recover)=>{
+      if(this.#accountId!==facts.identity||boxId!==facts.boxId||gym.timeZone!==facts.preview.gym.timeZone||gym.timeZoneStatus!=='user-confirmed'||gym.name!==facts.preview.gym.name)throw new AimHarderError('IDENTITY_MISMATCH');
+      return this.#reconcileActivityDeletion(facts,recover,true);
+    });
+  }
+
+  async #reconcileActivityDeletion(facts:ActivityDeletionDispatch,recover:()=>Promise<void>,recovered=false) {
+      const {preview,boxId}=facts;const gym=preview.gym;const query=preview.target;
+      const month=preview.target.date.slice(0,7);const responseStatus=facts.outcome?.responseStatus??'uncertain';
       let observedState: 'absent' | 'still-visible' | 'incomplete' | 'conflicting-identity' = 'incomplete';
       try {
         const read = async (operation: { kind: 'activity-calendar'; month: string } | { kind: 'activity-detail'; sourceId: number }) => {
@@ -673,7 +696,7 @@ export class AimHarderClient {
         : { status: 'incomplete' as const, completedDates: [], reason: observedState === 'conflicting-identity'
           ? 'The target identity or date conflicted with the prepared own entry.' : 'The account calendar or target detail could not be completely verified.' };
       return { status, preview, responseStatus, observedState, readbackCoverage, notices: [
-        'Exactly one DELETE was attempted at the verified gym endpoint. It was not retried.',
+        recovered ? 'An earlier deletion may have been sent. Only fresh original-account reads were requested; no DELETE was replayed.' : 'Exactly one DELETE was attempted at the verified gym endpoint. It was not retried.',
         observedState === 'absent' ? 'The entry was absent from a fresh account calendar view. This does not prove permanent deletion or any effect on RM history.'
           : observedState === 'still-visible' ? 'The same own entry remains visible in a fresh account calendar and detail view.'
             : observedState === 'conflicting-identity' ? 'The fresh view has conflicting target identity or date; the deletion outcome is uncertain.'
@@ -681,7 +704,6 @@ export class AimHarderClient {
         responseStatus === 'uncertain' ? 'The DELETE transport or response was uncertain. A new attempt requires a new preview and confirmation.'
           : 'The HTTP response was readable, but its deletion semantics have not been verified.',
       ] };
-    });
   }
 
   getPublishedWorkouts(input: WorkoutQuery) {
