@@ -36,12 +36,13 @@ export async function issueGrantClaim(env: HostedEnvironment, grant: Grant | und
   if (!await currentGrant(env, grant.id, grant.userId, grant.clientId)) invalidGrant();
   return { [grantClaim]: grant.id };
 }
-export async function currentGrant(env: HostedEnvironment, id: unknown, userId: unknown, clientId: unknown): Promise<boolean> {
-  if (typeof id !== 'string' || typeof userId !== 'string' || typeof clientId !== 'string' || !await participant(env, userId)) return false;
+export async function currentGrant(env: HostedEnvironment, id: unknown, userId: unknown, clientId: unknown, connectionRevision?: string): Promise<boolean> {
+  if (typeof id !== 'string' || typeof userId !== 'string' || typeof clientId !== 'string') return false;
   return Boolean(await env.AUTH_DB.prepare(`SELECT g.id FROM portal_mcp_grant g JOIN oauthClient c ON c.clientId=g.clientId
-    WHERE g.id=? AND g.userId=? AND g.clientId=? AND g.revokedAt IS NULL AND COALESCE(c.disabled,0)=0
-    AND COALESCE((SELECT generation FROM portal_mcp_revocation r WHERE r.userId=g.userId AND r.clientId=g.clientId),0)=g.revocationGeneration`)
-    .bind(id, userId, clientId).first());
+    JOIN portal_participant p ON p.userId=g.userId JOIN user u ON u.id=p.userId
+    WHERE p.status='active' AND u.emailVerified=1 AND g.id=? AND g.userId=? AND g.clientId=? AND g.revokedAt IS NULL AND COALESCE(c.disabled,0)=0
+    AND COALESCE((SELECT generation FROM portal_mcp_revocation r WHERE r.userId=g.userId AND r.clientId=g.clientId),0)=g.revocationGeneration${connectionRevision === undefined ? '' : ' AND EXISTS (SELECT 1 FROM portal_aimharder_connection a WHERE a.userId=g.userId AND a.revision=?)'}`)
+    .bind(id, userId, clientId, ...(connectionRevision === undefined ? [] : [connectionRevision])).first());
 }
 export async function revokeClient(env: HostedEnvironment, userId: string, clientId: string) {
   const now = Date.now();

@@ -65,6 +65,9 @@ function isFatalPersonalRead(error: unknown) {
   ].includes(error.code);
 }
 
+export interface BookingCreationDispatch { identity: number; boxId: number; sourceId: number; preview: BookingCreationPreview; }
+export interface ActionExecutionCoordination { beforeDispatch(facts: BookingCreationDispatch): Promise<void>; }
+
 /** One account, an in-memory session, and a closed set of upstream operations. */
 export class AimHarderClient {
   #cookies = new CookieJar();
@@ -171,7 +174,7 @@ export class AimHarderClient {
     });
   }
 
-  executeBookingCreation(input: BookingExecution) {
+  executeBookingCreation(input: BookingExecution, coordination?: ActionExecutionCoordination) {
     const parsed = bookingExecutionSchema.safeParse(input);
     if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_BOOKING_EXECUTION_QUERY'));
     const query = parsed.data;
@@ -199,10 +202,34 @@ export class AimHarderClient {
       }
       let response: unknown;
       let writeIssue = false;
+      let dispatchAuthorized = coordination === undefined;
       try {
-        response = await this.#request({ kind: 'book-create', gymId: gym.id, sourceId: entry.sourceId, date: target.date });
+        response = await this.#request({ kind: 'book-create', gymId: gym.id, sourceId: entry.sourceId, date: target.date }, coordination ? async () => {
+          await coordination.beforeDispatch({identity:this.#accountId!,boxId,sourceId:entry.sourceId,preview:structuredClone(preview)});
+          dispatchAuthorized = true;
+        } : undefined);
         if (!z.record(z.string(), z.unknown()).safeParse(response).success) writeIssue = true;
-      } catch { writeIssue = true; }
+      } catch (error) {
+        // A trusted denial happens before fetch and must remain a zero-send error.
+        if (!dispatchAuthorized) throw error;
+        writeIssue = true;
+      }
+      return this.#reconcileBookingCreation({identity:this.#accountId!,boxId,sourceId:entry.sourceId,preview},response,writeIssue,recover);
+    });
+  }
+
+  /** Trusted read-only recovery of an original dispatch; never reconstructs permission. */
+  reconcileBookingCreation(facts: BookingCreationDispatch) {
+    return this.#query(facts.preview.gym.id, async (_gyms,{gym,boxId},recover)=>{
+      if(this.#accountId!==facts.identity || boxId!==facts.boxId || gym.timeZone!==facts.preview.gym.timeZone || gym.timeZoneStatus!=='user-confirmed' || gym.name!==facts.preview.gym.name) throw new AimHarderError('IDENTITY_MISMATCH');
+      return this.#reconcileBookingCreation(facts,undefined,true,recover,true);
+    });
+  }
+
+  async #reconcileBookingCreation(facts: BookingCreationDispatch,response:unknown,writeIssue:boolean,recover:()=>Promise<void>,recovered=false) {
+    const {preview,boxId,sourceId}=facts;const {gym,target}=preview;
+    const base={action:'create' as const,gym,target};
+    const matchesTarget=(item:{date:string|null;startTime:string|null;timeLabel:string;classType:{name:string|null}})=>item.date===target.date&&item.startTime===target.startTime&&item.timeLabel.endsWith(target.endTime)&&(item.classType.name===target.className||item.classType.name===null);
       let scheduleState: 'unbooked' | 'booked' | 'waitlisted' | 'unknown' = 'unknown';
       let conflicting = false;
       let reconciliationIssue = false;
@@ -216,7 +243,7 @@ export class AimHarderClient {
           }
         };
         const after = bookingCandidates(await read({ kind: 'classes', gymId: gym.id, boxId, date: target.date }), gym.id, target.date, gym.timeZone, target);
-        if (after.length === 1 && after[0]!.sourceId === entry.sourceId) scheduleState = after[0]!.currentState;
+        if (after.length === 1 && after[0]!.sourceId === sourceId) scheduleState = after[0]!.currentState;
         const upcoming = parseUpcomingBookings(await read({ kind: 'upcoming', gymId: gym.id, boxId }), gym.timeZone);
         const matches = upcoming.filter(matchesTarget);
         // This view has no verified horizon; absence cannot contradict a fresh daily schedule.
@@ -228,15 +255,14 @@ export class AimHarderClient {
         : scheduleState === 'waitlisted' ? 'waitlisted' as const
           : scheduleState === 'unbooked' && denied ? 'rejected' as const : 'uncertain' as const;
       return { ...base, status, observedState: scheduleState, notices: [
-        'One standard booking request was attempted. Fresh booking reads, not the HTTP response alone, determine the reported state.',
+        recovered ? 'An earlier booking operation may have been sent. Only fresh original-account reads were requested; no write was replayed.' : 'One standard booking request was attempted. Fresh booking reads, not the HTTP response alone, determine the reported state.',
         status === 'confirmed' ? 'A fresh schedule read reported a confirmed booking.'
           : status === 'waitlisted' ? 'A fresh schedule read reported a waitlist state; no further write was sent.'
             : status === 'rejected' ? 'The source returned a denial indication and the fresh schedule remains unbooked. Denial semantics remain unverified live.'
               : 'The outcome is uncertain. Check the booking directly before preparing a new action; no automatic write retry was sent.',
-        ...(writeIssue ? ['The write response was incomplete; use fresh booking reads to assess the outcome.'] : []),
+        ...(writeIssue ? [recovered ? 'The original write response is unavailable; use fresh booking reads to assess the outcome.' : 'The write response was incomplete; use fresh booking reads to assess the outcome.'] : []),
         ...(reconciliationIssue ? ['A follow-up view could not be read completely; booking state remains uncertain.'] : []),
       ] };
-    });
   }
 
   prepareBookingCancellation(input: BookingCancellationQuery) {
@@ -965,7 +991,7 @@ export class AimHarderClient {
     return [...gyms.values()];
   }
 
-  async #request(operation: { kind: 'activity-calendar'; month: string } | { kind: 'activity-detail'; sourceId: number } | { kind: 'activity-delete'; gymId: string; sourceId: number } | 'login' | 'identity' | { kind: 'classes'; gymId: string; boxId: number; date: string } | { kind: 'book-create'; gymId: string; sourceId: number; date: string } | { kind: 'book-cancel'; gymId: string; reservationId: number; late: boolean } | { kind: 'activity-post'; gymId: string; form: FormData } | { kind: 'upcoming'; gymId: string; boxId: number } | { kind: 'gym-page'; gymId: string } | { kind: 'account-settings' } | { kind: 'feed'; gymId: string; publisher: number } | { kind: 'workout'; gymId: string; sourceId: number } | { kind: 'copy-source'; gymId: string; sourceId: number } | { kind: 'exercise-detail'; gymId: string; exerciseId: number; accountId: number } | { kind: 'exercise-search'; gymId: string; name: string }): Promise<unknown> {
+  async #request(operation: { kind: 'activity-calendar'; month: string } | { kind: 'activity-detail'; sourceId: number } | { kind: 'activity-delete'; gymId: string; sourceId: number } | 'login' | 'identity' | { kind: 'classes'; gymId: string; boxId: number; date: string } | { kind: 'book-create'; gymId: string; sourceId: number; date: string } | { kind: 'book-cancel'; gymId: string; reservationId: number; late: boolean } | { kind: 'activity-post'; gymId: string; form: FormData } | { kind: 'upcoming'; gymId: string; boxId: number } | { kind: 'gym-page'; gymId: string } | { kind: 'account-settings' } | { kind: 'feed'; gymId: string; publisher: number } | { kind: 'workout'; gymId: string; sourceId: number } | { kind: 'copy-source'; gymId: string; sourceId: number } | { kind: 'exercise-detail'; gymId: string; exerciseId: number; accountId: number } | { kind: 'exercise-search'; gymId: string; name: string }, beforeDispatch?: () => Promise<void>): Promise<unknown> {
     let url: string;
     if (typeof operation === 'string') url = operation === 'login' ? loginUrl : identityUrl;
     else {
@@ -1012,6 +1038,8 @@ export class AimHarderClient {
       init.body = new URLSearchParams({ id: String(operation.reservationId), late: operation.late ? '1' : '0' }).toString();
     }
     if (typeof operation === 'object' && operation.kind === 'activity-post') init.body = operation.form;
+    // Last trusted admission/fence point: cookies and body are ready; fetch follows.
+    if (beforeDispatch) await beforeDispatch();
     try {
       const response = await fetch(url, init);
       if (response.status === 401) {

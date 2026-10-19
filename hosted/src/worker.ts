@@ -12,6 +12,7 @@ import { handleInvitations } from './invitations.js';
 import { currentGrant, grantClaim } from './oauth-grants.js';
 import { handleConnections } from './connections.js';
 import { accountOperation } from './account-connection.js';
+import { registerBookingCreation } from './booking-creation.js';
 import { registerScheduleQueries } from './schedule-queries.js';
 import { handleAimHarderSettings } from './aimharder-settings.js';
 export { AccountConnection } from './account-connection.js';
@@ -84,7 +85,7 @@ export async function handleHostedRequest(
               }
             }
           );
-          if (!resolveConnection && claims.sub) registerScheduleQueries(server, env, claims.sub);
+          if (!resolveConnection && claims.sub) { registerScheduleQueries(server, env, claims.sub); registerBookingCreation(server, env, claims.sub, {grantId:String(claims[grantClaim]),clientId:String(claims.client_id)}); }
           return server;
         },
         { legacy: 'reject' }

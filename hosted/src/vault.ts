@@ -32,3 +32,20 @@ export async function decryptConnection(env: VaultEnvironment, row: ConnectionRo
   if (!Number.isSafeInteger(payload.identity) || payload.identity <= 0) throw new Error('Vault unavailable');
   return payload;
 }
+
+/** Minimal operation facts use a distinct purpose, never a credential snapshot. */
+export async function encryptActionFacts(env:VaultEnvironment,userId:string,revision:string,referenceDigest:string,facts:unknown):Promise<string>{
+ const keyId=env.VAULT_ACTIVE_KEY_ID;
+ if(!keyId||!/^[a-zA-Z0-9_-]{1,64}$/.test(keyId))throw new Error('Vault unavailable');
+ const iv=crypto.getRandomValues(new Uint8Array(12));
+ const additionalData=new TextEncoder().encode(JSON.stringify(['aimharder-action',1,userId,revision,referenceDigest,keyId]));
+ const ciphertext=await crypto.subtle.encrypt({name:'AES-GCM',iv,additionalData},await key(env,keyId),new TextEncoder().encode(JSON.stringify(facts)));
+ return JSON.stringify({version:1,keyId,iv:encoded(iv),ciphertext:encoded(new Uint8Array(ciphertext))});
+}
+export async function decryptActionFacts(env:VaultEnvironment,userId:string,revision:string,referenceDigest:string,value:string):Promise<unknown>{
+ const envelope=envelopeSchema.parse(JSON.parse(value));const iv=bytes(envelope.iv);
+ if(iv.byteLength!==12||envelope.ciphertext.length>24000)throw new Error('Vault unavailable');
+ const additionalData=new TextEncoder().encode(JSON.stringify(['aimharder-action',1,userId,revision,referenceDigest,envelope.keyId]));
+ const plaintext=await crypto.subtle.decrypt({name:'AES-GCM',iv,additionalData},await key(env,envelope.keyId),bytes(envelope.ciphertext));
+ return JSON.parse(new TextDecoder().decode(plaintext));
+}
