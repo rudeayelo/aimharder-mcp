@@ -1,5 +1,7 @@
 # Hosted personal activity and RM queries
 
+Actual acceptance checkpoint, 2026-10-19: the separate installed native Codex Apps pilot connector successfully called exercise search, own 1RM and progression, but two 2026-10-19 personal-activity calls returned safe `INVALID_ACTIVITY_RESPONSE`. A same-account/gym one-day 2026-09-19 counterprobe then passed with complete requested-date coverage, narrowing the failure to current-month data/schema/semantics without identifying a field. Its outer `INVALID_ARGUMENT` label does not establish an invalid application query. The upstream shape/parser stage is not yet observed, so no schema relaxation or complete result for the failing interval is inferred. These native calls do not establish the corresponding browser ChatGPT/Hermes query families; see the [client ledger](hosted-pilot-acceptance.md#separate-native-codex-apps-read-only-checkpoint). Historical synthetic coverage below remains valid and distinct from this unresolved actual response.
+
 Issue [#76](https://github.com/rudeayelo/aimharder-mcp/issues/76) exposes four existing own-account read tools over the protected hosted `/mcp` endpoint. An invited, verified, active participant first connects their own AimHarder account through the [portal](hosted-aimharder-connection.md), then authorizes an MCP client through the [maintained OAuth flow](hosted-mcp-authorization.md). Both `admin` and `user` roles have these read capabilities. Credentials, member IDs and upstream URLs are never tool inputs.
 
 | Tool | Example arguments | Result limits |
