@@ -77,6 +77,15 @@ export class AccountConnection {
         return Response.json({ status: 'connected', ...context });
       }
       if (operation.kind !== 'context' && operation.kind !== 'status') return Response.json({ status: 'unsupported' }, { status: 404 });
+      if (operation.kind === 'status') {
+        // Discovery stays usable when membership changes invalidate selection.
+        // The same client still verifies its pinned identity before returning gyms.
+        const { gyms } = await this.#client.client.verifyConnection();
+        const selectedGym = payload.configuration.defaultGym
+          ? gyms.find(gym => gym.id === payload.configuration.defaultGym)
+          : gyms.length === 1 ? gyms[0] : undefined;
+        return Response.json({ status: selectedGym ? 'connected' : 'selection-required', gyms, ...(selectedGym ? { selectedGym } : {}) });
+      }
       const context: AccountContext = await this.#client.client.getAccountContext(operation.gymId);
       return Response.json({ status: 'connected', ...context });
     } catch (error) {

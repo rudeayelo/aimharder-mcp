@@ -20,6 +20,8 @@ Initial connection verifies identity/memberships with the real API client before
 
 Each account object owns one in-memory API client per current connection envelope/revision. On restart it decrypts D1, constructs an empty session and verifies the pinned upstream identity. Authentication failure stays local to that client. All existing fixed origins, redirects, body limits, timeout and bounded reauthentication safeguards remain in the shared client. Current admission is checked again at the account boundary, in addition to the MCP grant checks.
 
+Separate own-account membership discovery/status from selected-gym MCP query validation. If a changed membership makes the default missing or inaccessible, return safe `selection-required` status with current verified choices and keep the settings form available, without requesting stored credentials again. Require an explicit accessible selection; MCP retains its original missing/inaccessible-default errors until repair. The same owned client checks the pinned identity before any membership is displayed; this is not a fallback to another account or an inferred default.
+
 ## Alternatives and consequences
 
 A module-global client cache cannot provide a reliable tenant/operation boundary or survive eviction. Reimplementing upstream authentication would duplicate the verified API client and weaken its contract. Storing plaintext credentials in an actor/database or deriving the vault key from an authentication secret would not satisfy separate recoverable custody. D1 atomic coordination remains a possible alternative, but would need an equivalent operation-ordering design.

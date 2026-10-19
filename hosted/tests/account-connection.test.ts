@@ -237,3 +237,39 @@ test('the trusted rotation command rewraps encrypted rows with compare-and-swap,
   expect((await context(portalCookies.get('participant@example.invalid')!)).isError).toBe(true);
   expect(logins.length + identities.length).toBe(before);
 });
+
+test('membership changes leave verified choices available so the owner can repair a lost default through the browser without replacing credentials', async () => {
+  const cookie = portalCookies.get('participant@example.invalid')!;
+  profiles.get('upstream-a@example.invalid')!.gyms = [
+    {role:'client',gym:'New membership',centre_url:'new-gym.aimharder.es',boid:200},
+    {role:'client',gym:'Third membership',centre_url:'third-gym.aimharder.es',boid:201},
+  ];
+  await worker.dispose();
+  await start({second:Buffer.alloc(32,33).toString('base64')},'second');
+  expect(JSON.stringify(await context(cookie))).toContain('GYM_NOT_ACCESSIBLE');
+  const status = await worker.dispatchFetch(origin+'/api/portal/aimharder',{headers:{cookie}});
+  expect(status.status).toBe(200);
+  expect(await status.json()).toMatchObject({status:'selection-required',gyms:[{id:'new-gym',name:'New membership'},{id:'third-gym',name:'Third membership'}]});
+  const page = await worker.dispatchFetch(origin+'/aimharder',{headers:{cookie}});
+  const html = await page.text();
+  expect(html).toContain('action="/portal/aimharder/settings"');
+  expect(html).toContain('value="new-gym"');
+  expect(html).toContain('value="third-gym"');
+  expect(html).toContain('Choose a default gym');
+  expect(html).not.toContain('name="password"');
+  expect(html).not.toContain('name="username"');
+  expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{}},cookie)).status).toBe(400);
+  const missing = await worker.dispatchFetch(origin+'/portal/aimharder/settings',{method:'POST',headers:{origin,cookie,'content-type':'application/x-www-form-urlencoded'},body:'defaultGym=',redirect:'manual'});
+  expect(missing.status).toBe(422);
+  const retry = await missing.text();
+  expect(retry).toContain('action="/portal/aimharder/settings"');
+  expect(retry).not.toContain('name="password"');
+  expect(JSON.stringify(await context(cookie))).toContain('GYM_NOT_ACCESSIBLE');
+  const repair = await worker.dispatchFetch(origin+'/portal/aimharder/settings',{method:'POST',headers:{origin,cookie,'content-type':'application/x-www-form-urlencoded'},
+    body:new URLSearchParams({defaultGym:'third-gym','zone:third-gym':'Europe/London','zone:new-gym':''}).toString(),redirect:'manual'});
+  expect(repair.status).toBe(303);
+  expect(repair.headers.get('location')).toBe('/aimharder');
+  expect((await context(cookie)).structuredContent).toMatchObject({selectedGym:{id:'third-gym',name:'Third membership',timeZone:'Europe/London',timeZoneStatus:'user-confirmed'}});
+  expect((await context(portalCookies.get('other@example.invalid')!)).structuredContent).toMatchObject({selectedGym:{id:'shared-gym',name:'B gym'}});
+  expect((await post('/api/portal/aimharder',{username:'upstream-b@example.invalid',password:'private-replacement-canary'},cookie)).status).toBe(409);
+});
