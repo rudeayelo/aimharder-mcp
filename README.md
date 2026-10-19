@@ -74,7 +74,7 @@ Planned capabilities, without committed dates or versions:
 
 The hosted [MCP authorization runbook](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-mcp-authorization.md) covers maintained OAuth, trusted client provisioning and independent participant revocation. Actual ChatGPT/Hermes journeys remain pending final pilot acceptance.
 
-The hosted [AimHarder connection slice](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-aimharder-connection.md) adds encrypted recoverable credentials, verified gyms and isolated account operations with synthetic public HTTP/SDK and restart/rotation evidence. Platform key custody, deployed upstream connectivity and the remaining hosted features require separate validation; this does not change the local stdio setup.
+The hosted [AimHarder connection slice](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-aimharder-connection.md) adds encrypted recoverable credentials, verified gyms and isolated account operations with synthetic public HTTP/SDK and restart/rotation evidence. Owner-managed key custody, isolated upstream connection and controlled rotation/recovery are now verified; remaining hosted features and real-client acceptance are in progress. This does not change the local stdio setup.
 
 ## Contributing
 
@@ -85,3 +85,5 @@ Report bugs or propose changes in [GitHub Issues](https://github.com/rudeayelo/a
 ## License
 
 [MIT](LICENSE).
+
+The hosted [schedule, workout and booking-view queries](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-schedule-queries.md) retain their existing inputs/results, uncertainty and own-account calculated loads for both roles. Automated evidence uses real HTTP MCP and isolated account objects with synthetic upstream responses; actual ChatGPT/Hermes query acceptance remains pending.

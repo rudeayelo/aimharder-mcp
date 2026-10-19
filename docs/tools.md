@@ -2,6 +2,8 @@
 
 Version `0.4.0` exposes eighteen tools for one configured account, including read queries, booking previews and actions, own-account exercise RM queries, and activity publication/deletion previews and actions. Exact public artifact verification is recorded separately in [validation](validation.md). An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking and activity actions require a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
 
+The hosted service now exposes account context plus these existing four reads through authenticated HTTP MCP: `get_class_sessions`, `get_published_workouts`, `get_upcoming_bookings` and `get_booking_history`. Both roles retain the same strict inputs and successful results described below, routed through their own encrypted connection. See [remote schedule guidance](hosted-schedule-queries.md) for authorization, composition and the distinction between synthetic transport evidence and later real-client acceptance. The full hosted tool set remains in progress; this does not change local stdio.
+
 ## `get_account_context`
 
 Input: `{}` or `{"gymId":"another-accessible-gym"}`. Returns `account.authenticated`, `gyms`, `selectedGym` and `notices`. Each gym has an `id`, source `name`, `timeZone` and `timeZoneStatus` (`assumed` or `user-confirmed`). A query override does not change the default; multiple gyms require a configured default.
