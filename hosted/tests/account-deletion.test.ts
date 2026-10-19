@@ -112,7 +112,7 @@ const b = () => portalCookies.get('other@example.invalid')!;
 const session = (extra: Record<string,unknown> = {}) => ({id:501,time:'07:00 - 08:00',timeid:'0700_60',classId:10,className:'Metcon Ñ',ocupation:8,limit:20,limitc:20,enabled:1,resadmin:0,cancelledId:null,bookState:null,privateCoach:'private-canary',...extra});
 const daily = (rows: unknown[] = [session()]) => ({clasesDisp:'Clases disponibles',day:'Source label',bookings:rows,timetable:[{id:'0700_60',time:'07:00 - 08:00'}],seminars:[]});
 afterEach(()=>expect(unexpected.splice(0)).toEqual([]));
-beforeEach(()=>{requests.length=0; synthetic=()=>{return failOutbound();};});
+beforeEach(()=>{requests.length=0;writes=[];booked=new Set();mail.length=0;synthetic=()=>{return failOutbound();};});
 
 
 const target={date:'2026-10-25',className:'Metcon Ñ',startTime:'07:00',endTime:'08:00'};
@@ -280,4 +280,16 @@ test('restore preserves later suspension and role policy while discarding a disc
  const policyHtml=await worker.dispatchFetch(origin+'/admin/activity-access',{headers:{cookie:admin}}).then(r=>r.text());expect(policyHtml).toMatch(/user: Activity publication<select name="enabled"><option value="1">Enabled<\/option><option value="0" selected>/);
  expect((await post('/api/portal/participants/other-participant/reactivate',{},admin)).status).toBe(204);
  const fresh=await freshB();expect(JSON.stringify(await call(fresh,'get_account_context'))).toContain('not-connected');
+});
+
+test('a missing independent latest head fails closed across portal, authentication, recovery and MCP',async()=>{
+ const bearer=await token(a());const authority=await worker.getD1Database('RECOVERY_DB');
+ // Actual synthetic authority loss, never an internal authorization replacement.
+ await authority.exec('DELETE FROM recovery_head');
+ expect((await worker.dispatchFetch(origin+'/sign-in')).status).toBe(503);
+ expect((await worker.dispatchFetch(origin+'/account',{headers:{cookie:a()}})).status).toBe(503);
+ expect((await post('/api/auth/sign-in/email',{email:'participant@example.invalid',password:'synthetic-portal-password'})).status).toBe(503);
+ expect((await post('/api/auth/request-password-reset',{email:'participant@example.invalid',redirectTo:origin+'/reset-password'})).status).toBe(503);
+ await expect(call(a(),'get_account_context',{},bearer)).rejects.toThrow();
+ expect(writes).toEqual([]);
 });
