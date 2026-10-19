@@ -1,6 +1,6 @@
 # ADR: confirmed hosted action coordination
 
-Status: accepted on 2026-10-19 for [issue #77](https://github.com/rudeayelo/aimharder-mcp/issues/77). Local synthetic implementation; platform schema/code activation and actual ChatGPT/Hermes acceptance remain separate.
+Status: accepted on 2026-10-19 for [issue #77](https://github.com/rudeayelo/aimharder-mcp/issues/77), extended for [#78](https://github.com/rudeayelo/aimharder-mcp/issues/78). Local synthetic implementation; platform schema/code activation and actual ChatGPT/Hermes acceptance remain separate.
 
 ## Context
 
@@ -19,6 +19,12 @@ The AES-256-GCM journal envelope uses a distinct `aimharder-action` purpose plus
 A different actor instance can consume a retained recovery record for read-only reconciliation through the original pinned client contract. It never reinstates local preparation or calls a sporting write. Fresh original-account schedule/upcoming reads may confirm a current state; absent response/denial evidence never turns an unbooked state into a rejection. If the original revision/identity cannot be used, report uncertainty using the original protected target, without reading a replacement account or restoring old credentials. A lost, expired, foreign or already consumed reference never authorizes another dispatch.
 
 Use D1 for the journal instead of private object storage so the existing trusted operator path can inventory, conditionally rewrap and inspect all active ciphertext. Extend the offline rotation command to accept `{ connections, actions }`; retain connection-array compatibility but mark that it lacks action inventory. Exact old-ciphertext/revision/action/reference predicates protect concurrent updates. Completion changes the phase without overwriting concurrently rotated facts. Active-key-only recovery must cover both inventories before runtime key retirement. Old escrow stays available for retained encrypted copies; this does not implement backup retention or deletion-safe restoration.
+
+## Cancellation extension
+
+Expose the existing cancellation preparation, standard execution and distinct late execution tools through the same owned actor/coordinator, available to both roles without switches. Any exact own reservation offered in the current daily schedule is eligible for preparation, irrespective of whether this service created it. Preserve the existing preview, gym-specific warnings and separate late-credit-loss reference and explicit `confirmedCreditLoss: true` contract. The late reference is remembered only from a fresh in-process standard warning whose read-back still verifies the exact actionable reservation; it has a distinct coordinator action identity. Each standard or late confirmation admits at most one external request.
+
+Trusted cancellation dispatch facts contain only the encrypted original identity, membership, source session/reservation, preview and standard/late flag, plus interpreted cancellation-state/response-issue facts after the possible send. Original-account reconciliation preserves existing accepted/denied/warning/uncertain semantics, including unknown credit effects. Read-only recovery never calls either execution method, recreates a preparation or reissues a late reference. A recovered warning therefore requires a fresh preview and confirmation before any later standard request, followed by separate consequence confirmation if a new late warning occurs. The shared post-send bookkeeping-failure guarantees apply equally to cancellation. Failure to update the recovery-instance marker cannot skip available read-only reconciliation: the previous durable dispatch fence still prevents execution, although a later duplicate read may remain possible. Explicit caller gym binding is checked against protected original facts before any recovery read or uncertain-target fallback, for creation as well as cancellation. The [cancellation guide](../hosted-booking-cancellation.md) records synthetic evidence and live gym/credit limits.
 
 ## Alternatives and consequences
 

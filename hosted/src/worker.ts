@@ -14,6 +14,7 @@ import { currentGrant, grantClaim } from './oauth-grants.js';
 import { handleConnections } from './connections.js';
 import { accountOperation } from './account-connection.js';
 import { registerActivityPublication } from './activity-publication.js';
+import { registerBookingCancellation } from './booking-cancellation.js';
 import { registerBookingCreation } from './booking-creation.js';
 import { registerActivityQueries } from './activity-queries.js';
 import { registerScheduleQueries } from './schedule-queries.js';
@@ -92,6 +93,7 @@ export async function handleHostedRequest(
             registerScheduleQueries(server, env, claims.sub);
             registerActivityQueries(server, env, claims.sub);
             registerActivityPublication(server, env, claims.sub, {grantId:String(claims[grantClaim]),clientId:String(claims.client_id)});
+            registerBookingCancellation(server, env, claims.sub, {grantId:String(claims[grantClaim]),clientId:String(claims.client_id)});
             registerBookingCreation(server, env, claims.sub, {grantId:String(claims[grantClaim]),clientId:String(claims.client_id)});
           }
           return server;
