@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { afterAll, beforeAll, expect, test } from 'vitest';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
+import { spawn } from 'node:child_process';
 import { buildWorker } from '../build.mjs';
 const origin = 'http://localhost:8796';
 const syntheticKey = Buffer.alloc(32, 17).toString('base64');
@@ -11,6 +12,9 @@ let worker: Miniflare;
 let directory: string;
 const logins: string[] = [];
 const identities: string[] = [];
+let holdIdentityA: Promise<void> | undefined;
+let expireA = 0;
+let rejectA = false;
 const profiles = new Map([
   ['upstream-a@example.invalid', { id: 42, cookie: 'synthetic-a', gyms: [{ role: 'client', gym: 'A gym', centre_url: 'shared-gym.aimharder.es', boid: 200 }] }],
   ['upstream-b@example.invalid', { id: 73, cookie: 'synthetic-b', gyms: [{ role: 'client', gym: 'B gym', centre_url: 'shared-gym.aimharder.es', boid: 200 }] }],
@@ -19,19 +23,19 @@ const portalCookies = new Map<string,string>();
 function post(path: string, body: unknown, cookie = '', requestOrigin = origin) {
   return worker.dispatchFetch(origin + path, { method: 'POST', headers: { origin: requestOrigin, cookie, 'content-type': 'application/json' }, body: JSON.stringify(body), redirect: 'manual' });
 }
-async function start() {
+async function start(keys: Record<string,string> = {first:syntheticKey}, active = 'first') {
   worker = new Miniflare(convertV4MiniflareOptions({ modules: true, scriptPath: 'dist/account-connection-fixture-worker.js', port: 8796,
-    compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'], d1Databases: ['AUTH_DB'], d1Persist: directory,
-    durableObjects: { ACCOUNT_CONNECTIONS: { className: 'AccountConnection', useSQLite: true } }, durableObjectsPersist: directory + '/objects',
+    compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'], d1Databases: ['AUTH_DB'], resourcePersistencePath: directory,
+    durableObjects: { ACCOUNT_CONNECTIONS: { className: 'AccountConnection', useSQLite: true } },
     bindings: { BASE_URL: origin, AUTH_SECRET: 'synthetic-account-connection-auth-secret-long-enough',
-      VAULT_KEYS: JSON.stringify({ first: syntheticKey }), VAULT_ACTIVE_KEY_ID: 'first' },
+      VAULT_KEYS: JSON.stringify(keys), VAULT_ACTIVE_KEY_ID: active },
     outboundService: async request => {
       if (new URL(request.url).origin === origin) return worker.dispatchFetch(request);
       if (request.url === 'https://login.aimharder.es/api/login' && request.method === 'POST') {
         const body = await request.json() as { username: string; password: string };
         logins.push(body.username);
         const profile = profiles.get(body.username);
-        if (!profile || body.password !== 'synthetic-upstream-password') return Response.json({ data: { auth: { authOK: false } } });
+        if (!profile || body.password !== 'synthetic-upstream-password' || rejectA && profile.cookie === 'synthetic-a') return Response.json({ data: { auth: { authOK: false } } });
         return Response.json({ data: { userData: { id: profile.id }, auth: { authOK: true } } }, {
           headers: { 'set-cookie': `amhrdrauth=${profile.cookie}; Domain=.aimharder.es; Path=/; HttpOnly` },
         });
@@ -41,6 +45,10 @@ async function start() {
         identities.push(cookie);
         const profile = [...profiles.values()].find(value => cookie === `amhrdrauth=${value.cookie}`);
         if (!profile) throw new Error('Unknown synthetic upstream cookie');
+        if (profile.cookie === 'synthetic-a') {
+          if (holdIdentityA) { const held = holdIdentityA; holdIdentityA = undefined; await held; }
+          if (expireA > 0) { expireA--; return Response.json({data:[]}); }
+        }
         return Response.json({ data: [{ id: profile.id, roles: profile.gyms }] });
       }
       throw new Error('Unexpected connection test upstream request');
@@ -54,7 +62,7 @@ async function token(cookie: string) {
   const query = new URLSearchParams({ client_id: 'fixture-client', redirect_uri: 'http://127.0.0.1:9999/callback', response_type: 'code',
     code_challenge: challenge, code_challenge_method: 'S256', scope: 'openid profile offline_access mcp:access', state: 'synthetic-state', resource: origin+'/mcp', prompt: 'consent' });
   const authorize = await worker.dispatchFetch(origin + '/api/auth/oauth2/authorize?' + query, { headers: { cookie }, redirect: 'manual' });
-  expect(authorize.status).toBe(200);
+  expect(authorize.status, await authorize.clone().text()).toBe(200);
   const url = new URL((await authorize.json() as {url: string}).url, origin);
   const consent = await post('/api/auth/oauth2/consent', { accept: true, oauth_query: url.search.slice(1) }, cookie);
   expect(consent.status).toBe(200);
@@ -137,4 +145,95 @@ test('browser settings expose verified gym choices and reject foreign origins, i
   expect(html).toContain('name="zone:shared-gym"');
   expect(html).not.toContain('upstream-a@example.invalid');
   expect(html).not.toContain('synthetic-upstream-password');
+});
+
+test('a held account operation, bounded recovery and latched authentication failure do not interrupt another account', async () => {
+  const a = portalCookies.get('participant@example.invalid')!;
+  const b = portalCookies.get('other@example.invalid')!;
+  let release!: () => void;
+  holdIdentityA = new Promise<void>(resolve => { release = resolve; });
+  const held = context(a);
+  const independent = await Promise.race([context(b),new Promise<never>((_,reject)=>setTimeout(()=>reject(new Error('Other account blocked')),2000))]);
+  expect(independent.structuredContent).toMatchObject({selectedGym:{name:'B gym'}});
+  release();
+  expect((await held).structuredContent).toMatchObject({selectedGym:{name:'A gym'}});
+  const before = logins.filter(name=>name==='upstream-a@example.invalid').length;
+  expireA = 1;
+  expect((await context(a)).isError).not.toBe(true);
+  expect(logins.filter(name=>name==='upstream-a@example.invalid').length).toBe(before+1);
+  expireA = 2;
+  expect(JSON.stringify(await context(a))).toContain('SESSION_EXPIRED');
+  expect(logins.filter(name=>name==='upstream-a@example.invalid').length).toBe(before+2);
+  rejectA = true;
+  expect(JSON.stringify(await context(a))).toContain('AUTHENTICATION_FAILED');
+  const afterFailure = logins.length;
+  expect(JSON.stringify(await context(a))).toContain('AUTHENTICATION_FAILED');
+  expect((await context(b)).structuredContent).toMatchObject({selectedGym:{name:'B gym'}});
+  expect(logins.length).toBe(afterFailure);
+  rejectA = false;
+});
+
+test('restart restores the encrypted connection but rejects a different upstream identity, a wrong key and copied ciphertext without upstream access', async () => {
+  const a = portalCookies.get('participant@example.invalid')!;
+  const b = portalCookies.get('other@example.invalid')!;
+  await worker.dispose();
+  await start();
+  expect((await context(a)).structuredContent).toMatchObject({selectedGym:{name:'A gym'}});
+  expect((await context(b)).structuredContent).toMatchObject({selectedGym:{name:'B gym',timeZoneStatus:'user-confirmed'}});
+  await worker.dispose();
+  profiles.get('upstream-a@example.invalid')!.id = 99;
+  await start();
+  expect(JSON.stringify(await context(a))).toContain('IDENTITY_MISMATCH');
+  expect((await context(b)).isError).not.toBe(true);
+  profiles.get('upstream-a@example.invalid')!.id = 42;
+  await worker.dispose();
+  await start({first:Buffer.alloc(32,22).toString('base64')});
+  const before = logins.length + identities.length;
+  expect((await context(a)).isError).toBe(true);
+  expect(logins.length + identities.length).toBe(before);
+  await worker.dispose();
+  await start();
+  // Isolated operator corruption/security exercise, distinct from public assertions.
+  const db = await worker.getD1Database('AUTH_DB');
+  const source = await db.prepare('SELECT revision,envelope FROM portal_aimharder_connection WHERE userId=?').bind('portal-fixture').first<{revision:string;envelope:string}>();
+  const original = await db.prepare('SELECT revision,envelope FROM portal_aimharder_connection WHERE userId=?').bind('other-participant').first<{revision:string;envelope:string}>();
+  await db.prepare('UPDATE portal_aimharder_connection SET revision=?,envelope=? WHERE userId=?').bind(source!.revision,source!.envelope,'other-participant').run();
+  const beforeCopy = logins.length + identities.length;
+  expect((await context(b)).isError).toBe(true);
+  expect(logins.length + identities.length).toBe(beforeCopy);
+  await db.prepare('UPDATE portal_aimharder_connection SET revision=?,envelope=? WHERE userId=?').bind(original!.revision,original!.envelope,'other-participant').run();
+  expect((await context(b)).isError).not.toBe(true);
+});
+
+test('the trusted rotation command rewraps encrypted rows with compare-and-swap, then the escrowed active key recovers both accounts after restart', async () => {
+  const db = await worker.getD1Database('AUTH_DB');
+  // Separate operator security inspection; no plaintext dump is written.
+  const rows = (await db.prepare('SELECT userId,revision,envelope FROM portal_aimharder_connection').all()).results;
+  for (const canary of ['upstream-a@example.invalid','upstream-b@example.invalid','synthetic-upstream-password',syntheticKey]) expect(JSON.stringify(rows)).not.toContain(canary);
+  const nextKey = Buffer.alloc(32,33).toString('base64');
+  const command = spawn(process.execPath,['scripts/prepare-vault-rotation.ts'],{cwd:process.cwd(),env:{...process.env,VAULT_KEYS:JSON.stringify({first:syntheticKey,second:nextKey}),VAULT_ACTIVE_KEY_ID:'second'}});
+  let output = ''; let errors = '';
+  command.stdout.on('data', chunk=>{output+=String(chunk)});
+  command.stderr.on('data', chunk=>{errors+=String(chunk)});
+  command.stdin.end(JSON.stringify(rows));
+  expect(await new Promise(resolve=>command.on('exit',resolve)),errors).toBe(0);
+  for (const canary of ['upstream-a@example.invalid','synthetic-upstream-password',syntheticKey,nextKey]) expect(output+errors).not.toContain(canary);
+  const prepared = JSON.parse(output) as {sql:string;rows:number;activeKeyId:string};
+  expect(prepared).toMatchObject({rows:2,activeKeyId:'second'});
+  await db.exec(prepared.sql);
+  await worker.dispose();
+  await start({first:syntheticKey,second:nextKey},'second');
+  const currentDb = await worker.getD1Database('AUTH_DB');
+  expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'UTC'}},portalCookies.get('participant@example.invalid')!)).status).toBe(200);
+  // A stale maintenance artifact cannot overwrite a later envelope/configuration.
+  await currentDb.exec(prepared.sql);
+  await worker.dispose();
+  await start({second:nextKey},'second');
+  expect((await context(portalCookies.get('participant@example.invalid')!)).structuredContent).toMatchObject({selectedGym:{name:'A gym',timeZone:'UTC',timeZoneStatus:'user-confirmed'}});
+  expect((await context(portalCookies.get('other@example.invalid')!)).structuredContent).toMatchObject({selectedGym:{name:'B gym'}});
+  await worker.dispose();
+  await start({},'second');
+  const before = logins.length + identities.length;
+  expect((await context(portalCookies.get('participant@example.invalid')!)).isError).toBe(true);
+  expect(logins.length + identities.length).toBe(before);
 });

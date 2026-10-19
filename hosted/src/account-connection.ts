@@ -81,6 +81,7 @@ export class AccountConnection {
       return Response.json({ status: 'connected', ...context });
     } catch (error) {
       const safe = safeError(error);
+      if (safe.code === 'INVALID_CONFIGURATION' || safe.code === 'INVALID_TIME_ZONE_CONFIGURATION') return Response.json({ status: 'invalid-settings', error: safe }, { status: 400 });
       return Response.json({ status: ['AUTHENTICATION_FAILED', 'IDENTITY_MISMATCH', 'SESSION_EXPIRED', 'ACCESS_RESTRICTED'].includes(safe.code) ? 'authentication-required' : 'unavailable', error: safe }, { status: 503 });
     }
   }

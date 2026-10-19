@@ -8,6 +8,7 @@
     "exactOptionalPropertyTypes": true,
     "skipLibCheck": true,
     "noEmit": true,
+    "allowImportingTsExtensions": true,
     "allowJs": true,
     "types": [
       "node",
@@ -21,6 +22,7 @@
     "scripts/preview.ts",
     "scripts/smoke-test-environment.ts",
     "scripts/prepare-mcp-client.ts",
-    "build.mjs"
+    "build.mjs",
+    "scripts/prepare-vault-rotation.ts"
   ]
 }

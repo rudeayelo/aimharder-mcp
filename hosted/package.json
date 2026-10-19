@@ -10,7 +10,8 @@
     "owner:prepare": "node scripts/prepare-owner.ts",
     "smoke:test-environment": "node scripts/smoke-test-environment.ts",
     "schema:generate": "node scripts/generate-auth-schema.ts",
-    "client:prepare": "node scripts/prepare-mcp-client.ts"
+    "client:prepare": "node scripts/prepare-mcp-client.ts",
+    "vault:prepare-rotation": "node scripts/prepare-vault-rotation.ts"
   },
   "dependencies": {
     "@better-auth/mcp": "1.7.10",

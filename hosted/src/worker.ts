@@ -15,7 +15,7 @@ import { accountOperation } from './account-connection.js';
 import { handleAimHarderSettings } from './aimharder-settings.js';
 export { AccountConnection } from './account-connection.js';
 
-/** The vault resolves only the verified portal subject, never a tool argument. */
+/** Retained feasibility-harness adapter; production uses the private account object. */
 export type ResolveConnection = (portalAccountId: string) => Promise<Configuration | null>;
 
 export async function handleHostedRequest(

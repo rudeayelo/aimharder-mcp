@@ -1,0 +1,29 @@
+# ADR: encrypted AimHarder connections and an account operation boundary
+
+Status: accepted implementation decision on 2026-10-19 for [issue #74](https://github.com/rudeayelo/aimharder-mcp/issues/74). Local synthetic validation is recorded in the [connection runbook](../hosted-aimharder-connection.md). Platform key custody, deployed namespace activation and actual target-runtime AimHarder access remain separate operator gates.
+
+## Context
+
+The [identity/custody requirements](2026-10-15-hosted-identity-and-credential-custody.md) accept service-recoverable upstream credentials, one linked AimHarder account and separate portal/client identities. The [runtime candidate](2026-10-16-proposed-cloudflare-hosted-runtime.md) requires explicit per-account coordination and disposable sessions. Returning plaintext configuration to a stateless MCP handler and constructing a client per invocation cannot preserve cookie/failure isolation across requests or establish the later action boundary.
+
+## Decision
+
+Route only a verified, currently admitted portal/OAuth subject to the private `ACCOUNT_CONNECTIONS` binding. Export the ordinary `AccountConnection` Durable Object class, with a SQLite namespace, and derive its name from that stable portal subject. The object records its owner and serializes whole operations with an explicit promise queue; it does not hold network I/O inside `blockConcurrencyWhile`. Separate objects progress independently. This selects the candidate account boundary for read-only #74; it is not an MCP session or a complete durable write coordinator.
+
+D1 is the authority for one encrypted connection row per portal identity. The row contains a generated semantic revision, encrypted envelope and update timestamp. Encrypt the complete username/password/configuration and verified numeric upstream identity with Web Crypto AES-256-GCM, a fresh random 96-bit IV and authenticated data containing purpose, version, portal subject, revision and key ID. Neither username, password, upstream identity nor key is a plaintext database column. No cookies, raw upstream response or sporting-history replica is persisted.
+
+Use an independent versioned key ring in platform secret `VAULT_KEYS`, with `VAULT_ACTIVE_KEY_ID` selecting new encryption. Keep an authorized recovery copy in separate operator custody, outside D1 backups and separate from `AUTH_SECRET`. Imports are non-extractable. Missing/wrong keys, unknown envelope versions, modified/cross-tenant ciphertext and authentication-tag failures fail closed. Never generate keys or reinterpret ciphertext on startup.
+
+The trusted offline `vault:prepare-rotation` command reads only encrypted rows on stdin, takes keys through its environment and prepares new ciphertext plus conditional SQL. It preserves semantic connection revision and updates only the exact prior envelope/revision; stale maintenance output cannot overwrite a later settings change. Apply this private artifact through the existing authorized D1 operator path. No public maintenance/key endpoint or administrator credential-viewing privilege is added. Root operator activation and recovery escrow must be verified separately; application tests cannot establish platform custody.
+
+Initial connection verifies identity/memberships with the real API client before committing ciphertext. Several gyms require an explicit verified default. Time zones retain assumed Europe/Madrid or explicitly confirmed IANA mappings. The trusted client `verifyConnection()` exposes numeric identity only inside the service and pins it; the optional expected identity guards fresh sessions after restart. Public MCP results retain their previous identity-free schema. Different portal/upstream email addresses are supported. Reject account replacement with 409 until the later lifecycle ticket; settings updates can change only verified gym configuration, preserving portal/client authorization.
+
+Each account object owns one in-memory API client per current connection envelope/revision. On restart it decrypts D1, constructs an empty session and verifies the pinned upstream identity. Authentication failure stays local to that client. All existing fixed origins, redirects, body limits, timeout and bounded reauthentication safeguards remain in the shared client. Current admission is checked again at the account boundary, in addition to the MCP grant checks.
+
+## Alternatives and consequences
+
+A module-global client cache cannot provide a reliable tenant/operation boundary or survive eviction. Reimplementing upstream authentication would duplicate the verified API client and weaken its contract. Storing plaintext credentials in an actor/database or deriving the vault key from an authentication secret would not satisfy separate recoverable custody. D1 atomic coordination remains a possible alternative, but would need an equivalent operation-ordering design.
+
+This decision partially implements the earlier runtime/custody requirements; it does not supersede their lifecycle, role, backup or real-client requirements. Preparation state, dispatch fencing, durable action consumption and original-account reconciliation must be added before any hosted sporting write. Replacement, disconnection, suspension/deletion and restoration that preserves later revocations remain later tickets. Losing in-memory state requires fresh authentication/preparation, never reconstruction of write permission. Key-only rewrap may drop the in-memory session safely; it does not change client grants.
+
+The maintained portal/Google/Resend/MCP authorization implementation remains intact. SQLite-backed object availability on Free does not establish this account’s successful deployment, usage/cost or the EUR 10 target. No purchase, plan change, namespace deployment, live credential submission or upstream write is established by local validation.
