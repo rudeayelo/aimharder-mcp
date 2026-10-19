@@ -32,7 +32,7 @@ function activity(owner:number,id:number) {return {userId:owner,boxId:200,record
  ejerRate:[{ejerName:'Sentadilla Ñ',tipoWOD:0,valor1:['5']}],chartData:{8:[{idAction:id,desc:'Own recorded score'},{idAction:99999,desc:'private-history-canary'}]}, privateProfile:'private-profile-canary'};}
 function post(path:string,body:unknown,cookie='') {return worker.dispatchFetch(origin+path,{method:'POST',headers:{origin,cookie,'content-type':'application/json'},body:JSON.stringify(body),redirect:'manual'});}
 beforeAll(async()=>{
- await buildWorker('tests/account-connection-fixture-worker.ts','dist/activity-query-fixture-worker.js');
+ await buildWorker('tests/activity-query-fixture-worker.ts','dist/activity-query-fixture-worker.js');
  directory=await mkdtemp(join(tmpdir(),'aimharder-activity-query-'));
  worker=new Miniflare(convertV4MiniflareOptions({modules:true,scriptPath:'dist/activity-query-fixture-worker.js',port:8798,
  compatibilityDate:'2026-10-12',compatibilityFlags:['nodejs_compat'],d1Databases:['AUTH_DB'],resourcePersistencePath:directory,
