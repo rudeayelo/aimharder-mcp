@@ -11,7 +11,7 @@ export const securitySnapshotSchema=z.object({
 });
 export type SecuritySnapshot=z.infer<typeof securitySnapshotSchema>;
 export interface RecoveryStatement {sql:string;params:(string|number|null)[];}
-export function projectionPlan(snapshot:SecuritySnapshot,deleted:string[],invites:string[],epoch:number,checkpoint:string):RecoveryStatement[]{
+export function projectionPlan(snapshot:SecuritySnapshot,deleted:string[],invites:string[],epoch:number,checkpoint:string,auditId:string):RecoveryStatement[]{
  const forbidden=new Set(deleted);const users=snapshot.users.filter(row=>!forbidden.has(row.userId));
  const statements:RecoveryStatement[]=[];
  const add=(sql:string,...params:(string|number|null)[])=>statements.push({sql,params});
@@ -34,6 +34,21 @@ export function projectionPlan(snapshot:SecuritySnapshot,deleted:string[],invite
  for(const row of users)add('DELETE FROM portal_aimharder_connection WHERE userId=? AND (? IS NULL OR revision<>?)',row.userId,row.revision,row.revision);
  // Marker is LAST. Sequential native API application is safely resumable while
  // the independent gate remains closed; no cross-database transaction is assumed.
- add('INSERT OR REPLACE INTO portal_recovery_checkpoint(id,epoch,checkpoint) VALUES (1,?,?)',epoch+1,checkpoint);
+ add('INSERT OR REPLACE INTO portal_recovery_checkpoint(id,epoch,checkpoint,auditId) VALUES (1,?,?,?)',epoch+1,checkpoint,auditId);
  return statements;
+}
+
+/** Both native and binding operators record deadline evidence before deleting it.
+ * SQLite wall time prevents a prepared plan from freezing its audit clock. The
+ * completion postlude catches deadline crossings during a staged cleanup. */
+export function retentionAuditPlan(deleted:string[],residual:string[],checkpoint:string,auditId:string,preparedAt:number){
+ const clock="MAX(?,CAST(strftime('%s','now') AS INTEGER)*1000+CAST(substr(strftime('%f','now'),4,3) AS INTEGER))";
+ const present=new Set(residual);const before:RecoveryStatement[]=[];const after:RecoveryStatement[]=[];
+ for(const userId of deleted){
+  before.push({sql:`UPDATE recovery_deleted SET status=CASE WHEN status='overdue' OR (cleanupDeadline<${clock} AND (?=1 OR purgedAt IS NULL)) THEN 'overdue' ELSE status END WHERE userId=?`,params:[preparedAt,present.has(userId)?1:0,userId]});
+  after.push({sql:`UPDATE recovery_deleted SET purgedAt=COALESCE(purgedAt,${clock}),lastAttemptAt=${clock},lastSuccessAt=${clock},status=CASE WHEN status='overdue' OR (cleanupDeadline<${clock} AND (?=1 OR purgedAt IS NULL)) THEN 'overdue' ELSE 'cleaned' END WHERE userId=?`,params:[preparedAt,preparedAt,preparedAt,preparedAt,present.has(userId)?1:0,userId]});
+ }
+ before.push({sql:`INSERT OR REPLACE INTO recovery_projection_audit(checkpoint,auditId,startedAt,completedAt) VALUES (?,?,${clock},NULL)`,params:[checkpoint,auditId,preparedAt]});
+ after.push({sql:`UPDATE recovery_projection_audit SET completedAt=${clock} WHERE checkpoint=? AND auditId=?`,params:[preparedAt,checkpoint,auditId]});
+ return {before,after};
 }

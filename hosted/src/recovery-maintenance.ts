@@ -2,6 +2,13 @@ import type {HostedEnvironment} from './auth.js';
 import {recoveryAvailable,recordDeletionPurged} from './recovery-authority.js';
 import {eraseDeletedProjection} from './account-deletion.js';
 interface Deletion {userId:string;cleanupDeadline:number;purgedAt:number|null;memoryClearedAt:number|null;status:string;}
+/** Current residual inventory, including non-FK state, before a full projection can erase it. */
+export async function deletedPayloadPresent(env:HostedEnvironment,subject:string,invitations:string[]):Promise<boolean>{
+ if(await env.AUTH_DB.prepare('SELECT id FROM user WHERE id=?').bind(subject).first())return true;
+ if(await env.AUTH_DB.prepare("SELECT id FROM verification WHERE value=? OR (CASE WHEN json_valid(value) THEN json_extract(value,'$.userId') END)=? LIMIT 1").bind(subject,subject).first())return true;
+ for(const id of invitations)if(await env.AUTH_DB.prepare('SELECT id FROM portal_invitation WHERE id=?').bind(id).first())return true;
+ return false;
+}
 /** Tombstone-only purge is safe under an open/closed gate and held original read-back.
  * It never resets another user's auth, restores a capability, writes a restore marker,
  * opens the gate or depends on a possibly abandoned public/maintenance lease. */
@@ -18,10 +25,7 @@ export async function maintainDeletedAccounts(env:HostedEnvironment):Promise<{me
    try{
    await env.RECOVERY_DB!.prepare('UPDATE recovery_deleted SET lastAttemptAt=? WHERE userId=?').bind(now,row.userId).run();
    const invitations=(await env.RECOVERY_DB!.prepare('SELECT id FROM recovery_invitation WHERE userId=?').bind(row.userId).all<{id:string}>()).results;
-   const identity=await env.AUTH_DB.prepare('SELECT id FROM user WHERE id=?').bind(row.userId).first();
-   let residual=Boolean(identity);
-   if(await env.AUTH_DB.prepare("SELECT id FROM verification WHERE value=? OR (CASE WHEN json_valid(value) THEN json_extract(value,'$.userId') END)=? LIMIT 1").bind(row.userId,row.userId).first())residual=true;
-   for(const invitation of invitations)if(await env.AUTH_DB.prepare('SELECT id FROM portal_invitation WHERE id=?').bind(invitation.id).first())residual=true;
+   const residual=await deletedPayloadPresent(env,row.userId,invitations.map(row=>row.id));
    if(residual){
     if(invitations.length)await env.AUTH_DB.batch(invitations.map(invitation=>env.AUTH_DB.prepare('INSERT OR IGNORE INTO portal_deleted_invitation(id) VALUES (?)').bind(invitation.id)));
     await eraseDeletedProjection(env,row.userId);purged++;
@@ -32,7 +36,7 @@ export async function maintainDeletedAccounts(env:HostedEnvironment):Promise<{me
     failed=true;
     // A corrupt/failing identity must not indefinitely postpone another
     // participant's otherwise available original-deadline purge.
-    await env.RECOVERY_DB!.prepare("UPDATE recovery_deleted SET status=CASE WHEN status='overdue' OR cleanupDeadline<? THEN 'overdue' ELSE 'failed' END WHERE userId=?").bind(Date.now(),row.userId).run();
+    try{await env.RECOVERY_DB!.prepare("UPDATE recovery_deleted SET status=CASE WHEN status='overdue' OR cleanupDeadline<? THEN 'overdue' ELSE 'failed' END WHERE userId=?").bind(Date.now(),row.userId).run();}catch{/* Global failure still records the selective reporting failure; continue later tombstones. */}
    }
   }
   const overdue=await env.RECOVERY_DB!.prepare("SELECT userId FROM recovery_deleted WHERE status='overdue' LIMIT 1").first();

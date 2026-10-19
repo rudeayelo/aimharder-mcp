@@ -2,10 +2,10 @@
 import type { HostedEnvironment } from './auth.js';
 import {eraseDeletedAccountMemory} from './account-connection.js';
 import {recordDeletedMemoryErased} from './recovery-authority.js';
-import {maintainDeletedAccounts} from './recovery-maintenance.js';
+import {deletedPayloadPresent,maintainDeletedAccounts} from './recovery-maintenance.js';
 import { recoveryAvailable } from './recovery-authority.js';
 interface Head {authorityId:string;epoch:number;gate:'open'|'closed';closedAt:number|null;checkpoint:string;}
-import { projectionPlan, securitySnapshotSchema, type SecuritySnapshot } from './recovery-plan.js';
+import { retentionAuditPlan, projectionPlan, securitySnapshotSchema, type SecuritySnapshot } from './recovery-plan.js';
 async function head(env:HostedEnvironment):Promise<Head>{
   if(!await recoveryAvailable(env))throw new Error('Independent authority unavailable');
   const value=await env.RECOVERY_DB!.prepare('SELECT * FROM recovery_head WHERE authorityId=?').bind(env.RECOVERY_AUTHORITY_ID).first<Head>();
@@ -52,15 +52,22 @@ export async function reconcileRecovery(env:HostedEnvironment,checkpoint:string)
   if(!await env.RECOVERY_DB!.prepare('SELECT checkpoint FROM recovery_restore WHERE checkpoint=?').bind(checkpoint).first())throw new Error('Native restore point has not been authorized');
   const snapshot=securitySnapshotSchema.parse(JSON.parse(sealed.value));
   const deletions=(await env.RECOVERY_DB!.prepare('SELECT userId FROM recovery_deleted').all<{userId:string}>()).results;
-  const invitations=(await env.RECOVERY_DB!.prepare('SELECT id FROM recovery_invitation').all<{id:string}>()).results;
-  const statements=projectionPlan(snapshot,deletions.map(row=>row.userId),invitations.map(row=>row.id),value.epoch,checkpoint);
+  const invitations=(await env.RECOVERY_DB!.prepare('SELECT id,userId FROM recovery_invitation').all<{id:string;userId:string}>()).results;
+  const residual:string[]=[];
+  for(const row of deletions)if(await deletedPayloadPresent(env,row.userId,invitations.filter(invitation=>invitation.userId===row.userId).map(invitation=>invitation.id)))residual.push(row.userId);
+  const auditId=crypto.randomUUID();const audit=retentionAuditPlan(deletions.map(row=>row.userId),residual,checkpoint,auditId,Date.now());
+  await env.RECOVERY_DB!.batch(audit.before.map(statement=>env.RECOVERY_DB!.prepare(statement.sql).bind(...statement.params)));
+  const statements=projectionPlan(snapshot,deletions.map(row=>row.userId),invitations.map(row=>row.id),value.epoch,checkpoint,auditId);
   await env.AUTH_DB.batch(statements.map(statement=>env.AUTH_DB.prepare(statement.sql).bind(...statement.params)));
+  await env.RECOVERY_DB!.batch(audit.after.map(statement=>env.RECOVERY_DB!.prepare(statement.sql).bind(...statement.params)));
   return {checkpoint,nextEpoch:value.epoch+1};
 }
 export async function openRecovery(env:HostedEnvironment,checkpoint:string){
   const value=await drained(env,checkpoint);
-  const applied=await env.AUTH_DB.prepare('SELECT epoch,checkpoint FROM portal_recovery_checkpoint WHERE id=1').first<{epoch:number;checkpoint:string}>();
+  const applied=await env.AUTH_DB.prepare('SELECT epoch,checkpoint,auditId FROM portal_recovery_checkpoint WHERE id=1').first<{epoch:number;checkpoint:string;auditId:string}>();
   if(applied?.epoch!==value.epoch+1||applied.checkpoint!==checkpoint)throw new Error('Restore projection has not been reconciled');
+  const audit=await env.RECOVERY_DB!.prepare('SELECT auditId,completedAt FROM recovery_projection_audit WHERE checkpoint=?').bind(checkpoint).first<{auditId:string;completedAt:number|null}>();
+  if(!audit||audit.auditId!==applied.auditId||audit.completedAt===null)throw new Error('Restore retention audit has not completed');
   const maintenance=await maintainDeletedAccounts(env);
   // No public leases remain here; normal scheduled persistence cleanup never
   // waits for memory erasure behind an original account operation.

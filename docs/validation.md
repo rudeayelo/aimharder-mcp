@@ -642,3 +642,8 @@ Additional public/operator journeys cover scheduled database failure/retry, a re
 
 
 After these review corrections, the combined suite passes **162 hosted tests in fourteen files** on Node 24.22.0, plus hosted typecheck/build. The local package inputs remain byte-identical to the initial checked candidate, so its isolated 31-file/eighteen-tool result with empty stderr and 471 local tests are reused. Full committed-range whitespace and 142 local documentation targets/anchors remain checked. No provider operation or real sporting request occurred during these corrections; actual Cron/retention/native restore gates remain pending.
+
+
+### Subsequent retention and failure-isolation corrections (2026-10-19)
+
+Three new public/operator RED regressions reproduced a selective independent-authority row failure starving another deleted identity, and runtime/native full reconciliation reopening after an abandoned dirty restore had crossed the original deadline before the first resumed cron. Per-row failure reporting is now contained while global failure remains. Both full-projection paths inventory current residual opaque UUIDs and record an independent deadline prelude before deleting evidence, followed by a completion postlude after successful cleanup. The final application checkpoint includes an audit UUID and cannot reopen before its matching independent completion; overdue remains sticky while late cleanup proceeds. Native statements also evaluate SQLite wall time, so preparation cannot freeze deadline evaluation. The tests simulate 24 days at the Worker/offline-process clock boundary, apply real native-shaped SQL sequentially and cover partial-stage denial. They are not elapsed provider-retention evidence.
