@@ -12,6 +12,7 @@ export class AccountConnection extends ProductionAccountConnection {
   function statement(original:D1PreparedStatement,sql:string,values:unknown[]=[]):D1PreparedStatement{
    return new Proxy(original,{get(target,property){
     if(property==='bind')return(...args:unknown[])=>statement(target.bind(...args),sql,args);
+    if(property==='run'&&sql.startsWith('UPDATE portal_action_journal SET instance='))return async()=>{const before=await fetch('https://synthetic-scheduler.invalid/action/recovery/before');if(!before.ok)throw new Error('Synthetic recovery bookkeeping interruption');return target.run();};
     if(property==='run'&&sql.startsWith('INSERT INTO portal_action_journal'))return async()=>{
       const phase=String(values[5]);
       const before=await fetch('https://synthetic-scheduler.invalid/action/'+phase+'/before');if(!before.ok)throw new Error('Synthetic interruption');
