@@ -94,6 +94,19 @@ async function token(cookie: string) {
   return (await response.json() as {access_token: string}).access_token;
 }
 
+test('both participant roles discover the four read tools with strict inputs and unchanged result schemas',async()=>{
+ for(const client of clients){
+  const {tools}=await client.listTools();
+  for(const name of ['get_personal_activity','get_exercise_1rm','find_exercise_1rm','get_exercise_rm_progression']){
+   const tool=tools.find(tool=>tool.name===name)!;
+   expect(tool).toBeDefined();expect(tool.inputSchema.additionalProperties).toBe(false);
+   expect(tool.outputSchema).toMatchObject({type:'object'});
+   expect(tool.annotations).toMatchObject({readOnlyHint:true,destructiveHint:false,idempotentHint:true,openWorldHint:true});
+  }
+ }
+ expect(requests).toEqual([]);
+});
+
 test('remote participants retrieve distinct activity entries with source scores and explicit calendar coverage',async()=>{
  const result=await call('get_personal_activity',{startDate:'2026-03-29',endDate:'2026-03-29'});
  expect(result.isError).not.toBe(true);
