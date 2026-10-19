@@ -103,6 +103,9 @@ export function createAuth(env: HostedEnvironment) {
     hooks: {
       before: createAuthMiddleware(async ctx => {
         let authorizationPrompt: string | undefined;
+        // A cached portal cookie cannot authorize maintained account endpoints.
+        const currentSession = await getSessionFromCtx(ctx, { disableCookieCache: true });
+        if (currentSession && !['/sign-out', '/get-session'].includes(ctx.path) && !await participant(env, currentSession.user.id)) denyAdmission();
         if (['/oauth2/authorize', '/oauth2/consent', '/oauth2/continue'].includes(ctx.path)) {
           if (ctx.path === '/oauth2/authorize' && !authorizationSnapshot) {
             // Fresh authorizations always need an explicit decision. A stale
@@ -111,13 +114,17 @@ export function createAuth(env: HostedEnvironment) {
             prompts.add('consent');
             authorizationPrompt = [...prompts].join(' ');
           }
-          const session = await getSessionFromCtx(ctx);
+          const session = currentSession;
           if (session && !await participant(env, session.user.id)) denyAdmission();
           if (session && !authorizationSnapshot) {
             // Snapshot before the maintained handler can read consent. A code
             // minted later must not adopt a revocation committed in between.
-            const rows = await env.AUTH_DB.prepare('SELECT clientId,generation FROM portal_mcp_revocation WHERE userId=?')
-              .bind(session.user.id).all<{ clientId: string; generation: number }>();
+            const rows = await env.AUTH_DB.prepare(`SELECT c.clientId,COALESCE(r.generation,0) AS generation
+              FROM portal_participant p JOIN user u ON u.id=p.userId JOIN session s ON s.userId=p.userId
+              CROSS JOIN oauthClient c LEFT JOIN portal_mcp_revocation r ON r.userId=p.userId AND r.clientId=c.clientId
+              WHERE p.userId=? AND p.status='active' AND u.emailVerified=1 AND s.id=? AND s.expiresAt>?`)
+              .bind(session.user.id, session.session.id, Date.now()).all<{ clientId: string; generation: number }>();
+            if (!rows.results.length) denyAdmission();
             authorizationSnapshot = { userId: session.user.id,
               generations: new Map(rows.results.map(row => [row.clientId, row.generation])) };
           }

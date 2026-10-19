@@ -97,3 +97,5 @@ The hosted [own-activity publication slice](https://github.com/rudeayelo/aimhard
 The [remote cancellation slice](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-booking-cancellation.md) adds pre-existing own reservation cancellation and the separate late-credit-loss confirmation through the same safe coordination.
 
 The hosted [own-activity deletion slice](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-activity-deletion.md) adds independent role controls, exact own-entry confirmation, at-most-one DELETE and bounded read-only recovery. Synthetic tests include entries created before this service; actual deletion/client acceptance and permanence/RM effects remain separate.
+
+The hosted [participant administration slice](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-participants.md) adds private roles/status/configuration listing and suspension/reactivation. It preserves encrypted configuration, blocks cached access and requires fresh MCP authorization; synthetic restart and in-flight action checks do not establish actual pilot acceptance.
