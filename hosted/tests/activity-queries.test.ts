@@ -114,6 +114,16 @@ test('remote participants retrieve distinct activity entries with source scores 
  expect(result.structuredContent).toMatchObject({gym:{id:'shared-gym',timeZone:'Europe/Madrid',timeZoneStatus:'user-confirmed'},entries:[{sourceActivityId:421,startTime:null,trainingSessionId:null,blocks:[{result:{res:null,reps:0,time:1234,rondas:null,rx:false,rxstr:'SCALED',desc:'Own recorded score'}}]},{sourceActivityId:422}],coverage:{status:'complete',scope:'account-activity-calendar',completedDates:['2026-03-29'],reason:null}});
  expect(JSON.stringify(result)).not.toMatch(/private-history-canary|private-profile-canary|activity-a|upstream-a/);
 });
+test('remote activity ignores opaque calendar decoration while retaining rates-derived own detail',async()=>{
+ const previous=calendarReply;
+ calendarReply=owner=>Response.json({workouts:{'2026-03-29':{rates:{ids:[owner*10+1]},TIPOWODs:{'anonymous-decoration':{text:'untrusted-opaque-calendar-canary'}}}}});
+ try{
+  const result=await call('get_personal_activity',{startDate:'2026-03-29',endDate:'2026-03-29'});
+  expect(result.isError).not.toBe(true);
+  expect(result.structuredContent).toMatchObject({entries:[{sourceActivityId:421,date:'2026-03-29'}],coverage:{status:'complete',completedDates:['2026-03-29'],reason:null}});
+  expect(JSON.stringify(result)).not.toMatch(/anonymous-decoration|untrusted-opaque-calendar-canary/);
+ }finally{calendarReply=previous;}
+});
 
 test('known exercise IDs return each participant latest dated own 1RM with corroborated units and limited history',async()=>{
  const [a,b]=await Promise.all([call('get_exercise_1rm',{exerciseId:101}),call('get_exercise_1rm',{exerciseId:101},1)]);
