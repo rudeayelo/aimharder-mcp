@@ -1,6 +1,9 @@
 import { z } from 'zod';
 import { AimHarderClient, type AccountContext, type BookingCreationDispatch } from '../../src/client.js';
 import { gymIdSchema, readConfiguration, type Configuration } from '../../src/config.js';
+import { exerciseSearchQuerySchema } from '../../src/exercise-search.js';
+import { exercise1RMQuerySchema } from '../../src/exercise-records.js';
+import { activityQuerySchema } from '../../src/activity.js';
 import { workoutQuerySchema } from '../../src/workouts.js';
 import { classQuerySchema } from '../../src/classes.js';
 import { bookingCreationQuerySchema, bookingExecutionSchema } from '../../src/booking-preparation.js';
@@ -111,6 +114,23 @@ export class AccountConnection {
       }
       if (operation.kind === 'published-workouts') {
         const result = await this.#client.client.getPublishedWorkouts(workoutQuerySchema.parse(operation.input));
+        return Response.json({ status: 'queried', result });
+      }
+      if (operation.kind === 'exercise-progression') {
+        const query = exercise1RMQuerySchema.extend({ includeWod: z.boolean().optional() }).parse(operation.input);
+        const result = await this.#client.client.getExerciseProgression(query);
+        return Response.json({ status: 'queried', result });
+      }
+      if (operation.kind === 'find-exercise-1rm') {
+        const result = await this.#client.client.findExercise1RM(exerciseSearchQuerySchema.parse(operation.input));
+        return Response.json({ status: 'queried', result });
+      }
+      if (operation.kind === 'exercise-1rm') {
+        const result = await this.#client.client.getExercise1RM(exercise1RMQuerySchema.parse(operation.input));
+        return Response.json({ status: 'queried', result });
+      }
+      if (operation.kind === 'personal-activity') {
+        const result = await this.#client.client.getPersonalActivity(activityQuerySchema.parse(operation.input));
         return Response.json({ status: 'queried', result });
       }
       if (operation.kind === 'class-sessions') {
