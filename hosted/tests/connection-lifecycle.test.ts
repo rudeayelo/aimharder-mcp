@@ -247,4 +247,7 @@ test('connection lifecycle routes require the current owner session, same origin
  expect((await post('/api/portal/aimharder/disconnect',{userId:'other-participant'},a())).status).toBe(400);
  expect((await post('/api/portal/aimharder/password',{password:'synthetic-canary',username:'upstream-a@example.invalid'},a())).status).toBe(400);
  expect((await call(a(),'get_account_context')).structuredContent).toMatchObject({selectedGym:{name:'Second B gym'}});
+ const browserDisconnect=await worker.dispatchFetch(origin+'/portal/aimharder/disconnect',{method:'POST',headers:{origin,cookie:a(),'content-type':'application/x-www-form-urlencoded'},body:'',redirect:'manual'});
+ expect(browserDisconnect.status).toBe(303);
+ expect(JSON.stringify(await call(a(),'get_account_context'))).toContain('not-connected');
 });
