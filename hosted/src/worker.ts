@@ -12,6 +12,7 @@ import { handleInvitations } from './invitations.js';
 import { currentGrant, grantClaim } from './oauth-grants.js';
 import { handleConnections } from './connections.js';
 import { accountOperation } from './account-connection.js';
+import { registerScheduleQueries } from './schedule-queries.js';
 import { handleAimHarderSettings } from './aimharder-settings.js';
 export { AccountConnection } from './account-connection.js';
 
@@ -83,6 +84,7 @@ export async function handleHostedRequest(
               }
             }
           );
+          if (!resolveConnection && claims.sub) registerScheduleQueries(server, env, claims.sub);
           return server;
         },
         { legacy: 'reject' }
