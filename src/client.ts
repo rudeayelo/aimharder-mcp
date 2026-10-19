@@ -65,8 +65,8 @@ function isFatalPersonalRead(error: unknown) {
   ].includes(error.code);
 }
 
-export interface BookingCreationDispatch { identity: number; boxId: number; sourceId: number; preview: BookingCreationPreview; }
-export interface ActionExecutionCoordination { beforeDispatch(facts: BookingCreationDispatch): Promise<void>; }
+export interface BookingCreationDispatch { identity: number; boxId: number; sourceId: number; preview: BookingCreationPreview; outcome?: {denied:boolean;writeIssue:boolean}; }
+export interface ActionExecutionCoordination { beforeDispatch(facts: BookingCreationDispatch): Promise<void>; afterDispatch?(facts: BookingCreationDispatch): Promise<void>; }
 
 /** One account, an in-memory session, and a closed set of upstream operations. */
 export class AimHarderClient {
@@ -214,7 +214,10 @@ export class AimHarderClient {
         if (!dispatchAuthorized) throw error;
         writeIssue = true;
       }
-      return this.#reconcileBookingCreation({identity:this.#accountId!,boxId,sourceId:entry.sourceId,preview},response,writeIssue,recover);
+      const facts:BookingCreationDispatch={identity:this.#accountId!,boxId,sourceId:entry.sourceId,preview,outcome:{denied:bookingResponseDenied(response),writeIssue}};
+      try{await coordination?.afterDispatch?.(facts);}
+      catch{throw new AimHarderError('ACTION_OUTCOME_UNCERTAIN');}
+      return this.#reconcileBookingCreation(facts,response,writeIssue,recover);
     });
   }
 
@@ -222,7 +225,7 @@ export class AimHarderClient {
   reconcileBookingCreation(facts: BookingCreationDispatch) {
     return this.#query(facts.preview.gym.id, async (_gyms,{gym,boxId},recover)=>{
       if(this.#accountId!==facts.identity || boxId!==facts.boxId || gym.timeZone!==facts.preview.gym.timeZone || gym.timeZoneStatus!=='user-confirmed' || gym.name!==facts.preview.gym.name) throw new AimHarderError('IDENTITY_MISMATCH');
-      return this.#reconcileBookingCreation(facts,undefined,true,recover,true);
+      return this.#reconcileBookingCreation(facts,undefined,facts.outcome?.writeIssue??true,recover,true);
     });
   }
 
@@ -249,8 +252,7 @@ export class AimHarderClient {
         // This view has no verified horizon; absence cannot contradict a fresh daily schedule.
         conflicting = matches.length > 1 || matches.some(item => item.state !== scheduleState);
       } catch { reconciliationIssue = true; }
-      const sourceDenial = z.object({ bookState: z.number().int().negative().optional(), errorMssg: z.unknown().optional(), errorMssgLang: z.unknown().optional() }).safeParse(response);
-      const denied = sourceDenial.success && (sourceDenial.data.bookState !== undefined || sourceDenial.data.errorMssg !== undefined || sourceDenial.data.errorMssgLang !== undefined);
+      const denied = facts.outcome?.denied ?? bookingResponseDenied(response);
       const status = conflicting || reconciliationIssue || (denied && scheduleState !== 'unbooked') ? 'uncertain' as const : scheduleState === 'booked' ? 'confirmed' as const
         : scheduleState === 'waitlisted' ? 'waitlisted' as const
           : scheduleState === 'unbooked' && denied ? 'rejected' as const : 'uncertain' as const;
@@ -1064,6 +1066,11 @@ export class AimHarderClient {
       throw new AimHarderError('REQUEST_FAILED');
     }
   }
+}
+
+function bookingResponseDenied(response:unknown):boolean {
+  const denial=z.object({bookState:z.number().int().negative().optional(),errorMssg:z.unknown().optional(),errorMssgLang:z.unknown().optional()}).safeParse(response);
+  return denial.success&&(denial.data.bookState!==undefined||denial.data.errorMssg!==undefined||denial.data.errorMssgLang!==undefined);
 }
 
 async function readResponse(response: Response, textOnly = false): Promise<unknown> {

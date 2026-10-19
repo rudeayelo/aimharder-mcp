@@ -227,6 +227,10 @@ test('transport loss, denial, waitlist and incomplete read-back preserve source 
   expect(result.structuredContent).toMatchObject({status:variant==='denied'?'rejected':variant==='waitlisted'?'waitlisted':variant==='incomplete'?'uncertain':'confirmed'});
   expect(writes).toEqual(['amhrdrauth=synthetic-b']);
   expect((await call(b(),'execute_booking_creation',{actionReference,confirmed:true})).isError).toBe(true);
+  await worker.dispose();await start();
+  expect((await call(b(),'execute_booking_creation',{actionReference,confirmed:true})).structuredContent?.status).toBe(variant==='denied'?'rejected':variant==='waitlisted'?'waitlisted':variant==='incomplete'?'uncertain':'confirmed');
+  expect(writes).toHaveLength(1);
+  if(variant==='denied'){booked.add('amhrdrauth=synthetic-b');await worker.dispose();await start();expect((await call(b(),'execute_booking_creation',{actionReference,confirmed:true})).structuredContent?.status).toBe('uncertain');expect(writes).toHaveLength(1);}
  }
 });
 
@@ -278,4 +282,15 @@ test('trusted conditional rotation covers encrypted action facts and active-key-
  expect((await db.prepare("SELECT COUNT(*) AS n FROM portal_action_journal WHERE facts IS NOT NULL AND json_extract(facts,'$.keyId')='first'").first<{n:number}>())?.n).toBe(0);
  await worker.dispose();await start({second},'second');
  expect((await call(b(),'execute_booking_creation',{actionReference,confirmed:true})).structuredContent?.status).toBe('confirmed');expect(writes).toHaveLength(1);
+});
+
+test('losing the current connection after a possible send reports uncertainty without restoring credentials or sending again',async()=>{
+ booked=new Set();writes=[];synthetic=bookingSource;
+ const actionReference=((await call(b(),'prepare_booking_creation',target)).structuredContent as {actionReference:string}).actionReference;
+ expect((await call(b(),'execute_booking_creation',{actionReference,confirmed:true})).structuredContent?.status).toBe('confirmed');
+ const db=await worker.getD1Database('AUTH_DB');await db.prepare('DELETE FROM portal_aimharder_connection WHERE userId=?').bind('other-participant').run();
+ await worker.dispose();await start({second:Buffer.alloc(32,29).toString('base64')},'second');
+ const result=await call(b(),'execute_booking_creation',{actionReference,confirmed:true});
+ expect(result.isError).toBe(true);expect(JSON.stringify(result)).toContain('ACTION_OUTCOME_UNCERTAIN');expect(writes).toHaveLength(1);
+ expect((await call(b(),'get_account_context')).isError).toBe(true);
 });

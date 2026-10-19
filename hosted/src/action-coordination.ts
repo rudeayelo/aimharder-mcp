@@ -16,6 +16,10 @@ export class AccountActionCoordinator {
     const next=await this.env.AUTH_DB.prepare('SELECT MIN(expires) AS expires FROM portal_action_journal WHERE userId=?').bind(subject).first<{expires:number|null}>();
     if(next?.expires)await this.storage.setAlarm(next.expires);
   }
+  async hasPossibleDispatch(subject:string,reference:string){
+    return Boolean(await this.env.AUTH_DB.prepare("SELECT 1 FROM portal_action_journal WHERE userId=? AND referenceDigest=? AND expires>? AND phase IN ('possibly-sent','finished') AND facts IS NOT NULL")
+      .bind(subject,await digest(reference),Date.now()).first());
+  }
   remember(reference:string,preparation:Preparation){
     for(const [key,value] of this.#preparations)if(value.expires<=Date.now())this.#preparations.delete(key);
     if(this.#preparations.size>=32)this.#preparations.delete(this.#preparations.keys().next().value!);
@@ -27,7 +31,7 @@ export class AccountActionCoordinator {
       .bind(subject,row.referenceDigest,row.revision,row.expires,row.instance,row.phase,row.facts,row.action).run();
   }
   async execute<T,F>(options:{action:string;subject:string;revision:string;identity:number;reference:string;gymId?:string;
-    dispatch:(beforeDispatch:(facts:F)=>Promise<void>)=>Promise<T>;
+    dispatch:(beforeDispatch:(facts:F)=>Promise<void>,afterDispatch:(facts:F)=>Promise<void>)=>Promise<T>;
     authorize:()=>Promise<void>;recover:(facts:F,originalRevision:string)=>Promise<T>;
   }):Promise<T>{
     const now=Date.now();const referenceDigest=await digest(options.reference);
@@ -45,14 +49,18 @@ export class AccountActionCoordinator {
     if(rows.length>=64)throw new AimHarderError('BOOKING_REFERENCE_INVALID');
     const journal:Journal={action:options.action,referenceDigest,revision:options.revision,expires:now+actionRecoveryLifetime,instance:this.#instance,phase:'consumed',facts:null};
     // The durable D1 consumption completes before any preflight or sporting write.
-    await this.#put(options.subject,journal);
     const alarm=await this.storage.getAlarm();if(alarm===null||alarm>journal.expires)await this.storage.setAlarm(journal.expires);
+    await this.#put(options.subject,journal);
     const result=await options.dispatch(async facts=>{
       journal.facts=await encryptActionFacts(this.env,options.subject,options.revision,options.action+':'+referenceDigest,facts);journal.phase='possibly-sent';
       // Termination after this committed fence can only reconcile, never resend.
       await this.#put(options.subject,journal);
       try{await options.authorize();if(preparation.expires<=Date.now())throw new AimHarderError('BOOKING_REFERENCE_INVALID');}
       catch(error){journal.facts=null;journal.phase='consumed';await this.#put(options.subject,journal);throw error;}
+    },async facts=>{
+      // Preserve only response interpretation, never the upstream response itself.
+      journal.facts=await encryptActionFacts(this.env,options.subject,options.revision,options.action+':'+referenceDigest,facts);
+      await this.#put(options.subject,journal);
     });
     journal.phase='finished';if(journal.expires>Date.now())await this.#put(options.subject,journal);else await this.sweep(options.subject);
     return result;

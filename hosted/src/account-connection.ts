@@ -65,7 +65,11 @@ export class AccountConnection {
         this.#client = { revision, envelope, client: candidate };
         return Response.json({ status: 'connected', ...context });
       }
-      if (!row) { this.#client = undefined; return Response.json({ status: 'not-connected' }); }
+      if (!row) {
+        this.#client = undefined;
+        if(operation.kind==='execute-booking-creation'&&await this.#actions.hasPossibleDispatch(subject,bookingExecutionSchema.parse(operation.input).actionReference))throw new AimHarderError('ACTION_OUTCOME_UNCERTAIN');
+        return Response.json({ status: 'not-connected' });
+      }
       // Authenticate the current durable envelope even when memory is warm.
       const payload = await decryptConnection(this.env, row);
       if (!this.#client || this.#client.revision !== row.revision || this.#client.envelope !== row.envelope) this.#client = { revision: row.revision, envelope: row.envelope, client: new AimHarderClient(payload.configuration, payload.identity) };
@@ -98,7 +102,7 @@ export class AccountConnection {
           if(!await currentGrant(this.env,operation.authorization?.grantId,subject,operation.authorization?.clientId,row.revision)) throw new Error('Execution authorization unavailable');
         };
         const result=await this.#actions.execute<Awaited<ReturnType<AimHarderClient['executeBookingCreation']>>,BookingCreationDispatch>({action:'booking-create',subject,revision:row.revision,identity:payload.identity,reference:query.actionReference,...(query.gymId?{gymId:query.gymId}:{}),authorize,
-          dispatch:beforeDispatch=>client.executeBookingCreation(query,{beforeDispatch}),
+          dispatch:(beforeDispatch,afterDispatch)=>client.executeBookingCreation(query,{beforeDispatch,afterDispatch}),
           recover:async(facts:BookingCreationDispatch,originalRevision)=>{
             try{if(originalRevision!==row.revision||facts.identity!==payload.identity)throw new AimHarderError('IDENTITY_MISMATCH');return await client.reconcileBookingCreation(facts);}
             catch{return {action:'create' as const,gym:facts.preview.gym,target:facts.preview.target,status:'uncertain' as const,observedState:'unknown' as const,notices:['The original operation may have been sent. Original-account read-back is unavailable; inspect it before preparing a new action. No write was retried.']};}
