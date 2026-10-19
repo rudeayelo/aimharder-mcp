@@ -12,7 +12,7 @@ Portal authentication, authorization/consent, MCP SDK HTTP, D1, account objects,
 
 The initial probe denied a self-JWKS request. Its private wrapper was corrected to re-enter the real production handler **only for the exact probe origin's GET `/api/auth/jwks`**; no authorization/JWKS response was fabricated and no product code changed. The initial blocked-request counter remained one through cleanup. The original external fetch boundary was never used to bypass the synthetic outbound policy.
 
-The existing owner test Worker still runs its earlier #74 connection bundle. Its application migrations `0006`–`0009` and independent recovery binding have not been activated by this probe. Full owner-environment cutover and real-client/cost acceptance remain #84 work.
+At this experiment's pre-cutover checkpoint on 2026-10-19, the owner test Worker still ran its earlier #74 connection bundle. This isolated probe did not activate the owner's application migrations `0006`–`0009` or independent recovery binding. **Later the same day, the separately fenced [full-runtime activation](hosted-test-environment.md#full-runtime-activation-2026-10-19) superseded that owner-environment status:** reviewed executable 76686e4, those migrations and the independent authority are now active. No owner database was restored in either sequence. Actual ChatGPT/Hermes and sustainable capacity/cost acceptance remain #84 work; the native experiment below retains its own source and isolated-resource evidence.
 
 ## Confirmed provider observations
 

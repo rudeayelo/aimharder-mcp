@@ -4,6 +4,8 @@ Ticket [#73](https://github.com/rudeayelo/aimharder-mcp/issues/73) implements th
 
 The canonical production endpoint is `https://ahmcp.link/mcp`, once that origin is independently activated and verified. The existing isolated environment uses `https://pilot-test.ahmcp.link/mcp`. Client registration, issuer, callbacks and resource identifiers belong to exactly one environment; never mix them. Local harness success does not establish production routing or actual ChatGPT/Hermes compatibility. The [test environment](hosted-test-environment.md) records what is deployed separately.
 
+Current implementation status (2026-10-19): tickets #70–#83 now supply all 18 tools, encrypted connection custody, confirmed actions, role policy and lifecycle/restoration enforcement. Reviewed executable source 76686e4 is [active in the isolated environment](hosted-test-environment.md#full-runtime-activation-2026-10-19), with current issuer/resource/S256 and no DCR/CIMD read back. Historical #73-only results below remain evidence for that slice. The [whole-pilot setup and acceptance ledger](hosted-pilot-acceptance.md) tracks independent actual ChatGPT/Hermes journeys, which remain pending. Both distinct public registrations now have exact policy/callback/resource read-back; a prepared ChatGPT form and isolated Hermes configuration do not prove callback, authenticated tools or refresh.
+
 ## Boundary and behavior
 
 | Public boundary | Behavior |
@@ -65,6 +67,7 @@ mcp_servers:
     auth: oauth
     oauth:
       client_id: "<operator-issued-id>"
+      token_endpoint_auth_method: none
       redirect_host: "127.0.0.1"
       redirect_port: 8765
       scope: "openid profile offline_access mcp:access"
