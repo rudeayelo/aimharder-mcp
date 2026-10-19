@@ -256,14 +256,14 @@ test('membership changes leave verified choices available so the owner can repai
   expect(html).toContain('value="new-gym"');
   expect(html).toContain('value="third-gym"');
   expect(html).toContain('Choose a default gym');
-  expect(html).not.toContain('name="password"');
-  expect(html).not.toContain('name="username"');
+  expect(html).not.toContain('value="synthetic-upstream-password"');
+  expect(html).not.toContain('value="upstream-a@example.invalid"');
   expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{}},cookie)).status).toBe(400);
   const missing = await worker.dispatchFetch(origin+'/portal/aimharder/settings',{method:'POST',headers:{origin,cookie,'content-type':'application/x-www-form-urlencoded'},body:'defaultGym=',redirect:'manual'});
   expect(missing.status).toBe(422);
   const retry = await missing.text();
   expect(retry).toContain('action="/portal/aimharder/settings"');
-  expect(retry).not.toContain('name="password"');
+  expect(retry).not.toContain('value="synthetic-upstream-password"');
   expect(JSON.stringify(await context(cookie))).toContain('GYM_NOT_ACCESSIBLE');
   const repair = await worker.dispatchFetch(origin+'/portal/aimharder/settings',{method:'POST',headers:{origin,cookie,'content-type':'application/x-www-form-urlencoded'},
     body:new URLSearchParams({defaultGym:'third-gym','zone:third-gym':'Europe/London','zone:new-gym':''}).toString(),redirect:'manual'});

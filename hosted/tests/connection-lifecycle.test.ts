@@ -12,8 +12,6 @@ let directory: string;
 const logins: string[] = [];
 const identities: string[] = [];
 let rejectA = false;
-let interrupt:string|undefined;
-let interruptSkip=0;
 const unexpected: string[] = [];
 function failOutbound(): never { unexpected.push('Unexpected outbound request'); throw new Error('Unexpected outbound request'); }
 const requests: {url: URL; cookie: string}[] = [];
@@ -29,13 +27,12 @@ function post(path: string, body: unknown, cookie = '', requestOrigin = origin) 
   return worker.dispatchFetch(origin + path, { method: 'POST', headers: { origin: requestOrigin, cookie, 'content-type': 'application/json' }, body: JSON.stringify(body), redirect: 'manual' });
 }
 async function start(keys: Record<string,string> = {first:syntheticKey}, active = 'first') {
-  worker = new Miniflare(convertV4MiniflareOptions({ modules: true, scriptPath: 'dist/booking-creation-fixture-worker.js', port: 8805,
+  worker = new Miniflare(convertV4MiniflareOptions({ modules: true, scriptPath: 'dist/account-connection-fixture-worker.js', port: 8805,
     compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'], d1Databases: ['AUTH_DB'], resourcePersistencePath: directory,
     durableObjects: { ACCOUNT_CONNECTIONS: { className: 'AccountConnection', useSQLite: true } },
     bindings: { BASE_URL: origin, AUTH_SECRET: 'synthetic-account-connection-auth-secret-long-enough',
       VAULT_KEYS: JSON.stringify(keys), VAULT_ACTIVE_KEY_ID: active },
     outboundService: async request => {
-      if(new URL(request.url).origin==='https://synthetic-scheduler.invalid'){const matches=new URL(request.url).pathname===interrupt;const hit=matches&&interruptSkip--<=0;if(hit){interrupt=undefined;interruptSkip=0;}return new Response(null,{status:hit?503:204});}
       if (new URL(request.url).origin === origin) return worker.dispatchFetch(request);
       if (request.url === 'https://login.aimharder.es/api/login' && request.method === 'POST') {
         const body = await request.json() as { username: string; password: string };
@@ -87,7 +84,7 @@ async function call(cookie: string, name: string, args: Record<string, unknown> 
   } finally { await client.close(); }
 }
 beforeAll(async () => {
-  await buildWorker('tests/booking-creation-fixture-worker.ts', 'dist/booking-creation-fixture-worker.js');
+  await buildWorker('tests/account-connection-fixture-worker.ts', 'dist/account-connection-fixture-worker.js');
   directory = await mkdtemp(join(tmpdir(),'aimharder-vault-synthetic-'));
   await start();
   const db = await worker.getD1Database('AUTH_DB');
@@ -140,9 +137,11 @@ test('replacement verifies the new identity while preserving portal identity and
 });
 
 test('same-identity password updates retain authorization and gym settings, but reject identity drift',async()=>{
+ synthetic=bookingSource;
  const bearer=await token(a());
  const credentials={username:'upstream-a@example.invalid',password:'synthetic-upstream-password',gymTimeZones:{'shared-gym':'Europe/London'}};
  expect((await post('/api/portal/aimharder/replace',credentials,a())).status).toBe(200);
+ const prepared=(await call(a(),'prepare_booking_creation',target,bearer)).structuredContent as {actionReference:string};
  passwords.set('upstream-a@example.invalid','synthetic-updated-password');
  profiles.get('upstream-a@example.invalid')!.id=99;
  const rejected=await post('/api/portal/aimharder/password',{password:'synthetic-updated-password'},a());
@@ -151,6 +150,8 @@ test('same-identity password updates retain authorization and gym settings, but 
  profiles.get('upstream-a@example.invalid')!.id=42;
  const updated=await post('/api/portal/aimharder/password',{password:'synthetic-updated-password'},a());
  expect(updated.status).toBe(200);
+ expect((await call(a(),'execute_booking_creation',{actionReference:prepared.actionReference,confirmed:true},bearer)).isError).toBe(true);
+ expect(writes).toEqual([]);
  expect((await call(a(),'get_account_context',{},bearer)).structuredContent).toMatchObject({selectedGym:{name:'A gym',timeZone:'Europe/London',timeZoneStatus:'user-confirmed'}});
  await worker.dispose();await start();
  expect((await call(a(),'get_account_context',{},bearer)).structuredContent).toMatchObject({selectedGym:{name:'A gym',timeZone:'Europe/London'}});
@@ -235,4 +236,15 @@ test('replacement with multiple memberships retains the original until the brows
  expect((await call(a(),'get_account_context')).structuredContent).toMatchObject({selectedGym:{name:'A gym'}});
  expect((await browser({username:'upstream-b@example.invalid',password:'synthetic-upstream-password',defaultGym:'second-b','zone:second-b':'Europe/London'})).status).toBe(303);
  expect((await call(a(),'get_account_context')).structuredContent).toMatchObject({selectedGym:{name:'Second B gym',timeZone:'Europe/London'}});
+});
+
+test('connection lifecycle routes require the current owner session, same origin and strict owner-free input',async()=>{
+ for(const path of ['/replace','/password','/disconnect']){
+  expect((await post('/api/portal/aimharder'+path,{})).status).toBe(401);
+  expect((await post('/api/portal/aimharder'+path,{},a(),'https://foreign.invalid')).status).toBe(403);
+  expect((await worker.dispatchFetch(origin+'/api/portal/aimharder'+path,{headers:{cookie:a()}})).status).toBe(405);
+ }
+ expect((await post('/api/portal/aimharder/disconnect',{userId:'other-participant'},a())).status).toBe(400);
+ expect((await post('/api/portal/aimharder/password',{password:'synthetic-canary',username:'upstream-a@example.invalid'},a())).status).toBe(400);
+ expect((await call(a(),'get_account_context')).structuredContent).toMatchObject({selectedGym:{name:'Second B gym'}});
 });

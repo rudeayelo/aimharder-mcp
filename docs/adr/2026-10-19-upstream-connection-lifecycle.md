@@ -1,0 +1,23 @@
+# ADR: verified upstream connection lifecycle
+
+Status: accepted implementation decision on 2026-10-19 for [issue #81](https://github.com/rudeayelo/aimharder-mcp/issues/81). Synthetic public HTTP evidence only; no lifecycle deployment or live sporting action established.
+
+## Context
+
+The [identity/custody policy](2026-10-15-hosted-identity-and-credential-custody.md) requires a participant to replace or disconnect their own upstream connection without losing portal identity or MCP client authorization. The [account boundary](2026-10-19-encrypted-aimharder-account-boundary.md) serializes complete operations, and the [action coordinator](2026-10-19-confirmed-hosted-action-coordination.md) binds preparations and recovery to the original identity and semantic revision. A change cannot redirect an admitted write or resurrect the old credentials.
+
+## Decision
+
+Add explicit participant-only, bounded same-origin portal/API operations for replacement, password update and disconnection. The route derives ownership from the admitted maintained session. Replacement authenticates a fresh real client, verifies the new identity and memberships/default selection, encrypts a new revision and conditionally replaces the exact previous revision/envelope. Failed verification or incomplete selection leaves the existing connection intact. Password update authenticates the stored upstream username with the new password and the original pinned identity, preserving gym configuration; identity drift is rejected. Neither operation touches portal identity, linked sign-in methods or MCP grants.
+
+All connection mutations use the same full-operation account queue as queries/actions. A lifecycle request waits for operations already ahead of it, including original-account read-back after a possible send. Its successful conditional D1 mutation is the connection-change commit; subsequent operations observe the new revision or no connection. Submitting a change does not cancel an earlier confirmed action. The UI states this ordering. The existing final admission/current grant/revision guard remains mandatory; suspension can independently deny admission before dispatch, as specified by its separate ticket.
+
+After a successful replacement/password/settings commit, discard the old warm client/session and all coordinator preparations. New clients have no old executable references. Disconnection conditionally deletes the exact active connection and discards the session/preparations without authenticating or decrypting it; this permits removal of a broken connection. Return a conflict on an operator race rather than claiming removal. Disconnect changes no upstream booking/activity and retains portal/client authorization.
+
+Keep bounded encrypted possibly-sent recovery records for their existing ten-minute lifetime. They hold minimal original target/identity facts, never credentials/cookies or executable preparation. After the original revision is lost, report original-target uncertainty without replacement-account sporting reads; after disconnection, return explicit possible-send uncertainty. No recovery can restore the old connection or replay its write. Unused preparation lost through restart/change requires fresh preparation and exact separate confirmation.
+
+## Consequences
+
+Waiting for an earlier whole operation may delay the lifecycle response, including its bounded upstream timeout/read-back. This gives an explicit ordering without pretending D1 and an external API share a transaction. Immediate abort/redirection was rejected because it could hide a possible send or reconcile the wrong identity. Keeping old credentials for recovery was rejected because disconnection must remove access. The administrator receives no credential viewing, impersonation, account selector or private sporting view.
+
+This completes the upstream replacement/disconnection design requirement and amends the temporary replacement rejection in the #74 decision. Suspension/deletion, independent deletion/revocation authority, backup retention/restore and real ChatGPT/Hermes acceptance remain separate. There is no schema migration, extra provider configuration or change to local stdio/API contracts. See the [participant/operator guide and synthetic evidence](../hosted-aimharder-connection.md).
