@@ -52,7 +52,7 @@ async function start(keys: Record<string,string> = {first:syntheticKey}, active 
         if (!profile) throw new Error('Unknown synthetic upstream cookie');
         return Response.json({ data: [{ id: profile.id, roles: profile.gyms }] });
       }
-      
+
       requests.push({url:new URL(request.url),cookie:request.headers.get('cookie') ?? ''});
       return synthetic(request);
     },
