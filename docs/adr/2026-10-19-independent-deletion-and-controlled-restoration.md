@@ -1,6 +1,6 @@
 # ADR: independent deletion authority and controlled restoration
 
-Status: accepted implementation design on 2026-10-19 for [#83](https://github.com/rudeayelo/aimharder-mcp/issues/83). Synthetic application/operator evidence is separate from the mandatory actual provider retention and controlled-restore evidence. This decision does not declare those provider gates complete or authorize a production launch.
+Status: accepted implementation design on 2026-10-19 for [#83](https://github.com/rudeayelo/aimharder-mcp/issues/83). Synthetic application/operator evidence remains separate from the completed isolated [provider experiment](../hosted-restore-provider-validation.md). Its controlled restore, scheduled purge, recovery and scoped copy/retirement observations support #83; elapsed physical erasure, sustainable pilot capacity and production launch are not implied.
 
 ## Context
 
@@ -38,3 +38,8 @@ The operator must separately verify the actual plan/backend/window, provider boo
 ## Consequences
 
 An additional Free-compatible database and several gate reads/writes per operation must be included in #84 cost/CPU/load measurements. Recovery trades fresh proof and client consent for avoiding stale passwords and revoked capabilities. Global pending-auth invalidation can require an unaffected participant to restart an unfinished login or recovery transaction, while established access remains unaffected by another participant's ordinary deletion. Security tombstones persist beyond payload expiry for restore safety; they contain opaque identifiers only. Loss of independent authority or unresolved drain favors unavailability over resurrection. The [operator runbook](../hosted-account-deletion.md) defines executable steps and evidence boundaries.
+
+
+## Provider evidence checkpoint (2026-10-19)
+
+The [separate provider experiment](../hosted-restore-provider-validation.md) now records actual isolated native D1 and SQLite-object restoration, authenticated restored synthetic ciphertext, configured seven-day history, one successful quiet cron and public closed-gate denial. Actual scheduled purge before a projection marker, full binding reconciliation with matching completed audit, explicit reopen and fresh-proof denial checks subsequently passed. Disposable-resource and scoped copy closeout also passed; the measured nonempty purge used 14.579 ms CPU despite a successful outcome, above the nominal 10 ms Free allowance, so sustainable pilot feasibility remains #84. These observations do not change this decision, prove elapsed physical expiry or activate the full owner-bearing runtime. Synthetic application checks and actual provider observations remain distinct.
