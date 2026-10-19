@@ -6,12 +6,14 @@ import { AimHarderClient } from '../../src/client.js';
 import { gymIdSchema, type Configuration } from '../../src/config.js';
 import { safeError } from '../../src/errors.js';
 import { createAuth, type HostedEnvironment } from './auth.js';
+import { handleActivityPolicy } from './activity-policy.js';
 import { handleIdentity } from './identity.js';
 import { handlePortal } from './portal.js';
 import { handleInvitations } from './invitations.js';
 import { currentGrant, grantClaim } from './oauth-grants.js';
 import { handleConnections } from './connections.js';
 import { accountOperation } from './account-connection.js';
+import { registerActivityPublication } from './activity-publication.js';
 import { registerBookingCancellation } from './booking-cancellation.js';
 import { registerBookingCreation } from './booking-creation.js';
 import { registerActivityQueries } from './activity-queries.js';
@@ -28,7 +30,7 @@ export async function handleHostedRequest(
   resolveConnection?: ResolveConnection
 ): Promise<Response> {
   const auth = createAuth(env);
-  if (new URL(request.url).pathname !== '/mcp') return await handleAimHarderSettings(request, env, auth) ?? await handleConnections(request, env, auth) ?? await handleIdentity(request, env, auth) ?? await handleInvitations(request, env, auth) ?? await handlePortal(request, env, auth) ?? auth.handler(request);
+  if (new URL(request.url).pathname !== '/mcp') return await handleActivityPolicy(request, env, auth) ?? await handleAimHarderSettings(request, env, auth) ?? await handleConnections(request, env, auth) ?? await handleIdentity(request, env, auth) ?? await handleInvitations(request, env, auth) ?? await handlePortal(request, env, auth) ?? auth.handler(request);
   if (request.method !== 'POST') return new Response(null, { status: 405, headers: { allow: 'POST' } });
   return requireMcpAuth(
     auth,
@@ -90,6 +92,7 @@ export async function handleHostedRequest(
           if (!resolveConnection && claims.sub) {
             registerScheduleQueries(server, env, claims.sub);
             registerActivityQueries(server, env, claims.sub);
+            registerActivityPublication(server, env, claims.sub, {grantId:String(claims[grantClaim]),clientId:String(claims.client_id)});
             registerBookingCancellation(server, env, claims.sub, {grantId:String(claims[grantClaim]),clientId:String(claims.client_id)});
             registerBookingCreation(server, env, claims.sub, {grantId:String(claims[grantClaim]),clientId:String(claims.client_id)});
           }
