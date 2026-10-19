@@ -7,10 +7,18 @@ import type { HostedEnvironment } from '../src/auth.js';
 import { closeRecovery, sealRecovery, authorizeRestorePoint, reconcileRecovery, openRecovery } from '../src/recovery-operator.js';
 export { AccountConnection } from '../src/account-connection.js';
 const clockNow=Date.now;let clockOffset=0;Date.now=()=>clockNow()+clockOffset;
+let clockAfterBatch=0;
 let deferred:(()=>Promise<Response>)|undefined;
 export default {async fetch(request:Request,env:HostedEnvironment,ctx:ExecutionContext){
  const path=new URL(request.url).pathname;
  if(path==='/__fixture/clock'){clockOffset+=Number(request.headers.get('x-fixture-ms')??0);return new Response(null,{status:204});}
+ if(path==='/__fixture/clock-after-auth-batch'){clockAfterBatch=Number(request.headers.get('x-fixture-ms')??0);return new Response(null,{status:204});}
+ // Pass-through persistence scheduling: the real batch finishes before the
+ // controlled clock advances and the real independent completion is attempted.
+ if(clockAfterBatch){const database=env.AUTH_DB;env={...env,AUTH_DB:new Proxy(database,{get(target,key){
+  if(key==='batch')return async(statements:D1PreparedStatement[])=>{const result=await target.batch(statements);clockOffset+=clockAfterBatch;clockAfterBatch=0;return result;};
+  const value=Reflect.get(target,key);return typeof value==='function'?value.bind(target):value;
+ }})};}
  if(path==='/__fixture/scheduled'){try{await production.scheduled({cron:'*/5 * * * *',scheduledTime:Date.now(),noRetry(){}} as ScheduledController,env,ctx);return Response.json({outcome:'ok'});}catch{return Response.json({outcome:'failed'},{status:503});}}
  if(path==='/__fixture/watchdog-status')return Response.json(await recoveryMaintenanceStatus(env));
  if(path==='/__fixture/defer-query'){

@@ -208,7 +208,7 @@ async function freshB(email='other@example.invalid'){
  const signed=await post('/api/auth/sign-in/email',{email,password:'synthetic-new-portal-password'});expect(signed.status).toBe(200);
  return signed.headers.getSetCookie().map(v=>v.split(';')[0]).join('; ');
 }
-async function applyNativeRecoveryPlan(clockOffset=0){
+async function applyNativeRecoveryPlan(clockOffset=0,afterCleanup?:()=>Promise<void>){
  const recovery=await worker.getD1Database('RECOVERY_DB');const db=await worker.getD1Database('AUTH_DB');
  const head=(await recovery.prepare('SELECT authorityId,checkpoint,epoch,closedAt,gate FROM recovery_head').first())!;
  const snapshot=JSON.parse((await recovery.prepare('SELECT value FROM recovery_snapshot WHERE checkpoint=?').bind(head.checkpoint).first<{value:string}>())!.value);
@@ -236,6 +236,7 @@ async function applyNativeRecoveryPlan(clockOffset=0){
    if(n===3){expect((await worker.dispatchFetch(origin+'/account',{headers:{cookie:b()}})).status).toBe(503);expect((await worker.dispatchFetch(origin+'/__fixture/recovery/open')).status).toBe(409);}
  }
  expect((await worker.dispatchFetch(origin+'/__fixture/recovery/open')).status).toBe(409);
+ await afterCleanup?.();
  for(const statement of plan.independentAuditAfterStatements)await recovery.prepare(statement.sql).bind(...statement.params).run();
 }
 test('controlled rollback cannot revive deleted identities or old grants and retains only the latest permitted unaffected connection',async()=>{
@@ -445,4 +446,63 @@ test('a selective authority reporting fault cannot starve another trusted tombst
  expect(await (await worker.dispatchFetch(origin+'/__fixture/watchdog-status')).json()).toMatchObject({status:'failed',remainingDeletedIdentities:1});
  await recovery.exec('DROP TRIGGER synthetic_authority_fault');expect((await worker.dispatchFetch(origin+'/__fixture/scheduled')).status).toBe(200);
  expect(await (await worker.dispatchFetch(origin+'/__fixture/watchdog-status')).json()).toMatchObject({status:'ok',remainingDeletedIdentities:0});
+});
+
+async function restoredDeletedFixture(){
+ const snapshot=await backupFixture();expect((await post('/api/portal/account/delete',{confirmed:true},a())).status).toBe(204);
+ expect((await worker.dispatchFetch(origin+'/__fixture/recovery/close')).status).toBe(200);expect((await worker.dispatchFetch(origin+'/__fixture/recovery/seal')).status).toBe(200);
+ expect((await post('/__fixture/recovery/authorize',{bookmark:'synthetic-interrupted-completion',targetAt:Date.now()-60000})).status).toBe(200);await restoreFixture(snapshot);
+}
+async function failCompletionReport(){
+ const recovery=await worker.getD1Database('RECOVERY_DB');
+ await recovery.exec("CREATE TRIGGER synthetic_completion_fault BEFORE UPDATE ON recovery_deleted WHEN OLD.userId='portal-fixture' AND (NEW.lastSuccessAt IS NOT OLD.lastSuccessAt OR NEW.status='overdue') BEGIN SELECT RAISE(ABORT,'synthetic completion report fault'); END");
+ return recovery;
+}
+async function expectStickyOverdueAfterRetry(){
+ expect((await worker.dispatchFetch(origin+'/__fixture/recovery/open')).status).toBe(409);
+ expect(await (await worker.dispatchFetch(origin+'/__fixture/watchdog-status')).json()).toMatchObject({status:'overdue',remainingDeletedIdentities:0});expect(writes).toEqual([]);
+}
+
+test('fresh runtime reconciliation retains unfinished purge evidence after a crossed deadline and failed completion',async()=>{
+ await restoredDeletedFixture();const recovery=await failCompletionReport();
+ await worker.dispatchFetch(origin+'/__fixture/clock-after-auth-batch',{headers:{'x-fixture-ms':String(24*86400000)}});
+ expect((await worker.dispatchFetch(origin+'/__fixture/recovery/reconcile')).status).toBe(409);
+ await recovery.exec('DROP TRIGGER synthetic_completion_fault');
+ expect((await worker.dispatchFetch(origin+'/__fixture/recovery/reconcile')).status).toBe(200);
+ await expectStickyOverdueAfterRetry();
+});
+
+test('a fresh native plan retains unfinished purge evidence after a crossed deadline and failed postlude',async()=>{
+ await restoredDeletedFixture();const recovery=await failCompletionReport();
+ await expect(applyNativeRecoveryPlan(0,async()=>{await worker.dispatchFetch(origin+'/__fixture/clock',{headers:{'x-fixture-ms':String(24*86400000)}});})).rejects.toThrow('synthetic completion report fault');
+ await recovery.exec('DROP TRIGGER synthetic_completion_fault');await applyNativeRecoveryPlan(24*86400000);
+ await expectStickyOverdueAfterRetry();
+});
+
+test('scheduled retry retains purge evidence when both completion and its error report fail after deletion',async()=>{
+ await restoredDeletedFixture();const recovery=await failCompletionReport();
+ await worker.dispatchFetch(origin+'/__fixture/clock-after-auth-batch',{headers:{'x-fixture-ms':String(24*86400000)}});
+ expect((await worker.dispatchFetch(origin+'/__fixture/scheduled')).status).toBe(503);
+ await recovery.exec('DROP TRIGGER synthetic_completion_fault');
+ expect((await worker.dispatchFetch(origin+'/__fixture/scheduled')).status).toBe(503);
+ expect(await (await worker.dispatchFetch(origin+'/__fixture/watchdog-status')).json()).toMatchObject({status:'overdue',remainingDeletedIdentities:0});
+});
+
+test.each([false,true])('shared verification invalidation preserves deleted-owner evidence and isolates an authority fault=%s',async(fault)=>{
+ const subject=(await (await worker.dispatchFetch(origin+'/api/auth/get-session',{headers:{cookie:b()}})).json() as {user:{id:string}}).user.id;
+ expect((await post('/api/portal/account/delete',{confirmed:true},b())).status).toBe(204);
+ const db=await worker.getD1Database('AUTH_DB');const recovery=await worker.getD1Database('RECOVERY_DB');
+ // Synthetic persisted late-issuer state without a user FK, owned by the real
+ // deleted session identity. Public deletion/scheduled logic remains real.
+ await db.prepare("INSERT INTO verification(id,identifier,value,createdAt,updatedAt,expiresAt) VALUES ('synthetic-late-issuer','synthetic-state',?,?,?,?)").bind(subject,Date.now(),Date.now(),Date.now()+3600000).run();
+ await worker.dispatchFetch(origin+'/__fixture/clock',{headers:{'x-fixture-ms':String(24*86400000)}});
+ const signed=await post('/api/auth/sign-in/email',{email:'participant@example.invalid',password:'synthetic-portal-password'});expect(signed.status).toBe(200);
+ const fresh=signed.headers.getSetCookie().map(v=>v.split(';')[0]).join('; ');
+ if(fault)await recovery.exec("CREATE TRIGGER synthetic_other_authority_fault BEFORE UPDATE ON recovery_deleted WHEN OLD.userId<>'portal-fixture' BEGIN SELECT RAISE(ABORT,'synthetic other authority fault'); END");
+ expect((await post('/api/portal/account/delete',{confirmed:true},fresh)).status).toBe(fault?503:204);
+ expect(await db.prepare("SELECT id FROM user WHERE id='portal-fixture'").first()).toBeNull();
+ expect((await worker.dispatchFetch(origin+'/__fixture/scheduled')).status).toBe(503);
+ if(fault){expect(await db.prepare("SELECT id FROM verification WHERE id='synthetic-late-issuer'").first()).not.toBeNull();await recovery.exec('DROP TRIGGER synthetic_other_authority_fault');expect((await worker.dispatchFetch(origin+'/__fixture/scheduled')).status).toBe(503);}
+ expect(await db.prepare("SELECT id FROM verification WHERE id='synthetic-late-issuer'").first()).toBeNull();
+ expect(await (await worker.dispatchFetch(origin+'/__fixture/watchdog-status')).json()).toMatchObject({status:'overdue',remainingDeletedIdentities:0});expect(writes).toEqual([]);
 });

@@ -4,7 +4,7 @@ import type { HostedEnvironment } from './auth.js';
 export const recoverySchema = [
   `CREATE TABLE recovery_head (authorityId TEXT PRIMARY KEY, epoch INTEGER NOT NULL, gate TEXT NOT NULL CHECK(gate IN ('open','closed')), closedAt INTEGER, checkpoint TEXT NOT NULL)`,
   `CREATE TABLE recovery_lease (id TEXT PRIMARY KEY, epoch INTEGER NOT NULL, startedAt INTEGER NOT NULL)`,
-  `CREATE TABLE recovery_deleted (userId TEXT PRIMARY KEY, deletedAt INTEGER NOT NULL, cleanupDeadline INTEGER NOT NULL, purgedAt INTEGER, memoryClearedAt INTEGER, lastAttemptAt INTEGER, lastSuccessAt INTEGER, status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','cleaned','failed','overdue')))`,
+  `CREATE TABLE recovery_deleted (userId TEXT PRIMARY KEY, deletedAt INTEGER NOT NULL, cleanupDeadline INTEGER NOT NULL, purgePending INTEGER NOT NULL DEFAULT 1 CHECK(purgePending IN (0,1)), purgedAt INTEGER, memoryClearedAt INTEGER, lastAttemptAt INTEGER, lastSuccessAt INTEGER, status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','cleaned','failed','overdue')))`,
   `CREATE TABLE recovery_invitation (id TEXT PRIMARY KEY,userId TEXT NOT NULL)`,
   `CREATE TABLE recovery_snapshot (checkpoint TEXT PRIMARY KEY, value TEXT NOT NULL)`,
   `CREATE TABLE recovery_restore (checkpoint TEXT PRIMARY KEY, bookmark TEXT NOT NULL, targetAt INTEGER NOT NULL, authorizedAt INTEGER NOT NULL)`,
@@ -51,9 +51,15 @@ export async function invitationAllowed(env: HostedEnvironment, id:string):Promi
   return !await env.RECOVERY_DB!.prepare('SELECT id FROM recovery_invitation WHERE id=?').bind(id).first();
 }
 
+/** Acknowledged before erasure; retries must not replace unfinished evidence. */
+export async function recordDeletionPending(env:HostedEnvironment,subject:string){
+ const result=await env.RECOVERY_DB!.prepare('UPDATE recovery_deleted SET purgePending=1 WHERE userId=?').bind(subject).run();
+ if(result.meta.changes!==1)throw new Error('Independent purge evidence unavailable');
+}
+
 export async function recordDeletionPurged(env:HostedEnvironment,subject:string,residual:boolean){
  const now=Date.now();
- await env.RECOVERY_DB!.prepare(`UPDATE recovery_deleted SET purgedAt=COALESCE(purgedAt,?),lastAttemptAt=?,lastSuccessAt=?,status=CASE WHEN status='overdue' OR (cleanupDeadline<? AND (?=1 OR purgedAt IS NULL)) THEN 'overdue' ELSE 'cleaned' END WHERE userId=?`).bind(now,now,now,now,residual?1:0,subject).run();
+ await env.RECOVERY_DB!.prepare(`UPDATE recovery_deleted SET purgedAt=COALESCE(purgedAt,?),lastAttemptAt=?,lastSuccessAt=?,status=CASE WHEN status='overdue' OR (cleanupDeadline<? AND (?=1 OR purgePending=1 OR purgedAt IS NULL)) THEN 'overdue' ELSE 'cleaned' END,purgePending=0 WHERE userId=?`).bind(now,now,now,now,residual?1:0,subject).run();
 }
 
 export async function recordDeletedMemoryErased(env:HostedEnvironment,subject:string){

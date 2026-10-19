@@ -1,7 +1,7 @@
 import type {HostedEnvironment} from './auth.js';
 import {recoveryAvailable,recordDeletionPurged} from './recovery-authority.js';
 import {eraseDeletedProjection} from './account-deletion.js';
-interface Deletion {userId:string;cleanupDeadline:number;purgedAt:number|null;memoryClearedAt:number|null;status:string;}
+interface Deletion {userId:string;cleanupDeadline:number;purgePending:number;purgedAt:number|null;memoryClearedAt:number|null;status:string;}
 /** Current residual inventory, including non-FK state, before a full projection can erase it. */
 export async function deletedPayloadPresent(env:HostedEnvironment,subject:string,invitations:string[]):Promise<boolean>{
  if(await env.AUTH_DB.prepare('SELECT id FROM user WHERE id=?').bind(subject).first())return true;
@@ -17,10 +17,7 @@ export async function maintainDeletedAccounts(env:HostedEnvironment):Promise<{me
  const now=Date.now();let purged=0;let failed=false;const memoryPurgeSubjects:string[]=[];
  await env.RECOVERY_DB!.prepare(`INSERT INTO recovery_watchdog(id,lastAttemptAt,status) VALUES (1,?,'running') ON CONFLICT(id) DO UPDATE SET lastAttemptAt=excluded.lastAttemptAt,status='running'`).bind(now).run();
  try{
-  // Maintained generic state has no user FK. A late pending issuer cannot leave
-  // expired opaque state indefinitely merely because its owner row is gone.
-  await env.AUTH_DB.prepare('DELETE FROM verification WHERE expiresAt<=?').bind(now).run();
-  const deleted=(await env.RECOVERY_DB!.prepare('SELECT userId,cleanupDeadline,purgedAt,memoryClearedAt,status FROM recovery_deleted').all<Deletion>()).results;
+  const deleted=(await env.RECOVERY_DB!.prepare('SELECT userId,cleanupDeadline,purgePending,purgedAt,memoryClearedAt,status FROM recovery_deleted').all<Deletion>()).results;
   for(const row of deleted){
    try{
    await env.RECOVERY_DB!.prepare('UPDATE recovery_deleted SET lastAttemptAt=? WHERE userId=?').bind(now,row.userId).run();
@@ -39,6 +36,9 @@ export async function maintainDeletedAccounts(env:HostedEnvironment):Promise<{me
     try{await env.RECOVERY_DB!.prepare("UPDATE recovery_deleted SET status=CASE WHEN status='overdue' OR cleanupDeadline<? THEN 'overdue' ELSE 'failed' END WHERE userId=?").bind(Date.now(),row.userId).run();}catch{/* Global failure still records the selective reporting failure; continue later tombstones. */}
    }
   }
+  // Observe known residual state before global expired-state cleanup can erase it.
+  // If an evidence write failed, retain that row for the next trusted attempt.
+  if(!failed)await env.AUTH_DB.prepare('DELETE FROM verification WHERE expiresAt<=?').bind(now).run();
   const overdue=await env.RECOVERY_DB!.prepare("SELECT userId FROM recovery_deleted WHERE status='overdue' LIMIT 1").first();
   const status=overdue?'overdue':failed?'failed':'ok';
   await env.RECOVERY_DB!.prepare("UPDATE recovery_watchdog SET lastSuccessAt=CASE WHEN ?='ok' THEN ? ELSE lastSuccessAt END,lastPurgedCount=?,status=? WHERE id=1").bind(status,Date.now(),purged,status).run();
@@ -53,7 +53,7 @@ export async function maintainDeletedAccounts(env:HostedEnvironment):Promise<{me
 /** Trusted operator health projection; no secret or private sporting data. */
 export async function recoveryMaintenanceStatus(env:HostedEnvironment){
  const health=await env.RECOVERY_DB!.prepare('SELECT lastAttemptAt,lastSuccessAt,status,lastPurgedCount FROM recovery_watchdog WHERE id=1').first();
- const deleted=(await env.RECOVERY_DB!.prepare('SELECT userId,cleanupDeadline,purgedAt,memoryClearedAt,lastAttemptAt,lastSuccessAt,status FROM recovery_deleted').all<Deletion>()).results;
+ const deleted=(await env.RECOVERY_DB!.prepare('SELECT userId,cleanupDeadline,purgePending,purgedAt,memoryClearedAt,lastAttemptAt,lastSuccessAt,status FROM recovery_deleted').all<Deletion>()).results;
  let remainingDeletedIdentities=0;for(const row of deleted)if(await env.AUTH_DB.prepare('SELECT id FROM user WHERE id=?').bind(row.userId).first())remainingDeletedIdentities++;
  return {...health,remainingDeletedIdentities,deletions:deleted};
 }

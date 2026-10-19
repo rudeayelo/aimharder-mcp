@@ -45,8 +45,8 @@ export function retentionAuditPlan(deleted:string[],residual:string[],checkpoint
  const clock="MAX(?,CAST(strftime('%s','now') AS INTEGER)*1000+CAST(substr(strftime('%f','now'),4,3) AS INTEGER))";
  const present=new Set(residual);const before:RecoveryStatement[]=[];const after:RecoveryStatement[]=[];
  for(const userId of deleted){
-  before.push({sql:`UPDATE recovery_deleted SET status=CASE WHEN status='overdue' OR (cleanupDeadline<${clock} AND (?=1 OR purgedAt IS NULL)) THEN 'overdue' ELSE status END WHERE userId=?`,params:[preparedAt,present.has(userId)?1:0,userId]});
-  after.push({sql:`UPDATE recovery_deleted SET purgedAt=COALESCE(purgedAt,${clock}),lastAttemptAt=${clock},lastSuccessAt=${clock},status=CASE WHEN status='overdue' OR (cleanupDeadline<${clock} AND (?=1 OR purgedAt IS NULL)) THEN 'overdue' ELSE 'cleaned' END WHERE userId=?`,params:[preparedAt,preparedAt,preparedAt,preparedAt,present.has(userId)?1:0,userId]});
+  before.push({sql:`UPDATE recovery_deleted SET purgePending=CASE WHEN ?=1 THEN 1 ELSE purgePending END,status=CASE WHEN status='overdue' OR (cleanupDeadline<${clock} AND (?=1 OR purgePending=1 OR purgedAt IS NULL)) THEN 'overdue' ELSE status END WHERE userId=?`,params:[present.has(userId)?1:0,preparedAt,present.has(userId)?1:0,userId]});
+  after.push({sql:`UPDATE recovery_deleted SET purgedAt=COALESCE(purgedAt,${clock}),lastAttemptAt=${clock},lastSuccessAt=${clock},status=CASE WHEN status='overdue' OR (cleanupDeadline<${clock} AND (?=1 OR purgePending=1 OR purgedAt IS NULL)) THEN 'overdue' ELSE 'cleaned' END,purgePending=0 WHERE userId=?`,params:[preparedAt,preparedAt,preparedAt,preparedAt,present.has(userId)?1:0,userId]});
  }
  before.push({sql:`INSERT OR REPLACE INTO recovery_projection_audit(checkpoint,auditId,startedAt,completedAt) VALUES (?,?,${clock},NULL)`,params:[checkpoint,auditId,preparedAt]});
  after.push({sql:`UPDATE recovery_projection_audit SET completedAt=${clock} WHERE checkpoint=? AND auditId=?`,params:[preparedAt,checkpoint,auditId]});
