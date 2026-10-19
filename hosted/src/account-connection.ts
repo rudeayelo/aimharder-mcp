@@ -1,13 +1,17 @@
 import { z } from 'zod';
-import { AimHarderClient, type AccountContext } from '../../src/client.js';
+import { AimHarderClient, type AccountContext, type BookingCreationDispatch } from '../../src/client.js';
 import { gymIdSchema, readConfiguration, type Configuration } from '../../src/config.js';
 import { exerciseSearchQuerySchema } from '../../src/exercise-search.js';
 import { exercise1RMQuerySchema } from '../../src/exercise-records.js';
 import { activityQuerySchema } from '../../src/activity.js';
 import { workoutQuerySchema } from '../../src/workouts.js';
 import { classQuerySchema } from '../../src/classes.js';
+import { bookingCreationQuerySchema, bookingExecutionSchema } from '../../src/booking-preparation.js';
+import { AccountActionCoordinator } from './action-coordination.js';
+import { AimHarderError } from '../../src/errors.js';
 import { safeError } from '../../src/errors.js';
 import type { HostedEnvironment } from './auth.js';
+import { currentGrant } from './oauth-grants.js';
 import { participant } from './admission.js';
 import { decryptConnection, encryptConnection, type ConnectionRow } from './vault.js';
 
@@ -26,7 +30,9 @@ function configuration(value: z.infer<typeof input>): Configuration {
 export class AccountConnection {
   #queue: Promise<void> = Promise.resolve();
   #client: { revision: string; envelope: string; client: AimHarderClient } | undefined;
-  constructor(private readonly state: DurableObjectState, private readonly env: HostedEnvironment) {}
+  readonly #actions:AccountActionCoordinator;
+  constructor(private readonly state: DurableObjectState, private readonly env: HostedEnvironment) {this.#actions=new AccountActionCoordinator(state.storage,env);}
+  alarm():Promise<void>{const result=this.#queue.then(async()=>{const subject=await this.state.storage.get<string>('owner');if(subject)await this.#actions.sweep(subject);});this.#queue=result.catch(()=>undefined);return result;}
   fetch(request: Request): Promise<Response> {
     const result = this.#queue.then(() => this.#handle(request));
     this.#queue = result.then(() => undefined, () => undefined);
@@ -39,7 +45,7 @@ export class AccountConnection {
     if (owner && owner !== subject) return Response.json({ status: 'unavailable' }, { status: 403 });
     if (!owner) await this.state.storage.put('owner', subject);
     try {
-      const operation = await request.json() as { kind: string; input?: unknown; gymId?: string };
+      const operation = await request.json() as { kind: string; input?: unknown; gymId?: string; authorization?: {grantId: string; clientId: string} };
       const row = await this.env.AUTH_DB.prepare('SELECT userId,revision,envelope FROM portal_aimharder_connection WHERE userId=?').bind(subject).first<ConnectionRow>();
       if (operation.kind === 'connect') {
         if (row) return Response.json({ status: 'already-connected', message: 'An AimHarder account is already connected. Replacement is not available yet.' }, { status: 409 });
@@ -59,7 +65,11 @@ export class AccountConnection {
         this.#client = { revision, envelope, client: candidate };
         return Response.json({ status: 'connected', ...context });
       }
-      if (!row) { this.#client = undefined; return Response.json({ status: 'not-connected' }); }
+      if (!row) {
+        this.#client = undefined;
+        if(operation.kind==='execute-booking-creation'&&await this.#actions.hasPossibleDispatch(subject,bookingExecutionSchema.parse(operation.input).actionReference))throw new AimHarderError('ACTION_OUTCOME_UNCERTAIN');
+        return Response.json({ status: 'not-connected' });
+      }
       // Authenticate the current durable envelope even when memory is warm.
       const payload = await decryptConnection(this.env, row);
       if (!this.#client || this.#client.revision !== row.revision || this.#client.envelope !== row.envelope) this.#client = { revision: row.revision, envelope: row.envelope, client: new AimHarderClient(payload.configuration, payload.identity) };
@@ -80,6 +90,24 @@ export class AccountConnection {
         if (!saved.meta.changes) return Response.json({ status: 'connection-changed' }, { status: 409 });
         this.#client = { revision, envelope, client: candidate };
         return Response.json({ status: 'connected', ...context });
+      }
+      if(operation.kind==='prepare-booking-creation'){
+        const result=await this.#client.client.prepareBookingCreation(bookingCreationQuerySchema.parse(operation.input));
+        if('actionReference' in result && result.actionReference)this.#actions.remember(result.actionReference,{action:'booking-create',revision:row.revision,identity:payload.identity,expires:Date.parse(result.expiresAt),gymId:result.gym.id});
+        return Response.json({status:'queried',result});
+      }
+      if(operation.kind==='execute-booking-creation'){
+        const query=bookingExecutionSchema.parse(operation.input);const client=this.#client.client;
+        const authorize=async()=>{
+          if(!await currentGrant(this.env,operation.authorization?.grantId,subject,operation.authorization?.clientId,row.revision)) throw new Error('Execution authorization unavailable');
+        };
+        const result=await this.#actions.execute<Awaited<ReturnType<AimHarderClient['executeBookingCreation']>>,BookingCreationDispatch>({action:'booking-create',subject,revision:row.revision,identity:payload.identity,reference:query.actionReference,...(query.gymId?{gymId:query.gymId}:{}),authorize,
+          dispatch:(beforeDispatch,afterDispatch)=>client.executeBookingCreation(query,{beforeDispatch,afterDispatch}),
+          recover:async(facts:BookingCreationDispatch,originalRevision)=>{
+            try{if(originalRevision!==row.revision||facts.identity!==payload.identity)throw new AimHarderError('IDENTITY_MISMATCH');return await client.reconcileBookingCreation(facts);}
+            catch{return {action:'create' as const,gym:facts.preview.gym,target:facts.preview.target,status:'uncertain' as const,observedState:'unknown' as const,notices:['The original operation may have been sent. Original-account read-back is unavailable; inspect it before preparing a new action. No write was retried.']};}
+          }});
+        return Response.json({status:'queried',result});
       }
       if (operation.kind === 'upcoming-bookings' || operation.kind === 'booking-history') {
         const query = z.object({ gymId: gymIdSchema.optional() }).strict().parse(operation.input);
