@@ -4,6 +4,8 @@ Status: accepted on 2026-10-16 as the candidate to validate for the [hosted pilo
 
 ## Context
 
+Implementation update, 2026-10-19: the [encrypted account-boundary decision](2026-10-19-encrypted-aimharder-account-boundary.md) now selects an ordinary SQLite-backed `AccountConnection` Durable Object per verified portal identity, explicit whole-operation serialization and a D1 encrypted connection authority. Local synthetic public HTTP/SDK and restart/rotation evidence is recorded separately from pending platform activation/custody and actual upstream reachability. This partially implements the candidate below; it does not establish the later write/lifecycle/restore or cost gates.
+
 The accepted pilot targets at most 20 participants and EUR 10/month, with Google and email/password login, explicit account linking, authenticated MCP access and recoverable AimHarder credential custody. The [hosted identity decision](2026-10-15-hosted-identity-and-credential-custody.md) defines the product requirements. The existing package remains Node/stdin-based, with one AimHarder client and in-memory state per instance. Source compatibility with Workers and remote clients is unverified.
 
 ## Candidate decision

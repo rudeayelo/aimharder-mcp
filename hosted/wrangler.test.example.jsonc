@@ -20,7 +20,11 @@
       "database_id": "REPLACE_WITH_TEST_DATABASE_ID",
       "migrations_dir": "./migrations"
     }
-  ]
+  ],
+  "durable_objects": {
+    "bindings": [{ "name": "ACCOUNT_CONNECTIONS", "class_name": "AccountConnection" }]
+  },
+  "migrations": [{ "tag": "v1-account-connection-sqlite", "new_sqlite_classes": ["AccountConnection"] }]
   // AUTH_SECRET must be supplied as a platform secret through a trusted operator
   // context. This anonymous stage has no RESEND_API_KEY secret, MAIL_FROM, Google or vault.
   // The separately authorized mail stage needs a verified MAIL_FROM and a restricted
@@ -30,3 +34,7 @@
 // Google stage: inject GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET as platform
 // secrets after exact provider callback setup; preserve all existing mail/auth
 // secrets. See ../docs/hosted-google.md. No values belong in this manifest.
+// Connection stage: review/apply D1 0005 once, and inject independent VAULT_KEYS
+// and VAULT_ACTIVE_KEY_ID as protected platform secrets. Namespace creation is
+// an operator deployment action; retain SQLite (not legacy new_classes).
+// See ../docs/hosted-aimharder-connection.md. Never put keys in this manifest.

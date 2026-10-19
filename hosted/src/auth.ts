@@ -14,6 +14,9 @@ export interface HostedEnvironment {
   MAIL_FROM?: string;
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;
+  ACCOUNT_CONNECTIONS?: DurableObjectNamespace;
+  VAULT_KEYS?: string;
+  VAULT_ACTIVE_KEY_ID?: string;
 }
 
 export function googleConfigured(env: HostedEnvironment): boolean {

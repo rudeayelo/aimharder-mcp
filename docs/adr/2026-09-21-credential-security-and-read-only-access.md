@@ -8,6 +8,8 @@ Hosted-only amendment (2026-10-15): the [hosted identity and credential-custody 
 
 ## Decision
 
+Hosted implementation update (2026-10-19): the [encrypted account-boundary decision](2026-10-19-encrypted-aimharder-account-boundary.md) implements initial service-recoverable credential custody and isolated read-only account operations with synthetic rotation/recovery evidence. Platform custody/deployment, live upstream access and lifecycle/restore enforcement remain separate gates. The historical local environment-only/in-memory policy below remains unchanged.
+
 The server receives credentials through environment variables and keeps the session in memory, without persistence in the MVP. The user may load credentials from 1Password or another manager; 1Password is not a required dependency. Never include secrets in code, Git, documentation, or logs. When using 1Password, discover the item through metadata and read only the necessary fields.
 
 On session expiration, perform at most one automatic reauthentication per request and retry the query once. Stop with a clear error on invalid credentials, 2FA, or restrictions; do not retry in a loop.

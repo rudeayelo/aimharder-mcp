@@ -6,6 +6,8 @@ Implementation update, 2026-10-18: the [invited password admission decision](202
 
 ## Context
 
+Implementation update, 2026-10-19: the [encrypted account-boundary decision](2026-10-19-encrypted-aimharder-account-boundary.md) implements initial credential custody, verified gyms and isolated read-only account operations. Its [runbook](../hosted-aimharder-connection.md) distinguishes synthetic encryption/rotation/recovery evidence from pending platform key custody, deployment and live upstream access. Replacement/lifecycle, backup retention and restoration remain outstanding; the accepted requirements below stay current.
+
 The portal must distinguish signing in to the service from authenticating to AimHarder and authorizing an MCP client. The existing AimHarder client uses password login and an in-memory cookie session. Session-only custody would require participants to return to the portal when a session can no longer be used; retaining recoverable credentials allows the service to authenticate again.
 
 ## Decision

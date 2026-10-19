@@ -1,0 +1,65 @@
+import type { Gym } from '../../src/client.js';
+import type { HostedEnvironment } from './auth.js';
+import { createAuth } from './auth.js';
+import { participant } from './admission.js';
+import { accountOperation } from './account-connection.js';
+import { page } from './portal.js';
+
+function escape(value: string) {
+  return value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]!);
+}
+function settingsForm(gyms: Gym[], connected: boolean, selected?: string): string {
+  return `<form method="post" action="/portal/aimharder${connected ? '/settings' : ''}">${connected ? '' : '<label>AimHarder email<input name="username" type="email" required autocomplete="off" maxlength="512"></label><label>AimHarder password<input name="password" type="password" required autocomplete="off" maxlength="4096"></label>'}${gyms.length ? `<label>Default gym<select name="defaultGym" required>${selected ? '' : '<option value="" selected disabled>Choose a default gym</option>'}${gyms.map(gym => `<option value="${escape(gym.id)}"${gym.id === selected ? ' selected' : ''}>${escape(gym.name)} (${escape(gym.id)})</option>`).join('')}</select></label><p>Confirm each gym’s IANA time zone, such as Europe/Madrid. Leave it blank to retain the explicitly assumed Europe/Madrid zone.</p>${gyms.map(gym => `<label>${escape(gym.name)} time zone<input name="zone:${escape(gym.id)}" value="${gym.timeZoneStatus === 'user-confirmed' ? escape(gym.timeZone ?? '') : ''}" maxlength="100"></label>`).join('')}` : ''}<button>${connected ? 'Save gym settings' : 'Connect AimHarder'}</button></form>`;
+}
+async function boundedText(request: Request): Promise<string> {
+  if (Number(request.headers.get('content-length') ?? 0) > 16_384 || !request.body) throw new Error('Invalid body');
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      size += value.length;
+      if (size > 16_384) { await reader.cancel(); throw new Error('Invalid body'); }
+      chunks.push(value);
+    }
+  } finally { reader.releaseLock(); }
+  const bytes = new Uint8Array(size);
+  let offset = 0;
+  for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.length; }
+  return new TextDecoder().decode(bytes);
+}
+export async function handleAimHarderSettings(request: Request, env: HostedEnvironment, auth: ReturnType<typeof createAuth>): Promise<Response | null> {
+  const path = new URL(request.url).pathname;
+  if (!['/api/portal/aimharder', '/api/portal/aimharder/settings', '/aimharder', '/portal/aimharder', '/portal/aimharder/settings'].includes(path)) return null;
+  const session = await auth.api.getSession({ headers: request.headers });
+  if (!session || !await participant(env, session.user.id)) return Response.json({ status: 'unauthorized' }, { status: session ? 403 : 401 });
+  if (!['GET', 'POST'].includes(request.method) || request.method === 'GET' && path !== '/api/portal/aimharder' && path !== '/aimharder') return new Response(null, { status: 405 });
+  if (request.method === 'POST' && request.headers.get('origin') !== new URL(env.BASE_URL).origin) return Response.json({ status: 'forbidden' }, { status: 403 });
+  if (request.method === 'POST') {
+    let value: unknown;
+    try {
+      const text = await boundedText(request);
+      if (path.startsWith('/portal/')) {
+        const form = new URLSearchParams(text);
+        const gymTimeZones = Object.fromEntries([...form.entries()].filter(([name, zone]) => name.startsWith('zone:') && zone.trim()).map(([name, zone]) => [name.slice(5), zone.trim()]));
+        value = { ...(path.endsWith('/settings') ? {} : { username: form.get('username'), password: form.get('password') }), ...(form.get('defaultGym') ? { defaultGym: form.get('defaultGym') } : {}), gymTimeZones };
+      } else value = JSON.parse(text);
+    } catch { return Response.json({ status: 'invalid-settings' }, { status: 400 }); }
+    const result = await accountOperation(env, session.user.id, { kind: path.endsWith('/settings') ? 'settings' : 'connect', input: value }).then(response => new Response(response.body, response));
+    result.headers.set('cache-control', 'no-store');
+    if (path.startsWith('/api/')) return result;
+    if (result.ok) return new Response(null, { status: 303, headers: { location: '/aimharder', 'cache-control': 'no-store' } });
+    const outcome = await result.json() as { status: string; gyms?: Gym[] };
+    const retainedConnection = path.endsWith('/settings');
+    return page('Connection not saved', outcome.status === 'default-gym-required'
+      ? `<p>${retainedConnection ? 'Select a verified default gym and optionally confirm its zone. Your stored credentials are retained.' : 'Select a verified default gym, optionally confirm its zone, and submit your credentials again. They have not been stored.'}</p>${settingsForm(outcome.gyms ?? [], retainedConnection)}`
+      : '<p>Check your credentials and gym settings. An existing connection cannot be replaced yet.</p><a href="/aimharder">Connection settings</a>', result.status);
+  }
+  const result = await accountOperation(env, session.user.id, { kind: 'status' }).then(response => new Response(response.body, response));
+  result.headers.set('cache-control', 'no-store');
+  if (path === '/api/portal/aimharder') return result;
+  const outcome = await result.json() as { status: string; gyms?: Gym[]; selectedGym?: Gym };
+  return page('AimHarder connection', `<p>Status: ${escape(outcome.status)}.</p>${outcome.gyms ? `<ul>${outcome.gyms.map(gym => `<li>${escape(gym.name)} (${escape(gym.id)}), ${escape(gym.timeZone ?? '')} (${escape(gym.timeZoneStatus)})</li>`).join('')}</ul>` : ''}${outcome.status === 'selection-required' ? '<p>Your memberships changed. Select a current default gym and confirm its zone. Your stored AimHarder credentials are retained.</p>' : ''}${outcome.status === 'connected' || outcome.status === 'selection-required' ? settingsForm(outcome.gyms ?? [], true, outcome.selectedGym?.id) : outcome.status === 'not-connected' ? `<p>Your AimHarder email may differ from your portal email. Credentials are encrypted and recoverable by the service. AI clients do not receive them.</p>${settingsForm([], false)}` : '<p>Account access could not be verified. Check your AimHarder access or contact the service operator.</p>'}`);
+}

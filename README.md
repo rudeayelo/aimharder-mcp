@@ -74,6 +74,8 @@ Planned capabilities, without committed dates or versions:
 
 The hosted [MCP authorization runbook](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-mcp-authorization.md) covers maintained OAuth, trusted client provisioning and independent participant revocation. Actual ChatGPT/Hermes journeys remain pending final pilot acceptance.
 
+The hosted [AimHarder connection slice](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-aimharder-connection.md) adds encrypted recoverable credentials, verified gyms and isolated account operations with synthetic public HTTP/SDK and restart/rotation evidence. Platform key custody, deployed upstream connectivity and the remaining hosted features require separate validation; this does not change the local stdio setup.
+
 ## Contributing
 
 The server runs locally over stdio with one account per instance and no persistent storage. The TypeScript API client is separate from the MCP layer; see the [architecture decision](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/adr/2026-09-21-api-client-separated-from-interfaces.md).
