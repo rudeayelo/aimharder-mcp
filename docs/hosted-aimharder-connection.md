@@ -1,6 +1,6 @@
 # Hosted AimHarder connection
 
-The [#74 account-boundary decision](adr/2026-10-19-encrypted-aimharder-account-boundary.md) implements initial encrypted AimHarder connection and verified gym configuration. This is one slice of [#69](https://github.com/rudeayelo/aimharder-mcp/issues/69); the production pilot, full owner-runtime activation, real-client acceptance and measured cost remain pending. The separate [native restore experiment](hosted-restore-provider-validation.md) supplies #83 provider evidence on isolated synthetic resources. Local fixtures do not establish actual AimHarder reachability from Cloudflare.
+The [#74 account-boundary decision](adr/2026-10-19-encrypted-aimharder-account-boundary.md) implements initial encrypted AimHarder connection and verified gym configuration. This is one slice of [#69](https://github.com/rudeayelo/aimharder-mcp/issues/69). The [full owner-runtime activation](hosted-test-environment.md#full-runtime-activation-2026-10-19) is now verified with the accepted connection/revision, v2 envelope, linked methods/password and same account namespace preserved; production launch, actual-client acceptance and sustainable measured cost remain pending. The separate [native restore experiment](hosted-restore-provider-validation.md) supplies #83 provider evidence on isolated synthetic resources. Local fixtures do not establish actual AimHarder reachability from Cloudflare.
 
 ## Participant behavior
 

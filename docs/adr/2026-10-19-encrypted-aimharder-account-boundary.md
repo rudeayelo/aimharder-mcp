@@ -4,6 +4,8 @@ Status: accepted implementation decision on 2026-10-19 for [issue #74](https://g
 
 ## Context
 
+Activation update, 2026-10-19: the [full-runtime test cutover](../hosted-test-environment.md#full-runtime-activation-2026-10-19) preserves the exact accepted owner/method/password/connection/revision and v2 envelope, original application database, same SQLite namespace and protected secrets while activating all later feature/lifecycle/independent-recovery code. No owner password reset, new upstream credential entry, owner-bearing restore or sporting write was performed. A credential-free invalid-settings probe confirms the new actor code after authenticated connection recovery and before public routing. This extends deployment evidence; actual client queries/actions and sustainable cost remain [#84 acceptance](../hosted-pilot-acceptance.md).
+
 The [identity/custody requirements](2026-10-15-hosted-identity-and-credential-custody.md) accept service-recoverable upstream credentials, one linked AimHarder account and separate portal/client identities. The [runtime candidate](2026-10-16-proposed-cloudflare-hosted-runtime.md) requires explicit per-account coordination and disposable sessions. Returning plaintext configuration to a stateless MCP handler and constructing a client per invocation cannot preserve cookie/failure isolation across requests or establish the later action boundary.
 
 ## Decision
