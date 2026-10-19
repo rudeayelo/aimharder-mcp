@@ -62,7 +62,12 @@ export class AccountActionCoordinator {
       journal.facts=await encryptActionFacts(this.env,options.subject,options.revision,options.action+':'+referenceDigest,facts);
       await this.#put(options.subject,journal);
     });
-    journal.phase='finished';if(journal.expires>Date.now())await this.#put(options.subject,journal);else await this.sweep(options.subject);
+    journal.phase='finished';
+    try{if(journal.expires>Date.now())await this.#put(options.subject,journal);else await this.sweep(options.subject);}
+    catch{
+      // The prior durable fence already prohibits replay. A phase-marker or
+      // cleanup failure must not hide the original account's reconciled result.
+    }
     return result;
   }
 }

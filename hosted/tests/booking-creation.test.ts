@@ -14,6 +14,7 @@ const logins: string[] = [];
 const identities: string[] = [];
 let rejectA = false;
 let interrupt:string|undefined;
+let interruptSkip=0;
 const unexpected: string[] = [];
 function failOutbound(): never { unexpected.push('Unexpected outbound request'); throw new Error('Unexpected outbound request'); }
 const requests: {url: URL; cookie: string}[] = [];
@@ -34,7 +35,7 @@ async function start(keys: Record<string,string> = {first:syntheticKey}, active 
     bindings: { BASE_URL: origin, AUTH_SECRET: 'synthetic-account-connection-auth-secret-long-enough',
       VAULT_KEYS: JSON.stringify(keys), VAULT_ACTIVE_KEY_ID: active },
     outboundService: async request => {
-      if(new URL(request.url).origin==='https://synthetic-scheduler.invalid'){const hit=new URL(request.url).pathname===interrupt;if(hit)interrupt=undefined;return new Response(null,{status:hit?503:204});}
+      if(new URL(request.url).origin==='https://synthetic-scheduler.invalid'){const matches=new URL(request.url).pathname===interrupt;const hit=matches&&interruptSkip--<=0;if(hit){interrupt=undefined;interruptSkip=0;}return new Response(null,{status:hit?503:204});}
       if (new URL(request.url).origin === origin) return worker.dispatchFetch(request);
       if (request.url === 'https://login.aimharder.es/api/login' && request.method === 'POST') {
         const body = await request.json() as { username: string; password: string };
@@ -198,7 +199,8 @@ test('interruptions before consumption, after consumption, after dispatch fence 
   booked=new Set();writes=[];synthetic=bookingSource;
   const actionReference=((await call(a(),'prepare_booking_creation',target)).structuredContent as {actionReference:string}).actionReference;
   interrupt=point;
-  expect((await call(a(),'execute_booking_creation',{actionReference,confirmed:true})).isError).toBe(true);expect(interrupt).toBeUndefined();
+  const interrupted=await call(a(),'execute_booking_creation',{actionReference,confirmed:true});
+  if(point==='/action/finished/after')expect(interrupted.structuredContent?.status).toBe('confirmed');else expect(interrupted.isError).toBe(true);expect(interrupt).toBeUndefined();
   await worker.dispose();await start();
   const recovered=await call(a(),'execute_booking_creation',{actionReference,confirmed:true});
   if(status)expect(recovered.structuredContent).toMatchObject({status,target});else expect(recovered.isError).toBe(true);
@@ -282,6 +284,28 @@ test('trusted conditional rotation covers encrypted action facts and active-key-
  expect((await db.prepare("SELECT COUNT(*) AS n FROM portal_action_journal WHERE facts IS NOT NULL AND json_extract(facts,'$.keyId')='first'").first<{n:number}>())?.n).toBe(0);
  await worker.dispose();await start({second},'second');
  expect((await call(b(),'execute_booking_creation',{actionReference,confirmed:true})).structuredContent?.status).toBe('confirmed');expect(writes).toHaveLength(1);
+});
+
+test('post-send response-fact and terminal journal failures preserve fresh read-back without replay',async()=>{
+ for(const [point,skip]of [['/action/possibly-sent/before',1],['/action/finished/before',0]]as const){
+  for(const outcome of ['confirmed','rejected','uncertain']as const){
+   booked=new Set();writes=[];requests.length=0;let sent=false;
+   synthetic=request=>{
+    const path=new URL(request.url).pathname;const cookie=request.headers.get('cookie')!;
+    if(path==='/api/book'){writes.push(cookie);sent=true;if(outcome!=='rejected')booked.add(cookie);return Response.json(outcome==='rejected'?{bookState:-1}:{bookState:1});}
+    if(sent&&outcome==='uncertain'&&path==='/api/nextBookings')return new Response(null,{status:500});
+    return bookingSource(request);
+   };
+   const actionReference=((await call(a(),'prepare_booking_creation',target)).structuredContent as {actionReference:string}).actionReference;
+   interrupt=point;interruptSkip=skip;
+   const result=await call(a(),'execute_booking_creation',{actionReference,confirmed:true});
+   expect(interrupt).toBeUndefined();expect(result.isError,point+'/'+outcome).not.toBe(true);expect(result.structuredContent).toMatchObject({status:outcome,target});
+   if(point==='/action/possibly-sent/before')expect((result.structuredContent?.notices as string[]).some(notice=>notice.includes('Recovery details could not be saved'))).toBe(true);
+   const after=requests.slice(requests.findIndex(request=>request.url.pathname==='/api/book')+1).map(request=>request.url.pathname);
+   expect(after).toEqual(['/api/bookings','/api/nextBookings']);expect(writes).toHaveLength(1);
+   expect((await call(a(),'execute_booking_creation',{actionReference,confirmed:true})).isError).toBe(true);expect(writes).toHaveLength(1);
+  }
+ }
 });
 
 test('losing the current connection after a possible send reports uncertainty without restoring credentials or sending again',async()=>{

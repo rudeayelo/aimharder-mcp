@@ -215,9 +215,14 @@ export class AimHarderClient {
         writeIssue = true;
       }
       const facts:BookingCreationDispatch={identity:this.#accountId!,boxId,sourceId:entry.sourceId,preview,outcome:{denied:bookingResponseDenied(response),writeIssue}};
+      let recoveryIssue = false;
       try{await coordination?.afterDispatch?.(facts);}
-      catch{throw new AimHarderError('ACTION_OUTCOME_UNCERTAIN');}
-      return this.#reconcileBookingCreation(facts,response,writeIssue,recover);
+      catch{recoveryIssue = true;}
+      // Post-send persistence cannot substitute for the original account's reads.
+      const result = await this.#reconcileBookingCreation(facts,response,writeIssue,recover);
+      return recoveryIssue ? { ...result, notices: [...result.notices,
+        'Recovery details could not be saved. If this response is lost, inspect the original booking before preparing another action; no write was retried.',
+      ] } : result;
     });
   }
 
