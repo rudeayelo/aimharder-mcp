@@ -61,7 +61,7 @@ The operator applied only reviewed `0005-aimharder-connection.sql`, once. Read-b
 
 All eleven configured-mail anonymous HTTPS checks passed without requesting mail. Both new connection routes returned 401 to anonymous requests. Maintained authorization metadata at `/.well-known/oauth-authorization-server/api/auth` retained the exact isolated issuer, S256 and refresh support without dynamic client registration. Fresh D1 comparison against the new pre-#74 baseline retained the owner's portal identity/profile, active verified administrator state, exactly one credential method and one Google method, and the existing unique provider-subject index and MCP generation ledger. No purchase, plan change, additional mail or sporting write occurred.
 
-This establishes initial key custody and isolated schema/namespace/code activation. The subsequent owner connection and independent ciphertext inspection are recorded separately below. Controlled platform key rotation/recovery, runtime CPU/load/cost and the later #69 features remain unverified. Synthetic restart/rotation evidence below does not close those deployed gates; #74 remains open.
+This establishes initial key custody and isolated schema/namespace/code activation. The subsequent owner connection and independent ciphertext inspection are recorded separately below. The later controlled rotation/recovery stage is recorded below; runtime CPU/load/cost and the later #69 features remain unverified. Synthetic restart/rotation evidence below is distinct from those subsequent deployed checks; the completed slice acceptance is recorded in the controlled recovery stage.
 
 ## Owner connection and ciphertext inspection (2026-10-19)
 
@@ -69,7 +69,19 @@ The owner connected their own AimHarder account through the signed-in deployed p
 
 A read-only inspection selected only the verified admitted owner's connection and found exactly one encrypted row. The actual Web Crypto AES-256-GCM decrypt succeeded using the separately escrowed valid 32-byte key, the 12-byte nonce and authenticated ownership/revision/key-ID data. The decrypted payload had the expected structure and a pinned upstream identity. In-memory inspection of the serialized stored connection row found none of its actual username, password or key canaries. No decrypted payload, plaintext credential or key was persisted or emitted. Private hashes of configuration, pinned identity, revision and envelope were retained as the baseline for the controlled rotation/recovery comparison. Fresh D1 checks preserved the accepted portal identity/profile and credential/Google methods.
 
-The operator requested a second independent owner-escrowed key in a separate Password item for the controlled platform rotation/recovery. The service account remains read-only. That rotation, retained-key inventory and public read-only context after recovery remain pending; this connection/ciphertext evidence does not claim their completion or close #74.
+The operator requested a second independent owner-escrowed key in a separate Password item for the controlled platform rotation/recovery. The subsequent stage below records its use; the service account remains read-only. This connection/ciphertext evidence is distinct from that later operator exercise.
+
+## Controlled platform rotation and runtime recovery (2026-10-19)
+
+The owner saved a second independent base64-encoded 32-byte key in a separate Password item. Read-only 1Password access validated both keys and their independence; both escrow items remain retained. The operator first supplied both versions through protected `VAULT_KEYS`, then selected the new active ID through protected `VAULT_ACTIVE_KEY_ID`.
+
+The actual `pnpm vault:prepare-rotation` command consumed only encrypted rows on stdin and keys through its private environment. Before applying its output, the operator reviewed the exact owned revision/old-envelope conditional SQL shape and bound the prepared artifact to its digest. Independent Web Crypto decryption matched the private configuration, pinned identity and semantic revision hashes. The conditional D1 application updated exactly one row; fresh inventory found no active connection row on the old key. A separate read-only decrypt/canary inspection confirmed unchanged configuration, pinned identity and semantic revision, with no actual credential/key canaries in the serialized stored row.
+
+For the controlled runtime recovery, `VAULT_KEYS` was reloaded from the separately escrowed 1Password item with only the new key. Fresh rollout/settings read-back retained all ten intended bindings, the private SQLite account namespace, disabled alternate origins/logging and the accepted portal identity/profile plus credential/Google methods. All eleven configured-mail anonymous HTTPS checks passed again. No plaintext export, secret output, purchase, plan change or sporting write occurred.
+
+An additional independent new-key-only Web Crypto decrypt matched the original accepted configuration, pinned identity and semantic revision hashes and confirmed zero active envelopes on the old key. Separately, the owner refreshed the signed-in portal after the new-key-only rollout and reported that the account was still `connected`, without resubmitting upstream credentials. This owner-reported public recovery outcome is distinct from the operator cryptographic/D1 checks. Together with the earlier connection, isolation and reviewed local evidence, these observations complete #74 acceptance for this slice.
+
+This exercise does not restore a full D1 backup, test the later deletion/revocation-safe lifecycle restore or enforce the <=30-day backup policy. Old escrow keys are retained for historical ciphertext rather than declared safely disposable. CPU/load/cost and the remaining #69 features remain unverified.
 
 ## Local evidence (2026-10-19)
 
