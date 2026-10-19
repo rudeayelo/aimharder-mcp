@@ -329,3 +329,27 @@ test('suspension during a possibly sent publication preserves original read-back
  const recovered=requests.filter(value=>value.url.host==='aimharder.es');expect(recovered.map(value=>value.url.pathname)).toContain('/api/activity/workout');expect(recovered.every(value=>value.cookie==='amhrdrauth=synthetic-b')).toBe(true);expect(publicationWrites).toBe(1);
  expect((await executePublication(actionReference,b())).isError).toBe(true);expect(publicationWrites).toBe(1);expect((await setPolicy('user',false)).status).toBe(303);
 });
+
+test('connection replacement waits for an original-account publication read-back and never reuses its preparation or recovery on the new identity',async()=>{
+ resetPublication();
+ const unused=await preparePublication();const prepared=await preparePublication();
+ let release!:()=>void,entered!:()=>void;
+ const held=new Promise<void>(resolve=>{release=resolve}),arrived=new Promise<void>(resolve=>{entered=resolve});
+ synthetic=async request=>{const result=publicationSource(request);const url=new URL(request.url);if(url.pathname==='/api/activity'&&!url.search){entered();await held;}return result;};
+ const pending=executePublication(prepared.structuredContent!.actionReference as string);await arrived;
+ let changed=false;
+ const replacement=post('/api/portal/aimharder/replace',{username:'upstream-b@example.invalid',password:'synthetic-upstream-password',gymTimeZones:{'shared-gym':'Europe/Madrid'}},a()).then(response=>{changed=true;return response;});
+ expect((await call(b(),'get_account_context')).structuredContent).toMatchObject({selectedGym:{name:'B gym'}});
+ expect(changed).toBe(false);release();
+ const outcome=await pending;const replaced=await replacement;
+ expect(outcome.structuredContent).toMatchObject({status:'confirmed',observedEntry:'matched',preview:{gym:{name:'A gym'}}});
+ expect(replaced.status).toBe(200);
+ expect((await executePublication(unused.structuredContent!.actionReference as string)).isError).toBe(true);
+ expect(publicationWrites).toBe(1);
+ await worker.dispose();await start();requests.length=0;
+ const recovery=await executePublication(prepared.structuredContent!.actionReference as string);
+ expect(recovery.isError).toBe(true);expect(JSON.stringify(recovery)).toContain('ACTION_OUTCOME_UNCERTAIN');expect(requests).toEqual([]);
+ expect((await post('/api/portal/aimharder/disconnect',{},a())).status).toBe(200);
+ const disconnected=await executePublication(prepared.structuredContent!.actionReference as string);
+ expect(disconnected.isError).toBe(true);expect(JSON.stringify(disconnected)).toContain('ACTION_OUTCOME_UNCERTAIN');expect(requests).toEqual([]);expect(publicationWrites).toBe(1);
+});

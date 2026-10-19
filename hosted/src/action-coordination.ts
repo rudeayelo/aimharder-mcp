@@ -20,6 +20,7 @@ export class AccountActionCoordinator {
     return Boolean(await this.env.AUTH_DB.prepare("SELECT 1 FROM portal_action_journal WHERE userId=? AND referenceDigest=? AND expires>? AND phase IN ('possibly-sent','finished') AND facts IS NOT NULL")
       .bind(subject,await digest(reference),Date.now()).first());
   }
+  discardPreparations(){this.#preparations.clear();}
   remember(reference:string,preparation:Preparation){
     for(const [key,value] of this.#preparations)if(value.expires<=Date.now())this.#preparations.delete(key);
     if(this.#preparations.size>=32)this.#preparations.delete(this.#preparations.keys().next().value!);
