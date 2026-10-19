@@ -1,6 +1,6 @@
 # Connect ChatGPT desktop through local STDIO
 
-For the separate invitation-only hosted service, use the [hosted pilot setup and acceptance guide](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-pilot-acceptance.md) and its remote OAuth instructions. The local configuration below is a different integration; its availability does not establish hosted ChatGPT acceptance.
+For the separate invitation-only hosted service, use the [hosted pilot setup and acceptance guide](https://github.com/rudeayelo/aimharder-mcp/blob/codex/69-hosted-mcp-portal/docs/hosted-pilot-acceptance.md) and its remote OAuth instructions. The local configuration below is a different integration; its availability does not establish hosted ChatGPT acceptance.
 
 Use this guide if your ChatGPT desktop app offers **Connect to a custom MCP → Type: STDIO**. The user observed this form on 2026-09-24; a connection with this package has **not been tested**. If the local STDIO option is absent, see your app's [remote MCP documentation](https://developers.openai.com/plugins/deploy/connect-chatgpt).
 
