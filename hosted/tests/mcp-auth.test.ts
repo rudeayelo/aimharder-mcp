@@ -263,6 +263,8 @@ test('an already signed token stops working when authoritative participant admis
   await db.prepare("UPDATE portal_participant SET status='suspended' WHERE userId='portal-fixture'").run();
   expect((await probe(existing.savedTokens!.access_token)).status).toBe(401);
   expect((await fetch(origin + '/api/portal/connections', { headers: { cookie } })).status).toBe(403);
+  expect((await fetch(origin + '/api/auth/get-session', { headers: { cookie } })).status).toBe(403);
+  expect((await fetch(origin + '/api/auth/get-session/', { headers: { cookie } })).status).toBe(403);
   const refresh = await fetch(origin + '/api/auth/oauth2/token', { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({
     grant_type: 'refresh_token', client_id: existing.id, refresh_token: existing.savedTokens!.refresh_token!, resource: origin + '/mcp' }) });
   expect(refresh.status).toBe(400);

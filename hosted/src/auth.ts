@@ -105,7 +105,7 @@ export function createAuth(env: HostedEnvironment) {
         let authorizationPrompt: string | undefined;
         // A cached portal cookie cannot authorize maintained account endpoints.
         const currentSession = await getSessionFromCtx(ctx, { disableCookieCache: true });
-        if (currentSession && ctx.path !== '/sign-out' && !await participant(env, currentSession.user.id)) denyAdmission();
+        if (currentSession && !['/sign-out', '/get-session'].includes(ctx.path) && !await participant(env, currentSession.user.id)) denyAdmission();
         if (['/oauth2/authorize', '/oauth2/consent', '/oauth2/continue'].includes(ctx.path)) {
           if (ctx.path === '/oauth2/authorize' && !authorizationSnapshot) {
             // Fresh authorizations always need an explicit decision. A stale

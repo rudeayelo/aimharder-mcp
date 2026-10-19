@@ -11,6 +11,7 @@ import { handleIdentity } from './identity.js';
 import { handlePortal } from './portal.js';
 import { handleParticipants } from './participants.js';
 import { handleInvitations } from './invitations.js';
+import { participant } from './admission.js';
 import { currentGrant, grantClaim } from './oauth-grants.js';
 import { handleConnections } from './connections.js';
 import { accountOperation } from './account-connection.js';
@@ -32,6 +33,12 @@ export async function handleHostedRequest(
   resolveConnection?: ResolveConnection
 ): Promise<Response> {
   const auth = createAuth(env);
+  // Internal handlers need the maintained session getter to apply their own
+  // admission/status response. The public getter receives the same live gate.
+  if (new URL(request.url).pathname.replace(/\/$/, '') === '/api/auth/get-session') {
+    const session = await auth.api.getSession({ headers: request.headers });
+    if (session && !await participant(env, session.user.id)) return Response.json({ message: 'Portal access is unavailable.' }, { status: 403, headers: { 'cache-control': 'no-store' } });
+  }
   if (new URL(request.url).pathname !== '/mcp') return await handleParticipants(request, env, auth) ?? await handleActivityPolicy(request, env, auth) ?? await handleAimHarderSettings(request, env, auth) ?? await handleConnections(request, env, auth) ?? await handleIdentity(request, env, auth) ?? await handleInvitations(request, env, auth) ?? await handlePortal(request, env, auth) ?? auth.handler(request);
   if (request.method !== 'POST') return new Response(null, { status: 405, headers: { allow: 'POST' } });
   return requireMcpAuth(
