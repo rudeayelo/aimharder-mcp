@@ -61,7 +61,15 @@ The operator applied only reviewed `0005-aimharder-connection.sql`, once. Read-b
 
 All eleven configured-mail anonymous HTTPS checks passed without requesting mail. Both new connection routes returned 401 to anonymous requests. Maintained authorization metadata at `/.well-known/oauth-authorization-server/api/auth` retained the exact isolated issuer, S256 and refresh support without dynamic client registration. Fresh D1 comparison against the new pre-#74 baseline retained the owner's portal identity/profile, active verified administrator state, exactly one credential method and one Google method, and the existing unique provider-subject index and MCP generation ledger. No purchase, plan change, additional mail or sporting write occurred.
 
-This establishes initial key custody and isolated schema/namespace/code activation. The owner has been asked to connect their own AimHarder account through the private signed-in portal; that target-runtime upstream journey is pending. Actual platform ciphertext inspection after connection, controlled key rotation/recovery, runtime CPU/load/cost and the later #69 features remain unverified. Synthetic restart/rotation evidence below does not close those deployed gates; #74 remains open.
+This establishes initial key custody and isolated schema/namespace/code activation. The subsequent owner connection and independent ciphertext inspection are recorded separately below. Controlled platform key rotation/recovery, runtime CPU/load/cost and the later #69 features remain unverified. Synthetic restart/rotation evidence below does not close those deployed gates; #74 remains open.
+
+## Owner connection and ciphertext inspection (2026-10-19)
+
+The owner connected their own AimHarder account through the signed-in deployed portal and reported that its status showed `connected`. This is the owner-reported portal outcome, distinct from the independent private operator checks that followed.
+
+A read-only inspection selected only the verified admitted owner's connection and found exactly one encrypted row. The actual Web Crypto AES-256-GCM decrypt succeeded using the separately escrowed valid 32-byte key, the 12-byte nonce and authenticated ownership/revision/key-ID data. The decrypted payload had the expected structure and a pinned upstream identity. In-memory inspection of the serialized stored connection row found none of its actual username, password or key canaries. No decrypted payload, plaintext credential or key was persisted or emitted. Private hashes of configuration, pinned identity, revision and envelope were retained as the baseline for the controlled rotation/recovery comparison. Fresh D1 checks preserved the accepted portal identity/profile and credential/Google methods.
+
+The operator requested a second independent owner-escrowed key in a separate Password item for the controlled platform rotation/recovery. The service account remains read-only. That rotation, retained-key inventory and public read-only context after recovery remain pending; this connection/ciphertext evidence does not claim their completion or close #74.
 
 ## Local evidence (2026-10-19)
 
