@@ -66,7 +66,7 @@ function isFatalPersonalRead(error: unknown) {
 }
 
 export interface BookingCreationDispatch { identity: number; boxId: number; sourceId: number; preview: BookingCreationPreview; outcome?: {denied:boolean;writeIssue:boolean}; }
-export interface ActionExecutionCoordination { beforeDispatch(facts: BookingCreationDispatch): Promise<void>; afterDispatch?(facts: BookingCreationDispatch): Promise<void>; }
+export interface ActionExecutionCoordination<F = BookingCreationDispatch> { beforeDispatch(facts: F): Promise<void>; afterDispatch?(facts: F): Promise<void>; }
 
 /** One account, an in-memory session, and a closed set of upstream operations. */
 export class AimHarderClient {
