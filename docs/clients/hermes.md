@@ -2,6 +2,8 @@
 
 For the separate invitation-only hosted service, use the [hosted pilot setup and acceptance guide](https://github.com/rudeayelo/aimharder-mcp/blob/codex/69-hosted-mcp-portal/docs/hosted-pilot-acceptance.md) and its remote OAuth instructions. Do not supply AimHarder credentials in the remote client configuration. The local stdio evidence below does not establish hosted Hermes acceptance.
 
+Hosted checkpoint, 2026-10-19: installed CLI v0.22.1+333.gd023d0f independently completed owner OAuth/loopback authorization, discovered 18 tools and called authenticated account context through its maintained registry in an isolated profile. Adopted SDK session state reported `2026-07-28`; this was not a raw wire trace or conversational LLM QA. Other query families, natural-expiry refresh, revocation and separately confirmed actions remain pending in the linked ledger. The local setup below is unchanged.
+
 Hermes configures local stdio servers in `mcp_servers`. Version `0.1.2` connected, exposed six tools and authenticated an account query in Hermes; a prior local archive answered a future-WOD question. The `0.3.0` configuration below has fourteen tools, but Hermes has not been retested with that version. See [validation](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/validation.md).
 
 Set up [Node 24+ and credentials](../configuration.md). Hermes forwards configured `env` values, but does not pass every process variable to child servers. `${VAR}` resolves from the active profile's secrets or environment. See the [Hermes guide](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/features/mcp.md) and [config reference](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/reference/mcp-config-reference.md).
