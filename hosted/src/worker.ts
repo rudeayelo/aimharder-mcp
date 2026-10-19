@@ -13,6 +13,8 @@ import { handleInvitations } from './invitations.js';
 import { currentGrant, grantClaim } from './oauth-grants.js';
 import { handleConnections } from './connections.js';
 import { accountOperation } from './account-connection.js';
+import { registerActivityPublication } from './activity-publication.js';
+import { registerBookingCancellation } from './booking-cancellation.js';
 import { registerActivityDeletion } from './activity-deletion.js';
 import { registerBookingCreation } from './booking-creation.js';
 import { registerActivityQueries } from './activity-queries.js';
@@ -91,6 +93,8 @@ export async function handleHostedRequest(
           if (!resolveConnection && claims.sub) {
             registerScheduleQueries(server, env, claims.sub);
             registerActivityQueries(server, env, claims.sub);
+            registerActivityPublication(server, env, claims.sub, {grantId:String(claims[grantClaim]),clientId:String(claims.client_id)});
+            registerBookingCancellation(server, env, claims.sub, {grantId:String(claims[grantClaim]),clientId:String(claims.client_id)});
             registerActivityDeletion(server,env,claims.sub,{grantId:String(claims[grantClaim]),clientId:String(claims.client_id)});
             registerBookingCreation(server, env, claims.sub, {grantId:String(claims[grantClaim]),clientId:String(claims.client_id)});
           }

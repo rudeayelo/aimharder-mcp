@@ -30,7 +30,7 @@ export class AccountActionCoordinator {
       ON CONFLICT(userId,referenceDigest) DO UPDATE SET revision=excluded.revision,expires=excluded.expires,instance=excluded.instance,phase=excluded.phase,facts=CASE WHEN excluded.phase='finished' THEN portal_action_journal.facts ELSE excluded.facts END,action=excluded.action`)
       .bind(subject,row.referenceDigest,row.revision,row.expires,row.instance,row.phase,row.facts,row.action).run();
   }
-  async execute<T,F>(options:{action:string;subject:string;revision:string;identity:number;reference:string;gymId?:string;
+  async execute<T,F>(options:{action:string;invalidReference?:'BOOKING_REFERENCE_INVALID'|'ACTIVITY_REFERENCE_INVALID';subject:string;revision:string;identity:number;reference:string;gymId?:string;
     dispatch:(beforeDispatch:(facts:F)=>Promise<void>,afterDispatch:(facts:F)=>Promise<void>)=>Promise<T>;
     authorize:()=>Promise<void>;recover:(facts:F,originalRevision:string)=>Promise<T>;
   }):Promise<T>{
@@ -41,12 +41,16 @@ export class AccountActionCoordinator {
     if(previous&&previous.action===options.action&&previous.instance!==this.#instance&&previous.phase!=='consumed'&&previous.facts){
       await options.authorize();
       const facts=await decryptActionFacts(this.env,options.subject,previous.revision,previous.action+':'+referenceDigest,previous.facts) as F;
-      await this.env.AUTH_DB.prepare('UPDATE portal_action_journal SET instance=? WHERE userId=? AND referenceDigest=?').bind(this.#instance,options.subject,referenceDigest).run();
+      try{await this.env.AUTH_DB.prepare('UPDATE portal_action_journal SET instance=? WHERE userId=? AND referenceDigest=?').bind(this.#instance,options.subject,referenceDigest).run();}
+      catch{
+        // This marker only bounds duplicate read-only recovery. The retained
+        // durable dispatch fence still forbids a write; preserve available reads.
+      }
       return options.recover(facts,previous.revision);
     }
     const preparation=this.#preparations.get(options.reference);this.#preparations.delete(options.reference);
-    if(previous||!preparation||preparation.expires<=now||preparation.action!==options.action||preparation.revision!==options.revision||preparation.identity!==options.identity||(options.gymId!==undefined&&options.gymId!==preparation.gymId))throw new AimHarderError('BOOKING_REFERENCE_INVALID');
-    if(rows.length>=64)throw new AimHarderError('BOOKING_REFERENCE_INVALID');
+    if(previous||!preparation||preparation.expires<=now||preparation.action!==options.action||preparation.revision!==options.revision||preparation.identity!==options.identity||(options.gymId!==undefined&&options.gymId!==preparation.gymId))throw new AimHarderError(options.invalidReference??'BOOKING_REFERENCE_INVALID');
+    if(rows.length>=64)throw new AimHarderError(options.invalidReference??'BOOKING_REFERENCE_INVALID');
     const journal:Journal={action:options.action,referenceDigest,revision:options.revision,expires:now+actionRecoveryLifetime,instance:this.#instance,phase:'consumed',facts:null};
     // The durable D1 consumption completes before any preflight or sporting write.
     const alarm=await this.storage.getAlarm();if(alarm===null||alarm>journal.expires)await this.storage.setAlarm(journal.expires);
@@ -55,7 +59,7 @@ export class AccountActionCoordinator {
       journal.facts=await encryptActionFacts(this.env,options.subject,options.revision,options.action+':'+referenceDigest,facts);journal.phase='possibly-sent';
       // Termination after this committed fence can only reconcile, never resend.
       await this.#put(options.subject,journal);
-      try{await options.authorize();if(preparation.expires<=Date.now())throw new AimHarderError('BOOKING_REFERENCE_INVALID');}
+      try{await options.authorize();if(preparation.expires<=Date.now())throw new AimHarderError(options.invalidReference??'BOOKING_REFERENCE_INVALID');}
       catch(error){journal.facts=null;journal.phase='consumed';await this.#put(options.subject,journal);throw error;}
     },async facts=>{
       // Preserve only response interpretation, never the upstream response itself.

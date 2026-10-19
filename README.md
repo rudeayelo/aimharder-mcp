@@ -92,4 +92,8 @@ The hosted [personal activity and RM queries](https://github.com/rudeayelo/aimha
 
 The hosted [confirmed booking-creation slice](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-booking-creation.md) preserves the exact preview and one separate confirmation for both roles, with durable single-use coordination and original-account read-back after interruptions. Automated writes use synthetic upstream HTTP; deployment, actual client acceptance and later lifecycle flows remain separate.
 
+The hosted [own-activity publication slice](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-activity-publication.md) adds independent role access controlled by the administrator, current-policy dispatch checks and single-use recovery. It preserves the existing exact preview, source/result/load rules and separate confirmation. Evidence remains synthetic; each real publication needs its own account-holder confirmation.
+
+The [remote cancellation slice](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-booking-cancellation.md) adds pre-existing own reservation cancellation and the separate late-credit-loss confirmation through the same safe coordination.
+
 The hosted [own-activity deletion slice](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-activity-deletion.md) adds independent role controls, exact own-entry confirmation, at-most-one DELETE and bounded read-only recovery. Synthetic tests include entries created before this service; actual deletion/client acceptance and permanence/RM effects remain separate.

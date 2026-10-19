@@ -285,3 +285,13 @@ test('a policy disabled while preparation reads are held prevents returning a re
  const pending=call(a(),'prepare_activity_deletion',target);await arrived;await policy('admin',false);release();
  expect((await pending).isError).toBe(true);expect(writes).toEqual([]);await policy('admin',true);
 });
+test('large pre-existing entry contents stay out of compact recovery facts and remain recoverable after restart',async()=>{
+ removed=false;writes=[];const notes='Large own entry '.repeat(6000);
+ synthetic=request=>new URL(request.url).pathname==='/api/activity/workout'?Response.json({...activity(),TIPOWODs:[{...activity().TIPOWODs[0],notes}]}):deletionSource(request);
+ const prepared=await call(a(),'prepare_activity_deletion',target);expect(prepared.structuredContent).toMatchObject({status:'ready',target:{blocks:[{notes}]}});
+ const actionReference=prepared.structuredContent!.actionReference;
+ expect((await call(a(),'execute_activity_deletion',{actionReference,sourceActivityId:501,confirmed:true})).structuredContent?.status).toBe('observed-absent');
+ await worker.dispose();await start();
+ const result=await call(a(),'execute_activity_deletion',{actionReference,sourceActivityId:501,confirmed:true});
+ expect(result.structuredContent).toMatchObject({status:'observed-absent',preview:{target:{sourceActivityId:501,date:target.date}}});expect(JSON.stringify(result)).not.toContain('Large own entry');expect(writes).toHaveLength(1);
+});
