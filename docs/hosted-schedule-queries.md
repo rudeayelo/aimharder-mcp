@@ -19,6 +19,10 @@ The resource verifies current OAuth grant/admission before registering tools. On
 
 This extends the accepted [encrypted account boundary](adr/2026-10-19-encrypted-aimharder-account-boundary.md) and preserves the [schedule](adr/2026-09-22-class-schedules-and-confirmed-time-zones.md), [zone](adr/2026-09-24-default-gym-time-zone.md), [workout](adr/2026-09-22-published-workout-applicability.md), [upcoming](adr/2026-09-22-upcoming-bookings-and-view-coverage.md), [history](adr/2026-09-22-booking-history-state-and-coverage.md) and [RM](adr/2026-09-27-personal-exercise-rms-and-calculated-loads.md) decisions. No new upstream capability or local stdio behavior is added.
 
+## Actual installed-Hermes checkpoint (2026-10-19)
+
+At 19:05:10 UTC, maintained installed-Hermes dispatch passed complete schedule, upcoming-view retrieval and limited booking-history contracts for the same selected gym and reported assumed zone/provenance. Published workouts returned the valid `unavailable` outcome with incomplete feed coverage and `not-applicable` enrichment; this did not retrieve instructions or test calculated loads. Unknown upcoming/history horizons remain explicit. No sporting writes or conversational LLM QA occurred. These bounded actual results complement the historical synthetic slice below; they do not establish browser ChatGPT or full pilot acceptance. See the [read observation record](validation.md#actual-hermes-read-contracts-and-controlled-exercise-contrast-2026-10-19).
+
 ## Validation boundary
 
 Automated validation uses an actual SDK v2 HTTP client, maintained OAuth authorization, real workerd/D1/SQLite Durable Objects and the real AimHarder client, with synthetic external HTTP only. It does not establish actual ChatGPT/Hermes acceptance, new target-runtime query/source comparison, runtime cost, sporting writes or full action/lifecycle coordination. Those remain later tickets, including [#77](https://github.com/rudeayelo/aimharder-mcp/issues/77) and [#84](https://github.com/rudeayelo/aimharder-mcp/issues/84). No provider deployment or real upstream request is performed by this slice.
