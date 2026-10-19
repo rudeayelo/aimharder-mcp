@@ -37,6 +37,8 @@ Portal login does not replace MCP authorization. Each supported client still nee
 
 The [MCP client authorization implementation](2026-10-18-hosted-mcp-client-authorization.md) now gives each client a durable grant tied to the verified portal identity and provides independent portal revocation with current admission checks. It preserves this decision's separate upstream-connection lifecycle and action-specific confirmation requirements. Full client and lifecycle acceptance remains pending.
 
+Implementation update, 2026-10-19: the [activity role-access decision](2026-10-19-hosted-activity-role-access.md) implements the settled role-only policy and its same-snapshot dispatch enforcement. [Hosted publication](../hosted-activity-publication.md) retains existing exact preview/confirmation/read-back safeguards with synthetic evidence; deployment and actual client acceptance remain separate.
+
 ## Participant suspension implementation (2026-10-19)
 
 The [suspension decision](2026-10-19-hosted-participant-suspension.md) implements minimal participant administration, atomic access/grant invalidation outside held upstream operations, fresh authorization after reactivation and preparation access generations. Configuration remains encrypted and preserved; possible sends retain original-account read-back without replay. These are synthetic checks; deletion-safe restoration and actual-client/provider acceptance remain separate.
