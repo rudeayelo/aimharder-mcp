@@ -94,3 +94,4 @@ The hosted [confirmed booking-creation slice](https://github.com/rudeayelo/aimha
 
 The hosted [own-activity publication slice](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-activity-publication.md) adds independent role access controlled by the administrator, current-policy dispatch checks and single-use recovery. It preserves the existing exact preview, source/result/load rules and separate confirmation. Evidence remains synthetic; each real publication needs its own account-holder confirmation.
 
+The [remote cancellation slice](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-booking-cancellation.md) adds pre-existing own reservation cancellation and the separate late-credit-loss confirmation through the same safe coordination.

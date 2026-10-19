@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { AimHarderClient, type AccountContext, type ActivityPublicationDispatch, type BookingCancellationDispatch, type BookingCreationDispatch } from '../../src/client.js';
+import { AimHarderClient, type AccountContext, publicationRecoveryFacts, type ActivityPublicationRecovery, type BookingCancellationDispatch, type BookingCreationDispatch } from '../../src/client.js';
 import { gymIdSchema, readConfiguration, type Configuration } from '../../src/config.js';
 import { exerciseSearchQuerySchema } from '../../src/exercise-search.js';
 import { exercise1RMQuerySchema } from '../../src/exercise-records.js';
@@ -96,6 +96,7 @@ export class AccountConnection {
       if(operation.kind==='prepare-activity-publication'){
         await requireActivityPermission(this.env,subject,'publication');
         const result=await this.#client.client.prepareActivityPublication(publicationQuerySchema.parse(operation.input));
+        await requireActivityPermission(this.env,subject,'publication');
         if('actionReference' in result&&result.actionReference)this.#actions.remember(result.actionReference,{action:'activity-publish',revision:row.revision,identity:payload.identity,expires:Date.parse(result.expiresAt),gymId:result.gym.id});
         return Response.json({status:'queried',result});
       }
@@ -106,12 +107,12 @@ export class AccountConnection {
           if(!await currentGrant(this.env,operation.authorization?.grantId,subject,operation.authorization?.clientId,row.revision,'publication'))throw new AimHarderError('ACCESS_RESTRICTED');
         };
         await authorize();
-        const result=await this.#actions.execute<Awaited<ReturnType<AimHarderClient['executeActivityPublication']>>,ActivityPublicationDispatch>({action:'activity-publish',subject,revision:row.revision,identity:payload.identity,reference:query.actionReference,...(query.gymId?{gymId:query.gymId}:{}),authorize,
-          dispatch:(beforeDispatch,afterDispatch)=>client.executeActivityPublication(query,{beforeDispatch,afterDispatch}),
+        const result=await this.#actions.execute<Awaited<ReturnType<AimHarderClient['executeActivityPublication']>>,ActivityPublicationRecovery>({action:'activity-publish',invalidReference:'ACTIVITY_REFERENCE_INVALID',subject,revision:row.revision,identity:payload.identity,reference:query.actionReference,...(query.gymId?{gymId:query.gymId}:{}),authorize,
+          dispatch:(beforeDispatch,afterDispatch)=>client.executeActivityPublication(query,{beforeDispatch:facts=>beforeDispatch(publicationRecoveryFacts(facts)),afterDispatch:facts=>afterDispatch(publicationRecoveryFacts(facts))}),
           recover:async(facts,originalRevision)=>{
-            if(query.gymId!==undefined&&query.gymId!==facts.preview.gym.id)throw new AimHarderError('ACTIVITY_REFERENCE_INVALID');
+            if(query.gymId!==undefined&&query.gymId!==facts.gymId)throw new AimHarderError('ACTIVITY_REFERENCE_INVALID');
             try{if(originalRevision!==row.revision||facts.identity!==payload.identity)throw new AimHarderError('IDENTITY_MISMATCH');return await client.reconcileActivityPublication(facts);}
-            catch{return {status:'uncertain' as const,preview:facts.preview,responseStatus:'uncertain' as const,acceptedResponseId:null,rejectionDiagnostics:null,observedEntry:'unreadable' as const,sourceProvenance:{status:'unavailable' as const,originalPrescription:null},notices:['The original publication may have been sent. Original-account read-back is unavailable; inspect it before preparing a new action. No write was retried.']};}
+            catch{throw new AimHarderError('ACTION_OUTCOME_UNCERTAIN');}
           }});
         return Response.json({status:'queried',result});
       }

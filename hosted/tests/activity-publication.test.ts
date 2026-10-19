@@ -1,3 +1,4 @@
+import { spawn } from 'node:child_process';
 import { readFile, readdir, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -124,8 +125,10 @@ test('publication availability defaults by role and only an administrator can ch
 const sourceId=8001;
 const sourceBlock={notes:'Complete for time',deleted:false,type:1,timecap:600};
 const sourceExercise={ejerId:101,ejerName:'Sample lift',tipoWOD:0,formaReg:4,tipoud:4,valor2:'80'};
-const detail=(extra:Record<string,unknown>={})=>({recordDate:'28 de Septiembre de 2026',TIPOWODs:[sourceBlock],ejerRate:[sourceExercise],...extra});
+const detail=(extra:Record<string,unknown>={})=>({recordDate:'28 de Septiembre de 2026',TIPOWODs:[{...sourceBlock,notes:sourceNotes}],ejerRate:[sourceExercise],...extra});
 const settings=(audience='1')=>`<form id="frmConfiguration">¿Quién puede ver tus publicaciones?<input name="USPRIVACIDADDEF" value="2" ${audience==='2'?'checked':''}><input name="USPRIVACIDADDEF" value="1" ${audience==='1'?'checked':''}><input name="USPRIVACIDADDEF" value="4"><input name="USPRIVCAST" value="0" checked><input name="USPRIVCAST" value="1"></form>`;
+let publicationComment:string|null=null;
+let sourceNotes='Complete for time';
 let published=false;let publicationWrites=0;let audience='1';let sourceChanged=false;
 function publicationSource(request:QueryRequest){
  const url=new URL(request.url);
@@ -134,17 +137,17 @@ function publicationSource(request:QueryRequest){
  if(url.pathname==='/')return new Response('timeLineContent: 7, userID: 300');
  if(url.pathname==='/api/activity'&&url.search)return Response.json({timeLineContent:'7',timeLineFormat:'0',elements:[{id:sourceId,wodClass:'WOD',ejerRate:[],TIPOWODs:[{title:'Sample WOD'}]}],curDate:'20260928'});
  if(url.pathname==='/api/activity/workout'&&url.host==='shared-gym.aimharder.es')return Response.json(detail(sourceChanged?{TIPOWODs:[{...sourceBlock,notes:'Changed prescription'}]}:{}));
- if(url.pathname===`/api/activity/samewod/${sourceId}`)return Response.json({box:[{boxID:200,userId:300,date:'2026-09-28T00:00:00',rates:[sourceExercise],TIPOWODs:[sourceBlock]}]});
+ if(url.pathname===`/api/activity/samewod/${sourceId}`)return Response.json({box:[{boxID:200,userId:300,date:'2026-09-28T00:00:00',rates:[sourceExercise],TIPOWODs:[{...sourceBlock,notes:sourceNotes}]}]});
  if(url.pathname==='/api/activity'){publicationWrites++;published=true;return Response.json({errors:[],errorWODsID:[],errorWODsType:[],errorEjerID:[],id:'9001'});}
  if(url.pathname==='/api/activityCalendar')return Response.json({workouts:published?{'2026-09-28':{rates:{ids:[9001]},TIPOWODs:{}}}:{}});
- if(url.pathname==='/api/activity/workout')return Response.json({userId:request.headers.get('cookie')==='amhrdrauth=synthetic-a'?42:73,boxId:200,...detail({TIPOWODs:[{...sourceBlock,time:275}]})});
+ if(url.pathname==='/api/activity/workout')return Response.json({userId:request.headers.get('cookie')==='amhrdrauth=synthetic-a'?42:73,boxId:200,activityDesc:publicationComment,...detail({TIPOWODs:[{...sourceBlock,notes:sourceNotes,time:275}]})});
  return failOutbound();
 }
 const publication={sourceActivityId:sourceId,blockResults:[{blockIndex:0,kind:'time-seconds',value:275}]};
 async function setPolicy(role:string,enabled:boolean){return worker.dispatchFetch(origin+'/portal/activity-access',{method:'POST',headers:{origin,cookie:a(),'content-type':'application/x-www-form-urlencoded'},body:new URLSearchParams({role,feature:'publication',enabled:enabled?'1':'0'}).toString(),redirect:'manual'});}
 async function preparePublication(cookie=a(),extra:Record<string,unknown>={}){return call(cookie,'prepare_activity_publication',{...publication,...extra});}
 async function executePublication(actionReference:string,cookie=a(),extra:Record<string,unknown>={}){return call(cookie,'execute_activity_publication',{actionReference,confirmed:true,...extra});}
-function resetPublication(){published=false;publicationWrites=0;audience='1';sourceChanged=false;synthetic=publicationSource;}
+function resetPublication(){publicationComment=null;sourceNotes='Complete for time';published=false;publicationWrites=0;audience='1';sourceChanged=false;synthetic=publicationSource;}
 test('admin publishes the exact own preview once and blocked user cannot prepare or reuse a foreign reference',async()=>{
  resetPublication();
  expect((await preparePublication(b())).isError).toBe(true);
@@ -232,4 +235,50 @@ test('a recovered publication reference with a different supplied gym cannot rea
  expect((await executePublication(reference)).structuredContent?.status).toBe('confirmed');await worker.dispose();await start();
  const count=requests.length;expect((await executePublication(reference,a(),{gymId:'inaccessible-gym'})).isError).toBe(true);
  expect(requests.length).toBe(count);expect(publicationWrites).toBe(1);
+});
+
+test('a maximum-length escaped comment remains readable as bounded original intent',async()=>{
+ resetPublication();publicationComment='\u0001'.repeat(5000);
+ const prepared=await preparePublication(a(),{comment:publicationComment});expect(prepared.structuredContent?.status).toBe('ready');
+ const reference=prepared.structuredContent!.actionReference as string;
+ expect((await executePublication(reference)).structuredContent?.status).toBe('confirmed');await worker.dispose();await start();
+ expect((await executePublication(reference)).structuredContent?.status).toBe('confirmed');expect(publicationWrites).toBe(1);
+});
+test('a supported large source publishes once and its journal survives restart and actual combined offline rotation',async()=>{
+ resetPublication();sourceNotes='Long exact source note Ñ '.repeat(1800);
+ const prepared=await preparePublication();expect(prepared.structuredContent?.status).toBe('ready');
+ const reference=prepared.structuredContent!.actionReference as string;
+ expect((await executePublication(reference)).structuredContent?.status).toBe('confirmed');
+ await worker.dispose();await start();expect((await executePublication(reference)).structuredContent?.status).toBe('confirmed');
+ const db=await worker.getD1Database('AUTH_DB');
+ const connections=(await db.prepare('SELECT userId,revision,envelope FROM portal_aimharder_connection').all()).results;
+ const actions=(await db.prepare('SELECT userId,revision,referenceDigest,action,expires,facts FROM portal_action_journal').all()).results;
+ const second=Buffer.alloc(32,29).toString('base64');
+ const command=spawn(process.execPath,['scripts/prepare-vault-rotation.ts'],{cwd:process.cwd(),env:{...process.env,VAULT_KEYS:JSON.stringify({first:syntheticKey,second}),VAULT_ACTIVE_KEY_ID:'second'}});
+ let output='',errors='';command.stdout.on('data',c=>output+=String(c));command.stderr.on('data',c=>errors+=String(c));command.stdin.end(JSON.stringify({connections,actions}));
+ expect(await new Promise(resolve=>command.on('close',resolve))).toBe(0);expect(errors).toBe('');
+ const rotation=JSON.parse(output) as {sql:string;actionRows:number;actionInventoryProvided:boolean};expect(rotation.actionRows).toBeGreaterThan(0);expect(rotation.actionInventoryProvided).toBe(true);expect(output).not.toContain('Long exact source');
+ await db.exec(rotation.sql);await worker.dispose();await start({second},'second');
+ expect((await executePublication(reference)).structuredContent?.status).toBe('confirmed');expect(publicationWrites).toBe(1);
+ // Restore the original synthetic key for later independent journeys.
+ const reverse=spawn(process.execPath,['scripts/prepare-vault-rotation.ts'],{cwd:process.cwd(),env:{...process.env,VAULT_KEYS:JSON.stringify({first:syntheticKey,second}),VAULT_ACTIVE_KEY_ID:'first'}});
+ const rotatedConnections=(await (await worker.getD1Database('AUTH_DB')).prepare('SELECT userId,revision,envelope FROM portal_aimharder_connection').all()).results;
+ const rotatedActions=(await (await worker.getD1Database('AUTH_DB')).prepare('SELECT userId,revision,referenceDigest,action,expires,facts FROM portal_action_journal').all()).results;
+ let reverseOutput='';reverse.stdout.on('data',c=>reverseOutput+=String(c));reverse.stdin.end(JSON.stringify({connections:rotatedConnections,actions:rotatedActions}));expect(await new Promise(resolve=>reverse.on('close',resolve))).toBe(0);await(await worker.getD1Database('AUTH_DB')).exec(JSON.parse(reverseOutput).sql);await worker.dispose();await start();
+});
+test('invalid publication references use the activity participant error and never booking terminology',async()=>{
+ resetPublication();const result=await executePublication('a'.repeat(64));expect(result.isError).toBe(true);expect(JSON.stringify(result)).toContain('ACTIVITY_REFERENCE_INVALID');expect(JSON.stringify(result)).not.toContain('booking action reference');
+});
+test('disabling publication during a held preparation returns no preview or executable reference',async()=>{
+ resetPublication();let release!:()=>void,entered!:()=>void;const held=new Promise<void>(r=>{release=r}),arrived=new Promise<void>(r=>{entered=r});let once=true;
+ synthetic=async request=>{if(new URL(request.url).pathname===`/api/activity/samewod/${sourceId}`&&once){once=false;entered();await held;}return publicationSource(request);};
+ const pending=preparePublication();await arrived;await setPolicy('admin',false);release();try{const result=await pending;expect(result.isError).toBe(true);expect(result.structuredContent).toBeUndefined();expect(publicationWrites).toBe(0);}finally{await setPolicy('admin',true);}
+});
+
+test('unavailable source recovery still inspects the accepted own target and reports explicit uncertainty without replay',async()=>{
+ resetPublication();const prepared=await preparePublication();const reference=prepared.structuredContent!.actionReference as string;
+ expect((await executePublication(reference)).structuredContent?.status).toBe('confirmed');await worker.dispose();await start();
+ synthetic=request=>new URL(request.url).host==='shared-gym.aimharder.es'&&new URL(request.url).pathname==='/api/activity/workout'?new Response(null,{status:500}):publicationSource(request);
+ requests.length=0;const result=await executePublication(reference);expect(result.isError).toBe(true);expect(JSON.stringify(result)).toContain('ACTION_OUTCOME_UNCERTAIN');
+ expect(requests.filter(r=>r.url.host==='aimharder.es').map(r=>r.url.pathname)).toContain('/api/activityCalendar');expect(requests.filter(r=>r.url.host==='aimharder.es').map(r=>r.url.pathname)).toContain('/api/activity/workout');expect(publicationWrites).toBe(1);
 });

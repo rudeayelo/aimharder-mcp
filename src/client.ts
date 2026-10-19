@@ -66,7 +66,14 @@ function isFatalPersonalRead(error: unknown) {
 }
 
 export interface BookingCreationDispatch { identity: number; boxId: number; sourceId: number; preview: BookingCreationPreview; outcome?: {denied:boolean;writeIssue:boolean}; }
-export interface ActivityPublicationDispatch { identity:number; boxId:number; preview:PublicationPreview; formDigest:string; outcome?:ReturnType<typeof publicationResponse>; }
+export interface ActivityPublicationDispatch { identity:number; boxId:number; preview:PublicationPreview; query:PublicationQuery; formDigest:string; outcome?:ReturnType<typeof publicationResponse>; }
+export interface ActivityPublicationRecovery { identity:number; boxId:number; gymId:string; timeZone:string; gymNameDigest:string; sourceDigest:string; activityDate:string; audience:PublicationAudience; query:PublicationQuery; formDigest:string; outcome?:ReturnType<typeof publicationResponse>; }
+/** A bounded original intent, not a copy of source prescriptions or RM suggestions. */
+export function publicationRecoveryFacts(facts:ActivityPublicationDispatch):ActivityPublicationRecovery {
+  return {identity:facts.identity,boxId:facts.boxId,gymId:facts.preview.gym.id,timeZone:facts.preview.gym.timeZone,
+    gymNameDigest:createHash('sha256').update(facts.preview.gym.name).digest('hex'),sourceDigest:createHash('sha256').update(JSON.stringify(facts.preview.source)).digest('hex'),
+    activityDate:facts.preview.activityDate,audience:facts.preview.audience,query:facts.query,formDigest:facts.formDigest,...(facts.outcome?{outcome:facts.outcome}:{})};
+}
 export interface BookingCancellationDispatch { identity: number; boxId: number; sourceId: number; reservationId: number; preview: BookingCancellationPreview; late: boolean; outcome?: {cancelState:number|null;writeIssue:boolean}; }
 export interface ActionExecutionCoordination<F = BookingCreationDispatch> { beforeDispatch(facts: F): Promise<void>; afterDispatch?(facts: F): Promise<void>; }
 
@@ -850,7 +857,7 @@ export class AimHarderClient {
       catch { return { status: 'stale' as const, preview, notices: ['The Copy payload has unsupported fields. No activity write was sent.'] }; }
       if (JSON.stringify([...form]) !== stored.formSnapshot)
         return { status: 'stale' as const, preview, notices: ['The mapped Copy fields changed after preparation. No activity write was sent.'] };
-      const facts:ActivityPublicationDispatch={identity:this.#accountId!,boxId,preview:structuredClone(preview),formDigest:createHash('sha256').update(stored.formSnapshot).digest('hex')};
+      const facts:ActivityPublicationDispatch={identity:this.#accountId!,boxId,preview:structuredClone(preview),query:structuredClone(stored.query),formDigest:createHash('sha256').update(stored.formSnapshot).digest('hex')};
       let response: ReturnType<typeof publicationResponse> = { status: 'uncertain', id: null, rejectionDiagnostics: null };
       let dispatchAuthorized=coordination===undefined;
       try {
@@ -867,10 +874,27 @@ export class AimHarderClient {
   }
 
   /** Trusted original-account read-back; never recreates publication permission. */
-  reconcileActivityPublication(facts:ActivityPublicationDispatch){
-    return this.#query(facts.preview.gym.id,async(_gyms,{gym,boxId})=>{
-      if(this.#accountId!==facts.identity||boxId!==facts.boxId||gym.timeZone!==facts.preview.gym.timeZone||gym.timeZoneStatus!=='user-confirmed'||gym.name!==facts.preview.gym.name)throw new AimHarderError('IDENTITY_MISMATCH');
-      return this.#reconcileActivityPublication(facts);
+  reconcileActivityPublication(facts:ActivityPublicationRecovery){
+    return this.#query(facts.gymId,async(_gyms,{gym,boxId})=>{
+      if(this.#accountId!==facts.identity||boxId!==facts.boxId||gym.timeZone!==facts.timeZone||gym.timeZoneStatus!=='user-confirmed'||createHash('sha256').update(gym.name).digest('hex')!==facts.gymNameDigest)throw new AimHarderError('IDENTITY_MISMATCH');
+      let preview:PublicationPreview|null=null;
+      try {
+        const source=await this.#readPublicationSource(gym,boxId,facts.query.sourceActivityId);
+        if(source)preview=publicationPreview(source.workout,source.copy,facts.query,{...gym,timeZone:facts.timeZone,timeZoneStatus:'user-confirmed'},facts.audience);
+        if(!source||!preview||preview.activityDate!==facts.activityDate||createHash('sha256').update(JSON.stringify(preview.source)).digest('hex')!==facts.sourceDigest||createHash('sha256').update(JSON.stringify([...buildActivityForm(source.copy,preview)])).digest('hex')!==facts.formDigest)preview=null;
+      } catch { /* Own read-back remains useful when source reconstruction fails. */ }
+      if(!preview){
+        // Inspect only the original accepted target; never join a similar entry.
+        try {
+          const month=facts.activityDate.slice(0,7);
+          const calendar=parseActivityCalendar(await this.#request({kind:'activity-calendar',month}),month);
+          const id=facts.outcome?.id;
+          if(id&&calendar.get(facts.activityDate)?.includes(id))parseActivityDetail(await this.#request({kind:'activity-detail',sourceId:id}),id,facts.activityDate,facts.identity,boxId,gym.id,facts.timeZone);
+        } catch { /* The incomplete original intent cannot establish confirmation. */ }
+        throw new AimHarderError('ACTION_OUTCOME_UNCERTAIN');
+      }
+      const result=await this.#reconcileActivityPublication({...facts,preview});
+      return {...result,notices:[...result.notices,'Recovery rebuilt the exact source/result comparison from original intent. Historical suggestion displays were not retained or recalculated; no write was replayed.']};
     });
   }
 
