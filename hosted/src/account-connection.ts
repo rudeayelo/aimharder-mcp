@@ -40,7 +40,8 @@ export class AccountConnection {
   }
   async #handle(request: Request): Promise<Response> {
     const subject = request.headers.get('x-portal-subject');
-    if (!subject || !await participant(this.env, subject)) return Response.json({ status: 'unavailable' }, { status: 403 });
+    const admission = subject && await participant(this.env, subject);
+    if (!subject || !admission) return Response.json({ status: 'unavailable' }, { status: 403 });
     const owner = await this.state.storage.get<string>('owner');
     if (owner && owner !== subject) return Response.json({ status: 'unavailable' }, { status: 403 });
     if (!owner) await this.state.storage.put('owner', subject);
@@ -93,7 +94,7 @@ export class AccountConnection {
       }
       if(operation.kind==='prepare-booking-cancellation'){
         const result=await this.#client.client.prepareBookingCancellation(bookingCancellationQuerySchema.parse(operation.input));
-        if('actionReference' in result&&result.actionReference)this.#actions.remember(result.actionReference,{action:'booking-cancel',revision:row.revision,identity:payload.identity,expires:Date.parse(result.expiresAt),gymId:result.gym.id});
+        if('actionReference' in result&&result.actionReference)this.#actions.remember(result.actionReference,{action:'booking-cancel',revision:row.revision,identity:payload.identity,accessGeneration:admission.accessGeneration,expires:Date.parse(result.expiresAt),gymId:result.gym.id});
         return Response.json({status:'queried',result});
       }
       if(operation.kind==='execute-booking-cancellation'||operation.kind==='execute-late-booking-cancellation'){
@@ -101,19 +102,19 @@ export class AccountConnection {
         const query=late?lateCancellationExecutionSchema.parse(operation.input):bookingExecutionSchema.parse(operation.input);
         const client=this.#client.client;
         const authorize=async()=>{if(!await currentGrant(this.env,operation.authorization?.grantId,subject,operation.authorization?.clientId,row.revision))throw new Error('Execution authorization unavailable');};
-        const result=await this.#actions.execute<Awaited<ReturnType<AimHarderClient['executeBookingCancellation']>>,BookingCancellationDispatch>({action:late?'booking-cancel-late':'booking-cancel',subject,revision:row.revision,identity:payload.identity,reference:query.actionReference,...(query.gymId?{gymId:query.gymId}:{}),authorize,
+        const result=await this.#actions.execute<Awaited<ReturnType<AimHarderClient['executeBookingCancellation']>>,BookingCancellationDispatch>({action:late?'booking-cancel-late':'booking-cancel',subject,revision:row.revision,identity:payload.identity,accessGeneration:admission.accessGeneration,reference:query.actionReference,...(query.gymId?{gymId:query.gymId}:{}),authorize,
           dispatch:(beforeDispatch,afterDispatch)=>late?client.executeLateBookingCancellation(lateCancellationExecutionSchema.parse(query),{beforeDispatch,afterDispatch}):client.executeBookingCancellation(bookingExecutionSchema.parse(query),{beforeDispatch,afterDispatch}),
           recover:async(facts,originalRevision)=>{
             if(query.gymId!==undefined&&query.gymId!==facts.preview.gym.id)throw new AimHarderError('BOOKING_REFERENCE_INVALID');
             try{if(originalRevision!==row.revision||facts.identity!==payload.identity)throw new AimHarderError('IDENTITY_MISMATCH');return await client.reconcileBookingCancellation(facts);}
             catch{return {action:'cancel' as const,gym:facts.preview.gym,target:facts.preview.target,credit:facts.preview.credit,status:'uncertain' as const,observedState:'unknown' as const,notices:['The original cancellation may have been sent. Original-account read-back is unavailable; inspect it before preparing a new action. No write was retried.']};}
           }});
-        if('actionReference' in result&&typeof result.actionReference==='string'&&'expiresAt' in result&&typeof result.expiresAt==='string')this.#actions.remember(result.actionReference,{action:'booking-cancel-late',revision:row.revision,identity:payload.identity,expires:Date.parse(result.expiresAt),gymId:result.gym.id});
+        if('actionReference' in result&&typeof result.actionReference==='string'&&'expiresAt' in result&&typeof result.expiresAt==='string')this.#actions.remember(result.actionReference,{action:'booking-cancel-late',revision:row.revision,identity:payload.identity,accessGeneration:admission.accessGeneration,expires:Date.parse(result.expiresAt),gymId:result.gym.id});
         return Response.json({status:'queried',result});
       }
       if(operation.kind==='prepare-booking-creation'){
         const result=await this.#client.client.prepareBookingCreation(bookingCreationQuerySchema.parse(operation.input));
-        if('actionReference' in result && result.actionReference)this.#actions.remember(result.actionReference,{action:'booking-create',revision:row.revision,identity:payload.identity,expires:Date.parse(result.expiresAt),gymId:result.gym.id});
+        if('actionReference' in result && result.actionReference)this.#actions.remember(result.actionReference,{action:'booking-create',revision:row.revision,identity:payload.identity,accessGeneration:admission.accessGeneration,expires:Date.parse(result.expiresAt),gymId:result.gym.id});
         return Response.json({status:'queried',result});
       }
       if(operation.kind==='execute-booking-creation'){
@@ -121,7 +122,7 @@ export class AccountConnection {
         const authorize=async()=>{
           if(!await currentGrant(this.env,operation.authorization?.grantId,subject,operation.authorization?.clientId,row.revision)) throw new Error('Execution authorization unavailable');
         };
-        const result=await this.#actions.execute<Awaited<ReturnType<AimHarderClient['executeBookingCreation']>>,BookingCreationDispatch>({action:'booking-create',subject,revision:row.revision,identity:payload.identity,reference:query.actionReference,...(query.gymId?{gymId:query.gymId}:{}),authorize,
+        const result=await this.#actions.execute<Awaited<ReturnType<AimHarderClient['executeBookingCreation']>>,BookingCreationDispatch>({action:'booking-create',subject,revision:row.revision,identity:payload.identity,accessGeneration:admission.accessGeneration,reference:query.actionReference,...(query.gymId?{gymId:query.gymId}:{}),authorize,
           dispatch:(beforeDispatch,afterDispatch)=>client.executeBookingCreation(query,{beforeDispatch,afterDispatch}),
           recover:async(facts:BookingCreationDispatch,originalRevision)=>{
             if(query.gymId!==undefined&&query.gymId!==facts.preview.gym.id)throw new AimHarderError('BOOKING_REFERENCE_INVALID');

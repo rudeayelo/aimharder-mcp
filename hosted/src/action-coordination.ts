@@ -5,7 +5,7 @@ import { decryptActionFacts, encryptActionFacts } from './vault.js';
 
 // Recovery records never authorize dispatch. Unused preparations stay in memory.
 export const actionRecoveryLifetime = 10 * 60_000;
-interface Preparation { action:string; revision:string; identity:number; expires:number; gymId:string; }
+interface Preparation { accessGeneration:number; action:string; revision:string; identity:number; expires:number; gymId:string; }
 interface Journal { action:string; referenceDigest:string; revision:string; expires:number; instance:string; phase:'consumed'|'possibly-sent'|'finished'; facts:string|null; }
 export class AccountActionCoordinator {
   #instance=crypto.randomUUID();
@@ -30,7 +30,7 @@ export class AccountActionCoordinator {
       ON CONFLICT(userId,referenceDigest) DO UPDATE SET revision=excluded.revision,expires=excluded.expires,instance=excluded.instance,phase=excluded.phase,facts=CASE WHEN excluded.phase='finished' THEN portal_action_journal.facts ELSE excluded.facts END,action=excluded.action`)
       .bind(subject,row.referenceDigest,row.revision,row.expires,row.instance,row.phase,row.facts,row.action).run();
   }
-  async execute<T,F>(options:{action:string;subject:string;revision:string;identity:number;reference:string;gymId?:string;
+  async execute<T,F>(options:{accessGeneration:number;action:string;subject:string;revision:string;identity:number;reference:string;gymId?:string;
     dispatch:(beforeDispatch:(facts:F)=>Promise<void>,afterDispatch:(facts:F)=>Promise<void>)=>Promise<T>;
     authorize:()=>Promise<void>;recover:(facts:F,originalRevision:string)=>Promise<T>;
   }):Promise<T>{
@@ -49,7 +49,7 @@ export class AccountActionCoordinator {
       return options.recover(facts,previous.revision);
     }
     const preparation=this.#preparations.get(options.reference);this.#preparations.delete(options.reference);
-    if(previous||!preparation||preparation.expires<=now||preparation.action!==options.action||preparation.revision!==options.revision||preparation.identity!==options.identity||(options.gymId!==undefined&&options.gymId!==preparation.gymId))throw new AimHarderError('BOOKING_REFERENCE_INVALID');
+    if(previous||!preparation||preparation.expires<=now||preparation.action!==options.action||preparation.revision!==options.revision||preparation.identity!==options.identity||preparation.accessGeneration!==options.accessGeneration||(options.gymId!==undefined&&options.gymId!==preparation.gymId))throw new AimHarderError('BOOKING_REFERENCE_INVALID');
     if(rows.length>=64)throw new AimHarderError('BOOKING_REFERENCE_INVALID');
     const journal:Journal={action:options.action,referenceDigest,revision:options.revision,expires:now+actionRecoveryLifetime,instance:this.#instance,phase:'consumed',facts:null};
     // The durable D1 consumption completes before any preflight or sporting write.
