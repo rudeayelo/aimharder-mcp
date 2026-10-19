@@ -12,6 +12,7 @@ const syntheticKey = Buffer.alloc(32, 17).toString('base64');
 let worker: Miniflare;
 let directory: string;
 const mail:{to:string[];subject:string;text:string}[]=[];
+const googleProfiles=new Map<string,{email:string;sub:string}>();
 const logins: string[] = [];
 const identities: string[] = [];
 let rejectA = false;
@@ -35,8 +36,13 @@ async function start(keys: Record<string,string> = {first:syntheticKey}, active 
     compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'], d1Databases: ['AUTH_DB','RECOVERY_DB'], resourcePersistencePath: directory,
     durableObjects: { ACCOUNT_CONNECTIONS: { className: 'AccountConnection', useSQLite: true } },
     bindings: { RECOVERY_AUTHORITY_ID:'synthetic-authority', BASE_URL: origin, AUTH_SECRET: 'synthetic-account-connection-auth-secret-long-enough',
-      RESEND_API_KEY:'synthetic-resend',MAIL_FROM:'noreply@example.invalid',VAULT_KEYS: JSON.stringify(keys), VAULT_ACTIVE_KEY_ID: active },
+      GOOGLE_CLIENT_ID:'synthetic-google-client',GOOGLE_CLIENT_SECRET:'synthetic-google-secret',RESEND_API_KEY:'synthetic-resend',MAIL_FROM:'noreply@example.invalid',VAULT_KEYS: JSON.stringify(keys), VAULT_ACTIVE_KEY_ID: active },
     outboundService: async request => {
+      if(request.url==='https://oauth2.googleapis.com/token'){
+        const body=new URLSearchParams(await request.text());const profile=googleProfiles.get(body.get('code')??'');if(!profile)return Response.json({error:'invalid_grant'},{status:400});
+        const jwt=[Buffer.from('{"alg":"RS256","typ":"JWT"}').toString('base64url'),Buffer.from(JSON.stringify({...profile,email_verified:true,name:'Synthetic Google Participant',iss:'https://accounts.google.com',aud:'synthetic-google-client',iat:Math.floor(Date.now()/1000),exp:Math.floor(Date.now()/1000)+3600})).toString('base64url'),'synthetic-signature'].join('.');
+        return Response.json({access_token:'synthetic-access',token_type:'Bearer',expires_in:3600,id_token:jwt});
+      }
       if(request.url==='https://api.resend.com/emails'){mail.push(await request.json() as typeof mail[number]);return Response.json({id:'synthetic-mail'});}
       if (new URL(request.url).origin === origin) return worker.dispatchFetch(request);
       if (request.url === 'https://login.aimharder.es/api/login' && request.method === 'POST') {
@@ -292,4 +298,108 @@ test('a missing independent latest head fails closed across portal, authenticati
  expect((await post('/api/auth/request-password-reset',{email:'participant@example.invalid',redirectTo:origin+'/reset-password'})).status).toBe(503);
  await expect(call(a(),'get_account_context',{},bearer)).rejects.toThrow();
  expect(writes).toEqual([]);
+});
+
+async function googleSignIn(email='participant@example.invalid',sub='synthetic-google-subject',linkCookie=''){
+ const start=await post('/api/auth/'+(linkCookie?'link-social':'sign-in/social'),{provider:'google',callbackURL:origin+'/account',errorCallbackURL:origin+'/google-result'},linkCookie);expect(start.status).toBe(200);
+ const google=new URL((await start.json() as {url:string}).url);const code=crypto.randomUUID();googleProfiles.set(code,{email,sub});
+ const response=await worker.dispatchFetch(origin+'/api/auth/callback/google?'+new URLSearchParams({code,state:google.searchParams.get('state')!}),{redirect:'manual',headers:{cookie:[linkCookie,start.headers.getSetCookie().map(v=>v.split(';')[0]).join('; ')].filter(Boolean).join('; ')}});
+ const cookie=[linkCookie,response.headers.getSetCookie().map(v=>v.split(';')[0]).join('; ')].filter(Boolean).join('; ');
+ return {response,cookie,session:await worker.dispatchFetch(origin+'/api/auth/get-session',{headers:{cookie}}).then(r=>r.json())};
+}
+async function rollback(snapshot:Awaited<ReturnType<typeof backupFixture>>){
+ expect((await worker.dispatchFetch(origin+'/__fixture/recovery/close')).status).toBe(200);expect((await worker.dispatchFetch(origin+'/__fixture/recovery/seal')).status).toBe(200);
+ expect((await post('/__fixture/recovery/authorize',{bookmark:'synthetic-before-method-change',targetAt:Date.now()-60000})).status).toBe(200);
+ await restoreFixture(snapshot);await applyNativeRecoveryPlan();expect((await worker.dispatchFetch(origin+'/__fixture/recovery/open')).status).toBe(200);
+}
+test('restoration cannot recreate a Google association removed through the maintained fresh-session unlink endpoint',async()=>{
+ await worker.dispatchFetch(origin+'/__fixture/linked-google');expect((await googleSignIn()).session).toMatchObject({user:{id:'portal-fixture'}});
+ const snapshot=await backupFixture();expect((await post('/api/auth/unlink-account',{accountId:'synthetic-google'},a())).status).toBe(200);
+ await rollback(snapshot);
+ expect((await googleSignIn()).session).toBeNull();
+ const fresh=await freshB('participant@example.invalid');expect((await call(fresh,'get_account_context')).structuredContent).toMatchObject({selectedGym:{name:'A gym'}});
+});
+
+test('a delayed authenticated callback cannot borrow a new lease after natural parent completion and controlled restore reopen',async()=>{
+ synthetic=bookingSource;const delayed=await worker.dispatchFetch(origin+'/__fixture/defer-query',{headers:{cookie:b()}});expect(delayed.status).toBe(204);
+ const snapshot=await backupFixture();await rollback(snapshot);
+ const before=logins.length;const released=await worker.dispatchFetch(origin+'/__fixture/release-deferred');expect(released.status).toBe(503);
+ expect(requests).toHaveLength(0);expect(logins).toHaveLength(before);expect(writes).toEqual([]);
+});
+
+test('restoration cannot re-enable password recovery after credential unlink and preserves unchanged Google proof',async()=>{
+ await worker.dispatchFetch(origin+'/__fixture/linked-google');const snapshot=await backupFixture();
+ expect((await post('/api/auth/unlink-account',{accountId:'fixture-password'},a())).status).toBe(200);
+ await rollback(snapshot);const before=mail.length;
+ expect((await post('/api/auth/request-password-reset',{email:'participant@example.invalid',redirectTo:origin+'/reset-password'})).status).toBe(200);expect(mail).toHaveLength(before);
+ expect(Boolean((await googleSignIn()).session)).toBe(true);
+ expect((await post('/api/auth/sign-in/email',{email:'participant@example.invalid',password:'synthetic-portal-password'})).ok).toBe(false);
+});
+
+test('scheduled tombstone purge removes abandoned dirty-restored payload without reopening or replaying',async()=>{
+ const snapshot=await backupFixture();expect((await post('/api/portal/account/delete',{confirmed:true},a())).status).toBe(204);
+ expect((await worker.dispatchFetch(origin+'/__fixture/recovery/close')).status).toBe(200);expect((await worker.dispatchFetch(origin+'/__fixture/recovery/seal')).status).toBe(200);
+ expect((await post('/__fixture/recovery/authorize',{bookmark:'synthetic-abandoned-dirty',targetAt:Date.now()-60000})).status).toBe(200);await restoreFixture(snapshot);
+ const scheduled=await worker.dispatchFetch(origin+'/__fixture/scheduled');expect(scheduled.status).toBe(200);
+ expect((await worker.dispatchFetch(origin+'/account',{headers:{cookie:b()}})).status).toBe(503);
+ const health=await worker.dispatchFetch(origin+'/__fixture/watchdog-status');expect(await health.json()).toMatchObject({status:'ok',remainingDeletedIdentities:0});
+ expect((await worker.dispatchFetch(origin+'/__fixture/recovery/open')).status).toBe(409);expect(writes).toEqual([]);
+ // A later native rollback must be purged again even after a prior successful tick.
+ await restoreFixture(snapshot);expect((await worker.dispatchFetch(origin+'/__fixture/scheduled')).status).toBe(200);
+ expect(await (await worker.dispatchFetch(origin+'/__fixture/watchdog-status')).json()).toMatchObject({status:'ok',remainingDeletedIdentities:0});
+});
+
+test('scheduled cleanup retries real database failure while preserving access denial and exposes operator failure until purge succeeds',async()=>{
+ const db=await worker.getD1Database('AUTH_DB');await db.exec("CREATE TRIGGER synthetic_cleanup_fault BEFORE DELETE ON user BEGIN SELECT RAISE(ABORT,'synthetic cleanup fault'); END");
+ expect((await post('/api/portal/account/delete',{confirmed:true},a())).status).toBe(503);
+ expect((await worker.dispatchFetch(origin+'/__fixture/scheduled')).status).toBe(503);
+ expect(await (await worker.dispatchFetch(origin+'/__fixture/watchdog-status')).json()).toMatchObject({status:'failed',remainingDeletedIdentities:1});
+ expect((await worker.dispatchFetch(origin+'/account',{headers:{cookie:a()}})).status).toBe(401);
+ await db.exec('DROP TRIGGER synthetic_cleanup_fault');expect((await worker.dispatchFetch(origin+'/__fixture/scheduled')).status).toBe(200);
+ expect(await (await worker.dispatchFetch(origin+'/__fixture/watchdog-status')).json()).toMatchObject({status:'ok',remainingDeletedIdentities:0});
+});
+
+test('scheduled purge reports an original-deletion deadline incident even after removing an abandoned overdue payload',async()=>{
+ const snapshot=await backupFixture();expect((await post('/api/portal/account/delete',{confirmed:true},a())).status).toBe(204);
+ expect((await worker.dispatchFetch(origin+'/__fixture/recovery/close')).status).toBe(200);expect((await worker.dispatchFetch(origin+'/__fixture/recovery/seal')).status).toBe(200);
+ expect((await post('/__fixture/recovery/authorize',{bookmark:'synthetic-now-abandoned',targetAt:Date.now()-60000})).status).toBe(200);await restoreFixture(snapshot);
+ await worker.dispatchFetch(origin+'/__fixture/clock',{headers:{'x-fixture-ms':String(24*86400000)}});
+ expect((await worker.dispatchFetch(origin+'/__fixture/scheduled')).status).toBe(503);
+ expect(await (await worker.dispatchFetch(origin+'/__fixture/watchdog-status')).json()).toMatchObject({status:'overdue',remainingDeletedIdentities:0});
+ expect((await worker.dispatchFetch(origin+'/__fixture/recovery/reconcile')).status).toBe(200);
+ expect((await worker.dispatchFetch(origin+'/__fixture/recovery/open')).status).toBe(409);
+ expect(writes).toEqual([]);
+});
+
+test('a held original account read cannot delay another deleted account durable purge or the scheduled outcome',async()=>{
+ synthetic=bookingSource;const bearer=await token(a());let release!:()=>void;let entered!:()=>void;
+ const held=new Promise<void>(r=>release=r),arrived=new Promise<void>(r=>entered=r);
+ synthetic=async request=>{if(new URL(request.url).pathname==='/api/bookings'&&request.headers.get('cookie')==='amhrdrauth=synthetic-a'){entered();await held;}return bookingSource(request);};
+ const reading=call(a(),'get_class_sessions',{startDate:'2026-10-25',endDate:'2026-10-25'},bearer);await arrived;
+ try{
+  const db=await worker.getD1Database('AUTH_DB');await db.exec("CREATE TRIGGER synthetic_queue_fault BEFORE DELETE ON user BEGIN SELECT RAISE(ABORT,'synthetic queue fault'); END");
+  expect((await post('/api/portal/account/delete',{confirmed:true},a())).status).toBe(503);expect((await post('/api/portal/account/delete',{confirmed:true},b())).status).toBe(503);
+  await db.exec('DROP TRIGGER synthetic_queue_fault');expect((await worker.dispatchFetch(origin+'/__fixture/scheduled')).status).toBe(200);
+  expect(await (await worker.dispatchFetch(origin+'/__fixture/watchdog-status')).json()).toMatchObject({status:'ok',remainingDeletedIdentities:0});
+ }finally{release();await reading;}
+ expect(writes).toEqual([]);
+});
+
+test('a Google unlink and explicit relink does not permit the earlier association ID to return from backup',async()=>{
+ await worker.dispatchFetch(origin+'/__fixture/linked-google');const snapshot=await backupFixture();
+ expect((await post('/api/auth/unlink-account',{accountId:'synthetic-google'},a())).status).toBe(200);
+ expect((await googleSignIn('participant@example.invalid','synthetic-google-subject',a())).response.headers.get('location')).toBe(origin+'/account');
+ await rollback(snapshot);expect(Boolean((await googleSignIn()).session)).toBe(false);
+ const current=await freshB('participant@example.invalid');const html=await worker.dispatchFetch(origin+'/account',{headers:{cookie:current}}).then(r=>r.text());
+ expect(html).toContain('Link Google to this account');expect(html).not.toContain('Google is linked.');
+});
+
+test('one selectively failing deleted identity cannot starve another identity persisted purge',async()=>{
+ const db=await worker.getD1Database('AUTH_DB');await db.exec("CREATE TRIGGER synthetic_all_deletes BEFORE DELETE ON user BEGIN SELECT RAISE(ABORT,'synthetic initial fault'); END");
+ expect((await post('/api/portal/account/delete',{confirmed:true},a())).status).toBe(503);expect((await post('/api/portal/account/delete',{confirmed:true},b())).status).toBe(503);
+ await db.exec("DROP TRIGGER synthetic_all_deletes; CREATE TRIGGER synthetic_one_delete BEFORE DELETE ON user WHEN OLD.id='portal-fixture' BEGIN SELECT RAISE(ABORT,'synthetic selective fault'); END");
+ expect((await worker.dispatchFetch(origin+'/__fixture/scheduled')).status).toBe(503);
+ expect(await (await worker.dispatchFetch(origin+'/__fixture/watchdog-status')).json()).toMatchObject({status:'failed',remainingDeletedIdentities:1});
+ await db.exec('DROP TRIGGER synthetic_one_delete');expect((await worker.dispatchFetch(origin+'/__fixture/scheduled')).status).toBe(200);
+ expect(await (await worker.dispatchFetch(origin+'/__fixture/watchdog-status')).json()).toMatchObject({status:'ok',remainingDeletedIdentities:0});
 });

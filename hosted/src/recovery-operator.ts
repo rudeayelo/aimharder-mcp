@@ -1,5 +1,8 @@
 /** Trusted operator module; not an HTTP route. Provider API may execute its SQL plan. */
 import type { HostedEnvironment } from './auth.js';
+import {eraseDeletedAccountMemory} from './account-connection.js';
+import {recordDeletedMemoryErased} from './recovery-authority.js';
+import {maintainDeletedAccounts} from './recovery-maintenance.js';
 import { recoveryAvailable } from './recovery-authority.js';
 interface Head {authorityId:string;epoch:number;gate:'open'|'closed';closedAt:number|null;checkpoint:string;}
 import { projectionPlan, securitySnapshotSchema, type SecuritySnapshot } from './recovery-plan.js';
@@ -28,15 +31,17 @@ export async function sealRecovery(env:HostedEnvironment,checkpoint:string){
   await drained(env,checkpoint);
   const users=(await env.AUTH_DB.prepare(`SELECT p.userId,p.role,p.status,p.accessGeneration,c.revision FROM portal_participant p LEFT JOIN portal_aimharder_connection c ON c.userId=p.userId`).all<SecuritySnapshot['users'][number]>()).results;
   const policies=(await env.AUTH_DB.prepare('SELECT role,publication,deletion FROM portal_activity_policy').all<SecuritySnapshot['policies'][number]>()).results;
+  const methods=(await env.AUTH_DB.prepare('SELECT id,userId,providerId,accountId FROM account').all<SecuritySnapshot['methods'][number]>()).results;
   const clients=(await env.AUTH_DB.prepare('SELECT clientId,disabled FROM oauthClient').all<SecuritySnapshot['clients'][number]>()).results;
-  await env.RECOVERY_DB!.prepare('INSERT INTO recovery_snapshot(checkpoint,value) VALUES (?,?)').bind(checkpoint,JSON.stringify({users,policies,clients})).run();
+  await env.RECOVERY_DB!.prepare('INSERT INTO recovery_snapshot(checkpoint,value) VALUES (?,?)').bind(checkpoint,JSON.stringify({users,policies,clients,methods})).run();
   return {checkpoint,participants:users.length};
 }
 export async function authorizeRestorePoint(env:HostedEnvironment,checkpoint:string,bookmark:string,targetAt:number){
   const value=await drained(env,checkpoint);const now=Date.now();
   const seal=await env.RECOVERY_DB!.prepare('SELECT checkpoint FROM recovery_snapshot WHERE checkpoint=?').bind(checkpoint).first();
   const dirty=await env.RECOVERY_DB!.prepare('SELECT epoch FROM recovery_interval WHERE closedAt<=? AND (openedAt IS NULL OR openedAt>=?)').bind(targetAt,targetAt).first();
-  if(!seal||!bookmark||bookmark.length>256||!Number.isSafeInteger(targetAt)||targetAt>now||targetAt<now-7*86400000||targetAt>=value.closedAt!||dirty)throw new Error('Restore point is outside a clean retained interval');
+  const deletionInterval=await env.RECOVERY_DB!.prepare('SELECT userId FROM recovery_deleted WHERE deletedAt<=? AND (purgedAt IS NULL OR purgedAt>=?) LIMIT 1').bind(targetAt,targetAt).first();
+  if(deletionInterval||!seal||!bookmark||bookmark.length>256||!Number.isSafeInteger(targetAt)||targetAt>now||targetAt<now-7*86400000||targetAt>=value.closedAt!||dirty)throw new Error('Restore point is outside a clean retained interval');
   await env.RECOVERY_DB!.prepare('INSERT INTO recovery_restore(checkpoint,bookmark,targetAt,authorizedAt) VALUES (?,?,?,?)').bind(checkpoint,bookmark,targetAt,now).run();
   return {checkpoint,bookmark,targetAt};
 }
@@ -56,6 +61,11 @@ export async function openRecovery(env:HostedEnvironment,checkpoint:string){
   const value=await drained(env,checkpoint);
   const applied=await env.AUTH_DB.prepare('SELECT epoch,checkpoint FROM portal_recovery_checkpoint WHERE id=1').first<{epoch:number;checkpoint:string}>();
   if(applied?.epoch!==value.epoch+1||applied.checkpoint!==checkpoint)throw new Error('Restore projection has not been reconciled');
+  const maintenance=await maintainDeletedAccounts(env);
+  // No public leases remain here; normal scheduled persistence cleanup never
+  // waits for memory erasure behind an original account operation.
+  for(const subject of maintenance.memoryPurgeSubjects){await eraseDeletedAccountMemory(env,subject);await recordDeletedMemoryErased(env,subject);}
+  if(maintenance.status!=='ok')throw new Error('Recovery cleanup requires operator attention');
   await env.RECOVERY_DB!.batch([
     env.RECOVERY_DB!.prepare("UPDATE recovery_interval SET openedAt=? WHERE epoch=? AND openedAt IS NULL").bind(Date.now(),value.epoch),
     env.RECOVERY_DB!.prepare("UPDATE recovery_head SET gate='open',epoch=epoch+1,closedAt=NULL,checkpoint=? WHERE authorityId=? AND gate='closed' AND checkpoint=? AND NOT EXISTS(SELECT 1 FROM recovery_lease)").bind(crypto.randomUUID(),env.RECOVERY_AUTHORITY_ID,checkpoint),

@@ -8,7 +8,7 @@ try{
  const manifest=manifestSchema.parse(JSON.parse(input));
  if(manifest.applicationDatabaseId===manifest.recoveryDatabaseId)throw new Error('Recovery authority must be independent');
  const now=Date.now();const target=manifest.restore.targetAt;
- if(target>=manifest.closedAt||target>now||target<now-7*86400000||manifest.restore.authorizedAt>now||manifest.intervals.some(interval=>target>=interval.closedAt&&(interval.openedAt===null||target<=interval.openedAt)))throw new Error('Restore point outside clean retained interval');
+ if(target>=manifest.closedAt||target>manifest.restore.authorizedAt||target<manifest.restore.authorizedAt-7*86400000||manifest.restore.authorizedAt>now||manifest.intervals.some(interval=>target>=interval.closedAt&&(interval.openedAt===null||target<=interval.openedAt)))throw new Error('Restore point outside clean retained interval');
  const statements=projectionPlan(manifest.snapshot,manifest.deletedUsers,manifest.deletedInvitations,manifest.epoch,manifest.checkpoint);
  process.stdout.write(JSON.stringify({applicationDatabaseId:manifest.applicationDatabaseId,recoveryDatabaseId:manifest.recoveryDatabaseId,authorizedNativeRestore:manifest.restore,authorityId:manifest.authorityId,checkpoint:manifest.checkpoint,epoch:manifest.epoch,requiresFreshClosedDrainedReadback:true,authDatabaseStatements:statements,readback:{sql:'SELECT epoch,checkpoint FROM portal_recovery_checkpoint WHERE id=1',params:[],expected:{epoch:manifest.epoch+1,checkpoint:manifest.checkpoint}},independentGateMustRemainClosed:true}));
 }catch{process.stderr.write('Recovery preparation failed. No plan was prepared.\n');process.exitCode=1;}

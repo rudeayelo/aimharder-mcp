@@ -1,10 +1,31 @@
 // Synthetic-only operator seam; excluded from production build.
+import {recoveryMaintenanceStatus} from '../src/recovery-maintenance.js';
+import production from '../src/worker.js';
+import {accountOperation} from '../src/account-connection.js';
 import setup from './account-connection-fixture-worker.js';
 import type { HostedEnvironment } from '../src/auth.js';
 import { closeRecovery, sealRecovery, authorizeRestorePoint, reconcileRecovery, openRecovery } from '../src/recovery-operator.js';
 export { AccountConnection } from '../src/account-connection.js';
-export default {async fetch(request:Request,env:HostedEnvironment){
+const clockNow=Date.now;let clockOffset=0;Date.now=()=>clockNow()+clockOffset;
+let deferred:(()=>Promise<Response>)|undefined;
+export default {async fetch(request:Request,env:HostedEnvironment,ctx:ExecutionContext){
  const path=new URL(request.url).pathname;
+ if(path==='/__fixture/clock'){clockOffset+=Number(request.headers.get('x-fixture-ms')??0);return new Response(null,{status:204});}
+ if(path==='/__fixture/scheduled'){try{await production.scheduled({cron:'*/5 * * * *',scheduledTime:Date.now(),noRetry(){}} as ScheduledController,env,ctx);return Response.json({outcome:'ok'});}catch{return Response.json({outcome:'failed'},{status:503});}}
+ if(path==='/__fixture/watchdog-status')return Response.json(await recoveryMaintenanceStatus(env));
+ if(path==='/__fixture/defer-query'){
+   let parent:string|undefined;
+   const recovery=new Proxy(env.RECOVERY_DB!,{get(target,key){
+    if(key==='prepare')return(sql:string)=>{const statement=target.prepare(sql);if(!sql.startsWith('INSERT INTO recovery_lease'))return statement;return new Proxy(statement,{get(value,property){if(property==='bind')return(...args:unknown[])=>{parent=String(args[0]);return value.bind(...args);};const found=Reflect.get(value,property);return typeof found==='function'?found.bind(value):found;}});};
+    const value=Reflect.get(target,key);return typeof value==='function'?value.bind(target):value;
+   }});
+   const sessionResponse=await production.fetch(new Request(new URL('/api/auth/get-session',request.url),{headers:request.headers}),{...env,RECOVERY_DB:recovery});
+   const session=await sessionResponse.json() as {user?:{id:string}}|null;if(!session?.user||!parent)return new Response(null,{status:401});
+   const context={...env,RECOVERY_LEASE:parent};const subject=session.user.id;
+   deferred=()=>accountOperation(context,subject,{kind:'class-sessions',input:{startDate:'2026-10-25',endDate:'2026-10-25'}});
+   return new Response(null,{status:204});
+ }
+ if(path==='/__fixture/release-deferred'){const callback=deferred;deferred=undefined;return callback?callback():new Response(null,{status:404});}
  if(path==='/__fixture/linked-google'){
    const now=Date.now();await env.AUTH_DB.prepare("INSERT INTO account(id,accountId,providerId,userId,createdAt,updatedAt) VALUES ('synthetic-google','synthetic-google-subject','google','portal-fixture',?,?)").bind(now,now).run();return new Response(null);
  }

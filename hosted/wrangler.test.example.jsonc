@@ -10,6 +10,7 @@
   "workers_dev": false,
   "preview_urls": false,
   "send_metrics": false,
+  "triggers": { "crons": ["*/5 * * * *"] },
   "observability": { "enabled": false },
   "routes": [{ "pattern": "pilot-test.ahmcp.link", "custom_domain": true }],
   "vars": { "BASE_URL": "https://pilot-test.ahmcp.link", "RECOVERY_AUTHORITY_ID": "REPLACE_WITH_PINNED_AUTHORITY_ID" },

@@ -7,6 +7,7 @@ import { gymIdSchema, type Configuration } from '../../src/config.js';
 import { safeError } from '../../src/errors.js';
 import { createAuth, type HostedEnvironment } from './auth.js';
 import { handleActivityPolicy } from './activity-policy.js';
+import {maintainDeletedAccounts} from './recovery-maintenance.js';
 import { handleAccountDeletion } from './account-deletion.js';
 import { acquireRecoveryLease, releaseRecoveryLease } from './recovery-authority.js';
 import { handleIdentity } from './identity.js';
@@ -16,7 +17,8 @@ import { handleInvitations } from './invitations.js';
 import { participant } from './admission.js';
 import { currentGrant, grantClaim } from './oauth-grants.js';
 import { handleConnections } from './connections.js';
-import { accountOperation } from './account-connection.js';
+import {recordDeletedMemoryErased} from './recovery-authority.js';
+import { accountOperation,eraseDeletedAccountMemory } from './account-connection.js';
 import { registerActivityPublication } from './activity-publication.js';
 import { registerBookingCancellation } from './booking-cancellation.js';
 import { registerActivityDeletion } from './activity-deletion.js';
@@ -120,11 +122,19 @@ async function dispatchHostedRequest(
 
 export async function handleHostedRequest(request:Request,env:HostedEnvironment,resolveConnection?:ResolveConnection):Promise<Response>{
   let lease:string|null;
-  try{lease=await acquireRecoveryLease(env);}catch{return Response.json({error:'Service recovery is unavailable.'},{status:503});}
+  try{lease=await acquireRecoveryLease(env,null);}catch{return Response.json({error:'Service recovery is unavailable.'},{status:503});}
   if(!lease)return Response.json({error:'Service recovery is unavailable.'},{status:503});
   try{return await dispatchHostedRequest(request,{...env,RECOVERY_LEASE:lease},resolveConnection);}
   finally{await releaseRecoveryLease(env,lease);}
 }
 export default {
+  scheduled:async(_controller:ScheduledController,env:HostedEnvironment,ctx:ExecutionContext)=>{
+    const result=await maintainDeletedAccounts(env);
+    ctx.waitUntil((async()=>{
+      const memory=await Promise.allSettled(result.memoryPurgeSubjects.map(async subject=>{await eraseDeletedAccountMemory(env,subject);await recordDeletedMemoryErased(env,subject);}));
+      if(memory.some(outcome=>outcome.status==='rejected'))throw new Error('Deleted account memory cleanup requires operator attention');
+    })());
+    if(result.status!=='ok')throw new Error('Recovery cleanup requires operator attention');
+  },
   fetch: (request: Request, env: HostedEnvironment) => handleHostedRequest(request, env),
 };

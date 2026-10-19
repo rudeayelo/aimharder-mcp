@@ -33,7 +33,8 @@ export async function accountOperation(env: HostedEnvironment, subject: string, 
 /** Trusted binding-only cleanup. The actor independently requires a deletion tombstone. */
 export async function eraseDeletedAccountMemory(env:HostedEnvironment,subject:string){
   if(!env.ACCOUNT_CONNECTIONS)return;
-  await env.ACCOUNT_CONNECTIONS.get(env.ACCOUNT_CONNECTIONS.idFromName(subject)).fetch('https://account.internal/',{method:'POST',headers:{'x-portal-subject':subject},body:JSON.stringify({kind:'erase-deleted'})});
+  const response=await env.ACCOUNT_CONNECTIONS.get(env.ACCOUNT_CONNECTIONS.idFromName(subject)).fetch('https://account.internal/',{method:'POST',headers:{'x-portal-subject':subject},body:JSON.stringify({kind:'erase-deleted'})});
+  if(response.status!==403)throw new Error('Deleted account memory cleanup unavailable');
 }
 const input = z.object({ username: z.string().min(1).max(512), password: z.string().min(1).max(4096),
   defaultGym: z.string().optional(), gymTimeZones: z.record(z.string(), z.string()).optional() }).strict();
@@ -48,7 +49,7 @@ export class AccountConnection {
   readonly #actions:AccountActionCoordinator;
   private readonly env:HostedEnvironment;
   constructor(private readonly state: DurableObjectState, env: HostedEnvironment) {this.env={...env};this.#actions=new AccountActionCoordinator(state.storage,this.env);}
-  alarm():Promise<void>{const result=this.#queue.then(async()=>{const lease=await acquireRecoveryLease(this.env);if(!lease)return;try{const subject=await this.state.storage.get<string>('owner');if(subject)await this.#actions.sweep(subject);}finally{await releaseRecoveryLease(this.env,lease);}});this.#queue=result.catch(()=>undefined);return result;}
+  alarm():Promise<void>{const result=this.#queue.then(async()=>{const lease=await acquireRecoveryLease(this.env,null);if(!lease)return;try{const subject=await this.state.storage.get<string>('owner');if(subject)await this.#actions.sweep(subject);}finally{await releaseRecoveryLease(this.env,lease);}});this.#queue=result.catch(()=>undefined);return result;}
   fetch(request: Request): Promise<Response> {
     const result = this.#queue.then(() => this.#handle(request));
     this.#queue = result.then(() => undefined, () => undefined);

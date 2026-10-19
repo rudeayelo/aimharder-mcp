@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import type { HostedEnvironment, createAuth } from './auth.js';
 import { participant } from './admission.js';
-import { recordDeletion } from './recovery-authority.js';
+import { recordDeletion,recordDeletionPurged,recordDeletedMemoryErased } from './recovery-authority.js';
 import { eraseDeletedAccountMemory } from './account-connection.js';
 import { page } from './portal.js';
 
@@ -32,7 +32,9 @@ export async function handleAccountDeletion(request:Request,env:HostedEnvironmen
   try{
   if(invitations.length)await env.AUTH_DB.batch(invitations.map(id=>env.AUTH_DB.prepare('INSERT OR IGNORE INTO portal_deleted_invitation(id) VALUES (?)').bind(id)));
   await eraseDeletedProjection(env,session.user.id);
+  await recordDeletionPurged(env,session.user.id,true);
   await eraseDeletedAccountMemory(env,session.user.id);
+  await recordDeletedMemoryErased(env,session.user.id);
   }catch{return Response.json({message:'Deletion is recorded and access is blocked. Active-data cleanup needs operator maintenance.'},{status:503});}
   return path.startsWith('/api/')?new Response(null,{status:204}):page('Portal account deleted','<p>Portal access, MCP authorizations and active service data have been removed. Your AimHarder bookings and activity were not changed. Earlier encrypted backups expire within the documented recovery limit, no later than 30 days after deletion.</p>');
 }
