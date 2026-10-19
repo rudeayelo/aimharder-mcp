@@ -87,3 +87,5 @@ Report bugs or propose changes in [GitHub Issues](https://github.com/rudeayelo/a
 [MIT](LICENSE).
 
 The hosted [schedule, workout and booking-view queries](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-schedule-queries.md) retain their existing inputs/results, uncertainty and own-account calculated loads for both roles. Automated evidence uses real HTTP MCP and isolated account objects with synthetic upstream responses; actual ChatGPT/Hermes query acceptance remains pending.
+
+The hosted [personal activity and RM queries](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-activity-queries.md) likewise preserve own-account activity, bounded exercise discovery, latest 1RM and separate progression, with explicit partial coverage and unknown units. This is synthetic HTTP/isolation evidence; actual client acceptance remains pending.
