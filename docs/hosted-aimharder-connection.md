@@ -47,6 +47,12 @@ Generate keys securely in the trusted operator process, escrow them in authorize
 
 The offline command is a trusted operator interface, not an application administrator capability. Provider key custody, actual encrypted-at-rest inspection, rotation inventory and a controlled platform recovery require separately recorded operator evidence before closing their acceptance gate.
 
+## Operator predeployment status (2026-10-19)
+
+Fresh Cloudflare/D1 read-back confirmed the seven existing bindings, an active verified owner with exactly one credential method and one Google method, the unique provider-subject index and MCP generation ledger. The #74 connection table was absent. A new pre-#74 baseline was captured for later comparison; this fresh observation does not reconstruct the unavailable earlier local baseline. The live bundle remains the #73 deployment `58354e4`.
+
+A protected 1Password escrow-creation attempt was rejected with `Permission (101)`; fresh inspection found zero matching escrow items. No secret value was persisted or printed. No Durable Object namespace, vault binding, #74 migration or new code deployment was activated. Key escrow access, separate custody, deployed encryption/rotation/recovery and target-runtime read-only AimHarder access remain pending; #74 stays open. No purchase or plan change occurred. This preflight changes no architecture or acceptance requirement.
+
 ## Local evidence (2026-10-19)
 
 Seven public/operator journeys use the actual production portal entry, maintained sign-in/OAuth, SDK v2 over HTTP, real AimHarder client and workerd/D1/SQLite Durable Objects. External AimHarder HTTP is the only sporting substitute and unexpected outbound requests fail. Synthetic identities, credentials and keys are clearly artificial; no real account or provider is contacted.
