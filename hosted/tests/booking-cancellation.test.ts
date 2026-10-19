@@ -302,3 +302,12 @@ test('creation restart recovery also rejects a changed explicit gym without prot
  const wrong=await call(a(),'execute_booking_creation',{actionReference,gymId:'inaccessible-gym',confirmed:true});
  expect(wrong.isError).toBe(true);expect(wrong.structuredContent).toBeUndefined();expect(requests).toHaveLength(0);expect(writes).toHaveLength(1);
 });
+
+test('a missing original connection after possible cancellation cannot resurrect credentials or authorize replay',async()=>{
+ booked=new Set(['amhrdrauth=synthetic-b']);writes=[];synthetic=bookingSource;
+ const {actionReference}=(await call(b(),'prepare_booking_cancellation',target)).structuredContent as {actionReference:string};
+ expect((await call(b(),'execute_booking_cancellation',{actionReference,confirmed:true})).structuredContent?.status).toBe('confirmed');
+ const db=await worker.getD1Database('AUTH_DB');await db.prepare('DELETE FROM portal_aimharder_connection WHERE userId=?').bind('other-participant').run();
+ await worker.dispose();await start();requests.length=0;
+ const recovered=await call(b(),'execute_booking_cancellation',{actionReference,confirmed:true});expect(recovered.isError).toBe(true);expect(JSON.stringify(recovered)).toContain('ACTION_OUTCOME_UNCERTAIN');expect(requests).toHaveLength(0);expect(writes).toHaveLength(1);
+});
