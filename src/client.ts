@@ -66,7 +66,8 @@ function isFatalPersonalRead(error: unknown) {
 }
 
 export interface BookingCreationDispatch { identity: number; boxId: number; sourceId: number; preview: BookingCreationPreview; outcome?: {denied:boolean;writeIssue:boolean}; }
-export interface ActionExecutionCoordination { beforeDispatch(facts: BookingCreationDispatch): Promise<void>; afterDispatch?(facts: BookingCreationDispatch): Promise<void>; }
+export interface BookingCancellationDispatch { identity: number; boxId: number; sourceId: number; reservationId: number; preview: BookingCancellationPreview; late: boolean; outcome?: {cancelState:number|null;writeIssue:boolean}; }
+export interface ActionExecutionCoordination<F = BookingCreationDispatch> { beforeDispatch(facts: F): Promise<void>; afterDispatch?(facts: F): Promise<void>; }
 
 /** One account, an in-memory session, and a closed set of upstream operations. */
 export class AimHarderClient {
@@ -311,19 +312,19 @@ export class AimHarderClient {
     });
   }
 
-  executeBookingCancellation(input: BookingExecution) {
+  executeBookingCancellation(input: BookingExecution, coordination?: ActionExecutionCoordination<BookingCancellationDispatch>) {
     const parsed = bookingExecutionSchema.safeParse(input);
     if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_BOOKING_EXECUTION_QUERY'));
-    return this.#executeCancellation(parsed.data, false);
+    return this.#executeCancellation(parsed.data, false, coordination);
   }
 
-  executeLateBookingCancellation(input: LateCancellationExecution) {
+  executeLateBookingCancellation(input: LateCancellationExecution, coordination?: ActionExecutionCoordination<BookingCancellationDispatch>) {
     const parsed = lateCancellationExecutionSchema.safeParse(input);
     if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_LATE_CANCELLATION_QUERY'));
-    return this.#executeCancellation(parsed.data, true);
+    return this.#executeCancellation(parsed.data, true, coordination);
   }
 
-  #executeCancellation(query: { gymId?: string | undefined; actionReference: string }, late: boolean) {
+  #executeCancellation(query: { gymId?: string | undefined; actionReference: string }, late: boolean, coordination?: ActionExecutionCoordination<BookingCancellationDispatch>) {
     return this.#query(query.gymId, async (_gyms, { gym, boxId }, recover) => {
       const entry = late
         ? this.#bookingPreparations.take(query.actionReference, 'cancel-late', this.#accountId!, gym.id)
@@ -348,8 +349,33 @@ export class AimHarderClient {
       }
       let response: unknown;
       let writeIssue = false;
-      try { response = await this.#request({ kind: 'book-cancel', gymId: gym.id, reservationId: entry.reservationId, late }); }
-      catch { writeIssue = true; }
+      const facts: BookingCancellationDispatch = {identity:this.#accountId!,boxId,sourceId:before[0]!.sourceId,reservationId:entry.reservationId,preview,late};
+      let dispatchAuthorized = coordination === undefined;
+      try { response = await this.#request({ kind: 'book-cancel', gymId: gym.id, reservationId: entry.reservationId, late }, coordination ? async () => {
+        await coordination.beforeDispatch(structuredClone(facts)); dispatchAuthorized = true;
+      } : undefined); }
+      catch(error) { if(!dispatchAuthorized) throw error; writeIssue = true; }
+      const parsedResponse = z.object({ cancelState: z.number().int() }).safeParse(response);
+      facts.outcome = {cancelState:parsedResponse.success?parsedResponse.data.cancelState:null,writeIssue};
+      let recoveryIssue = false;
+      try{await coordination?.afterDispatch?.(facts);}catch{recoveryIssue=true;}
+      const result = await this.#reconcileBookingCancellation(facts,recover);
+      return recoveryIssue ? {...result,notices:[...result.notices,'Recovery details could not be saved. If this response is lost, inspect the original reservation before preparing another action; no write was retried.']} : result;
+    });
+  }
+
+  /** Trusted read-only recovery; a recovered warning never restores execution permission. */
+  reconcileBookingCancellation(facts: BookingCancellationDispatch) {
+    return this.#query(facts.preview.gym.id,async(_gyms,{gym,boxId},recover)=>{
+      if(this.#accountId!==facts.identity||boxId!==facts.boxId||gym.timeZone!==facts.preview.gym.timeZone||gym.timeZoneStatus!=='user-confirmed'||gym.name!==facts.preview.gym.name)throw new AimHarderError('IDENTITY_MISMATCH');
+      return this.#reconcileBookingCancellation(facts,recover,true);
+    });
+  }
+
+  async #reconcileBookingCancellation(facts: BookingCancellationDispatch,recover:()=>Promise<void>,recovered=false) {
+      const {preview,boxId,sourceId,reservationId,late}=facts; const {gym,target}=preview;
+      const base={action:'cancel' as const,gym,target,credit:preview.credit};
+      const writeIssue=facts.outcome?.writeIssue??true;
       let observedState: 'booked' | 'waitlisted' | 'cancelled' | 'unbooked' | 'unknown' = 'unknown';
       let conflicting = false;
       let reconciliationIssue = false;
@@ -365,8 +391,8 @@ export class AimHarderClient {
           }
         };
         const after = cancellationCandidates(await read({ kind: 'classes', gymId: gym.id, boxId, date: target.date }), gym.id, target.date, gym.timeZone!, target);
-        const sameSourceSession = after.length === 1 && after[0]!.sourceId === before[0]!.sourceId;
-        const sameReservation = sameSourceSession && after[0]!.reservationId === entry.reservationId;
+        const sameSourceSession = after.length === 1 && after[0]!.sourceId === sourceId;
+        const sameReservation = sameSourceSession && after[0]!.reservationId === reservationId;
         releasedSameSession = sameSourceSession && after[0]!.reservationId === null && after[0]!.currentState === 'unbooked';
         if (sameReservation || releasedSameSession) observedState = after[0]!.currentState;
         else conflicting = true;
@@ -376,22 +402,20 @@ export class AimHarderClient {
           && item.timeLabel.endsWith(target.endTime) && (item.classType.name === target.className || item.classType.name === null));
         conflicting = conflicting || matches.length > 1 || matches.some(item => item.state !== observedState);
       } catch { reconciliationIssue = true; }
-      const parsedResponse = z.object({ cancelState: z.number().int() }).safeParse(response);
-      const result = parsedResponse.success ? parsedResponse.data.cancelState : null;
+      const result = facts.outcome?.cancelState ?? null;
       const status = conflicting || reconciliationIssue || writeIssue ? 'uncertain' as const
         : result === 1 && (observedState === 'cancelled' || releasedSameSession) ? 'confirmed' as const
           : !late && result === 2 && observedState === 'booked' && sameActionableReservation ? 'pending-credit-loss' as const
             : result === 3 && observedState === 'booked' ? 'rejected' as const : 'uncertain' as const;
-      const lateReference = status === 'pending-credit-loss'
-        ? this.#bookingPreparations.issueLateCancellation(this.#accountId!, boxId, entry.reservationId, preview) : {};
+      const lateReference = status === 'pending-credit-loss' && !recovered
+        ? this.#bookingPreparations.issueLateCancellation(this.#accountId!, boxId, reservationId, preview) : {};
       return { ...base, status, observedState, notices: [
-        `One ${late ? 'late' : 'standard'} cancellation request was attempted. Fresh booking reads, not the HTTP response alone, determine the reported state.`,
+        recovered ? 'An earlier cancellation may have been sent. Only fresh original-account reads were requested; no write was replayed and no executable late reference was restored.' : `One ${late ? 'late' : 'standard'} cancellation request was attempted. Fresh booking reads, not the HTTP response alone, determine the reported state.`,
         status === 'confirmed' ? 'Fresh schedule and upcoming reads support no active booking for the target. No credit balance or refund was verified.'
           : status === 'pending-credit-loss' ? 'AimHarder indicated possible late credit loss. The reservation remains booked. No second cancellation request was sent. Show the exact class, current state, and possible loss, then obtain a separate explicit account-holder confirmation before a late attempt.'
             : status === 'rejected' ? 'AimHarder indicated a denial and the reservation remains booked.'
               : 'The cancellation outcome is uncertain. Inspect the reservation directly before preparing another action; no automatic retry was sent.',
       ], ...lateReference };
-    });
   }
 
   getUpcomingBookings(gymId?: string) {

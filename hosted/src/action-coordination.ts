@@ -42,7 +42,11 @@ export class AccountActionCoordinator {
     if(previous&&previous.action===options.action&&previous.instance!==this.#instance&&previous.phase!=='consumed'&&previous.facts){
       await options.authorize();
       const facts=await decryptActionFacts(this.env,options.subject,previous.revision,previous.action+':'+referenceDigest,previous.facts) as F;
-      await this.env.AUTH_DB.prepare('UPDATE portal_action_journal SET instance=? WHERE userId=? AND referenceDigest=?').bind(this.#instance,options.subject,referenceDigest).run();
+      try{await this.env.AUTH_DB.prepare('UPDATE portal_action_journal SET instance=? WHERE userId=? AND referenceDigest=?').bind(this.#instance,options.subject,referenceDigest).run();}
+      catch{
+        // This marker only bounds duplicate read-only recovery. The retained
+        // durable dispatch fence still forbids a write; preserve available reads.
+      }
       return options.recover(facts,previous.revision);
     }
     const preparation=this.#preparations.get(options.reference);this.#preparations.delete(options.reference);

@@ -78,7 +78,7 @@ async function context(cookie: string, gymId?: string) {
   const client = new Client({ name: 'synthetic-account-connection', version: '1' }, { versionNegotiation: { mode: { pin: '2026-07-28' } } });
   try {
     await client.connect(new StreamableHTTPClientTransport(new URL(origin+'/mcp'), { requestInit: { headers: { authorization: `Bearer ${bearer}` } } }));
-    expect((await client.listTools()).tools.map(tool=>tool.name)).toEqual(['get_account_context','get_class_sessions','get_upcoming_bookings','get_booking_history','get_published_workouts','get_exercise_rm_progression','find_exercise_1rm','get_exercise_1rm','get_personal_activity','prepare_booking_creation','execute_booking_creation']);
+    expect((await client.listTools()).tools.map(tool=>tool.name)).toEqual(['get_account_context','get_class_sessions','get_upcoming_bookings','get_booking_history','get_published_workouts','get_exercise_rm_progression','find_exercise_1rm','get_exercise_1rm','get_personal_activity','prepare_booking_cancellation','execute_booking_cancellation','execute_late_booking_cancellation','prepare_booking_creation','execute_booking_creation']);
     return await client.callTool({ name: 'get_account_context', arguments: gymId ? {gymId} : {} });
   } finally { await client.close(); }
 }
