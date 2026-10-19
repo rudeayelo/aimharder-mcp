@@ -2,6 +2,11 @@
 
 This page records what was checked against AimHarder, what was checked only with anonymized fixtures, and what remains unknown. Live checks used one account at one location (9NBC). They do not establish behavior for every gym. The user defined recent and period activity questions in terms of **activity entries**; earlier physical-session grouping blockers were superseded by [the entry semantics decision](adr/2026-09-22-activity-entry-query-semantics.md).
 
+## Complete hosted pilot acceptance preparation (#84, 2026-10-19)
+
+The [participant/client setup and acceptance ledger](hosted-pilot-acceptance.md) records each required actual ChatGPT/Hermes stage and whole-pilot lifecycle/provider gate. The [cost report](hosted-pilot-cost.md) separates actual earlier-runtime aggregate CPU/state, native recovery-probe CPU, current shared mail quotas and domain renewal from the explicit 20-participant projection. The installed Hermes CLI/runtime metadata and logged-out ChatGPT web observation do not establish negotiation, eligibility or client journeys. All client OAuth/callback/refresh/revocation/query/confirmed-action stages remain pending; no sporting write is authorized by this preparation.
+
+The earlier owner-reported password/verification/recovery/Google-linking and connected-after-key-recovery outcomes remain accepted as recorded. Google-first/password-add remains synthetic-only. The actual isolated native restore/purge/reconciliation experiment completes #83 separately. Tickets #70–#83 are complete, while the existing owner test Worker still serves the earlier #74 bundle pending the separately fenced full-runtime activation. Above-nominal Free CPU was observed without reported errors; sustainable full-runtime authentication/maintenance capacity and all-in EUR 10/month feasibility are not established. No provider, secret, client configuration or sporting state was changed by this documentation slice. API research, domain vocabulary and local source/package behavior are unchanged; the runtime ADR is updated with this acceptance boundary rather than adding an unsupported new architecture decision.
 
 
 ## Hosted own-activity deletion with independent role policy (2026-10-19, issue #80)

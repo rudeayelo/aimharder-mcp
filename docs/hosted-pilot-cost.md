@@ -1,0 +1,46 @@
+# Hosted pilot operating cost and capacity
+
+The accepted target is **20 invited participants and at most EUR 10/month in service operating cost**. These measurements and assumptions were collected on 2026-10-19 for [ticket #84](https://github.com/rudeayelo/aimharder-mcp/issues/84). Sustainable full-runtime capacity and an all-in cost conclusion remain **unverified**. No purchases or plan changes are authorized. Functional success above a nominal CPU allowance does not establish a reliable free service.
+
+## Actual observations
+
+| Component | Observation | Scope and limit |
+| --- | --- | --- |
+| Workers plan | Authenticated dashboard shows Free, USD 0, 100,000 requests/day and nominal 10 ms CPU/invocation | Account state, not a promise that all authentication/maintenance traffic fits |
+| Existing test Worker | 2026-10-18 10:32:38–2026-10-19 10:32:38 UTC: 586 requests, 13 subrequests, zero errors; 14,421,791 microseconds total CPU; P50 17.072 ms, P99 110.131 ms | Earlier #74 bundle, not the complete runtime or a password-specific cohort. Adaptive/reservoir metrics may be sampled. Total CPU / requests is 24.610565 ms/request; quantiles are not a mean or total |
+| Existing account object | Separate 24-hour window ending 2026-10-19 11:00:22 UTC: nine invocations; 56.751 ms total CPU, 68.618163 seconds active time, 8.783124864 GB-s duration; eight SQLite rows read, one written, 13 subrequests; zero reported CPU/memory/fatal errors | Earlier #74 namespace. Empty storage results mean unavailable, not zero bytes. Not a 20-account workload |
+| Actual independent recovery probe | One quiet native scheduled invocation: 0.520 ms CPU, zero errors. One nonempty restored-data purge: 14.579 ms CPU, zero errors | Separate synthetic-only provider experiment using the real deployed maintenance implementation; the purge exceeds the nominal Free CPU allowance. Not sustained load, authentication or billing evidence |
+| Shared D1 dashboard | 2026-10-19 account-wide baseline: two of ten databases; 30.38k/5M daily rows read, 117/100k written, 360.45 kB/5 GB current storage, 5.35 kB-month metered | Shared account includes other services; not pilot-only. Later authority creation/resource changes require fresh inventory |
+| Resend usage API | Daily 0/100 messages; monthly 5/3,000 (five sent, zero received); domains 2/3; API rate 10/1,000 ms | Actual shared account quotas/counters, not attribution of those five messages. Sender/DNS and invitation/verification/recovery delivery have separate functional evidence |
+| Domain renewal | Authenticated registrar shows `ahmcp.link` renewal USD 7.20/year, equivalent to USD 0.60/month amortized; active, expiry 2027-10-17 | Existing registration and auto-renew setting unchanged. Not an invoice, tax determination or actual EUR card charge |
+
+Workers rollover behavior can allow requests above the nominal CPU limit without reporting invocation errors; the observed zero errors do not remove the capacity concern. Worker upload/startup time and local wall timings are not authentication CPU. Aggregate totals provide a baseline, while a bounded full-runtime cohort must establish password hashing, ordinary query/OAuth traffic and maintenance separately. Maintained password hashing must not be weakened to fit a plan.
+
+Primary contracts: [Workers pricing](https://developers.cloudflare.com/workers/platform/pricing/), [Workers metrics](https://developers.cloudflare.com/workers/observability/metrics-and-analytics/), [Durable Objects pricing](https://developers.cloudflare.com/durable-objects/platform/pricing/), [object metrics](https://developers.cloudflare.com/durable-objects/observability/metrics-and-analytics/), [D1 pricing](https://developers.cloudflare.com/d1/platform/pricing/), [D1 billing](https://developers.cloudflare.com/d1/observability/billing/), [Resend usage API](https://www.resend.com/changelog/account-usage-api) and [Resend pricing](https://resend.com/pricing?product=transactional). Published allowances are distinct from the actual account observations above.
+
+## Explicit 20-participant planning case
+
+This is arithmetic for comparison with measurements, not an observed load test. Use 30 days/month, 20 participants, 100 MCP operations per participant/day, 200 password operations/month, at most 200 emails/month and 20,000 additional portal/discovery/OAuth HTTP requests/month. Assume one incoming HTTP request per MCP operation initially; actual client discovery, refresh, retries and fanout must replace this assumption. A five-minute maintenance schedule contributes **8,640 scheduled invocations/month**. This gives **88,840 Worker invocations/month** (60,000 + 200 + 20,000 + 8,640), or about 2,961/day averaged; daily peaks, shared usage and abuse matter independently of the average. No traffic generation is authorized by the arithmetic itself.
+
+| Resource | Published Free boundary | Planning constraint to verify |
+| --- | --- | --- |
+| Worker requests/CPU | 100,000/day; nominal 10 ms CPU/invocation | Count actual HTTP plus scheduled invocations, per-day peaks, retries and other account services. Verify password and maintenance CPU independently; low monthly request count cannot compensate for per-invocation failure |
+| Object requests/duration | 100,000/day; 13,000 GB-s/day | At the stated 0.128 GB billing-memory assumption, 20 objects active one hour/day consume 9,216 GB-s/day. Continuous residency consumes 221,184 GB-s/day and exceeds Free. Measure actual active residency/idle release and concurrent sessions; no claim that objects stay active for only one hour |
+| D1 reads/writes/storage | 5M rows read/day; 100k written/day; 5 GB/account | Include application and independent authority, request/operation leases, OAuth/refresh, journal, deletion cron, indexes, retained authority history, other services and recovery workload. Actual rows per operation and retained sizes are pending |
+| Mail | 3,000/month, 100/day, three domains | 200 messages/month fit the monthly allowance only if shared traffic, invitation/verification/recovery bursts and retries also fit. Twenty password admissions may each send invitation plus verification; recovery and replacement invitations add mail. Successful delivery is separate from quota arithmetic |
+
+Do not scale the old aggregate CPU quotient into password CPU, derive storage from an empty metric group or treat sampled success as a guaranteed quota. Model peak simultaneous users and delayed/uncertain upstream calls: wall wait, object residency and account serialization can dominate duration even when query CPU is small. Include the independent recovery watchdog and retention/copy policy; disabling them is not a cost optimization.
+
+## Currency, tax and recurring total
+
+With every service within its existing Free quotas, the **conditional** incremental provider charge is USD 0/month for Workers/D1/objects and USD 0/month for Resend, plus **USD 0.60/month** domain renewal amortization. Existing shared services still consume allowances. This is not an accepted full-runtime quote or permission to incur overages. The selected Free plan may fail a capacity requirement even while its charge remains zero.
+
+For a stated conservative scenario only, use **EUR 1 per USD 1 and 21% tax** on every USD charge: domain amortization becomes **EUR 0.726/month**, leaving **EUR 9.274/month** of the target. These are assumptions, not a current exchange rate or verified tax treatment. Replace them with applicable invoice currency/tax/fees when known, retaining the USD source amounts. No provider invoice or EUR card settlement has been inspected. Published Resend Pro starts at USD 20/month and already exceeds EUR 10 under this scenario; it is not an authorized fallback. Any paid Cloudflare plan needs its own complete, explicitly approved cost decision.
+
+Personal ChatGPT subscriptions and Hermes/LLM usage are excluded from the **service** budget in this planning case and must be identified separately for the actual client/account chosen. This does not claim free client availability. Engineering/support time, participant devices and connectivity are also excluded; no monetary estimate for them has been accepted.
+
+## Measurements required before a readiness decision
+
+Record the exact full deployed source, Free account settings, UTC window, sample size, units and attribution method. Obtain privacy-preserving password admission/sign-in/recovery cohorts and ordinary portal/OAuth/query cohorts; record failures and above-limit CPU instead of averaging them away. Measure real-client refresh/discovery traffic, object requests/GB-s/residency and storage, both D1 databases' rows/storage/growth, five-minute cron CPU and shared remaining quotas. Retain aggregate metadata only; do not enable body/URL logs or fetch email bodies to obtain billing evidence.
+
+Apply the measured per-operation costs to the explicit 20-participant scenario, including daily peaks, retry/abuse allowance, recovery and existing shared consumption. Report observed results separately from extrapolation, provider policy and invoice assumptions. A material CPU, protocol, quota or budget problem leaves #84 open for a revised decision; no scope reduction, purchase or plan change follows automatically.

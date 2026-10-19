@@ -74,6 +74,8 @@ Planned capabilities, without committed dates or versions:
 
 The hosted [MCP authorization runbook](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-mcp-authorization.md) covers maintained OAuth, trusted client provisioning and independent participant revocation. Actual ChatGPT/Hermes journeys remain pending final pilot acceptance.
 
+The [hosted pilot setup and acceptance ledger](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-pilot-acceptance.md) collects participant/client instructions and remaining actual checks. The [operating cost report](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-pilot-cost.md) separates measured provider inputs from the conditional 20-participant/EUR 10 model; sustainable Free capacity and final client acceptance remain unverified.
+
 The hosted [AimHarder connection slice](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-aimharder-connection.md) adds encrypted recoverable credentials, verified gyms and isolated account operations with synthetic public HTTP/SDK and restart/rotation evidence. Owner-managed key custody, isolated upstream connection and controlled rotation/recovery are now verified; full owner-runtime activation and real-client acceptance remain in progress. Verified replacement/password updates and disconnection now preserve portal identity and existing MCP grants while discarding old sessions/preparations; earlier queued actions finish on their original account before a change completes. This does not change the local stdio setup.
 
 ## Contributing
