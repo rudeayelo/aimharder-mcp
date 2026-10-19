@@ -19,3 +19,5 @@ Migration `0007-activity-role-policy.sql` is required before activation. The pol
 The [publication runbook](../hosted-activity-publication.md) records implementation and limits. Per-user overrides and authorization inferred from tool visibility were rejected because they contradict the settled role-only policy or allow cached access to bypass it.
 
 The post-preparation check prevents a role disabled during source reads from receiving a usable preview/reference. The coordinator selects activity-specific invalid-reference errors for activity actions while retaining booking terminology for reservations.
+
+The independent deletion controls and own-entry execution/recovery are documented in the [deletion guide](../hosted-activity-deletion.md).

@@ -144,6 +144,8 @@ The shared exercise projection also includes `sourceExerciseId` on personal acti
 
 `completedDates` lists dates whose calendar and details were retrieved. Partial results cannot support exact counts; a first-partition failure errors, while later failures/read limits retain entries marked incomplete. Complete coverage means available records for requested dates, not attendance or immutable lifetime history.
 
+The hosted [deletion tools](hosted-activity-deletion.md) retain these strict own-entry contracts with current role permission at preparation and dispatch. Deletion starts enabled for `admin` and disabled for `user`, independently of publication. Durable restart recovery is read-only and retains only minimal original target facts; it never restores execution permission.
+
 ## `prepare_activity_deletion`
 
 Input: a gym-local `date` and optionally a `sourceActivityId` from `get_personal_activity`. The ID must also occur in the authenticated account calendar for that date; an arbitrary ID alone is never fetched as a deletion target. With no ID, zero calendar candidates return `missing`, one candidate is verified, and several candidates return `ambiguous` with a count so the account holder can select an ID from the activity query. An invalid, partial-shaped or failed calendar read returns `incomplete` with no detail read or reference; authentication and access failures remain safe errors.

@@ -32,5 +32,5 @@ export async function handleActivityPolicy(request: Request, env: HostedEnvironm
     return new Response(null,{status:303,headers:{location:'/admin/activity-access'}});
   }
   const rows=(await env.AUTH_DB.prepare('SELECT role,publication,deletion FROM portal_activity_policy ORDER BY role').all<{role:'admin'|'user';publication:number;deletion:number}>()).results;
-  return page('Activity access by role','<p>Changes apply to all accounts in the selected role, including prepared actions. Each publication still requires its own exact confirmation.</p>'+rows.map(row=>renderActivityControl(row.role,'publication',row.publication)).join(''));
+  return page('Activity access by role','<p>Changes apply to all accounts in the selected role, including prepared actions. Each publication or deletion still requires its own exact confirmation.</p>'+rows.map(row=>renderActivityControl(row.role,'publication',row.publication)+renderActivityControl(row.role,'deletion',row.deletion)).join(''));
 }
