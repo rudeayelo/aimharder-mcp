@@ -1,0 +1,25 @@
+# Hosted own-activity publication
+
+Issue [#79](https://github.com/rudeayelo/aimharder-mcp/issues/79) exposes `prepare_activity_publication` and `execute_activity_publication` through the protected hosted MCP endpoint. They run the existing real API client inside the participant-owned account queue. The [role decision](adr/2026-10-19-hosted-activity-role-access.md) and [action coordination](hosted-booking-creation.md) apply. This is synthetic implementation evidence, not activation or authorization of a real publication.
+
+## Role access and participant journey
+
+The administrator opens **Activity access by role** from the portal home page. Publication and deletion are independent role policies: initially enabled for `admin`, disabled for `user`, with no individual overrides. This ticket adds publication controls; deletion controls are delivered separately by #80. The administrator can disable publication for their own role without losing access to manage policies. Other query and booking tools have no switches.
+
+Connect your own AimHarder account, configure a confirmed gym zone and authorize an MCP client. Select a verified source from `get_published_workouts`. Preparation retains the existing [source, variant, historical load, structured result, duplicate and audience rules](tools.md#prepare_activity_publication). A draft cannot execute. Show the full ready preview and obtain one separate account-holder confirmation of that exact publication before execution. Neither an administrator role nor `confirmed: true` independently establishes human consent.
+
+Permission is checked from the current active verified participant's role at preparation and execution. The final pre-fetch authorization checks the current role policy, grant/generation/client, admission and exact connection revision in the same D1 snapshot. Cached tools, previously issued references and setting changes during preflight cannot bypass it. A successful final guard admits that one external request; a later policy change cannot unsend it. Wrong/foreign/expired/repeated references cannot send another POST.
+
+## Dispatch, recovery and limits
+
+The existing real client rechecks source/Copy mapping, selected date/variant/results/actual loads and account audience before dispatch. Exactly one POST can be attempted from a consumed reference. Fresh own-calendar/detail read-back preserves accepted/rejected/uncertain outcomes and only verifies original prescription provenance after a fresh matching source. No activity history is mirrored and no applied audience or RM side effect is inferred.
+
+The existing ten-minute encrypted action journal retains the original identity/membership and exact preview needed for comparison, a SHA-256 digest of the mapped form, and only bounded interpreted response facts (accepted ID/status and sanitized rejection counts/indices). It stores no raw Copy payload, raw response, credentials or executable preparation. A restart loses unused preparation; a retained possibly-sent record permits only original-account read-back. Without an accepted response ID, recovery remains uncertain rather than identifying a new entry by similarity. A different supplied gym is refused before recovery reads. A missing original connection/revision/identity never causes a replacement-account query or restored old credentials.
+
+Failure to save post-send facts still attempts own read-back and reports its honest result with a recovery limitation. Terminal-phase persistence failure cannot hide an already reconciled result. The prior durable fence prevents replay in both cases. Current role permission is still required for recovery. Journal expiry removes recovery details, not evidence that a possible upstream write never happened.
+
+## Activation and validation
+
+Apply migrations `0006-action-journal.sql` and `0007-activity-role-policy.sql` once before deploying a bundle containing this feature. Do not replay the isolated environment's historical manual migrations. The shared rotation command inventories and rewraps activity records through the existing journal contract; this ticket creates no additional maintenance endpoint or secret.
+
+Ten added public portal/OAuth/SDK HTTP journeys exercise real workerd, D1, SQLite account objects and shared API client. Synthetic external responses cover administrator success, blocked user/disabled role, no individual exceptions, strict confirmation, concurrent/repeated and foreign references, changed audience/source, final role-change races, restart loss/read-only recovery, wrong recovery gym, denial/lost response/conflicting ownership/incomplete reads, journal faults and expiry. Local source/result/variant/load rules retain the broader stdio regression coverage. Real publication, provider activation, actual ChatGPT/Hermes UI behavior, applied audience, broader upstream formats, costs and later lifecycle/restore acceptance remain separate and unobserved here. Every real publication still needs a new exact confirmation and fresh own read-back.

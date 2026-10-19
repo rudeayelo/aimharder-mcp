@@ -1,5 +1,5 @@
 import { activityQuerySchema, parseActivityCalendar, parseActivityDetail, type ActivityQuery, type ActivityEntry } from './activity.js';
-import { randomBytes } from 'node:crypto';
+import { randomBytes, createHash } from 'node:crypto';
 import { CookieJar } from 'tough-cookie';
 import { z } from 'zod';
 import { gymIdSchema, type Configuration } from './config.js';
@@ -66,6 +66,7 @@ function isFatalPersonalRead(error: unknown) {
 }
 
 export interface BookingCreationDispatch { identity: number; boxId: number; sourceId: number; preview: BookingCreationPreview; outcome?: {denied:boolean;writeIssue:boolean}; }
+export interface ActivityPublicationDispatch { identity:number; boxId:number; preview:PublicationPreview; formDigest:string; outcome?:ReturnType<typeof publicationResponse>; }
 export interface ActionExecutionCoordination<F = BookingCreationDispatch> { beforeDispatch(facts: F): Promise<void>; afterDispatch?(facts: F): Promise<void>; }
 
 /** One account, an in-memory session, and a closed set of upstream operations. */
@@ -801,7 +802,7 @@ export class AimHarderClient {
     });
   }
 
-  executeActivityPublication(input: z.infer<typeof publicationExecutionSchema>) {
+  executeActivityPublication(input: z.infer<typeof publicationExecutionSchema>, coordination?: ActionExecutionCoordination<ActivityPublicationDispatch>) {
     const parsed = publicationExecutionSchema.safeParse(input);
     if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_ACTIVITY_PUBLICATION_QUERY'));
     const query = parsed.data;
@@ -825,12 +826,33 @@ export class AimHarderClient {
       catch { return { status: 'stale' as const, preview, notices: ['The Copy payload has unsupported fields. No activity write was sent.'] }; }
       if (JSON.stringify([...form]) !== stored.formSnapshot)
         return { status: 'stale' as const, preview, notices: ['The mapped Copy fields changed after preparation. No activity write was sent.'] };
+      const facts:ActivityPublicationDispatch={identity:this.#accountId!,boxId,preview:structuredClone(preview),formDigest:createHash('sha256').update(stored.formSnapshot).digest('hex')};
       let response: ReturnType<typeof publicationResponse> = { status: 'uncertain', id: null, rejectionDiagnostics: null };
+      let dispatchAuthorized=coordination===undefined;
       try {
-        response = publicationResponse(await this.#request({ kind: 'activity-post', gymId: gym.id, form }), {
-          blockCount: source.copy.TIPOWODs.length, exerciseCount: source.copy.rates.length,
-        });
-      } catch { /* A POST may have reached AimHarder. Never retry it. */ }
+        response = publicationResponse(await this.#request({ kind: 'activity-post', gymId: gym.id, form }, coordination?async()=>{
+          await coordination.beforeDispatch(facts);dispatchAuthorized=true;
+        }:undefined), { blockCount: source.copy.TIPOWODs.length, exerciseCount: source.copy.rates.length });
+      } catch(error) { if(!dispatchAuthorized)throw error; /* A POST may have reached AimHarder. Never retry it. */ }
+      facts.outcome=response;
+      let recoveryIssue=false;
+      try{await coordination?.afterDispatch?.(facts);}catch{recoveryIssue=true;}
+      const result=await this.#reconcileActivityPublication(facts);
+      return recoveryIssue?{...result,notices:[...result.notices,'Recovery details could not be saved. Inspect the original account before preparing another action; no write was retried.']}:result;
+    });
+  }
+
+  /** Trusted original-account read-back; never recreates publication permission. */
+  reconcileActivityPublication(facts:ActivityPublicationDispatch){
+    return this.#query(facts.preview.gym.id,async(_gyms,{gym,boxId})=>{
+      if(this.#accountId!==facts.identity||boxId!==facts.boxId||gym.timeZone!==facts.preview.gym.timeZone||gym.timeZoneStatus!=='user-confirmed'||gym.name!==facts.preview.gym.name)throw new AimHarderError('IDENTITY_MISMATCH');
+      return this.#reconcileActivityPublication(facts);
+    });
+  }
+
+  async #reconcileActivityPublication(facts:ActivityPublicationDispatch){
+      const {preview,boxId}=facts;const gym=preview.gym;
+      const response=facts.outcome??{status:'uncertain' as const,id:null,rejectionDiagnostics:null};
       let observedEntry: 'matched' | 'missing' | 'unidentified' | 'conflicting' | 'unverified-comment' | 'unreadable' = 'unreadable';
       try {
         const month = preview.activityDate.slice(0, 7);
@@ -850,8 +872,8 @@ export class AimHarderClient {
         { status: 'unavailable', originalPrescription: null };
       if (status === 'confirmed') {
         try {
-          const sourceAfter = await this.#readPublicationSource(gym, boxId!, stored.query.sourceActivityId);
-          if (sourceAfter && JSON.stringify([...buildActivityForm(sourceAfter.copy, preview)]) === stored.formSnapshot)
+          const sourceAfter = await this.#readPublicationSource(gym, boxId!, preview.source.sourceActivityId);
+          if (sourceAfter && createHash('sha256').update(JSON.stringify([...buildActivityForm(sourceAfter.copy, preview)])).digest('hex') === facts.formDigest)
             sourceProvenance = { status: 'verified', originalPrescription: preview.prescription };
         } catch { /* A changed or unreadable gym source cannot establish later provenance. */ }
       }
@@ -861,7 +883,6 @@ export class AimHarderClient {
           : status === 'rejected' ? 'AimHarder rejected the request; a calendar read alone cannot prove absence of a separate entry.'
             : 'The activity outcome is not confirmed by a fresh own-account read.',
         'At most one activity POST was attempted. No possibly sent write is retried automatically.'] };
-    });
   }
 
   getExercise1RM(input: Exercise1RMQuery) {
