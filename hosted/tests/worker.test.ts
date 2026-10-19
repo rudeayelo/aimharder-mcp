@@ -1,3 +1,4 @@
+import { initializeTestRecovery } from './recovery-fixture.js';
 import { readFile, readdir } from 'node:fs/promises';
 import { afterAll, beforeAll, expect, test } from 'vitest';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
@@ -47,14 +48,14 @@ beforeAll(async () => {
         }
         throw new Error('Unexpected outbound request');
       },
-      d1Databases: ['AUTH_DB'],
-      bindings: {
+      d1Databases: ['AUTH_DB','RECOVERY_DB'],
+      bindings: { RECOVERY_AUTHORITY_ID:'synthetic-authority',
         AUTH_SECRET: 'synthetic-local-auth-secret-at-least-32-characters',
         BASE_URL: 'http://localhost:8787',
       },
     })
   );
-  await worker.ready;
+  await worker.ready; await initializeTestRecovery(worker);
   const database = await worker.getD1Database('AUTH_DB');
   for (const file of (await readdir('migrations')).filter(name => /^\d+.*\.sql$/.test(name)).sort())
     await database.exec((await readFile(`migrations/${file}`, 'utf8')).replaceAll('\n', ' '));

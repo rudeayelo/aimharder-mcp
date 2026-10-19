@@ -1,3 +1,4 @@
+import { initializeTestRecovery } from './recovery-fixture.js';
 import { createServer, type Server } from 'node:http';
 import { readFile, readdir } from 'node:fs/promises';
 import { afterAll, beforeAll, expect, test } from 'vitest';
@@ -20,7 +21,7 @@ beforeAll(async () => {
   await buildWorker('tests/mcp-auth-fixture-worker.ts', 'dist/mcp-auth-fixture-worker.js');
   worker = new Miniflare(convertV4MiniflareOptions({ modules: true, scriptPath: 'dist/mcp-auth-fixture-worker.js',
     port: 8793, compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'],
-    d1Databases: ['AUTH_DB'], bindings: { AUTH_SECRET: 'synthetic-auth-secret-with-at-least-thirty-two-characters', BASE_URL: origin },
+    d1Databases: ['AUTH_DB','RECOVERY_DB'], bindings: { RECOVERY_AUTHORITY_ID:'synthetic-authority', AUTH_SECRET: 'synthetic-auth-secret-with-at-least-thirty-two-characters', BASE_URL: origin },
     outboundService: async request => {
       if (new URL(request.url).origin === origin) return worker.dispatchFetch(request);
       if (request.url === 'https://synthetic-scheduler.invalid/code-write' && codeWriteBarrier) {
@@ -41,7 +42,7 @@ beforeAll(async () => {
       throw new Error('Unexpected external request');
     },
   }));
-  await worker.ready;
+  await worker.ready; await initializeTestRecovery(worker);
   callbackServer = createServer((request, response) => {
     void (async () => {
       const callback = new URL(request.url!, 'http://127.0.0.1:9999');

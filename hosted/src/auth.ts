@@ -8,6 +8,10 @@ import { mailConfigured, sendPortalMail } from './mail.js';
 
 export interface HostedEnvironment {
   AUTH_DB: D1Database;
+  RECOVERY_DB?: D1Database;
+  RECOVERY_AUTHORITY_ID?: string;
+  /** Request scoped, never accepted from external headers. */
+  RECOVERY_LEASE?: string;
   AUTH_SECRET: string;
   BASE_URL: string;
   RESEND_API_KEY?: string;

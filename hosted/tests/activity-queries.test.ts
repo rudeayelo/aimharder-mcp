@@ -1,3 +1,4 @@
+import { initializeTestRecovery } from './recovery-fixture.js';
 import { readFile, readdir, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -35,9 +36,9 @@ beforeAll(async()=>{
  await buildWorker('tests/activity-query-fixture-worker.ts','dist/activity-query-fixture-worker.js');
  directory=await mkdtemp(join(tmpdir(),'aimharder-activity-query-'));
  worker=new Miniflare(convertV4MiniflareOptions({modules:true,scriptPath:'dist/activity-query-fixture-worker.js',port:8798,
- compatibilityDate:'2026-10-12',compatibilityFlags:['nodejs_compat'],d1Databases:['AUTH_DB'],resourcePersistencePath:directory,
+ compatibilityDate:'2026-10-12',compatibilityFlags:['nodejs_compat'],d1Databases:['AUTH_DB','RECOVERY_DB'],resourcePersistencePath:directory,
  durableObjects:{ACCOUNT_CONNECTIONS:{className:'AccountConnection',useSQLite:true}},
- bindings:{BASE_URL:origin,AUTH_SECRET:'synthetic-activity-query-auth-secret-long-enough',VAULT_KEYS:JSON.stringify({first:Buffer.alloc(32,19).toString('base64')}),VAULT_ACTIVE_KEY_ID:'first'},
+ bindings: { RECOVERY_AUTHORITY_ID:'synthetic-authority',BASE_URL:origin,AUTH_SECRET:'synthetic-activity-query-auth-secret-long-enough',VAULT_KEYS:JSON.stringify({first:Buffer.alloc(32,19).toString('base64')}),VAULT_ACTIVE_KEY_ID:'first'},
  outboundService:async request=>{
   const url=new URL(request.url);
   if(url.origin===origin)return worker.dispatchFetch(request);
@@ -60,7 +61,7 @@ beforeAll(async()=>{
   if(url.origin==='https://shared-gym.aimharder.es'&&url.pathname==='/api/workoutAndEjers')return searchReply();
   unexpectedOutbound.push('route');throw Error('Unexpected activity test upstream request');
  }}));
- await worker.ready;
+ await worker.ready; await initializeTestRecovery(worker);
  const db=await worker.getD1Database('AUTH_DB');
  for(const file of (await readdir('migrations')).filter(n=>/^\d+.*\.sql$/.test(n)).sort())await db.exec((await readFile('migrations/'+file,'utf8')).replaceAll('\n',' '));
  expect((await worker.dispatchFetch(origin+'/__fixture')).status).toBe(200);

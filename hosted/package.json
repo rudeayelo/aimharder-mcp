@@ -11,7 +11,8 @@
     "smoke:test-environment": "node scripts/smoke-test-environment.ts",
     "schema:generate": "node scripts/generate-auth-schema.ts",
     "client:prepare": "node scripts/prepare-mcp-client.ts",
-    "vault:prepare-rotation": "node scripts/prepare-vault-rotation.ts"
+    "vault:prepare-rotation": "node scripts/prepare-vault-rotation.ts",
+    "recovery:prepare": "node scripts/prepare-recovery.ts"
   },
   "dependencies": {
     "@better-auth/mcp": "1.7.10",

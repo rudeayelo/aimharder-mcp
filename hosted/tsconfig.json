@@ -23,6 +23,7 @@
     "scripts/smoke-test-environment.ts",
     "scripts/prepare-mcp-client.ts",
     "build.mjs",
-    "scripts/prepare-vault-rotation.ts"
+    "scripts/prepare-vault-rotation.ts",
+    "scripts/prepare-recovery.ts"
   ]
 }

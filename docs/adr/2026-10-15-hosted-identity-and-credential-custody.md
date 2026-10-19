@@ -42,3 +42,5 @@ Implementation update, 2026-10-19: the [activity role-access decision](2026-10-1
 ## Participant suspension implementation (2026-10-19)
 
 The [suspension decision](2026-10-19-hosted-participant-suspension.md) implements minimal participant administration, atomic access/grant invalidation outside held upstream operations, fresh authorization after reactivation and preparation access generations. Configuration remains encrypted and preserved; possible sends retain original-account read-back without replay. These are synthetic checks; deletion-safe restoration and actual-client/provider acceptance remain separate.
+
+Implementation update for #83: the [independent deletion/restoration decision](2026-10-19-independent-deletion-and-controlled-restoration.md) implements active owner deletion and an independent quarantine/manifest mechanism. It preserves the original deletion and ordinary connection-replacement requirements; stronger post-rollback fresh authentication is a distinct security recovery decision. Actual provider retention/native restore evidence remains a required separate gate.

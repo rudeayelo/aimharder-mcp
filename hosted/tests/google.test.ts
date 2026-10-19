@@ -1,3 +1,4 @@
+import { initializeTestRecovery } from './recovery-fixture.js';
 import { readFile, readdir } from 'node:fs/promises';
 import { afterAll, beforeAll, expect, test } from 'vitest';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
@@ -51,8 +52,8 @@ async function identity(cookie: string) {
 beforeAll(async () => {
   await buildWorker('tests/portal-fixture-worker.ts', 'dist/google-fixture-worker.js');
   worker = new Miniflare(convertV4MiniflareOptions({ modules: true, scriptPath: 'dist/google-fixture-worker.js',
-    compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'], d1Databases: ['AUTH_DB'],
-    bindings: { BASE_URL: origin, AUTH_SECRET: 'synthetic-google-auth-secret-at-least-32-characters',
+    compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'], d1Databases: ['AUTH_DB','RECOVERY_DB'],
+    bindings: { RECOVERY_AUTHORITY_ID:'synthetic-authority', BASE_URL: origin, AUTH_SECRET: 'synthetic-google-auth-secret-at-least-32-characters',
       RESEND_API_KEY: 'synthetic-resend-key', MAIL_FROM: 'noreply@example.invalid',
       GOOGLE_CLIENT_ID: 'synthetic-google-client', GOOGLE_CLIENT_SECRET: 'synthetic-google-secret' },
     outboundService: async request => {
@@ -79,7 +80,7 @@ beforeAll(async () => {
       throw new Error('Unexpected outbound Google test request');
     },
   }));
-  await worker.ready;
+  await worker.ready; await initializeTestRecovery(worker);
   const db = await worker.getD1Database('AUTH_DB');
   for (const file of (await readdir('migrations')).filter(name => /^\d+.*\.sql$/.test(name)).sort())
     await db.exec((await readFile(`migrations/${file}`, 'utf8')).replaceAll('\n', ' '));
