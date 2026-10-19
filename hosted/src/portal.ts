@@ -96,7 +96,7 @@ export async function handlePortal(request: Request, env: HostedEnvironment, aut
   if (url.pathname === '/') {
     const session = await auth.api.getSession({ headers: request.headers });
     const actor = session && await participant(env, session.user.id);
-    return page('AimHarder MCP', actor ? `<p>You are signed in.</p><p><a href="/account">Account access</a> · <a href="/aimharder">AimHarder connection</a></p><p><a href="/connections">Connected MCP clients</a> · <a href="/connect-clients">Connect ChatGPT or Hermes</a></p>${actor.role === 'admin' ? '<a href="/admin/invitations">Manage invitations</a>' : ''}<form method="post" action="/portal/sign-out"><button>Sign out</button></form>` : '<p>An invitation is required to join this pilot.</p><a href="/sign-in">Sign in</a>');
+    return page('AimHarder MCP', actor ? `<p>You are signed in.</p><p><a href="/account">Account access</a> · <a href="/aimharder">AimHarder connection</a></p><p><a href="/connections">Connected MCP clients</a> · <a href="/connect-clients">Connect ChatGPT or Hermes</a></p>${actor.role === 'admin' ? '<a href="/admin/invitations">Manage invitations</a> · <a href="/admin/activity-access">Activity access by role</a>' : ''}<form method="post" action="/portal/sign-out"><button>Sign out</button></form>` : '<p>An invitation is required to join this pilot.</p><a href="/sign-in">Sign in</a>');
   }
   return null;
 }
