@@ -1,6 +1,9 @@
 import { z } from 'zod';
 import { AimHarderClient, type AccountContext } from '../../src/client.js';
 import { readConfiguration, type Configuration } from '../../src/config.js';
+import { exerciseSearchQuerySchema } from '../../src/exercise-search.js';
+import { exercise1RMQuerySchema } from '../../src/exercise-records.js';
+import { activityQuerySchema } from '../../src/activity.js';
 import { classQuerySchema } from '../../src/classes.js';
 import { safeError } from '../../src/errors.js';
 import type { HostedEnvironment } from './auth.js';
@@ -76,6 +79,23 @@ export class AccountConnection {
         if (!saved.meta.changes) return Response.json({ status: 'connection-changed' }, { status: 409 });
         this.#client = { revision, envelope, client: candidate };
         return Response.json({ status: 'connected', ...context });
+      }
+      if (operation.kind === 'exercise-progression') {
+        const query = exercise1RMQuerySchema.extend({ includeWod: z.boolean().optional() }).parse(operation.input);
+        const result = await this.#client.client.getExerciseProgression(query);
+        return Response.json({ status: 'queried', result });
+      }
+      if (operation.kind === 'find-exercise-1rm') {
+        const result = await this.#client.client.findExercise1RM(exerciseSearchQuerySchema.parse(operation.input));
+        return Response.json({ status: 'queried', result });
+      }
+      if (operation.kind === 'exercise-1rm') {
+        const result = await this.#client.client.getExercise1RM(exercise1RMQuerySchema.parse(operation.input));
+        return Response.json({ status: 'queried', result });
+      }
+      if (operation.kind === 'personal-activity') {
+        const result = await this.#client.client.getPersonalActivity(activityQuerySchema.parse(operation.input));
+        return Response.json({ status: 'queried', result });
       }
       if (operation.kind === 'class-sessions') {
         const result = await this.#client.client.getClassSessions(classQuerySchema.parse(operation.input));

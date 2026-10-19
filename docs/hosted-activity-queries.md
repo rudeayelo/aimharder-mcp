@@ -1,0 +1,30 @@
+# Hosted personal activity and RM queries
+
+Issue [#76](https://github.com/rudeayelo/aimharder-mcp/issues/76) exposes four existing own-account read tools over the protected hosted `/mcp` endpoint. An invited, verified, active participant first connects their own AimHarder account through the [portal](hosted-aimharder-connection.md), then authorizes an MCP client through the [maintained OAuth flow](hosted-mcp-authorization.md). Both `admin` and `user` roles have these read capabilities. Credentials, member IDs and upstream URLs are never tool inputs.
+
+| Tool | Example arguments | Result limits |
+| --- | --- | --- |
+| `get_personal_activity` | `{"startDate":"2026-03-01","endDate":"2026-03-31"}` | At most 31 inclusive gym-local dates; explicit completed-date coverage and recovered partial entries. |
+| `get_exercise_1rm` | `{"exerciseId":101}` | Latest dated own 1RM for an exact source exercise ID; limited exercise-detail view. |
+| `find_exercise_1rm` | `{"name":"lift"}` | Bounded candidates; ambiguity requires an explicit ID from the current returned candidates. |
+| `get_exercise_rm_progression` | `{"exerciseId":101,"includeWod":true}` | Separate dated 1/3/5/10RM series; optional WOD context stays distinct. |
+
+An optional `gymId` selects another currently verified membership without changing the saved default. Use `get_account_context` for gym IDs and reported zones. Dates use that gym's configured IANA zone, or the explicitly reported assumed `Europe/Madrid`. Multiple memberships still require a saved default. IDs in these examples are synthetic; use IDs actually returned by your authorized queries.
+
+## Interpretation
+
+Hosted results preserve the [existing public contracts](tools.md), including original source names and instructions as untrusted data. Activity entries retain distinct source IDs even on the same date; they do not prove training-session counts or attendance. Start time and training-session identity remain null. Preserve the source block result encodings, including zero/null/absent distinctions, current-block result descriptions, and `time` in seconds. Unrelated historical chart data, profiles and rankings are discarded.
+
+Use `coverage.completedDates`, not entry dates, to decide which dates are completely retrieved. A first-calendar failure is an error; later calendar/detail failure returns recovered entries with incomplete coverage, which may include a partially retrieved day. A wrong-owner detail never contributes content; it leaves incomplete coverage under the existing activity contract. Other-gym details are excluded only after owner verification. Detail reads remain bounded at 500. Empty complete coverage is an empty retrieved interval, not evidence of attendance or a lifetime-history horizon.
+
+For recent activity, compose explicit bounded activity windows in the consuming client and preserve unresolved within-date ties. For longer period counts, compose intervals of at most 31 inclusive dates. Count distinct entries, report days separately, and use an exact total only with complete requested-period coverage; incomplete counts are recovered lower bounds. These are existing consumer compositions, not additional hosted tools or a persistent history replica.
+
+Exercise detail uses only the verified account's internal ID on the selected gym origin. The latest 1RM is selected by source date, not maximum load. Physical units require corroborating same-date/action history evidence; `lbs` and the `ud` code alone do not establish units. Preserve `unit: null`, `unit-unverified` and `no-1rm`, and keep other RM/WOD counts separate. An entirely empty view may omit chart owner; nonempty personal series must match the authenticated owner. Search is at most 50 returned candidates, potentially truncated at the bound, and an empty/unsupported view never proves catalog or personal-record absence. Progression points use only explicit source evidence for `newMark`; not every point is a new mark. Lifetime completeness and the record's gym of origin remain unverified.
+
+## Account boundary and evidence
+
+The MCP subject is derived from the verified current OAuth grant. The complete query, including name search and its selected personal read, runs inside that subject's [account operation queue](adr/2026-10-19-encrypted-aimharder-account-boundary.md) with its owned real API client. Callers cannot supply another participant, account ID, cookie, credential or URL. Existing same-identity/membership verification, bounded reauthentication, response limits and sanitized errors remain unchanged. One participant's latched authentication failure does not reset or borrow another participant's session. No sporting-history table, cache replica or upstream write endpoint is introduced.
+
+Synthetic validation uses actual SDK v2 HTTP, maintained portal sign-in/consent/PKCE, workerd, disposable D1 and SQLite Durable Objects, with only external AimHarder HTTP responses synthesized. Unexpected outbound requests fail the fixture. The public journeys cover source-result projection, two accounts sharing gym/boid but using distinct cookies/IDs, latest dated RM and units, ambiguous/empty/unsupported search, separate progression, 31-date/selector rejection, complete empty and recovered partial coverage, owner/membership isolation, and concurrent independent progress with bounded recovery and one account's authentication failure.
+
+This is local synthetic transport/isolation evidence. It does not establish new live AimHarder contracts, deployment, actual ChatGPT/Hermes operation, runtime cost or full backup/lifecycle restoration. Those remain separately recorded in [validation](validation.md) and the parent pilot acceptance work. The local stdio package is unchanged.
