@@ -50,8 +50,19 @@ export class AccountConnection {
     try {
       const operation = await request.json() as { kind: string; input?: unknown; gymId?: string; authorization?: {grantId: string; clientId: string} };
       const row = await this.env.AUTH_DB.prepare('SELECT userId,revision,envelope FROM portal_aimharder_connection WHERE userId=?').bind(subject).first<ConnectionRow>();
-      if (operation.kind === 'connect') {
-        if (row) return Response.json({ status: 'already-connected', message: 'An AimHarder account is already connected. Replacement is not available yet.' }, { status: 409 });
+      if (operation.kind === 'disconnect') {
+        if (!z.object({}).strict().safeParse(operation.input).success) return Response.json({status:'invalid-settings'},{status:400});
+        if (row) {
+          const removed=await this.env.AUTH_DB.prepare('DELETE FROM portal_aimharder_connection WHERE userId=? AND revision=? AND envelope=?').bind(subject,row.revision,row.envelope).run();
+          if (!removed.meta.changes) return Response.json({status:'connection-changed'},{status:409});
+        }
+        this.#client = undefined;
+        this.#actions.discardPreparations();
+        return Response.json({ status: 'not-connected' });
+      }
+      if (operation.kind === 'connect' || operation.kind === 'replace') {
+        if (row && operation.kind === 'connect') return Response.json({ status: 'already-connected', message: 'Use the explicit replacement form to change the connected AimHarder account.' }, { status: 409 });
+        if (!row && operation.kind === 'replace') return Response.json({status:'not-connected'},{status:409});
         const parsed = input.safeParse(operation.input);
         if (!parsed.success) return Response.json({ status: 'invalid-settings' }, { status: 400 });
         const config = configuration(parsed.data);
@@ -63,8 +74,11 @@ export class AccountConnection {
         const context = await candidate.getAccountContext();
         const revision = crypto.randomUUID();
         const envelope = await encryptConnection(this.env, subject, revision, { configuration: config, identity: verified.identity });
-        const saved = await this.env.AUTH_DB.prepare('INSERT OR IGNORE INTO portal_aimharder_connection (userId,revision,envelope,updatedAt) VALUES (?,?,?,?)').bind(subject, revision, envelope, Date.now()).run();
+        const saved = row
+          ? await this.env.AUTH_DB.prepare('UPDATE portal_aimharder_connection SET revision=?,envelope=?,updatedAt=? WHERE userId=? AND revision=? AND envelope=?').bind(revision,envelope,Date.now(),subject,row.revision,row.envelope).run()
+          : await this.env.AUTH_DB.prepare('INSERT OR IGNORE INTO portal_aimharder_connection (userId,revision,envelope,updatedAt) VALUES (?,?,?,?)').bind(subject, revision, envelope, Date.now()).run();
         if (!saved.meta.changes) return Response.json({ status: 'already-connected' }, { status: 409 });
+        this.#actions.discardPreparations();
         this.#client = { revision, envelope, client: candidate };
         return Response.json({ status: 'connected', ...context });
       }
@@ -77,6 +91,21 @@ export class AccountConnection {
       // Authenticate the current durable envelope even when memory is warm.
       const payload = await decryptConnection(this.env, row);
       if (!this.#client || this.#client.revision !== row.revision || this.#client.envelope !== row.envelope) this.#client = { revision: row.revision, envelope: row.envelope, client: new AimHarderClient(payload.configuration, payload.identity) };
+      if (operation.kind === 'password') {
+        const parsed = z.object({password:z.string().min(1).max(4096)}).strict().safeParse(operation.input);
+        if (!parsed.success) return Response.json({status:'invalid-settings'},{status:400});
+        const config = {...payload.configuration,password:parsed.data.password};
+        const candidate = new AimHarderClient(config,payload.identity);
+        await candidate.verifyConnection();
+        const context = await candidate.getAccountContext();
+        const revision = crypto.randomUUID();
+        const envelope = await encryptConnection(this.env,subject,revision,{configuration:config,identity:payload.identity});
+        const saved = await this.env.AUTH_DB.prepare('UPDATE portal_aimharder_connection SET revision=?,envelope=?,updatedAt=? WHERE userId=? AND revision=? AND envelope=?').bind(revision,envelope,Date.now(),subject,row.revision,row.envelope).run();
+        if (!saved.meta.changes) return Response.json({status:'connection-changed'},{status:409});
+        this.#actions.discardPreparations();
+        this.#client = {revision,envelope,client:candidate};
+        return Response.json({status:'connected',...context});
+      }
       if (operation.kind === 'settings') {
         const settings = z.object({ defaultGym: z.string().optional(), gymTimeZones: z.record(z.string(), z.string()) }).strict().safeParse(operation.input);
         if (!settings.success) return Response.json({ status: 'invalid-settings' }, { status: 400 });
@@ -92,6 +121,7 @@ export class AccountConnection {
         const saved = await this.env.AUTH_DB.prepare('UPDATE portal_aimharder_connection SET revision=?,envelope=?,updatedAt=? WHERE userId=? AND revision=? AND envelope=?')
           .bind(revision, envelope, Date.now(), subject, row.revision, row.envelope).run();
         if (!saved.meta.changes) return Response.json({ status: 'connection-changed' }, { status: 409 });
+        this.#actions.discardPreparations();
         this.#client = { revision, envelope, client: candidate };
         return Response.json({ status: 'connected', ...context });
       }
