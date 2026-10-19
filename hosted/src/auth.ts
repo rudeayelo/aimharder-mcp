@@ -211,7 +211,7 @@ export function createAuth(env: HostedEnvironment) {
         customAccessTokenClaims: ({ user }) => issueGrantClaim(env, issuingGrant, user?.id),
         consentPage: '/consent',
         resource: `${env.BASE_URL}/mcp`,
-        resources: [{ identifier: `${env.BASE_URL}/mcp`, name: 'AimHarder MCP', allowedScopes: ['mcp:access'] }],
+        resources: [{ identifier: `${env.BASE_URL}/mcp`, name: 'AimHarder MCP', allowedScopes: ['mcp:access', 'offline_access'] }],
         resourceSeedMode: 'merge',
         scopes: ['openid', 'profile', 'offline_access', 'mcp:access'],
         grantTypes: ['authorization_code', 'refresh_token'],
