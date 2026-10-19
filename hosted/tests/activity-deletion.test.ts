@@ -295,3 +295,32 @@ test('large pre-existing entry contents stay out of compact recovery facts and r
  const result=await call(a(),'execute_activity_deletion',{actionReference,sourceActivityId:501,confirmed:true});
  expect(result.structuredContent).toMatchObject({status:'observed-absent',preview:{target:{sourceActivityId:501,date:target.date}}});expect(JSON.stringify(result)).not.toContain('Large own entry');expect(writes).toHaveLength(1);
 });
+
+test('fresh authorization after reactivation cannot reuse a warm deletion preparation',async()=>{
+ removed=false;writes=[];synthetic=deletionSource;await policy('user',true);
+ const prepared=await call(b(),'prepare_activity_deletion',target);expect(prepared.structuredContent?.status).toBe('ready');
+ expect((await post('/api/portal/participants/other-participant/suspend',{},a())).status).toBe(204);
+ expect((await post('/api/portal/participants/other-participant/reactivate',{},a())).status).toBe(204);
+ const signIn=await post('/api/auth/sign-in/email',{email:'other@example.invalid',password:'synthetic-portal-password'});expect(signIn.status).toBe(200);
+ portalCookies.set('other@example.invalid',signIn.headers.getSetCookie().map(value=>value.split(';')[0]).join('; '));
+ const result=await call(b(),'execute_activity_deletion',{actionReference:prepared.structuredContent!.actionReference,sourceActivityId:501,confirmed:true});
+ expect(result.isError).toBe(true);expect(JSON.stringify(result)).toContain('ACTIVITY_REFERENCE_INVALID');expect(writes).toHaveLength(0);
+ await policy('user',false);
+});
+
+test('suspension during a possibly sent deletion preserves original read-back and restart recovery cannot repeat DELETE',async()=>{
+ removed=false;writes=[];synthetic=deletionSource;await policy('user',true);
+ const prepared=await call(b(),'prepare_activity_deletion',target);const actionReference=prepared.structuredContent!.actionReference;
+ let release!:()=>void;let entered!:()=>void;const held=new Promise<void>(resolve=>{release=resolve});const arrived=new Promise<void>(resolve=>{entered=resolve});
+ synthetic=async request=>{if(new URL(request.url).pathname==='/api/activity/501'){entered();await held;}return deletionSource(request);};
+ const pending=call(b(),'execute_activity_deletion',{actionReference,sourceActivityId:501,confirmed:true});await arrived;
+ expect((await post('/api/portal/participants/other-participant/suspend',{},a())).status).toBe(204);
+ const boundary=requests.length;release();expect((await pending).structuredContent).toMatchObject({status:'observed-absent',observedState:'absent'});
+ const readBack=requests.slice(boundary).filter(value=>value.url.host==='aimharder.es');expect(readBack.map(value=>value.url.pathname)).toContain('/api/activityCalendar');expect(readBack.every(value=>value.cookie==='amhrdrauth=synthetic-b')).toBe(true);expect(writes).toEqual(['amhrdrauth=synthetic-b']);
+ await worker.dispose();await start();expect((await post('/api/portal/participants/other-participant/reactivate',{},a())).status).toBe(204);
+ const signIn=await post('/api/auth/sign-in/email',{email:'other@example.invalid',password:'synthetic-portal-password'});expect(signIn.status).toBe(200);portalCookies.set('other@example.invalid',signIn.headers.getSetCookie().map(value=>value.split(';')[0]).join('; '));
+ synthetic=deletionSource;requests.length=0;
+ expect((await call(b(),'execute_activity_deletion',{actionReference,sourceActivityId:501,confirmed:true})).structuredContent).toMatchObject({status:'observed-absent',observedState:'absent'});
+ const recovered=requests.filter(value=>value.url.host==='aimharder.es');expect(recovered.map(value=>value.url.pathname)).toContain('/api/activityCalendar');expect(recovered.every(value=>value.cookie==='amhrdrauth=synthetic-b')).toBe(true);expect(writes).toEqual(['amhrdrauth=synthetic-b']);
+ expect((await call(b(),'execute_activity_deletion',{actionReference,sourceActivityId:501,confirmed:true})).isError).toBe(true);expect(writes).toHaveLength(1);await policy('user',false);
+});

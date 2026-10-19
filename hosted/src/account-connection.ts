@@ -100,7 +100,7 @@ export class AccountConnection {
         await requireActivityPermission(this.env,subject,'publication');
         const result=await this.#client.client.prepareActivityPublication(publicationQuerySchema.parse(operation.input));
         await requireActivityPermission(this.env,subject,'publication');
-        if('actionReference' in result&&result.actionReference)this.#actions.remember(result.actionReference,{action:'activity-publish',revision:row.revision,identity:payload.identity,expires:Date.parse(result.expiresAt),gymId:result.gym.id});
+        if('actionReference' in result&&result.actionReference)this.#actions.remember(result.actionReference,{action:'activity-publish',revision:row.revision,identity:payload.identity,accessGeneration:admission.accessGeneration,expires:Date.parse(result.expiresAt),gymId:result.gym.id});
         return Response.json({status:'queried',result});
       }
       if(operation.kind==='execute-activity-publication'){
@@ -110,7 +110,7 @@ export class AccountConnection {
           if(!await currentGrant(this.env,operation.authorization?.grantId,subject,operation.authorization?.clientId,row.revision,'publication'))throw new AimHarderError('ACCESS_RESTRICTED');
         };
         await authorize();
-        const result=await this.#actions.execute<Awaited<ReturnType<AimHarderClient['executeActivityPublication']>>,ActivityPublicationRecovery>({action:'activity-publish',invalidReference:'ACTIVITY_REFERENCE_INVALID',subject,revision:row.revision,identity:payload.identity,reference:query.actionReference,...(query.gymId?{gymId:query.gymId}:{}),authorize,
+        const result=await this.#actions.execute<Awaited<ReturnType<AimHarderClient['executeActivityPublication']>>,ActivityPublicationRecovery>({action:'activity-publish',invalidReference:'ACTIVITY_REFERENCE_INVALID',subject,revision:row.revision,identity:payload.identity,accessGeneration:admission.accessGeneration,reference:query.actionReference,...(query.gymId?{gymId:query.gymId}:{}),authorize,
           dispatch:(beforeDispatch,afterDispatch)=>client.executeActivityPublication(query,{beforeDispatch:facts=>beforeDispatch(publicationRecoveryFacts(facts)),afterDispatch:facts=>afterDispatch(publicationRecoveryFacts(facts))}),
           recover:async(facts,originalRevision)=>{
             if(query.gymId!==undefined&&query.gymId!==facts.gymId)throw new AimHarderError('ACTIVITY_REFERENCE_INVALID');
@@ -143,7 +143,7 @@ export class AccountConnection {
         await requireActivityPermission(this.env,subject,'deletion');
         const result=await this.#client.client.prepareActivityDeletion(activityDeletionQuerySchema.parse(operation.input));
         await requireActivityPermission(this.env,subject,'deletion');
-        if('actionReference' in result&&result.actionReference)this.#actions.remember(result.actionReference,{action:'activity-delete',revision:row.revision,identity:payload.identity,expires:Date.parse(result.expiresAt),gymId:result.gym.id});
+        if('actionReference' in result&&result.actionReference)this.#actions.remember(result.actionReference,{action:'activity-delete',revision:row.revision,identity:payload.identity,accessGeneration:admission.accessGeneration,expires:Date.parse(result.expiresAt),gymId:result.gym.id});
         return Response.json({status:'queried',result});
       }
       if(operation.kind==='execute-activity-deletion'){
@@ -152,7 +152,7 @@ export class AccountConnection {
         const authorize=async()=>{
           if(!await currentGrant(this.env,operation.authorization?.grantId,subject,operation.authorization?.clientId,row.revision,'deletion'))throw new Error('Execution authorization unavailable');
         };
-        const result=await this.#actions.execute<Awaited<ReturnType<AimHarderClient['executeActivityDeletion']>>|Awaited<ReturnType<AimHarderClient['reconcileActivityDeletion']>>,ActivityDeletionDispatch>({action:'activity-delete',invalidReference:'ACTIVITY_REFERENCE_INVALID',subject,revision:row.revision,identity:payload.identity,reference:query.actionReference,...(query.gymId?{gymId:query.gymId}:{}),authorize,
+        const result=await this.#actions.execute<Awaited<ReturnType<AimHarderClient['executeActivityDeletion']>>|Awaited<ReturnType<AimHarderClient['reconcileActivityDeletion']>>,ActivityDeletionDispatch>({action:'activity-delete',invalidReference:'ACTIVITY_REFERENCE_INVALID',subject,revision:row.revision,identity:payload.identity,accessGeneration:admission.accessGeneration,reference:query.actionReference,...(query.gymId?{gymId:query.gymId}:{}),authorize,
           dispatch:(beforeDispatch:(facts:ActivityDeletionDispatch)=>Promise<void>,afterDispatch)=>client.executeActivityDeletion(query,{beforeDispatch,afterDispatch}),
           recover:async(facts:ActivityDeletionDispatch,originalRevision)=>{
             if(query.sourceActivityId!==facts.preview.target.sourceActivityId||(query.gymId!==undefined&&query.gymId!==facts.preview.gym.id))throw new AimHarderError('ACTIVITY_REFERENCE_INVALID');
