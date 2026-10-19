@@ -1,9 +1,10 @@
 import { z } from 'zod';
 import { AimHarderClient, type AccountContext } from '../../src/client.js';
-import { readConfiguration, type Configuration } from '../../src/config.js';
+import { gymIdSchema, readConfiguration, type Configuration } from '../../src/config.js';
 import { exerciseSearchQuerySchema } from '../../src/exercise-search.js';
 import { exercise1RMQuerySchema } from '../../src/exercise-records.js';
 import { activityQuerySchema } from '../../src/activity.js';
+import { workoutQuerySchema } from '../../src/workouts.js';
 import { classQuerySchema } from '../../src/classes.js';
 import { safeError } from '../../src/errors.js';
 import type { HostedEnvironment } from './auth.js';
@@ -79,6 +80,17 @@ export class AccountConnection {
         if (!saved.meta.changes) return Response.json({ status: 'connection-changed' }, { status: 409 });
         this.#client = { revision, envelope, client: candidate };
         return Response.json({ status: 'connected', ...context });
+      }
+      if (operation.kind === 'upcoming-bookings' || operation.kind === 'booking-history') {
+        const query = z.object({ gymId: gymIdSchema.optional() }).strict().parse(operation.input);
+        const result = operation.kind === 'upcoming-bookings'
+          ? await this.#client.client.getUpcomingBookings(query.gymId)
+          : await this.#client.client.getBookingHistory(query.gymId);
+        return Response.json({ status: 'queried', result });
+      }
+      if (operation.kind === 'published-workouts') {
+        const result = await this.#client.client.getPublishedWorkouts(workoutQuerySchema.parse(operation.input));
+        return Response.json({ status: 'queried', result });
       }
       if (operation.kind === 'exercise-progression') {
         const query = exercise1RMQuerySchema.extend({ includeWod: z.boolean().optional() }).parse(operation.input);
