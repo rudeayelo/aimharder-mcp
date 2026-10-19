@@ -278,3 +278,10 @@ test('a changed connection revision cannot redirect read-only recovery to new co
  expect(result.structuredContent).toMatchObject({status:'uncertain',preview:{target:{sourceActivityId:501,date:target.date}},observedState:'incomplete'});
  expect(requests).toEqual([]);expect(writes).toHaveLength(1);
 });
+test('a policy disabled while preparation reads are held prevents returning a ready reference',async()=>{
+ removed=false;writes=[];
+ let release!:()=>void;let entered!:()=>void;const held=new Promise<void>(resolve=>{release=resolve});const arrived=new Promise<void>(resolve=>{entered=resolve});
+ synthetic=async request=>{if(new URL(request.url).pathname==='/api/activity/workout'){entered();await held;}return deletionSource(request)};
+ const pending=call(a(),'prepare_activity_deletion',target);await arrived;await policy('admin',false);release();
+ expect((await pending).isError).toBe(true);expect(writes).toEqual([]);await policy('admin',true);
+});

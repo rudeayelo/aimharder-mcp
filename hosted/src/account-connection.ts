@@ -97,6 +97,7 @@ export class AccountConnection {
       if(operation.kind==='prepare-activity-deletion'){
         await requireActivityPermission(this.env,subject,'deletion');
         const result=await this.#client.client.prepareActivityDeletion(activityDeletionQuerySchema.parse(operation.input));
+        await requireActivityPermission(this.env,subject,'deletion');
         if('actionReference' in result&&result.actionReference)this.#actions.remember(result.actionReference,{action:'activity-delete',revision:row.revision,identity:payload.identity,expires:Date.parse(result.expiresAt),gymId:result.gym.id});
         return Response.json({status:'queried',result});
       }
