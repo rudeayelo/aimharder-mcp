@@ -24,8 +24,8 @@ export async function invited(env: HostedEnvironment, token: string | null, emai
 export async function participant(env: HostedEnvironment, userId: string) {
   if(!await recoveryAdmission(env,userId))return null;
   return env.AUTH_DB.prepare(
-    'SELECT p.userId,p.role FROM portal_participant p JOIN user u ON u.id=p.userId WHERE p.userId=? AND p.status=\'active\' AND u.emailVerified=1'
-  ).bind(userId).first<{ userId: string; role: 'admin' | 'user' }>();
+    'SELECT p.userId,p.role,p.accessGeneration FROM portal_participant p JOIN user u ON u.id=p.userId WHERE p.userId=? AND p.status=\'active\' AND u.emailVerified=1'
+  ).bind(userId).first<{ userId: string; role: 'admin' | 'user'; accessGeneration: number }>();
 }
 export async function pendingInvitation(env: HostedEnvironment, userId: string) {
   return env.AUTH_DB.prepare(

@@ -301,6 +301,35 @@ test('a source change masked by an achieved load after dispatch leaves live orig
  expect(result.structuredContent).toMatchObject({status:'confirmed',observedEntry:'matched',sourceProvenance:{status:'unavailable',originalPrescription:null}});expect(publicationWrites).toBe(1);
 });
 
+test('fresh authorization after reactivation cannot reuse a warm publication preparation',async()=>{
+ resetPublication();expect((await setPolicy('user',true)).status).toBe(303);
+ const prepared=await preparePublication(b());expect(prepared.structuredContent?.status).toBe('ready');
+ expect((await post('/api/portal/participants/other-participant/suspend',{},a())).status).toBe(204);
+ expect((await post('/api/portal/participants/other-participant/reactivate',{},a())).status).toBe(204);
+ const signIn=await post('/api/auth/sign-in/email',{email:'other@example.invalid',password:'synthetic-portal-password'});expect(signIn.status).toBe(200);
+ portalCookies.set('other@example.invalid',signIn.headers.getSetCookie().map(value=>value.split(';')[0]).join('; '));
+ const result=await executePublication(prepared.structuredContent!.actionReference as string,b());
+ expect(result.isError).toBe(true);expect(JSON.stringify(result)).toContain('ACTIVITY_REFERENCE_INVALID');expect(publicationWrites).toBe(0);
+ expect((await setPolicy('user',false)).status).toBe(303);
+});
+
+test('suspension during a possibly sent publication preserves original read-back and restart recovery cannot repost',async()=>{
+ resetPublication();expect((await setPolicy('user',true)).status).toBe(303);
+ const prepared=await preparePublication(b());const actionReference=prepared.structuredContent!.actionReference as string;
+ let release!:()=>void;let entered!:()=>void;const held=new Promise<void>(resolve=>{release=resolve});const arrived=new Promise<void>(resolve=>{entered=resolve});
+ synthetic=async request=>{const url=new URL(request.url);if(url.pathname==='/api/activity'&&!url.search){entered();await held;}return publicationSource(request);};
+ const pending=executePublication(actionReference,b());await arrived;
+ expect((await post('/api/portal/participants/other-participant/suspend',{},a())).status).toBe(204);
+ const boundary=requests.length;release();expect((await pending).structuredContent).toMatchObject({status:'confirmed',observedEntry:'matched'});
+ const readBack=requests.slice(boundary).filter(value=>value.url.host==='aimharder.es');expect(readBack.map(value=>value.url.pathname)).toContain('/api/activity/workout');expect(readBack.every(value=>value.cookie==='amhrdrauth=synthetic-b')).toBe(true);expect(publicationWrites).toBe(1);
+ await worker.dispose();await start();expect((await post('/api/portal/participants/other-participant/reactivate',{},a())).status).toBe(204);
+ const signIn=await post('/api/auth/sign-in/email',{email:'other@example.invalid',password:'synthetic-portal-password'});expect(signIn.status).toBe(200);portalCookies.set('other@example.invalid',signIn.headers.getSetCookie().map(value=>value.split(';')[0]).join('; '));
+ synthetic=publicationSource;requests.length=0;
+ expect((await executePublication(actionReference,b())).structuredContent).toMatchObject({status:'confirmed',observedEntry:'matched'});
+ const recovered=requests.filter(value=>value.url.host==='aimharder.es');expect(recovered.map(value=>value.url.pathname)).toContain('/api/activity/workout');expect(recovered.every(value=>value.cookie==='amhrdrauth=synthetic-b')).toBe(true);expect(publicationWrites).toBe(1);
+ expect((await executePublication(actionReference,b())).isError).toBe(true);expect(publicationWrites).toBe(1);expect((await setPolicy('user',false)).status).toBe(303);
+});
+
 test('connection replacement waits for an original-account publication read-back and never reuses its preparation or recovery on the new identity',async()=>{
  resetPublication();
  const unused=await preparePublication();const prepared=await preparePublication();
