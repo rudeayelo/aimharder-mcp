@@ -82,7 +82,13 @@ The later recovery report below supplies the separate human outcome. Role behavi
 
 The owner subsequently confirmed the requested sign-out, recovery request for the same participant, recovery-mail receipt, personally chosen new portal password and successful sign-in with that new password. Mail receipt, completed reset and new-password sign-in pass at the owner-reported evidence level. No recovery link or password was shared with the agent.
 
-No fresh independent delivery metadata, identity/configuration comparison, session-revocation check or role/isolation/lifecycle observation was performed. The agent recorded the outcome without sending mail, operating authentication or changing provider/client/runtime configuration. Participant administrator-route denial and the remaining acceptance gates are still unobserved; #84/#69 remain open. This documentation-only update changes no archive input or executable; existing source/package proof is retained without repeating tests, build or packaging. See the [Google record](hosted-google.md#controlled-participant-password-recovery-2026-10-20) and [whole-pilot ledger](hosted-pilot-acceptance.md#controlled-participant-password-recovery-2026-10-20).
+No fresh independent delivery metadata, identity/configuration comparison, session-revocation check or role/isolation/lifecycle observation was performed. The agent recorded the outcome without sending mail, operating authentication or changing provider/client/runtime configuration. The later administration-page report below supplies a separate human outcome; the remaining acceptance gates stay open under #84/#69. This documentation-only update changes no archive input or executable; existing source/package proof is retained without repeating tests, build or packaging. See the [Google record](hosted-google.md#controlled-participant-password-recovery-2026-10-20) and [whole-pilot ledger](hosted-pilot-acceptance.md#controlled-participant-password-recovery-2026-10-20).
+
+### Controlled participant administration-page denial (2026-10-20)
+
+Asked to retain the same recovered participant session and open `/admin/participants` directly, the owner reported **Administrator access required.**, with no participant list visible. This administration-page denial passes at the owner-reported evidence level. No fresh independent HTTP 403, session identity or current-role check was performed.
+
+This narrow UI report establishes neither disabled activity permissions, MCP/account isolation nor lifecycle acceptance. The agent made no provider, client or runtime change. #84/#69 remain open. This documentation-only addition changes no archive input, executable, API contract or ADR decision; existing source/package proof is retained without repeating tests, build or packaging. See the [whole-pilot ledger](hosted-pilot-acceptance.md#controlled-participant-administration-page-denial-2026-10-20).
 
 ### Opaque calendar metadata candidate (2026-10-19)
 
