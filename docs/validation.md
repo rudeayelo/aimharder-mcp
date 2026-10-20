@@ -90,6 +90,14 @@ Asked to retain the same recovered participant session and open `/admin/particip
 
 This narrow UI report establishes neither disabled activity permissions, MCP/account isolation nor lifecycle acceptance. The agent made no provider, client or runtime change. #84/#69 remain open. This documentation-only addition changes no archive input, executable, API contract or ADR decision; existing source/package proof is retained without repeating tests, build or packaging. See the [whole-pilot ledger](hosted-pilot-acceptance.md#controlled-participant-administration-page-denial-2026-10-20).
 
+### Controlled participant connection-page states (2026-10-20)
+
+Asked to retain the same recovered participant session, the owner reported that direct `GET /aimharder` shows the **Connect AimHarder** form rather than a connected state, and direct `GET /connections` shows **No clients are connected.**, without a client list. Both expected page states pass at the owner-reported UI evidence level. No credentials were entered or connection submitted as part of these checks.
+
+No fresh independent HTTP status, current backend identity, stored credentials, connection rows or client grants were checked. These page reports do not establish MCP credential/data isolation or compare the administrator's connection. Keep this participant unconnected for the separate actual MCP isolation trial. The agent made no provider, client or runtime change; #84/#69 remain open.
+
+This documentation-only evidence addition changes no archive input, executable, API contract or ADR decision. Existing source/package proof is retained without repeating tests, build or packaging. See the [whole-pilot ledger](hosted-pilot-acceptance.md#controlled-participant-connection-page-states-2026-10-20).
+
 ### Opaque calendar metadata candidate (2026-10-19)
 
 One actual installed-Hermes read under independently reviewed bounded diagnostics returned the expected safe error and a sanitized structural path: `workouts.<date>.TIPOWODs.<unknown-key>` failed the positive-decimal record-key constraint. The actual key/value was neither retained nor assigned meaning. The temporary runtime was then retired and the exact original production bundle/settings/owner/authority/cron verified. No debug helper, hooks, temporary test or diagnostic tag remains in this final source candidate.
