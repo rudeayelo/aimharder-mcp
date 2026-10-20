@@ -122,6 +122,10 @@ This passes bounded portal/provider revocation, old cached-access denial and dif
 
 After ordinary portal sign-out from the participant and sign-in as administrator, the owner reports that `/admin/activity-access` shows publication and deletion **Enabled** for `admin` and both **Disabled** for `user`. This passes the expected configuration UI values at the owner-reported evidence level only; no fresh root UI, independent policy database read-back or actual MCP permission behavior is established. No policy edit, Save or new MCP consent was requested. Actual disabled-user enforcement and separately confirmed administrator write journeys remain pending under #84/#69; no decision, API contract, executable or archive input changed.
 
+### Administrator participant-list UI owner report (2026-10-20)
+
+On read-only `/admin/participants`, the owner reports the administrator row as `admin` / `active` / `configured` and the controlled participant as `user` / `active` / `not-connected`. As the [administration contract](hosted-participants.md#administration-boundary) specifies, `configured` means saved configuration presence, not verified upstream health. This is owner-reported UI evidence only, without fresh root UI, database, HTTP or identity comparison; no lifecycle transition or MCP role enforcement is established. No Suspend, Reactivate or participant MCP reauthorization was requested, and no private names, emails or identifiers were copied. #84/#69 remain open; no decision, API contract, vocabulary, executable or archive input changed.
+
 ### Opaque calendar metadata candidate (2026-10-19)
 
 One actual installed-Hermes read under independently reviewed bounded diagnostics returned the expected safe error and a sanitized structural path: `workouts.<date>.TIPOWODs.<unknown-key>` failed the positive-decimal record-key constraint. The actual key/value was neither retained nor assigned meaning. The temporary runtime was then retired and the exact original production bundle/settings/owner/authority/cron verified. No debug helper, hooks, temporary test or diagnostic tag remains in this final source candidate.
