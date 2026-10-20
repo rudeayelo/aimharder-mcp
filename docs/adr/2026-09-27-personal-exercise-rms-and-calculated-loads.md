@@ -31,3 +31,7 @@ Public MCP fixture tests cover these rules. An early 27 September feed scan foun
 ## Release acceptance (2026-09-28)
 
 The account holder requested closure of #38 and the next release with the calculated split arithmetic path covered by anonymized MCP fixtures rather than a live calculable split example. Keep that evidence limit visible in release documentation and future verification. A source example can be compared later; any defect found then will be tracked separately. This acceptance does not change the exact-ID join, original-prescription preservation, unavailable status, or release artifact verification requirements.
+
+## Hosted unavailable-enrichment observation (2026-10-20)
+
+An actual maintained Hermes current-day workout query retained available instructions while reporting incomplete enrichment: all three eligible percentage-exercise occurrences and their alternatives were unavailable with `no-1rm-in-returned-view`, and no available calculated load was observed. This is the returned own-record view's unavailability, not proof that no earlier record exists elsewhere. The [bounded validation](../validation.md#actual-hermes-current-day-workout-instructions-2026-10-20) adds hosted maintained-client contract evidence without a raw-source/arithmetic comparison, conversational LLM QA or change to this decision. Actual available calculated loads in the hosted clients remain an acceptance gate; prior narrow local-source comparisons retain their separate scope.
