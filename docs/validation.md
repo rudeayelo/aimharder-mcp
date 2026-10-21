@@ -166,7 +166,9 @@ The [owner’s general context-success reply](hosted-pilot-acceptance.md#owner-r
 
 ### ChatGPT preparation and separate zone probe (2026-10-21)
 
-The [preparation/prerequisite checkpoint](hosted-pilot-acceptance.md#chatgpt-preparation-and-separate-zone-probe-2026-10-21) distinguishes owner-reported ChatGPT `INVALID_ARGUMENT`/no preview from a separate actual native connector's two read-only calls: assumed selected-gym zone and application `CONFIRMED_GYM_TIME_ZONE_REQUIRED`, with zero execute calls. ChatGPT arguments and same-portal identity are unverified. The requested per-account portal zone confirmation and subsequent preparation remain unobserved; no write or successful repair is claimed. Existing zone policy/API/security/ADR decisions and source/archive inputs are unchanged; no automated suites/build/package checks were rerun and no deployment change occurred. #84/#69 remain open.
+The [preparation/prerequisite checkpoint](hosted-pilot-acceptance.md#chatgpt-preparation-and-separate-zone-probe-2026-10-21) distinguishes owner-reported ChatGPT `INVALID_ARGUMENT`/no preview from a separate actual native connector's two read-only calls: assumed selected-gym zone and application `CONFIRMED_GYM_TIME_ZONE_REQUIRED`, with zero execute calls. ChatGPT arguments and same-portal identity are unverified. At that failed-preparation checkpoint, the requested per-account zone confirmation and follow-up were unobserved.
+
+After owner-reported portal confirmation, two actual native reads returned the expected selected gym with a user-confirmed zone and the same exact preparation ready/unbooked. A reference was returned but not retained; zero execute calls and no new write confirmation occurred. This resolves the separate connector prerequisite, while actual ChatGPT preparation, backend same-portal identity comparison and ChatGPT arguments/wire remain unobserved. Existing zone policy/API/security/ADR decisions and source/archive inputs are unchanged; no automated suites/build/package checks were rerun or deployment changed. #84/#69 remain open.
 
 ### Actual Hermes standard cancellation (2026-10-21)
 
