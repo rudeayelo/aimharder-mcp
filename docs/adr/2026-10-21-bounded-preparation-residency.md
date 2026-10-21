@@ -1,6 +1,6 @@
 # ADR: bounded residency for unused hosted preparations
 
-Status: accepted on 2026-10-21 for [#84](https://github.com/rudeayelo/aimharder-mcp/issues/84). Locally implemented and tested; deployment and a positive native-provider check of this candidate remain separate.
+Status: accepted on 2026-10-21 for [#84](https://github.com/rudeayelo/aimharder-mcp/issues/84). Implemented and locally tested; an isolated native-provider comparison passes. Code-only test-pilot activation and native context are verified; browser ChatGPT action validation remains pending.
 
 ## Context
 
@@ -22,7 +22,7 @@ Release outer preparations whenever the actor reconstructs the inner client, inc
 
 [Cloudflare's state contract](https://developers.cloudflare.com/durable-objects/api/state/#waituntil) says a pending `waitUntil` prevents eviction until settlement or its platform timeout; it does not delay the response. The [lifecycle contract](https://developers.cloudflare.com/durable-objects/concepts/durable-object-lifecycle/#durable-object-lifecycle-state-transitions) distinguishes idle hibernation from pending events, I/O and timers. This design keeps ordinary idle hibernation from discarding live permission; it cannot guarantee survival of crashes, forced restarts, deployments or arbitrary platform termination. Original expiry remains authoritative even if a timer is delayed.
 
-The observable coordinator tests cover original expiry, overlap, bounded rollover during continuous replenishment, immediate discard, stale callbacks, consumption rejection, missing references, capacity and all action identities. A public portal/OAuth/SDK HTTP/workerd journey observes a pending native hold after preparation and its release after ciphertext-only client reconstruction; the old reference then fails with zero synthetic writes. Existing action/lifecycle HTTP suites retain their preflight, restart, expiry, isolation and no-replay coverage. A positive native idle test of this candidate and real-client acceptance remain unobserved at this implementation checkpoint.
+The observable coordinator tests cover original expiry, overlap, bounded rollover during continuous replenishment, immediate discard, stale callbacks, consumption rejection, missing references, capacity and all action identities. A public portal/OAuth/SDK HTTP/workerd journey observes a pending native hold after preparation and its release after ciphertext-only client reconstruction; the old reference then fails with zero synthetic writes. Existing action/lifecycle HTTP suites retain their preflight, restart, expiry, isolation and no-replay coverage. At that implementation checkpoint, a positive native idle test and real-client acceptance remained unobserved. The later [native comparison](../validation.md#bounded-preparation-residency-native-comparison-2026-10-21) passes two idle positives, duplicate protection, forced-restart rejection and unchanged-TTL expiry rejection; it does not attribute the historical ChatGPT failure. The code-only test-pilot activation and native context are verified; browser ChatGPT action acceptance remains pending.
 
 ## Alternatives and consequences
 

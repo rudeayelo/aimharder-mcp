@@ -12,7 +12,7 @@ Permission is checked from the current active verified participant's role before
 
 ## Dispatch, recovery and limits
 
-The locally implemented [residency amendment](adr/2026-10-21-bounded-preparation-residency.md) coalesces actor holds for unused publication preparations through their original two-minute expiry and releases them on consumption/discard. Permission remains memory-only, one-use and subject to current policy; restart still requires fresh preparation and confirmation. Deployment and a native-positive check remain separate.
+The implemented [residency amendment](adr/2026-10-21-bounded-preparation-residency.md) coalesces actor holds for unused publication preparations through their original two-minute expiry and releases them on consumption/discard. Permission remains memory-only, one-use and subject to current policy; restart still requires fresh preparation and confirmation. The isolated [native comparison](validation.md#bounded-preparation-residency-native-comparison-2026-10-21) passes; the code-only test-pilot activation and native context are verified, while browser ChatGPT action validation remains pending.
 
 The existing real client rechecks source/Copy mapping, selected date/variant/results/actual loads and account audience before dispatch. Exactly one POST can be attempted from a consumed reference. Fresh own-calendar/detail read-back preserves accepted/rejected/uncertain outcomes and only verifies original prescription provenance after a fresh matching source. No activity history is mirrored and no applied audience or RM side effect is inferred.
 

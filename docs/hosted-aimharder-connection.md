@@ -35,7 +35,7 @@ Mutation bodies are bounded at 16 KiB and require the exact portal Origin plus a
 
 ## Runtime setup
 
-The locally implemented [bounded residency amendment](adr/2026-10-21-bounded-preparation-residency.md) releases unused preparations and their background hold whenever connection/access state discards them or the inner client is reconstructed. This includes ciphertext-only rewrap at the same semantic revision: the reconstructed client no longer owns the old in-memory reference. It does not change encrypted credential persistence or restore permission after restart. Native-positive validation and deployment remain separate.
+The implemented [bounded residency amendment](adr/2026-10-21-bounded-preparation-residency.md) releases unused preparations and their background hold whenever connection/access state discards them or the inner client is reconstructed. This includes ciphertext-only rewrap at the same semantic revision: the reconstructed client no longer owns the old in-memory reference. It does not change encrypted credential persistence or restore permission after restart. The isolated [native comparison](validation.md#bounded-preparation-residency-native-comparison-2026-10-21) passes; the code-only test-pilot activation and native context are verified, while browser ChatGPT action validation remains pending.
 
 Preserve all existing auth/mail/Google bindings and the [#73 authorization migration/grants](hosted-mcp-authorization.md). Apply reviewed `0005-aimharder-connection.sql` once to the authorized D1 database, after migrations 0001–0004. Existing isolated migrations were applied through the direct API; do not blindly replay them through a different migration ledger.
 
