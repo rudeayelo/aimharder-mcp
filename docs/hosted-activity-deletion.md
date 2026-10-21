@@ -30,7 +30,7 @@ A readable response has no established upstream success contract. Current absenc
 
 ## Concurrency, restart and recovery
 
-The locally implemented [residency amendment](adr/2026-10-21-bounded-preparation-residency.md) coalesces actor holds for unused deletion preparations through their original two-minute expiry and releases them on consumption/discard. It preserves current policy, exact separate confirmation and restart rejection. Native-positive validation and deployment remain separate; no DELETE is authorized by this lifecycle change.
+The implemented [residency amendment](adr/2026-10-21-bounded-preparation-residency.md) coalesces actor holds for unused deletion preparations through their original two-minute expiry and releases them on consumption/discard. It preserves current policy, exact separate confirmation and restart rejection. The isolated [native comparison](validation.md#bounded-preparation-residency-native-comparison-2026-10-21) passes; the code-only test-pilot activation and native context are verified, while browser ChatGPT action validation remains pending; no DELETE is authorized by this lifecycle change.
 
 The subject-owned account queue contains the complete preparation/execution/reconciliation journey. Its bounded in-memory reference binds the portal owner, original upstream identity, connection revision, action and gym. The shared durable journal records consumption before preflight and a possibly-sent fence before dispatch. Expired, foreign, mismatched, used or lost references cannot dispatch. Concurrent duplicate execution sends at most one DELETE; separate accounts remain independent.
 

@@ -25,7 +25,7 @@ Both roles have booking creation without a feature switch. Existing [tool contra
 
 ## Consumption and interruption
 
-The locally implemented [residency amendment](adr/2026-10-21-bounded-preparation-residency.md) adds a coalesced, cancellable actor hold through unused references' original two-minute expiry. Consumption, expiry or connection/client invalidation releases it; a restart still loses unused permission. Native-positive validation and deployment of this amendment remain pending at this checkpoint. It adds no durable executable permission, TTL extension or automatic retry.
+The implemented [residency amendment](adr/2026-10-21-bounded-preparation-residency.md) adds a coalesced, cancellable actor hold through unused references' original two-minute expiry. Consumption, expiry or connection/client invalidation releases it; a restart still loses unused permission. The isolated [native comparison](validation.md#bounded-preparation-residency-native-comparison-2026-10-21) passes; the code-only test-pilot activation and native context are verified, while browser ChatGPT action validation remains pending. It adds no durable executable permission, TTL extension or automatic retry.
 
 The actor owns the full client operation, encrypted connection and preparation binding. It durably consumes permission before execution preflight. A purpose-specific encrypted D1 journal records minimal original operation facts before any possible send. The last private dispatch guard checks active verified participant, current client/grant/generation and exact connection revision together, then checks expiry. The guard is per execution request; a reused client never carries an old MCP client's authorization permanently.
 
