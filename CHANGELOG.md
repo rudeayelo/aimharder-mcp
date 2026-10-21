@@ -1,5 +1,11 @@
 # aimharder-mcp
 
+## 0.5.1
+
+### Patch Changes
+
+- 114b17d: Preserve source complex grouping and repeat counts in published workouts, difficulty variants, and personal-activity prescriptions.
+
 ## 0.5.0
 
 ### Minor Changes
