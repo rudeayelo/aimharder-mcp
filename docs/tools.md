@@ -62,6 +62,8 @@ Use only the new reference from a `pending-credit-loss` result, after displaying
 
 ## `get_published_workouts`
 
+Exercise prescriptions retain optional source `complex` and `complexrep` fields in the current checkout. Within each block and difficulty, consecutive exercises with the same non-null `complex` marker belong to one complex; `complexrep` gives its repeat count. The marker is not the repeat count. Preserve exercise order, raw numeric/string encodings, and absent/null/zero distinctions. An exercise without a marker ends the group. For example, a run, three exercises marked `complex: 2, complexrep: "4"`, and another run means four repetitions of the three central exercises, with each run outside the complex. These fields also survive the shared personal-activity prescription projection. This read correction does not add support for publishing complex workouts; the publication serializer still rejects nonzero complex markers.
+
 Input: an explicit gym-local date and an exact class name, such as `{"date":"2026-09-24","className":"WOD"}`. The response includes `status` (`available`, `unavailable`, or `unsupported`), `ambiguous`, `workouts`, `enrichment`, `coverage` and `notices`.
 
 Available workouts include source titles, notes, exercises, prescriptions and intended `recordDate`/class provenance. A workout may apply to several sessions, so `sessionId` is `null`. Multiple publications remain alternatives with `ambiguous: true`; recency does not establish supersession.

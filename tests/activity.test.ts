@@ -53,6 +53,23 @@ function calendar(days: Record<string, number[]>) { return { workouts: Object.fr
 function respond(days: Record<string, number[]>) {
  upstream.use(http.get('https://aimharder.es/api/activityCalendar', () => HttpResponse.json(calendar(days))), http.get('https://aimharder.es/api/activity/workout', () => HttpResponse.json(detail())));
 }
+test('retains source complex membership and repetition count in verified own activity', async () => {
+ respond({ '2026-03-29': [1] });
+ upstream.use(http.get('https://aimharder.es/api/activity/workout', () => HttpResponse.json(detail(1, {
+  ejerRate: [
+   { ejerName: 'Run', tipoWOD: 0, valor1: ['500'] },
+   { ejerName: 'Movement A', tipoWOD: 0, complex: 2, complexrep: '4', valor1: ['6'] },
+   { ejerName: 'Movement B', tipoWOD: 0, complex: 2, complexrep: '4', valor1: ['12'] },
+   { ejerName: 'Run', tipoWOD: 0, valor1: ['500'] },
+  ],
+ }))));
+ const result = await query(await connect());
+ expect(result.isError).not.toBe(true);
+ expect(result.structuredContent).toMatchObject({ entries: [{ exercises: [
+  { name: 'Run' }, { name: 'Movement A', prescription: { complex: 2, complexrep: '4' } },
+  { name: 'Movement B', prescription: { complex: 2, complexrep: '4' } }, { name: 'Run' },
+ ] }] });
+});
 test('returns personal entries with original detail, explicit dates and no session claim', async () => {
  respond({ '2026-03-29': [1, 1, 2] });
  const result = await query(await connect());
