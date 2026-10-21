@@ -7,10 +7,38 @@ import { decryptActionFacts, encryptActionFacts } from './vault.js';
 export const actionRecoveryLifetime = 10 * 60_000;
 interface Preparation { accessGeneration:number; action:string; revision:string; identity:number; expires:number; gymId:string; }
 interface Journal { action:string; referenceDigest:string; revision:string; expires:number; instance:string; phase:'consumed'|'possibly-sent'|'finished'; facts:string|null; }
+interface Retention { until:number; generation:number; timer:ReturnType<typeof setTimeout>|undefined; settle:()=>void; }
 export class AccountActionCoordinator {
   #instance=crypto.randomUUID();
   #preparations=new Map<string,Preparation>();
-  constructor(private storage:DurableObjectStorage,private env:HostedEnvironment){}
+  #retention:Retention|undefined;
+  constructor(private storage:DurableObjectStorage,private env:HostedEnvironment,private retain:(promise:Promise<void>)=>void){}
+  #settleRetention(retention:Retention){
+    clearTimeout(retention.timer);retention.generation++;retention.settle();
+    if(this.#retention===retention)this.#retention=undefined;
+  }
+  #scheduleRetention(retention:Retention,expires:number){
+    clearTimeout(retention.timer);const generation=++retention.generation;
+    retention.timer=setTimeout(()=>{
+      if(this.#retention===retention&&retention.generation===generation)this.#refreshRetention();
+    },Math.max(0,Math.min(expires,retention.until)-Date.now()));
+  }
+  #refreshRetention(){
+    const now=Date.now();
+    for(const [key,value]of this.#preparations)if(value.expires<=now)this.#preparations.delete(key);
+    const expires=Math.max(...[...this.#preparations.values()].map(value=>value.expires));
+    const previous=this.#retention;
+    if(!(expires>now)){if(previous)this.#settleRetention(previous);return;}
+    if(previous&&previous.until>now){this.#scheduleRetention(previous,expires);return;}
+    let settle!:()=>void;
+    const promise=new Promise<void>(resolve=>{settle=resolve;});
+    const retention:Retention={until:now+120_000,generation:0,timer:undefined,settle};
+    this.#retention=retention;this.#scheduleRetention(retention,expires);
+    try{this.retain(promise);}
+    catch(error){this.#preparations.clear();this.#settleRetention(retention);if(previous)this.#settleRetention(previous);throw error;}
+    // A replenished stream starts a fresh bounded hold before settling its predecessor.
+    if(previous)this.#settleRetention(previous);
+  }
   async sweep(subject:string){
     await this.env.AUTH_DB.prepare('DELETE FROM portal_action_journal WHERE userId=? AND expires<=?').bind(subject,Date.now()).run();
     const next=await this.env.AUTH_DB.prepare('SELECT MIN(expires) AS expires FROM portal_action_journal WHERE userId=?').bind(subject).first<{expires:number|null}>();
@@ -20,11 +48,13 @@ export class AccountActionCoordinator {
     return Boolean(await this.env.AUTH_DB.prepare("SELECT 1 FROM portal_action_journal WHERE userId=? AND referenceDigest=? AND expires>? AND phase IN ('possibly-sent','finished') AND facts IS NOT NULL")
       .bind(subject,await digest(reference),Date.now()).first());
   }
-  discardPreparations(){this.#preparations.clear();}
+  discardPreparations(){this.#preparations.clear();this.#refreshRetention();}
   remember(reference:string,preparation:Preparation){
+    if(!Number.isFinite(preparation.expires)||preparation.expires>Date.now()+120_000)throw new RangeError('Invalid preparation lifetime');
     for(const [key,value] of this.#preparations)if(value.expires<=Date.now())this.#preparations.delete(key);
     if(this.#preparations.size>=32)this.#preparations.delete(this.#preparations.keys().next().value!);
     this.#preparations.set(reference,preparation);
+    this.#refreshRetention();
   }
   async #put(subject:string,row:Journal){
     await this.env.AUTH_DB.prepare(`INSERT INTO portal_action_journal (userId,referenceDigest,revision,expires,instance,phase,facts,action) VALUES (?,?,?,?,?,?,?,?)
@@ -50,6 +80,7 @@ export class AccountActionCoordinator {
       return options.recover(facts,previous.revision);
     }
     const preparation=this.#preparations.get(options.reference);this.#preparations.delete(options.reference);
+    this.#refreshRetention();
     if(previous||!preparation||preparation.expires<=now||preparation.action!==options.action||preparation.revision!==options.revision||preparation.identity!==options.identity||preparation.accessGeneration!==options.accessGeneration||(options.gymId!==undefined&&options.gymId!==preparation.gymId))throw new AimHarderError(options.invalidReference??'BOOKING_REFERENCE_INVALID');
     if(rows.length>=64)throw new AimHarderError(options.invalidReference??'BOOKING_REFERENCE_INVALID');
     const journal:Journal={action:options.action,referenceDigest,revision:options.revision,expires:now+actionRecoveryLifetime,instance:this.#instance,phase:'consumed',facts:null};

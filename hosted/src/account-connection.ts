@@ -48,7 +48,7 @@ export class AccountConnection {
   #client: { revision: string; envelope: string; client: AimHarderClient } | undefined;
   readonly #actions:AccountActionCoordinator;
   private readonly env:HostedEnvironment;
-  constructor(private readonly state: DurableObjectState, env: HostedEnvironment) {this.env={...env};this.#actions=new AccountActionCoordinator(state.storage,this.env);}
+  constructor(private readonly state: DurableObjectState, env: HostedEnvironment) {this.env={...env};this.#actions=new AccountActionCoordinator(state.storage,this.env,promise=>state.waitUntil(promise));}
   alarm():Promise<void>{const result=this.#queue.then(async()=>{const lease=await acquireRecoveryLease(this.env,null);if(!lease)return;try{const subject=await this.state.storage.get<string>('owner');if(subject)await this.#actions.sweep(subject);}finally{await releaseRecoveryLease(this.env,lease);}});this.#queue=result.catch(()=>undefined);return result;}
   fetch(request: Request): Promise<Response> {
     const result = this.#queue.then(() => this.#handle(request));
@@ -113,7 +113,10 @@ export class AccountConnection {
       }
       // Authenticate the current durable envelope even when memory is warm.
       const payload = await decryptConnection(this.env, row);
-      if (!this.#client || this.#client.revision !== row.revision || this.#client.envelope !== row.envelope) this.#client = { revision: row.revision, envelope: row.envelope, client: new AimHarderClient(payload.configuration, payload.identity) };
+      if (!this.#client || this.#client.revision !== row.revision || this.#client.envelope !== row.envelope) {
+        this.#actions.discardPreparations();
+        this.#client = { revision: row.revision, envelope: row.envelope, client: new AimHarderClient(payload.configuration, payload.identity) };
+      }
       if (operation.kind === 'password') {
         const parsed = z.object({password:z.string().min(1).max(4096)}).strict().safeParse(operation.input);
         if (!parsed.success) return Response.json({status:'invalid-settings'},{status:400});

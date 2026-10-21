@@ -39,6 +39,14 @@ This is arithmetic for comparison with measurements, not an observed load test. 
 
 Do not scale the old aggregate CPU quotient into password CPU, derive storage from an empty metric group or treat sampled success as a guaranteed quota. Model peak simultaneous users and delayed/uncertain upstream calls: wall wait, object residency and account serialization can dominate duration even when query CPU is small. Include the independent recovery watchdog and retention/copy policy; disabling them is not a cost optimization.
 
+## Preparation residency planning amendment (2026-10-21)
+
+The locally implemented [bounded residency decision](adr/2026-10-21-bounded-preparation-residency.md) keeps an account actor active while unused action preparations remain, through their original two-minute TTL. It has not yet been activated or measured on the full provider runtime at this checkpoint. [Durable Object duration pricing](https://developers.cloudflare.com/durable-objects/platform/pricing/#when-does-a-durable-object-incur-duration-charges) counts non-hibernating wall time at the allocated memory, rather than only CPU execution.
+
+Using the existing **0.128 GB** planning assumption, one otherwise idle, non-overlapping full 120-second preparation window contributes **15.36 GB-s**. Twenty participants with one such window each per day contribute **307.2 GB-s/day**; ten windows each contribute **3,072 GB-s/day**. These are illustrative upper-duration scenarios for those windows, not observed traffic or guaranteed account headroom. Overlap within one actor coalesces; already active work may overlap that time. Distinct actors add. Continually arriving new preparations can keep an actor resident across multiple bounded promises, so there is no two-minute overall daily cap. Ordinary reads do not create a preparation hold; the model must count actual preparations rather than treat every MCP operation as one.
+
+The timer scans at most 32 in-memory bindings and performs no I/O or lease renewal. A 120-second hold is not 120 seconds of CPU. Actual extra object GB-s, CPU, concurrent accounts, shared remaining allowance and 20-participant/monthly-budget sustainability still require measurement. No purchase or plan change follows from this amendment.
+
 ## Currency, tax and recurring total
 
 With every service within its existing Free quotas, the **conditional** incremental provider charge is USD 0/month for Workers/D1/objects and USD 0/month for Resend, plus **USD 0.60/month** domain renewal amortization. Existing shared services still consume allowances. This is not an accepted full-runtime quote or permission to incur overages. The selected Free plan may fail a capacity requirement even while its charge remains zero.
