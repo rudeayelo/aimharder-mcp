@@ -52,7 +52,7 @@ A finite actual maintained Hermes query for explicit 2026-10-20 and fixed approv
 
 ## Complex prescription amendment (2026-10-21)
 
-Status: accepted for the source checkout; release and deployment pending.
+Status: accepted; released in `0.5.1` and verified in the [hosted code-only rollout](../hosted-test-environment.md#complex-prescription-code-only-rollout-2026-10-21).
 
 Preserve optional scalar `complex` and `complexrep` fields in each exercise prescription, including each difficulty replacement and the shared own-activity projection. The authenticated 22 October 9NBC source and its official renderer establish consecutive non-null equal-marker grouping within a block and the separate repeat-count field. The prior allowlist silently removed both, losing the fourfold repetition shown in the account holder's screenshot. Keep source order and number/string/null/absent encodings; do not infer a repeat count from `complex`, block `rondas`, or exercise `round`, flatten groups, or inherit missing fields into a replacement.
 

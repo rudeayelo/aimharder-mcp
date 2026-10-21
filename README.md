@@ -60,7 +60,7 @@ Each write requires a separate confirmation of the exact preview and a user-conf
 
 Clients can combine tools for questions about workouts and bookings, or count recent **activity entries**. An activity entry does not establish attendance or one distinct training session. See [tool inputs and coverage](docs/tools.md).
 
-The current checkout preserves complex grouping and repeat counts in workout and personal-activity prescriptions, including source difficulty variants. Publication and hosted deployment of this correction remain pending; see [complex field guidance](docs/tools.md#get_published_workouts).
+Workout and personal-activity prescriptions preserve complex grouping and repeat counts, including source difficulty variants. This correction is released in `0.5.1` and active in the hosted pilot; see [complex field guidance](docs/tools.md#get_published_workouts).
 
 Personal RM queries show the latest dated record and progression separately. Eligible `%RM` prescriptions for today or later can include calculated loads while preserving the original workout instructions. Search and history coverage are limited; see [tool details](docs/tools.md).
 
