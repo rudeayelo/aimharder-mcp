@@ -162,7 +162,11 @@ These are real-import synthetic loopback checks, not a repeated owner OAuth/toke
 
 ### Owner-reported ChatGPT current context (2026-10-21)
 
-The [owner’s general context-success reply](hosted-pilot-acceptance.md#owner-reported-chatgpt-current-context-2026-10-21) is manual evidence only: no raw response, exact authentication/gym booleans, independent no-reauthorization continuity, provider rotation or default-expiry proof was supplied. It does not resolve the historical response-load failure or complete ChatGPT renewal. The read-only booking-preparation follow-up is pending; no write was confirmed or performed. No API/authentication/ADR decision, source or archive input changed; #84/#69 remain open.
+The [owner’s general context-success reply](hosted-pilot-acceptance.md#owner-reported-chatgpt-current-context-2026-10-21) is manual evidence only: no raw response, exact authentication/gym booleans, independent no-reauthorization continuity, provider rotation or default-expiry proof was supplied. It does not resolve the historical response-load failure or complete ChatGPT renewal. At this context-report checkpoint, the read-only booking-preparation follow-up was pending; no write was confirmed or performed. No API/authentication/ADR decision, source or archive input changed; #84/#69 remain open.
+
+### ChatGPT preparation and separate zone probe (2026-10-21)
+
+The [preparation/prerequisite checkpoint](hosted-pilot-acceptance.md#chatgpt-preparation-and-separate-zone-probe-2026-10-21) distinguishes owner-reported ChatGPT `INVALID_ARGUMENT`/no preview from a separate actual native connector's two read-only calls: assumed selected-gym zone and application `CONFIRMED_GYM_TIME_ZONE_REQUIRED`, with zero execute calls. ChatGPT arguments and same-portal identity are unverified. The requested per-account portal zone confirmation and subsequent preparation remain unobserved; no write or successful repair is claimed. Existing zone policy/API/security/ADR decisions and source/archive inputs are unchanged; no automated suites/build/package checks were rerun and no deployment change occurred. #84/#69 remain open.
 
 ### Actual Hermes standard cancellation (2026-10-21)
 
