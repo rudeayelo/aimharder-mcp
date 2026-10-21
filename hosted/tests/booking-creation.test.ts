@@ -138,6 +138,20 @@ test('both roles preview the exact target and confirm once through real HTTP MCP
  expect(writes).toEqual(['amhrdrauth=synthetic-a','amhrdrauth=synthetic-b']);
 });
 
+test('public MCP retains unused permission but releases it when ciphertext-only rewrap reconstructs the client',async()=>{
+ booked=new Set();writes=[];synthetic=bookingSource;
+ const prepared=await call(a(),'prepare_booking_creation',{...target,gymId:'shared-gym'});
+ expect(prepared.structuredContent).toMatchObject({status:'ready',currentState:'unbooked'});
+ const reference=(prepared.structuredContent as {actionReference:string}).actionReference;
+ expect(await(await worker.dispatchFetch(origin+'/__fixture/holds')).json()).toMatchObject({pending:1});
+ expect((await worker.dispatchFetch(origin+'/__fixture/rewrap')).status).toBe(200);
+ expect((await call(a(),'get_account_context')).isError).not.toBe(true);
+ expect(await(await worker.dispatchFetch(origin+'/__fixture/holds')).json()).toMatchObject({pending:0});
+ const rejected=await call(a(),'execute_booking_creation',{actionReference:reference,gymId:'shared-gym',confirmed:true});
+ expect(rejected.isError).toBe(true);expect(JSON.stringify(rejected)).toContain('BOOKING_REFERENCE_INVALID');
+ expect(writes).toHaveLength(0);
+});
+
 test('revoking the executing client during held preflight denies dispatch while another account remains independent',async()=>{
  booked=new Set();writes=[];synthetic=bookingSource;
  const prepared=await call(a(),'prepare_booking_creation',target);

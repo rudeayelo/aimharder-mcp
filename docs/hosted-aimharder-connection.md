@@ -35,6 +35,8 @@ Mutation bodies are bounded at 16 KiB and require the exact portal Origin plus a
 
 ## Runtime setup
 
+The locally implemented [bounded residency amendment](adr/2026-10-21-bounded-preparation-residency.md) releases unused preparations and their background hold whenever connection/access state discards them or the inner client is reconstructed. This includes ciphertext-only rewrap at the same semantic revision: the reconstructed client no longer owns the old in-memory reference. It does not change encrypted credential persistence or restore permission after restart. Native-positive validation and deployment remain separate.
+
 Preserve all existing auth/mail/Google bindings and the [#73 authorization migration/grants](hosted-mcp-authorization.md). Apply reviewed `0005-aimharder-connection.sql` once to the authorized D1 database, after migrations 0001–0004. Existing isolated migrations were applied through the direct API; do not blindly replay them through a different migration ledger.
 
 Add private Durable Object binding `ACCOUNT_CONNECTIONS` to exported class `AccountConnection`, with a new uniquely tagged `new_sqlite_classes` migration. Do not use legacy `new_classes`, whose KV-backed namespace is not the selected Free-compatible candidate. The checked-in Wrangler example contains no actual account/database/namespace IDs. Root operator owns actual namespace activation and verifies read-back without purchases or plan changes.

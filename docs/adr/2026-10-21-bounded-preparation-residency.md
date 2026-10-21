@@ -1,0 +1,31 @@
+# ADR: bounded residency for unused hosted preparations
+
+Status: accepted on 2026-10-21 for [#84](https://github.com/rudeayelo/aimharder-mcp/issues/84). Locally implemented and tested; deployment and a positive native-provider check of this candidate remain separate.
+
+## Context
+
+The [action coordinator](2026-10-19-confirmed-hosted-action-coordination.md) and real client keep unused execution permission only in memory for two minutes. An ordinary HTTP-only SQLite Durable Object may hibernate between preparation and confirmation, losing that memory before the reference expires. A storage alarm schedules future work; it does not preserve the heap.
+
+An isolated native experiment using the unchanged real preparation store and coordinator, synthetic targets and a fake effect counter reproduced this boundary. Warm execution succeeded once and its duplicate caused no additional effect. After a quiet 20-second interval, the server measured a 21.388-second-old, exactly bound reference still inside its original TTL, but a changed module instance rejected it with `BOOKING_REFERENCE_INVALID` and zero effects. Forced restart also rejected unused permission. Resources were independently retired and baseline inventory restored. This establishes the isolated module residency defect; it does not reproduce the complete account actor or establish the cause of the owner's earlier ChatGPT error.
+
+## Decision
+
+Inject a narrow promise-retention callback into `AccountActionCoordinator`. The account actor supplies `promise => state.waitUntil(promise)`. While any unconsumed preparation remains, retain one pending promise and cancellable timer until the latest remaining **original** expiry. All five action identities use this shared path: creation, standard cancellation, separately confirmed late cancellation, activity publication and activity deletion.
+
+Coalesce overlapping preparations. Bound each promise to at most 120 seconds from its own registration; a continuously replenished stream registers its successor before settling the previous promise. New references retain their own original expiry and do not extend an older reference. Timer callbacks check both hold identity and generation, so an obsolete queued callback cannot settle a later hold. Prune expired entries, respect the existing 32-entry capacity, shorten the timer after consumption, and settle/clear immediately when no preparations remain or they are discarded. Consumption refreshes residency before any binding guard can throw. Missing or foreign references cannot remove other valid preparations.
+
+Do not await the retention promise in the account queue or `blockConcurrencyWhile`. Its timer performs only bounded in-memory housekeeping: no database calls, upstream requests, lease renewal or permission reconstruction. Existing recovery alarms, ten-minute encrypted consumption journal, authorization generations, preflight, final dispatch guard, strict confirmations and one-use semantics remain unchanged. There is no schema, key, durable executable permission or MCP contract change.
+
+Release outer preparations whenever the actor reconstructs the inner client, including a ciphertext-only rewrap with unchanged semantic revision. The discarded inner preparation store makes the old outer permission obsolete. Existing connection/access/recovery invalidation also releases residency. A forced restart or other loss of memory still fails closed and requires a fresh exact preview and appropriate human confirmation.
+
+## Guarantees and limits
+
+[Cloudflare's state contract](https://developers.cloudflare.com/durable-objects/api/state/#waituntil) says a pending `waitUntil` prevents eviction until settlement or its platform timeout; it does not delay the response. The [lifecycle contract](https://developers.cloudflare.com/durable-objects/concepts/durable-object-lifecycle/#durable-object-lifecycle-state-transitions) distinguishes idle hibernation from pending events, I/O and timers. This design keeps ordinary idle hibernation from discarding live permission; it cannot guarantee survival of crashes, forced restarts, deployments or arbitrary platform termination. Original expiry remains authoritative even if a timer is delayed.
+
+The observable coordinator tests cover original expiry, overlap, bounded rollover during continuous replenishment, immediate discard, stale callbacks, consumption rejection, missing references, capacity and all action identities. A public portal/OAuth/SDK HTTP/workerd journey observes a pending native hold after preparation and its release after ciphertext-only client reconstruction; the old reference then fails with zero synthetic writes. Existing action/lifecycle HTTP suites retain their preflight, restart, expiry, isolation and no-replay coverage. A positive native idle test of this candidate and real-client acceptance remain unobserved at this implementation checkpoint.
+
+## Alternatives and consequences
+
+Persisting unused preparations would change restart permission, custody and recovery semantics and require a different security decision. Increasing TTL would not prevent idle heap loss. Polling or durable alarms would add requests or wake fresh instances without preserving the original client store. A single indefinitely pending promise would eventually exceed the platform limit under continuous traffic; bounded rollover avoids that dependency.
+
+Non-hibernating residency consumes duration allowance. At the existing 0.128 GB planning assumption, a full, otherwise idle, non-overlapping 120-second hold contributes **15.36 GB-s** of planned duration. Timer scheduling delays can defer settlement without extending permission. Overlapping references on one actor share their residency interval; distinct actors add. Continuous replenishment can retain an actor longer than two minutes overall. This is wall-duration arithmetic, not CPU consumption or a sustainable Free-plan conclusion; the [cost model](../hosted-pilot-cost.md#preparation-residency-planning-amendment-2026-10-21) records the assumptions and outstanding measurements.
