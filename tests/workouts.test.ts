@@ -52,6 +52,49 @@ async function query(client: Client, args: Record<string, unknown> = {}) {
 const post = (extra = {}) => ({ id: 8001, day: '23 Sep', when: '20560923210000', wodClass: 'WOD', ejerRate: [], TIPOWODs: [{ title: 'Fuerza Ñ', notes: '3 rondas\nDescansa 60 segundos', deleted: 'false' }], ...extra });
 const detail = (extra = {}) => ({ recordDate: '23 de Septiembre de 2026', publishDate: '22 de Septiembre de 2026', ejerRate: [{ ejerName: 'Sentadilla', tipoWOD: 0, valor1: ['10'], formaReg: 0 }], TIPOWODs: [{ notes: '3 rondas\nDescansa 60 segundos', deleted: false }], ...extra });
 const feed = (elements = [post()]) => ({ timeLineContent: '7', timeLineFormat: '0', elements, firstLoaded: 8001, lastLoaded: 7990, curDate: '20260922' });
+
+test('preserves a repeated complex between runs in the base prescription and each difficulty', async () => {
+ const labels = ['SCALED', 'INTERMEDIATE', 'RX'];
+ const exercises = ['Run', 'Movement A', 'Movement B', 'Movement C', 'Run'].map((ejerName, index) => {
+  const grouped = index > 0 && index < 4;
+  const row = { ejerName, tipoWOD: 0, valor1: [grouped ? '6' : '500'], ...(grouped ? { complex: 2, complexrep: '4' } : {}) };
+  return { ...row, privateProfile: 'private-complex-canary', scaledver: labels.map((_, variant) => ({ ...row,
+   ...(grouped ? { complex: String(variant + 2), complexrep: String(variant + 4) } : {}),
+  })) };
+ });
+ upstream.use(http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({
+  TIPOWODs: [{ type: 1, deleted: false, rondas: 1, scaledops: labels }], ejerRate: exercises,
+ }))));
+ const result = await query(await connect());
+ expect(result.isError).not.toBe(true);
+ const workout = (result.structuredContent as { workouts: { exercises: { name: string; prescription: Record<string, unknown> }[]; variants: { label: string; exercises: { name: string; prescription: Record<string, unknown> }[] }[] }[] }).workouts[0]!;
+ const complex = (rows: typeof workout.exercises) => rows.map(row => [row.name, row.prescription.complex, row.prescription.complexrep]);
+ expect(complex(workout.exercises)).toEqual([
+  ['Run', undefined, undefined], ['Movement A', 2, '4'], ['Movement B', 2, '4'], ['Movement C', 2, '4'], ['Run', undefined, undefined],
+ ]);
+ expect(workout.variants.map(variant => variant.label)).toEqual(labels);
+ workout.variants.forEach((variant, index) => {
+  expect(complex(variant.exercises)).toEqual([
+   ['Run', undefined, undefined], ...['Movement A', 'Movement B', 'Movement C'].map(name => [name, String(index + 2), String(index + 4)]), ['Run', undefined, undefined],
+  ]);
+ });
+ expect(JSON.stringify(result)).not.toContain('private-complex-canary');
+ expect(requests.every(request => request.method === 'GET' || request.url.pathname === '/api/login')).toBe(true);
+});
+
+test('keeps absent, null and zero complex fields distinct without inheriting base values into replacements', async () => {
+ upstream.use(http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({
+  TIPOWODs: [{ deleted: false, scaledops: ['OPTION'] }],
+  ejerRate: [{ ejerName: 'Base', tipoWOD: 0, complex: 0, complexrep: null, scaledver: [{ ejerName: 'Replacement', tipoWOD: 0 }] }],
+ }))));
+ const result = await query(await connect());
+ expect(result.structuredContent).toMatchObject({ workouts: [{ exercises: [{ prescription: { complex: 0, complexrep: null } }],
+  variants: [{ exercises: [{ name: 'Replacement', prescription: {} }] }],
+ }] });
+ const workout = (result.structuredContent as { workouts: { variants: { exercises: { prescription: Record<string, unknown> }[] }[] }[] }).workouts[0]!;
+ expect(workout.variants[0]!.exercises[0]!.prescription).not.toHaveProperty('complex');
+ expect(workout.variants[0]!.exercises[0]!.prescription).not.toHaveProperty('complexrep');
+});
 function respond(elements: unknown[]) { upstream.use(http.get('https://sample-gym.aimharder.es/api/activity', () => HttpResponse.json(feed(elements as ReturnType<typeof post>[])))); }
 function personalRecord(id: number, value = '100.5', unit = 'kg') {
  const date = Date.UTC(2026, 8, 24);

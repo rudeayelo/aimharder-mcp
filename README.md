@@ -60,6 +60,8 @@ Each write requires a separate confirmation of the exact preview and a user-conf
 
 Clients can combine tools for questions about workouts and bookings, or count recent **activity entries**. An activity entry does not establish attendance or one distinct training session. See [tool inputs and coverage](docs/tools.md).
 
+The current checkout preserves complex grouping and repeat counts in workout and personal-activity prescriptions, including source difficulty variants. Publication and hosted deployment of this correction remain pending; see [complex field guidance](docs/tools.md#get_published_workouts).
+
 Personal RM queries show the latest dated record and progression separately. Eligible `%RM` prescriptions for today or later can include calculated loads while preserving the original workout instructions. Search and history coverage are limited; see [tool details](docs/tools.md).
 
 Activity publication starts from a verified gym workout and supports structured block results and manually confirmed actual kilogram loads. EMOM results require completed rounds; AMRAP results can include complete rounds and additional repetitions. Review the selected variant, results, loads and audience settings in the preview before confirming. See [publication inputs](docs/tools.md#prepare_activity_publication).

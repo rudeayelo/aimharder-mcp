@@ -13,7 +13,7 @@ const prescriptionSchema = z.record(z.string(), z.union([scalar, z.array(scalar)
 const loadUnits = ['kg', 'lbs', 'pood', '%BW', '%RM', 'RIR', 'RPE'] as const;
 const distanceUnits = ['m', 'mi', 'yd', 'ft', 'steps', 'km'] as const;
 const blockSchema = z.object({ notes: text.nullable(), prescription: prescriptionSchema });
-const exerciseSchema = z.object({ name: text, sourceExerciseId: z.number().int().positive().safe().nullable().describe('Validated upstream ejerId; null means no supported source identity was supplied.'), blockIndex: z.number().int().nonnegative().nullable(), prescription: prescriptionSchema.describe('Raw exercise values: valueUnit labels valor1; loadUnit labels valor2/valor2h/valor2m when verified. s means seconds and %RM is relative, not kilograms.'), personalLoad: personalLoadSchema.optional() });
+const exerciseSchema = z.object({ name: text, sourceExerciseId: z.number().int().positive().safe().nullable().describe('Validated upstream ejerId; null means no supported source identity was supplied.'), blockIndex: z.number().int().nonnegative().nullable(), prescription: prescriptionSchema.describe('Raw exercise values: valueUnit labels valor1; loadUnit labels valor2/valor2h/valor2m when verified. s means seconds and %RM is relative, not kilograms. Within a block, consecutive rows with the same non-null complex marker form a complex; complexrep is its repeat count. Preserve row order and source encodings.'), personalLoad: personalLoadSchema.optional() });
 export const workoutSchema = z.object({
   date: dateSchema, className: z.string(), timeZone: z.string(), sessionId: z.null(),
   titles: z.array(text), blocks: z.array(blockSchema), exercises: z.array(exerciseSchema),
@@ -32,7 +32,7 @@ const blockDetailSchema = z.object({
   scaledops: z.union([z.array(text).max(20), z.literal(-1)]).nullish(), scaledver: z.array(z.unknown()).max(20).nullish(),
 });
 const exerciseDetailSchema = z.object({ ejerName: text, ejerId: z.unknown().optional(), tipoWOD: z.number().int().nonnegative().nullish(),
-    valor1: z.array(scalar).nullish(), valor2: scalar.nullish(), valor2h: scalar.nullish(), valor2m: scalar.nullish(), formaReg: scalar.optional(), tipoud: scalar.optional(), tipoud2: scalar.optional(), round: scalar.optional(), roundrepeat: scalar.optional(),
+    valor1: z.array(scalar).nullish(), valor2: scalar.nullish(), valor2h: scalar.nullish(), valor2m: scalar.nullish(), formaReg: scalar.optional(), tipoud: scalar.optional(), tipoud2: scalar.optional(), round: scalar.optional(), roundrepeat: scalar.optional(), complex: scalar.optional(), complexrep: scalar.optional(),
     scaledver: z.array(z.unknown()).max(20).nullish(),
 });
 const detailSchema = z.object({

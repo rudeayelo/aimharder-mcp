@@ -49,3 +49,11 @@ Anonymized public MCP fixtures verify these projections and their partial-failur
 ## Hosted maintained-client observation (2026-10-20)
 
 A finite actual maintained Hermes query for explicit 2026-10-20 and fixed approved `WOD` filter returned one unambiguous available workout with two variants, instruction content and prescription structures. The filter was not inferred from a current schedule. Same selected gym and assumed-zone provenance were preserved; coverage remained the incomplete upstream feed view with verified interpretation. All three eligible percentage-load alternatives were explicitly unavailable with `no-1rm-in-returned-view`; no available calculated load was observed. The [validation record](../validation.md#actual-hermes-current-day-workout-instructions-2026-10-20) distinguishes this contract observation from raw-source comparison, conversational LLM QA and available-load acceptance. No applicability, coverage, projection or security decision changed.
+
+## Complex prescription amendment (2026-10-21)
+
+Status: accepted for the source checkout; release and deployment pending.
+
+Preserve optional scalar `complex` and `complexrep` fields in each exercise prescription, including each difficulty replacement and the shared own-activity projection. The authenticated 22 October 9NBC source and its official renderer establish consecutive non-null equal-marker grouping within a block and the separate repeat-count field. The prior allowlist silently removed both, losing the fourfold repetition shown in the account holder's screenshot. Keep source order and number/string/null/absent encodings; do not infer a repeat count from `complex`, block `rondas`, or exercise `round`, flatten groups, or inherit missing fields into a replacement.
+
+Consequences: consumers can recover the original complex instruction without another API call. Authentication, coverage, applicability, and endpoints remain unchanged. No normalized group object or new multiplication rule is introduced. Publication serialization remains independently restricted and rejects nonzero complex markers; this read correction does not authorize complex activity writes. Broader gym/source formats remain unverified. See [the source observation](../api-research.md#complex-prescription-fields-2026-10-21) and [validation](../validation.md).
