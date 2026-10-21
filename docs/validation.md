@@ -160,6 +160,10 @@ The actual base run failed four new cases (idle-peer success/error return, cance
 
 These are real-import synthetic loopback checks, not a repeated owner OAuth/token exchange or a trace of the original delay. The earlier operator failure remains recorded. New client processes use the local patch; existing processes were not restarted. No upstream release, hosted deployment, profile/token-store operation, new grant, sporting action or change to the authorization decision occurred. Old source-pinned acceptance operators need fresh review; consumed operators must not be rerun. This repository's runtime/archive inputs and prior **173 hosted / 476 local** evidence are unchanged, and those suites were not rerun for this documentation update. #84/#69 remain open.
 
+### Owner-reported ChatGPT current context (2026-10-21)
+
+The [owner’s general context-success reply](hosted-pilot-acceptance.md#owner-reported-chatgpt-current-context-2026-10-21) is manual evidence only: no raw response, exact authentication/gym booleans, independent no-reauthorization continuity, provider rotation or default-expiry proof was supplied. It does not resolve the historical response-load failure or complete ChatGPT renewal. The read-only booking-preparation follow-up is pending; no write was confirmed or performed. No API/authentication/ADR decision, source or archive input changed; #84/#69 remain open.
+
 ### Actual Hermes standard cancellation (2026-10-21)
 
 [Parent 75812 passes](hosted-booking-cancellation.md#actual-hermes-standard-cancellation-2026-10-21), with child exit 0/reaped and no timeout: five requested registry calls, one fresh material-matched preparation and one standard execution confirmed/unbooked. The original separate owner reply bound the full booked preview, credit risk and notices; only expiry differed, with no old-reference replay or invented new confirmation. A supported once approval was consumed and the prior thread callback restored. Independent upcoming found zero active target/unknown-name candidates; schedule target presence is not account booking state.
