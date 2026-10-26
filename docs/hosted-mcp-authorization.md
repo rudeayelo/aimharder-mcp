@@ -210,6 +210,12 @@ The actual maintained context child discovered **18 tools**, performed one reque
 
 This adds bounded real timing to successful authorization/read/cleanup without changing the earlier failed-parent record. Same-static-client homes do not prove independent-client preservation. No installed-client patch, deployment/configuration/registration change, direct token-store edit, TTL/cache/clock manipulation, upstream connection, suspension/reactivation or sporting preparation/write occurred in this flight. Remaining ChatGPT, role/isolation, distinct-client, lifecycle and sustainable-cost gates keep #84/#69 open; see the [timed acceptance checkpoint](hosted-pilot-acceptance.md#timed-actual-hermes-authorization-2026-10-20).
 
+## Current Hermes runtime observation (2026-10-26)
+
+The installation was externally updated to 5894e750/Python 3.14.9/MCP 2.3.0/httpx2 2.15.1 before the [bounded calculated-load query conversation](hosted-pilot-acceptance.md#actual-hermes-current-day-calculated-load-conversation-2026-10-26). Root verified 63 selected source seams against commit bytes; supported owner bootstrap supplied the current SDK before process-only selection of the existing isolated application home, with lazy installs disabled and no persistent installed/profile/package-manager configuration change. This is selected-seam evidence, not an exhaustive transitive audit.
+
+The current source no longer contains the former threaded callback helper. The October 20 d4af4b06 correction and accepted personal flows remain historical; they do not establish current-version callback behavior. No new interactive callback trial or live callback failure was observed, so no live regression or preservation of that fix is claimed. Existing query authorization was reused without new consent or manual token/cache/TTL/clock operation. This factual observation changes no authorization decision or hosted runtime.
+
 ## Actual personal authorization with corrected Hermes (2026-10-20)
 
 A new independently reviewed operator ran **once**, using a new empty participant home and the existing static public Hermes registration/callback. Actual managed preflight verified the clean installed correction **d4af4b06a3ea101b4f5091d28b1cb20d0df01e3e**, the maintained module closure including `tools/mcp_oauth_callback.py`, Python **3.14.7**, MCP **2.0.0** and pinned SDK/HTTPX bytes. The hosted source 98da176/verified bundle, domain and default resource policy were unchanged. No old operator was imported or rerun; existing profiles remained untouched.
