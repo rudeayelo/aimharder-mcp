@@ -1,6 +1,6 @@
 # ADR: hosted MCP client authorization and revocation
 
-Status: accepted engineering implementation for [#73](https://github.com/rudeayelo/aimharder-mcp/issues/73), locally verified on 2026-10-18. Complements the [hosted identity decision](2026-10-15-hosted-identity-and-credential-custody.md), [runtime candidate](2026-10-16-proposed-cloudflare-hosted-runtime.md) and [isolated feasibility boundary](2026-10-18-isolated-worker-authentication-feasibility.md). Actual ChatGPT/Hermes and production-pilot acceptance remain outstanding.
+Status: accepted engineering implementation for [#73](https://github.com/rudeayelo/aimharder-mcp/issues/73), locally verified on 2026-10-18. Complements the [hosted identity decision](2026-10-15-hosted-identity-and-credential-custody.md), [runtime candidate](2026-10-16-proposed-cloudflare-hosted-runtime.md) and [isolated feasibility boundary](2026-10-18-isolated-worker-authentication-feasibility.md). Later actual-client evidence includes [qualified ChatGPT normal-policy renewal](#qualified-chatgpt-normal-policy-renewal-evidence-2026-10-26); full production-pilot acceptance remains outstanding.
 
 ## Context
 
@@ -57,3 +57,7 @@ Corrected-client personal authorization evidence update, 2026-10-20: a separatel
 ## Confirmed-write dispatch check (2026-10-19, issue #77)
 
 The [coordination decision](2026-10-19-confirmed-hosted-action-coordination.md) carries verified grant/client context per execution request to the owning account object. Immediately before a booking fetch, one authoritative D1 query requires current active verified admission, unrevoked current-generation grant, enabled client and the original connection revision. Current-grant queries also evaluate participant admission in that same query. A reused upstream client never stores an MCP client's authorization permanently. No new scope, registration mode, role switch or public identity selector is introduced; already admitted/sent external writes cannot be undone by later revocation. Actual client and later lifecycle acceptance remain separate.
+
+## Qualified ChatGPT normal-policy renewal evidence (2026-10-26)
+
+The [later combined journey](../hosted-mcp-authorization.md#qualified-actual-chatgpt-normal-policy-renewal-2026-10-26) is accepted at a bounded evidence level: owner-reported fresh authenticated/accessible context after the planned normal-policy wait and contextual sole-call/no-reconnect/no-new-authorization affirmation, plus independent same-original-current-grant distinct-row rotation with exact consent/grant/revocation preservation under the unchanged 3,600-second policy. This supplies later evidence for the earlier pending ChatGPT renewal gate; the October 20 browser failure remains historical. No decoded JWT expiry, wire grant type, unique RPC, exact portal-browser identity or new portal sign-out is established. The authorization/identity decisions are unchanged; whole-pilot acceptance and #84/#69 remain open.
