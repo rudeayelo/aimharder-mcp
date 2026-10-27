@@ -4,6 +4,12 @@
 
 Use the isolated portal at `https://pilot-test.ahmcp.link` and MCP endpoint `https://pilot-test.ahmcp.link/mcp`. The production origin `https://ahmcp.link` is a separate environment, not an accepted deployment. An installed source tree, deployed bundle and accepted client journey are separate records. The [environment runbook](hosted-test-environment.md) identifies the deployed bundle; the [cost report](hosted-pilot-cost.md) records measurements and assumptions.
 
+## Current validation priority (2026-10-27)
+
+The owner deferred cost and capacity validation for the current round and prioritized lifecycle and isolation. The accepted 20-participant/EUR 10-per-month planning target remains unchanged; its feasibility is unverified, not accepted or waived. The [cost report](hosted-pilot-cost.md#owner-directed-deferral-2026-10-27) retains the measured inputs and deferred work. No purchase or plan change is authorized.
+
+At this priority checkpoint, the next disconnect/isolation journey has source preparation only; the owner’s read-only page check is still pending. No new lifecycle mutation or result is recorded. Existing evidence retains its original scope, and #84/#69 remain open.
+
 ## Participant setup
 
 1. Open your administrator-issued invitation and use its exact invited email address. Either create a separate portal password, follow the verification email and sign in, or choose **Accept with Google** using that verified address. An expired or revoked invitation needs a replacement from the administrator. Password recovery is available from **Forgot password?** after a password has been added.
