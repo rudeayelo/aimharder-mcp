@@ -1,6 +1,8 @@
 # ADR: verified upstream connection lifecycle
 
-Status: accepted implementation decision on 2026-10-19 for [issue #81](https://github.com/rudeayelo/aimharder-mcp/issues/81). Synthetic public HTTP evidence only; no lifecycle deployment or live sporting action established.
+Status: accepted implementation decision on 2026-10-19 for [issue #81](https://github.com/rudeayelo/aimharder-mcp/issues/81). At that decision checkpoint, evidence was synthetic public HTTP only; lifecycle deployment and live sporting actions were not established. Later bounded evidence is recorded below.
+
+Evidence update, 2026-10-27: a bounded [actual participant disconnection and same-account reconnection](../hosted-aimharder-connection.md#actual-participant-disconnection-and-same-account-reconnection-2026-10-27) now complements the historical synthetic evidence. Fresh native context calls and independent provider metadata observe participant connection removal/recreation while administrator connection state and both portal identities/client-authorization ledgers remain stable. Both portal identities use the same upstream account; different-identity replacement, stale-reference invalidation, browser-session proof and deletion/restore are not established by this observation. This adds evidence without changing the decision or claiming full pilot acceptance.
 
 ## Context
 
