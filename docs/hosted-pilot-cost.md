@@ -2,6 +2,10 @@
 
 The accepted target is **20 invited participants and at most EUR 10/month in service operating cost**. These measurements and assumptions were collected on 2026-10-19 for [ticket #84](https://github.com/rudeayelo/aimharder-mcp/issues/84). Sustainable full-runtime capacity and an all-in cost conclusion remain **unverified**. No purchases or plan changes are authorized. Functional success above a nominal CPU allowance does not establish a reliable free service.
 
+## Owner-directed deferral (2026-10-27)
+
+The owner deferred cost and capacity validation for the current round, prioritizing [lifecycle and isolation](hosted-pilot-acceptance.md#current-validation-priority-2026-10-27). No new cost or capacity measurements were taken for this checkpoint. The accepted 20-participant/EUR 10-per-month planning target remains unchanged and its feasibility remains unverified; deferral is not budget acceptance or a readiness conclusion. The existing observations, assumptions and outstanding measurements below remain historical evidence and deferred work. No purchase or plan change is authorized.
+
 ## Actual observations
 
 | Component | Observation | Scope and limit |
