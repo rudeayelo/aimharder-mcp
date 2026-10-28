@@ -371,6 +371,8 @@ The [central deletion record](hosted-account-deletion.md#qualified-actual-partic
 
 The original provider reader exit 1 is retained: its unchanged-recovery-head predicate contradicted the documented deletion checkpoint update. The qualified comparison preserves the other passing predicates and open-gate assertions without claiming exact epoch preservation or a checkpoint-only delta. No second deletion, product fix, new installation, sporting action or restore occurred. Physical backup expiry/thirty-day aging and owner-data PITR remain unverified; earlier isolated restore evidence is separate. Both subjects shared one upstream account. Other lifecycle/role/action gates and #84/#69 remain open; cost/capacity remains deferred and unverified.
 
+The later [final administrator ChatGPT return](hosted-mcp-authorization.md#final-administrator-chatgpt-return-2026-10-28) restores the existing application connection to the original administrator: one independently observed new current grant/qualified consent and owner-reported fresh authenticated, accessible-gym, confirmed-zone context; deleted participant data remains absent. Multiaccount UI and spinner causes remain unresolved.
+
 ## Whole-pilot evidence ledger
 
 | Criterion | Observed evidence through 2026-10-28 | Remaining acceptance |
