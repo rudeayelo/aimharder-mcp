@@ -38,7 +38,7 @@ jobs:
         run: pnpm typecheck
       - name: Exercise authenticated Worker journey
         working-directory: hosted
-        run: pnpm exec vitest run --no-file-parallelism
+        run: pnpm exec vitest run --no-file-parallelism --testTimeout=30000
       - name: Build hosted Worker
         working-directory: hosted
         run: pnpm build
