@@ -6,6 +6,8 @@ Design record: [issue #68](https://github.com/rudeayelo/aimharder-mcp/issues/68)
 
 Technical candidate: [Cloudflare hosted runtime](2026-10-16-proposed-cloudflare-hosted-runtime.md), accepted as the direction to validate. It records maintenance responsibilities and pilot acceptance gates; feasibility and exact implementation architecture remain unverified.
 
+Validation-scope amendment, 2026-10-28: the [scoped hosted-pilot acceptance decision](2026-10-28-scoped-hosted-pilot-acceptance.md) supersedes the requirement to keep #84/#69 open for every outstanding observation. Product features, security invariants and the planning target remain unchanged; deferred or excluded checks are not validated by closure.
+
 ## Context
 
 The local server requires one AimHarder account per instance. The user wants a hosted service with a web portal for sign-in, AimHarder connection settings and instructions for connecting MCP clients. Hosting changes the account-isolation and credential-management boundaries established by the [local MVP](2026-09-21-local-typescript-mcp-mvp.md) and [credential policy](2026-09-21-credential-security-and-read-only-access.md).
