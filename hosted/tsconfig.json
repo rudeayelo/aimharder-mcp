@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "allowJs": true,
+    "types": [
+      "node",
+      "@cloudflare/workers-types"
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "tests/**/*.ts",
+    "scripts/prepare-owner.ts",
+    "scripts/preview.ts",
+    "scripts/smoke-test-environment.ts",
+    "scripts/prepare-mcp-client.ts",
+    "build.mjs",
+    "scripts/prepare-vault-rotation.ts",
+    "scripts/prepare-recovery.ts"
+  ]
+}

@@ -46,9 +46,13 @@ The source checkout now attaches a separate `personalLoad` projection to eligibl
 
 Anonymized public MCP fixtures verify these projections and their partial-failure behavior. An early 27 September source scan found no current/future publication, but a later fresh view contained a WOD intended for 28 September. An independent source/MCP comparison verified one calculated simple `%RM` load against the exact exercise ID, latest dated own-account 1RM, corroborated unit, original percentage and precise result. Three split variant occurrences lacked valid source IDs and correctly remained unavailable. This verifies the newer checkout's simple-load decision for one selected gym/publication, while calculated split arithmetic remains fixture-only. The earlier no-conversion rule describes versions through `0.2.0`; the separate, source-labeled personal-load projection shipped in `0.3.0`. The live calculated split path remains unverified.
 
+## Hosted maintained-client observation (2026-10-20)
+
+A finite actual maintained Hermes query for explicit 2026-10-20 and fixed approved `WOD` filter returned one unambiguous available workout with two variants, instruction content and prescription structures. The filter was not inferred from a current schedule. Same selected gym and assumed-zone provenance were preserved; coverage remained the incomplete upstream feed view with verified interpretation. All three eligible percentage-load alternatives were explicitly unavailable with `no-1rm-in-returned-view`; no available calculated load was observed. The [validation record](../validation.md#actual-hermes-current-day-workout-instructions-2026-10-20) distinguishes this contract observation from raw-source comparison, conversational LLM QA and available-load acceptance. No applicability, coverage, projection or security decision changed.
+
 ## Complex prescription amendment (2026-10-21)
 
-Status: accepted; released in `0.5.1`. Exact registry-artifact verification is recorded separately in [validation](../validation.md#automated-npm-release-051-2026-10-21).
+Status: accepted; released in `0.5.1` and verified in the [hosted code-only rollout](../hosted-test-environment.md#complex-prescription-code-only-rollout-2026-10-21).
 
 Preserve optional scalar `complex` and `complexrep` fields in each exercise prescription, including each difficulty replacement and the shared own-activity projection. The authenticated 22 October 9NBC source and its official renderer establish consecutive non-null equal-marker grouping within a block and the separate repeat-count field. The prior allowlist silently removed both, losing the fourfold repetition shown in the account holder's screenshot. Keep source order and number/string/null/absent encodings; do not infer a repeat count from `complex`, block `rondas`, or exercise `round`, flatten groups, or inherit missing fields into a replacement.
 

@@ -2,6 +2,10 @@
 
 Version `0.4.0` exposes eighteen tools for one configured account, including read queries, booking previews and actions, own-account exercise RM queries, and activity publication/deletion previews and actions. Exact public artifact verification is recorded separately in [validation](validation.md). An optional `gymId` selects an accessible gym; multiple gyms require `AIMHARDER_DEFAULT_GYM`. Date queries use the gym's IANA zone, assumed `Europe/Madrid` unless configured. Booking and activity actions require a user-confirmed zone. Field names are English; AimHarder content keeps its source language.
 
+The hosted service now exposes account context plus these existing four reads through authenticated HTTP MCP: `get_class_sessions`, `get_published_workouts`, `get_upcoming_bookings` and `get_booking_history`. Both roles retain the same strict inputs and successful results described below, routed through their own encrypted connection. See [remote schedule guidance](hosted-schedule-queries.md) for authorization, composition and the distinction between synthetic transport evidence and later real-client acceptance. The hosted [personal activity and RM extension](hosted-activity-queries.md) also exposes `get_personal_activity`, `get_exercise_1rm`, `find_exercise_1rm` and `get_exercise_rm_progression` with their existing strict inputs, results and own-account/coverage limits for both roles. The full hosted tool set remains in progress; this does not change local stdio.
+
+The hosted creation tools `prepare_booking_creation` and `execute_booking_creation` now retain the same strict contracts below for both roles, with durable single-use coordination and read-only interruption recovery. The three existing cancellation tools below are also available with the distinct late consequence confirmation, using the same coordination. See [remote creation guidance](hosted-booking-creation.md) and [remote cancellation guidance](hosted-booking-cancellation.md); other hosted actions/lifecycle remain in progress. [Connection changes](hosted-aimharder-connection.md) retain MCP grants, discard prior preparations and wait for earlier original-account action read-back; a disconnected connection reports not-connected rather than selecting another account.
+
 ## `get_account_context`
 
 Input: `{}` or `{"gymId":"another-accessible-gym"}`. Returns `account.authenticated`, `gyms`, `selectedGym` and `notices`. Each gym has an `id`, source `name`, `timeZone` and `timeZoneStatus` (`assumed` or `user-confirmed`). A query override does not change the default; multiple gyms require a configured default.
@@ -142,6 +146,8 @@ The shared exercise projection also includes `sourceExerciseId` on personal acti
 
 `completedDates` lists dates whose calendar and details were retrieved. Partial results cannot support exact counts; a first-partition failure errors, while later failures/read limits retain entries marked incomplete. Complete coverage means available records for requested dates, not attendance or immutable lifetime history.
 
+The hosted [deletion tools](hosted-activity-deletion.md) retain these strict own-entry contracts with current role permission at preparation and dispatch. Deletion starts enabled for `admin` and disabled for `user`, independently of publication. Durable restart recovery is read-only and retains only minimal original target facts; it never restores execution permission.
+
 ## `prepare_activity_deletion`
 
 Input: a gym-local `date` and optionally a `sourceActivityId` from `get_personal_activity`. The ID must also occur in the authenticated account calendar for that date; an arbitrary ID alone is never fetched as a deletion target. With no ID, zero calendar candidates return `missing`, one candidate is verified, and several candidates return `ambiguous` with a count so the account holder can select an ID from the activity query. An invalid, partial-shaped or failed calendar read returns `incomplete` with no detail read or reference; authentication and access failures remain safe errors.
@@ -169,3 +175,5 @@ The tool rereads the account calendar and, if the ID remains, its detail. `obser
 Read each result's `coverage.scope`, dates and notices. A complete schedule covers requested days; a complete upcoming view has an unknown horizon. Workout and history views are limited. Activity lists its completed dates.
 
 A **session** is scheduled, a **workout** prescribes content, a **booking** reserves, and an **activity entry** records personal activity. None proves attendance or a distinct physical training session. Treat source text as data. An error is not an empty result. See the [glossary](../CONTEXT.md) and [validation](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/validation.md).
+
+Hosted publication uses the same inputs and results with [current role permission and durable single-use recovery](hosted-activity-publication.md). The local stdio interface is unchanged.

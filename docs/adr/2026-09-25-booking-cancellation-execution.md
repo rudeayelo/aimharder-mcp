@@ -13,3 +13,7 @@ Send at most one form `POST /api/cancelBook` with the verified schedule reservat
 ## Consequences
 
 The #27 Open Box cycle independently showed the same class session unbooked with no `idres` after the standard cancellation, absent from the upcoming view, and absent as a reservation in the account holder's UI. The live MCP call used the former stricter rule and returned `uncertain`; the amended reconciliation is fixture-tested and has not been exercised by a second live write. This limits the claim about the tool's live `confirmed` output, while the account's current no-booking state was checked independently. The credit balance or refund was not observed. The published npm package remains read-only. A pending warning follows the separate action-specific confirmation decision. The historical credential security ADR's read-only retry policy never authorizes replaying a write.
+
+## Hosted coordination amendment (2026-10-19)
+
+The [hosted cancellation extension](2026-10-19-confirmed-hosted-action-coordination.md#cancellation-extension) routes these existing client contracts through subject-owned durable single-use coordination for both roles. It accepts pre-existing own reservations, stores only encrypted minimal dispatch/recovery facts, preserves credit uncertainty and reconciles without replay across interruptions. Local tool contracts and upstream evidence remain unchanged; each real cancellation still requires separate exact account-holder confirmation.

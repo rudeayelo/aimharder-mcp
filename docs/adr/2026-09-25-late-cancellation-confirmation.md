@@ -11,3 +11,7 @@ Expose `execute_late_booking_cancellation` with that new reference and `confirme
 ## Consequences
 
 The 9NBC published 90-minute rule informs the preview and warning; it does not establish an API cutoff, account credit balance, or actual refund. This flow has public MCP fixture coverage, not a live authenticated late-cancellation contract. The released npm package remains read-only. Live validation requires a separate, action-time account-holder confirmation for any real creation or cancellation.
+
+## Hosted recovery amendment (2026-10-19)
+
+The [hosted coordination decision](2026-10-19-confirmed-hosted-action-coordination.md#cancellation-extension) preserves this distinct late tool and consequence confirmation. Actor restart loses unused standard and late references. Read-only recovery of a retained standard warning never reissues late permission: it can report the still-pending warning without an executable reference, requiring a new preparation and the appropriate new confirmations before any later request. This amendment does not change local in-memory behavior or establish live late-credit-loss evidence.

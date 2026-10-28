@@ -4,7 +4,11 @@ Status: accepted; updated for the local MVP on 2026-09-21.
 
 Time-zone amendment: the explicit confirmed-zone gate described below was superseded by the [2026-09-24 default-zone decision](2026-09-24-default-gym-time-zone.md). Other decisions and historical validation evidence remain unchanged.
 
+Hosted-only amendment (2026-10-15): the [hosted identity and credential-custody decision](2026-10-15-hosted-identity-and-credential-custody.md) supersedes the environment-only/no-persistence constraint for the proposed hosted service by accepting encrypted, service-recoverable AimHarder credentials. The local stdio policy is unchanged. The user confirmed the complete hosted design on 2026-10-16. Technical storage, key management, isolation and lifecycle enforcement remain unimplemented and unvalidated; no hosted deployment is established by that decision.
+
 ## Decision
+
+Hosted implementation update (2026-10-19): the [encrypted account-boundary decision](2026-10-19-encrypted-aimharder-account-boundary.md) implements initial service-recoverable credential custody and isolated read-only account operations with synthetic rotation/recovery evidence. Platform custody/deployment, live upstream access and lifecycle/restore enforcement remain separate gates. The historical local environment-only/in-memory policy below remains unchanged.
 
 The server receives credentials through environment variables and keeps the session in memory, without persistence in the MVP. The user may load credentials from 1Password or another manager; 1Password is not a required dependency. Never include secrets in code, Git, documentation, or logs. When using 1Password, discover the item through metadata and read only the necessary fields.
 

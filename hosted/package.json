@@ -1,0 +1,35 @@
+{
+  "name": "aimharder-mcp-hosted",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "build": "node build.mjs",
+    "preview": "node scripts/preview.ts",
+    "owner:prepare": "node scripts/prepare-owner.ts",
+    "smoke:test-environment": "node scripts/smoke-test-environment.ts",
+    "schema:generate": "node scripts/generate-auth-schema.ts",
+    "client:prepare": "node scripts/prepare-mcp-client.ts",
+    "vault:prepare-rotation": "node scripts/prepare-vault-rotation.ts",
+    "recovery:prepare": "node scripts/prepare-recovery.ts"
+  },
+  "dependencies": {
+    "@better-auth/mcp": "1.7.10",
+    "@modelcontextprotocol/server": "2.3.1",
+    "better-auth": "1.7.10",
+    "tough-cookie": "6.0.2",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20261018.1",
+    "@modelcontextprotocol/client": "2.3.1",
+    "@types/node": "24.13.6",
+    "esbuild": "0.28.0",
+    "miniflare": "5.20261012.1-beta",
+    "typescript": "7.0.2",
+    "vitest": "5.0.1",
+    "wrangler": "4.151.1"
+  },
+  "packageManager": "pnpm@12.5.1"
+}

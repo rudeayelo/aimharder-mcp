@@ -1,0 +1,63 @@
+import { z } from 'zod';
+import type { Configuration } from '../../src/config.js';
+import type { HostedEnvironment } from './auth.js';
+export type VaultEnvironment = Pick<HostedEnvironment, 'VAULT_KEYS' | 'VAULT_ACTIVE_KEY_ID'>;
+
+const envelopeSchema = z.object({ version: z.literal(1), keyId: z.string().regex(/^[a-zA-Z0-9_-]{1,64}$/), iv: z.string(), ciphertext: z.string() }).strict();
+export interface ConnectionPayload { configuration: Configuration; identity: number; }
+export interface ConnectionRow { userId: string; revision: string; envelope: string; }
+function bytes(value: string): Uint8Array<ArrayBuffer> { return Uint8Array.from(atob(value), char => char.charCodeAt(0)); }
+function encoded(value: Uint8Array): string {
+  let binary='';
+  for(let offset=0;offset<value.length;offset+=8192)binary+=String.fromCharCode(...value.subarray(offset,offset+8192));
+  return btoa(binary);
+}
+async function key(env: VaultEnvironment, keyId: string) {
+  const ring = JSON.parse(env.VAULT_KEYS ?? '{}') as Record<string, unknown>;
+  if (Object.keys(ring).length > 8 || !Object.hasOwn(ring, keyId) || typeof ring[keyId] !== 'string') throw new Error('Vault unavailable');
+  const raw = bytes(ring[keyId]);
+  if (raw.byteLength !== 32) throw new Error('Vault unavailable');
+  return crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['encrypt', 'decrypt']);
+}
+function aad(userId: string, revision: string, keyId: string) { return new TextEncoder().encode(JSON.stringify(['aimharder-connection', 1, userId, revision, keyId])); }
+export async function encryptConnection(env: VaultEnvironment, userId: string, revision: string, payload: ConnectionPayload): Promise<string> {
+  const keyId = env.VAULT_ACTIVE_KEY_ID;
+  if (!keyId || !/^[a-zA-Z0-9_-]{1,64}$/.test(keyId)) throw new Error('Vault unavailable');
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv, additionalData: aad(userId, revision, keyId) }, await key(env, keyId), new TextEncoder().encode(JSON.stringify(payload)));
+  return JSON.stringify({ version: 1, keyId, iv: encoded(iv), ciphertext: encoded(new Uint8Array(ciphertext)) });
+}
+export async function decryptConnection(env: VaultEnvironment, row: ConnectionRow): Promise<ConnectionPayload> {
+  const envelope = envelopeSchema.parse(JSON.parse(row.envelope));
+  const iv = bytes(envelope.iv);
+  if (iv.byteLength !== 12 || envelope.ciphertext.length > 24_000) throw new Error('Vault unavailable');
+  const plaintext = await crypto.subtle.decrypt({ name: 'AES-GCM', iv, additionalData: aad(row.userId, row.revision, envelope.keyId) }, await key(env, envelope.keyId), bytes(envelope.ciphertext));
+  const payload = JSON.parse(new TextDecoder().decode(plaintext)) as ConnectionPayload;
+  if (!Number.isSafeInteger(payload.identity) || payload.identity <= 0) throw new Error('Vault unavailable');
+  return payload;
+}
+
+// Bounded original intent: even a 5,000-character four-byte comment plus the
+// strict publication's 30 results and 50 short loads fits this UTF-8 limit.
+// This excludes source notes/prescriptions; writer and reader share one bound.
+const actionPlaintextLimit=131_072;
+const actionCiphertextLimit=4*Math.ceil((actionPlaintextLimit+16)/3);
+/** Minimal operation facts use a distinct purpose, never a credential snapshot. */
+export async function encryptActionFacts(env:VaultEnvironment,userId:string,revision:string,referenceDigest:string,facts:unknown):Promise<string>{
+ const keyId=env.VAULT_ACTIVE_KEY_ID;
+ if(!keyId||!/^[a-zA-Z0-9_-]{1,64}$/.test(keyId))throw new Error('Vault unavailable');
+ const iv=crypto.getRandomValues(new Uint8Array(12));
+ const additionalData=new TextEncoder().encode(JSON.stringify(['aimharder-action',1,userId,revision,referenceDigest,keyId]));
+ const plaintext=new TextEncoder().encode(JSON.stringify(facts));
+ if(plaintext.byteLength>actionPlaintextLimit)throw new Error('Vault unavailable');
+ const ciphertext=await crypto.subtle.encrypt({name:'AES-GCM',iv,additionalData},await key(env,keyId),plaintext);
+ return JSON.stringify({version:1,keyId,iv:encoded(iv),ciphertext:encoded(new Uint8Array(ciphertext))});
+}
+export async function decryptActionFacts(env:VaultEnvironment,userId:string,revision:string,referenceDigest:string,value:string):Promise<unknown>{
+ const envelope=envelopeSchema.parse(JSON.parse(value));const iv=bytes(envelope.iv);
+ if(iv.byteLength!==12||envelope.ciphertext.length>actionCiphertextLimit)throw new Error('Vault unavailable');
+ const additionalData=new TextEncoder().encode(JSON.stringify(['aimharder-action',1,userId,revision,referenceDigest,envelope.keyId]));
+ const plaintext=await crypto.subtle.decrypt({name:'AES-GCM',iv,additionalData},await key(env,envelope.keyId),bytes(envelope.ciphertext));
+ if(plaintext.byteLength>actionPlaintextLimit)throw new Error('Vault unavailable');
+ return JSON.parse(new TextDecoder().decode(plaintext));
+}

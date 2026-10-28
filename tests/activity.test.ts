@@ -76,6 +76,28 @@ test('returns personal entries with original detail, explicit dates and no sessi
  expect(result.isError).not.toBe(true);
  expect(result.structuredContent).toMatchObject({ entries: [{ sourceActivityId: 1, date: '2026-03-29', startTime: null, trainingSessionId: null, exercises: [{ name: 'Sentadilla Ñ' }] }, { sourceActivityId: 2 }], coverage: { status: 'complete', completedDates: expect.arrayContaining(['2026-03-01','2026-03-31']) } });
 });
+test('unused opaque calendar decoration does not block independently verified own activity', async () => {
+ respond({ '2026-03-29': [1] });
+ upstream.use(http.get('https://aimharder.es/api/activityCalendar', () => HttpResponse.json({ workouts: {
+  '2026-03-29': { rates: { ids: [1] }, TIPOWODs: { 'anonymous-decoration': { text: 'untrusted-opaque-calendar-canary', arbitrary: ['not-an-entry-reference'] } } },
+ } })));
+ const result = await query(await connect(), { startDate: '2026-03-29', endDate: '2026-03-29' });
+ expect(result.isError).not.toBe(true);
+ expect(result.structuredContent).toMatchObject({ entries: [{ sourceActivityId: 1, date: '2026-03-29', exercises: [{ name: 'Sentadilla Ñ' }] }],
+  coverage: { status: 'complete', completedDates: ['2026-03-29'], reason: null } });
+ expect(JSON.stringify(result)).not.toMatch(/anonymous-decoration|untrusted-opaque-calendar-canary|not-an-entry-reference/);
+ expect(requests.filter(request => request.url.pathname === '/api/activity/workout')).toHaveLength(1);
+});
+test.each([undefined, null, [], ['untrusted-container']])('calendar decoration still requires an object: %j', async decoration => {
+ upstream.use(http.get('https://aimharder.es/api/activityCalendar', () => HttpResponse.json({ workouts: {
+  '2026-03-29': { rates: { ids: [1] }, TIPOWODs: decoration },
+ } })));
+ const result = await query(await connect(), { startDate: '2026-03-29', endDate: '2026-03-29' });
+ expect(result.isError).toBe(true);
+ expect(JSON.stringify(result)).toContain('INVALID_ACTIVITY_RESPONSE');
+ expect(JSON.stringify(result)).not.toContain('untrusted-container');
+ expect(requests.filter(request => request.url.pathname === '/api/activity/workout')).toHaveLength(0);
+});
 test.each([{startDate:'2026-03-29',endDate:'2026-03-29'}, {startDate:'2026-03-01',endDate:'2026-03-31'}, {startDate:'2026-03-15',endDate:'2026-04-14'}])('accepts inclusive bounded range with DST %o', async args => {
  const result=await query(await connect(),args);expect(result.isError).not.toBe(true);expect(result.structuredContent).toMatchObject({entries:[],coverage:{status:'complete'}});
 });
