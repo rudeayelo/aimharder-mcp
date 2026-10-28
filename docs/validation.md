@@ -2,6 +2,12 @@
 
 This page records what was checked against AimHarder, what was checked only with anonymized fixtures, and what remains unknown. Live checks used one account at one location (9NBC). They do not establish behavior for every gym. The user defined recent and period activity questions in terms of **activity entries**; earlier physical-session grouping blockers were superseded by [the entry semantics decision](adr/2026-09-22-activity-entry-query-semantics.md).
 
+## Coordinated existing regression checks (2026-10-28)
+
+On unchanged executable source in pilot integration `82a699139260d31f113fd6974e5b9a6a24a917b3`, all seven sequential checks passed using existing dependencies: local typecheck, **479 tests in 18 files**, local build, hosted typecheck, **190 tests in 16 files**, hosted build and the anonymized isolated package check. The local stdio archive labeled `0.5.1` contained **31 files / 74,403 bytes**; initialization, discovery of 18 tools, account context, allowed/denied gym selection and sanitized errors passed with empty server stderr. This is a checkout package check, not registry artifact verification or a release.
+
+The curated environment carried no service credentials, and no live-test command, Hermes installation or deployment occurred. Hosted tests used local workerd/D1 fixtures. Qualified receipt SHA-256: `1cdfcfa79101187e7a807df6de4c975aa4832865e6d979f2ffecd2adde4ece2a`. These regression results are separate from the [actual client/lifecycle observations](hosted-pilot-acceptance.md); they do not close #84/#69 or establish production readiness, deferred cost/capacity, live replacement or administrator sporting-action acceptance. No implementation or ADR decision changed in this documentation delivery.
+
 ## Automated npm release 0.5.1 (2026-10-21)
 
 The correction [PR #86](https://github.com/rudeayelo/aimharder-mcp/pull/86) and [version PR #87](https://github.com/rudeayelo/aimharder-mcp/pull/87) passed CI and merged. The [release workflow](https://github.com/rudeayelo/aimharder-mcp/actions/runs/39673982734) published `aimharder-mcp@0.5.1` through npm OIDC from `fcbe77e38cd113dd82a3992eb8e120f81199dcfb`, creating [tag and GitHub Release v0.5.1](https://github.com/rudeayelo/aimharder-mcp/releases/tag/v0.5.1). The public branch passed root typecheck, all 474 tests, build and isolated package checks; these counts are distinct from the parallel hosted pilot branch.
