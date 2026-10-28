@@ -2,6 +2,8 @@
 
 Status: accepted on 2026-09-24. Supersedes the explicit-mapping requirement in the [class time-zone decision](2026-09-22-class-schedules-and-confirmed-time-zones.md).
 
+Hosted frontend amendment, 2026-10-28: the [fixed Madrid frontend decision](2026-10-28-hosted-frontend-madrid-time-zone.md) replaces the hosted participant-facing zone controls/checks with a fixed Madrid experience, while preserving backend overrides and local stdio configuration. Implementation and reconciliation with action provenance checks remain pending; the existing runtime behavior described below has not yet changed.
+
 ## Context
 
 AimHarder's observed account and schedule responses do not supply an authoritative IANA time zone. The first implementation required a user-confirmed mapping before any date query. For the first public package, the user chose a simpler setup: assume `Europe/Madrid` when no mapping exists. That choice is a product default, not evidence that all AimHarder gyms use that zone. The one gym used for live validation had its `Europe/Madrid` zone confirmed separately.

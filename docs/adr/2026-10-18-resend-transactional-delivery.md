@@ -24,6 +24,8 @@ One private owner invitation was acknowledged with HTTP 200 and later read back 
 
 ## Consequences
 
+Support-channel product amendment, 2026-10-28: the owner accepted Resend Inboxes as the intended human-operated support channel for `support@ahmcp.link`, accessed through the provider dashboard. This extends the product direction beyond transactional sending; configuration, account-specific pricing/quota, receiving-mail routing and an inbound/reply test remain pending. It does not change the existing mail adapter or activate an inbox, agent, DNS change, purchase or plan change. See the [product experience record](../product-experience.md#support-inbox-assessment) for the researched provider capabilities and pending activation evidence.
+
 The sender can be configured without enabling Cloudflare Paid or changing maintained authentication. The provider receives recipient addresses and capability-bearing message content; tracking, token scope, retention and deletion remain material security/acceptance concerns. The real invitation, verification and recovery mailbox/authentication requirement for #71 is complete as recorded above. Workers Free's CPU suitability for default scrypt, measured full-pilot cost, Google, client onboarding and later isolation/lifecycle gates remain unresolved. No local stdio or upstream AimHarder contract changes.
 
 Sources: [Resend send-email API](https://resend.com/docs/api-reference/emails/send-email), [API keys](https://resend.com/docs/dashboard/api-keys/introduction), [idempotency](https://resend.com/docs/dashboard/emails/idempotency-keys), and [pricing](https://resend.com/pricing), checked 2026-10-18.
