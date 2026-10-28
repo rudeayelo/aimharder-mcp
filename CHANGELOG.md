@@ -1,5 +1,16 @@
 # aimharder-mcp
 
+## 0.5.2
+
+### Patch Changes
+
+- 3762051: Add trusted account identity verification for hosted credential custody while preserving the local MCP tools and behavior.
+- 4bcccc4: Add trusted deletion dispatch coordination and read-only original-account reconciliation for hosted use while preserving local MCP inputs and results.
+- c9d9bd4: Preserve local activity publication while adding trusted pre-dispatch coordination and read-only original-account recovery for hosted execution.
+- edd14f8: Add trusted per-execution dispatch coordination and read-only booking reconciliation interfaces for hosted use while preserving local MCP contracts.
+- dfa9a63: Add trusted cancellation dispatch and read-only recovery hooks for the hosted account coordinator, preserving local cancellation contracts and credit uncertainty.
+- 9b8d81d: Use manual Fetch redirect handling while rejecting non-success responses, preserving credential forwarding protections and supporting the Worker runtime.
+
 ## 0.5.1
 
 ### Patch Changes
