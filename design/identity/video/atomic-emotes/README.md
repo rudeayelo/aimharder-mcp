@@ -1,5 +1,7 @@
 # Atomic kettle emotes
 
+Execution update: the owner authorized the [first Kling 4 blink trial](trial-01-blink/README.md). It succeeded at 39 credits and now includes a two-second 12 fps edit with shared neutral boundary holds. Earlier no-generation statements below describe prompt preparation; the other five emotes remain ungenerated.
+
 Prepared 2026-10-29 under [design #95](https://github.com/rudeayelo/aimharder-mcp/issues/95). The owner changed the direction after [trial 01](../trial-01/README.md): each delivered clip should last **two seconds**, perform **one emote**, and start and finish in the same neutral pose. Clips will be combined in code later. This package contains prompts only; no new generation, paid request, playback code or home-page implementation was performed.
 
 The previous six-second composite choreography is historical. Its eye drift motivates shorter, simpler acting and a model comparison; it does not prove that the previous model alone caused the defect or that a newer model will solve it.

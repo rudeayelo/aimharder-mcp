@@ -1,6 +1,6 @@
 # Kettlebell robot identity trials
 
-Current motion direction, 2026-10-29: [atomic two-second emotes](video/atomic-emotes/README.md), one action per clip with shared neutral endpoints, replace the composite animation as the next experiment. Six prompts and a proposed Kling 4 comparison are prepared; no additional video generation or playback integration has been performed.
+Current motion direction, 2026-10-29: [atomic two-second emotes](video/atomic-emotes/README.md), one action per clip with shared neutral endpoints, replace the composite animation as the next experiment. Six prompts are prepared, and the [first Kling 4 blink trial](video/atomic-emotes/trial-01-blink/README.md) now has a two-second 12 fps delivery. The other emotes and production playback integration remain pending.
 
 Status: two unselected image explorations, 2026-10-29, under #95. These follow the [provisional foundations](../README.md) and the owner's staged review. No public home page or remaining product screens have been generated.
 
