@@ -50,3 +50,7 @@ all current booking variants and delivery-mode preservation in
 [validation](../validation.md#booking-tool-observations-99-2026-10-29).
 This adds no architectural, authentication, scope, storage or dispatch decision;
 real Worker export/CPU acceptance and activation remain separate.
+
+## Controlled native review (2026-10-29)
+
+The owner subsequently authorized one isolated validation deployment, existing protected app-key provisioning and temporary activation bounded to two hours, followed by disabling. The [actual receipt](../hosted-telemetry-native-receipt.md) records provider read-back, effective shared settings/access, observed delivery/privacy, CPU estimates and verified disabling. No shared LogNorth setting, plan, participant access or sporting-write scope changed. The destination's dot-path filter prevents discovery-event storage; missing maintenance CPU and current-plan evidence leave native acceptance incomplete. The existing decision is unchanged, and sustained activation remains a subsequent decision. Earlier authorization statements describe their historical stage.

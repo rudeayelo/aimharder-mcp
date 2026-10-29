@@ -1,0 +1,878 @@
+{
+  "date": "2026-10-29",
+  "sourceCommit": "803c27e9bcd8123694a7442c768f2b65691dbce7",
+  "bundleSha256": "1e2cc09f33dd0202bbc1746761fb75ef2fe13aa50bd2997a65731aa11875103d",
+  "cpuUnit": "microseconds",
+  "providerDataset": "workersInvocationsAdaptive",
+  "association": "UTC workload windows; adaptive aggregates are not trace-matched per-invocation samples",
+  "cells": [
+    {
+      "phase": "baseline",
+      "surface": "landing",
+      "sampleCount": 20,
+      "startedAt": "2026-10-29T09:09:56.247Z",
+      "endedAt": "2026-10-29T09:10:08.669Z",
+      "metricsReadAt": "2026-10-29T09:21:45.683250Z",
+      "httpStatus": 200,
+      "errors": false,
+      "rows": [
+        {
+          "dimensions": {
+            "status": "success"
+          },
+          "max": {
+            "cpuTime": 45215,
+            "wallTime": 1371923
+          },
+          "quantiles": {
+            "cpuTimeP50": 12287,
+            "cpuTimeP95": 16942,
+            "cpuTimeP99": 45215
+          },
+          "sum": {
+            "cpuTimeUs": 289193,
+            "errors": 0,
+            "requests": 22,
+            "subrequests": 0
+          }
+        }
+      ]
+    },
+    {
+      "phase": "baseline",
+      "surface": "auth-challenge",
+      "sampleCount": 20,
+      "startedAt": "2026-10-29T09:10:08.670Z",
+      "endedAt": "2026-10-29T09:10:17.149Z",
+      "metricsReadAt": "2026-10-29T09:21:46.138363Z",
+      "httpStatus": 200,
+      "errors": false,
+      "rows": [
+        {
+          "dimensions": {
+            "status": "success"
+          },
+          "max": {
+            "cpuTime": 15590,
+            "wallTime": 347125
+          },
+          "quantiles": {
+            "cpuTimeP50": 8471,
+            "cpuTimeP95": 13938,
+            "cpuTimeP99": 15590
+          },
+          "sum": {
+            "cpuTimeUs": 205915,
+            "errors": 0,
+            "requests": 23,
+            "subrequests": 0
+          }
+        }
+      ]
+    },
+    {
+      "phase": "baseline",
+      "surface": "auth-discovery",
+      "sampleCount": 20,
+      "startedAt": "2026-10-29T09:10:17.149Z",
+      "endedAt": "2026-10-29T09:10:28.511Z",
+      "metricsReadAt": "2026-10-29T09:21:46.483837Z",
+      "httpStatus": 200,
+      "errors": false,
+      "rows": [
+        {
+          "dimensions": {
+            "status": "success"
+          },
+          "max": {
+            "cpuTime": 49580,
+            "wallTime": 573564
+          },
+          "quantiles": {
+            "cpuTimeP50": 10089,
+            "cpuTimeP95": 12931,
+            "cpuTimeP99": 49580
+          },
+          "sum": {
+            "cpuTimeUs": 245915,
+            "errors": 0,
+            "requests": 20,
+            "subrequests": 0
+          }
+        }
+      ]
+    },
+    {
+      "phase": "baseline",
+      "surface": "mcp-context",
+      "sampleCount": 20,
+      "startedAt": "2026-10-29T09:10:40.483Z",
+      "endedAt": "2026-10-29T09:11:02.821Z",
+      "metricsReadAt": "2026-10-29T09:21:46.818317Z",
+      "httpStatus": 200,
+      "errors": false,
+      "rows": [
+        {
+          "dimensions": {
+            "status": "success"
+          },
+          "max": {
+            "cpuTime": 75949,
+            "wallTime": 1485984
+          },
+          "quantiles": {
+            "cpuTimeP50": 32794,
+            "cpuTimeP95": 61609,
+            "cpuTimeP99": 75949
+          },
+          "sum": {
+            "cpuTimeUs": 711255,
+            "errors": 0,
+            "requests": 21,
+            "subrequests": 21
+          }
+        }
+      ]
+    },
+    {
+      "phase": "reviewed-disabled",
+      "surface": "landing-clean",
+      "sampleCount": 20,
+      "startedAt": "2026-10-29T09:22:57.514Z",
+      "endedAt": "2026-10-29T09:23:09.295Z",
+      "metricsReadAt": "2026-10-29T09:30:12.895589Z",
+      "httpStatus": 200,
+      "errors": false,
+      "rows": [
+        {
+          "dimensions": {
+            "status": "success"
+          },
+          "max": {
+            "cpuTime": 26677,
+            "wallTime": 453037
+          },
+          "quantiles": {
+            "cpuTimeP50": 14296,
+            "cpuTimeP95": 21154,
+            "cpuTimeP99": 26677
+          },
+          "sum": {
+            "cpuTimeUs": 309937,
+            "errors": 0,
+            "requests": 20,
+            "subrequests": 0
+          }
+        }
+      ]
+    },
+    {
+      "phase": "reviewed-disabled",
+      "surface": "auth-challenge",
+      "sampleCount": 20,
+      "startedAt": "2026-10-29T09:15:19.886Z",
+      "endedAt": "2026-10-29T09:15:28.679Z",
+      "metricsReadAt": "2026-10-29T09:21:50.868162Z",
+      "httpStatus": 200,
+      "errors": false,
+      "rows": [
+        {
+          "dimensions": {
+            "status": "success"
+          },
+          "max": {
+            "cpuTime": 17579,
+            "wallTime": 342863
+          },
+          "quantiles": {
+            "cpuTimeP50": 11850,
+            "cpuTimeP95": 16009,
+            "cpuTimeP99": 17579
+          },
+          "sum": {
+            "cpuTimeUs": 256157,
+            "errors": 0,
+            "requests": 21,
+            "subrequests": 0
+          }
+        }
+      ]
+    },
+    {
+      "phase": "reviewed-disabled",
+      "surface": "auth-discovery",
+      "sampleCount": 20,
+      "startedAt": "2026-10-29T09:15:28.679Z",
+      "endedAt": "2026-10-29T09:15:39.908Z",
+      "metricsReadAt": "2026-10-29T09:21:51.525664Z",
+      "httpStatus": 200,
+      "errors": false,
+      "rows": [
+        {
+          "dimensions": {
+            "status": "success"
+          },
+          "max": {
+            "cpuTime": 78746,
+            "wallTime": 408146
+          },
+          "quantiles": {
+            "cpuTimeP50": 14024,
+            "cpuTimeP95": 20122,
+            "cpuTimeP99": 78746
+          },
+          "sum": {
+            "cpuTimeUs": 358030,
+            "errors": 0,
+            "requests": 21,
+            "subrequests": 0
+          }
+        }
+      ]
+    },
+    {
+      "phase": "reviewed-disabled",
+      "surface": "mcp-context",
+      "sampleCount": 20,
+      "startedAt": "2026-10-29T09:17:53.037Z",
+      "endedAt": "2026-10-29T09:18:16.100Z",
+      "metricsReadAt": "2026-10-29T09:21:52.327758Z",
+      "httpStatus": 200,
+      "errors": false,
+      "rows": [
+        {
+          "dimensions": {
+            "status": "success"
+          },
+          "max": {
+            "cpuTime": 127782,
+            "wallTime": 2103160
+          },
+          "quantiles": {
+            "cpuTimeP50": 25194,
+            "cpuTimeP95": 95939,
+            "cpuTimeP99": 127782
+          },
+          "sum": {
+            "cpuTimeUs": 770841,
+            "errors": 0,
+            "requests": 22,
+            "subrequests": 22
+          }
+        }
+      ]
+    },
+    {
+      "phase": "enabled-success",
+      "surface": "landing",
+      "sampleCount": 20,
+      "startedAt": "2026-10-29T09:36:11.981Z",
+      "endedAt": "2026-10-29T09:36:25.403Z",
+      "metricsReadAt": "2026-10-29T09:37:53.992539Z",
+      "httpStatus": 200,
+      "errors": false,
+      "rows": [
+        {
+          "dimensions": {
+            "status": "success"
+          },
+          "max": {
+            "cpuTime": 80431,
+            "wallTime": 617255
+          },
+          "quantiles": {
+            "cpuTimeP50": 17525,
+            "cpuTimeP95": 28497,
+            "cpuTimeP99": 80431
+          },
+          "sum": {
+            "cpuTimeUs": 630844,
+            "errors": 0,
+            "requests": 31,
+            "subrequests": 31
+          }
+        }
+      ]
+    },
+    {
+      "phase": "enabled-success",
+      "surface": "auth-challenge",
+      "sampleCount": 20,
+      "startedAt": "2026-10-29T09:36:25.404Z",
+      "endedAt": "2026-10-29T09:36:35.151Z",
+      "metricsReadAt": "2026-10-29T09:37:55.084957Z",
+      "httpStatus": 200,
+      "errors": false,
+      "rows": [
+        {
+          "dimensions": {
+            "status": "success"
+          },
+          "max": {
+            "cpuTime": 28269,
+            "wallTime": 459076
+          },
+          "quantiles": {
+            "cpuTimeP50": 17525,
+            "cpuTimeP95": 25702,
+            "cpuTimeP99": 28269
+          },
+          "sum": {
+            "cpuTimeUs": 482036,
+            "errors": 0,
+            "requests": 28,
+            "subrequests": 28
+          }
+        }
+      ]
+    },
+    {
+      "phase": "enabled-success",
+      "surface": "auth-discovery",
+      "sampleCount": 20,
+      "startedAt": "2026-10-29T09:36:35.152Z",
+      "endedAt": "2026-10-29T09:36:47.710Z",
+      "metricsReadAt": "2026-10-29T09:37:55.905699Z",
+      "httpStatus": 200,
+      "errors": false,
+      "rows": [
+        {
+          "dimensions": {
+            "status": "success"
+          },
+          "max": {
+            "cpuTime": 79925,
+            "wallTime": 515940
+          },
+          "quantiles": {
+            "cpuTimeP50": 15750,
+            "cpuTimeP95": 23120,
+            "cpuTimeP99": 79925
+          },
+          "sum": {
+            "cpuTimeUs": 387220,
+            "errors": 0,
+            "requests": 20,
+            "subrequests": 20
+          }
+        }
+      ]
+    },
+    {
+      "phase": "enabled-success",
+      "surface": "mcp-context",
+      "sampleCount": 20,
+      "startedAt": "2026-10-29T09:37:12.324Z",
+      "endedAt": "2026-10-29T09:37:37.297Z",
+      "metricsReadAt": "2026-10-29T09:37:56.246029Z",
+      "httpStatus": 200,
+      "errors": false,
+      "rows": [
+        {
+          "dimensions": {
+            "status": "success"
+          },
+          "max": {
+            "cpuTime": 116808,
+            "wallTime": 2208383
+          },
+          "quantiles": {
+            "cpuTimeP50": 38819,
+            "cpuTimeP95": 116808,
+            "cpuTimeP99": 116808
+          },
+          "sum": {
+            "cpuTimeUs": 642981,
+            "errors": 0,
+            "requests": 15,
+            "subrequests": 30
+          }
+        }
+      ]
+    },
+    {
+      "phase": "enabled-unavailable",
+      "surface": "landing",
+      "sampleCount": 20,
+      "startedAt": "2026-10-29T10:01:23.481Z",
+      "endedAt": "2026-10-29T10:01:36.212Z",
+      "metricsReadAt": "2026-10-29T10:02:55.796468Z",
+      "httpStatus": 200,
+      "errors": false,
+      "rows": [
+        {
+          "dimensions": {
+            "status": "success"
+          },
+          "max": {
+            "cpuTime": 27940,
+            "wallTime": 407829
+          },
+          "quantiles": {
+            "cpuTimeP50": 17172,
+            "cpuTimeP95": 26406,
+            "cpuTimeP99": 27940
+          },
+          "sum": {
+            "cpuTimeUs": 366860,
+            "errors": 0,
+            "requests": 21,
+            "subrequests": 21
+          }
+        }
+      ]
+    },
+    {
+      "phase": "enabled-unavailable",
+      "surface": "auth-challenge",
+      "sampleCount": 20,
+      "startedAt": "2026-10-29T10:01:36.213Z",
+      "endedAt": "2026-10-29T10:01:45.201Z",
+      "metricsReadAt": "2026-10-29T10:02:56.126712Z",
+      "httpStatus": 200,
+      "errors": false,
+      "rows": [
+        {
+          "dimensions": {
+            "status": "success"
+          },
+          "max": {
+            "cpuTime": 23340,
+            "wallTime": 356589
+          },
+          "quantiles": {
+            "cpuTimeP50": 12714,
+            "cpuTimeP95": 21303,
+            "cpuTimeP99": 23340
+          },
+          "sum": {
+            "cpuTimeUs": 290665,
+            "errors": 0,
+            "requests": 21,
+            "subrequests": 21
+          }
+        }
+      ]
+    },
+    {
+      "phase": "enabled-unavailable",
+      "surface": "auth-discovery",
+      "sampleCount": 20,
+      "startedAt": "2026-10-29T10:01:45.201Z",
+      "endedAt": "2026-10-29T10:01:57.113Z",
+      "metricsReadAt": "2026-10-29T10:02:56.506541Z",
+      "httpStatus": 200,
+      "errors": false,
+      "rows": [
+        {
+          "dimensions": {
+            "status": "success"
+          },
+          "max": {
+            "cpuTime": 61317,
+            "wallTime": 413703
+          },
+          "quantiles": {
+            "cpuTimeP50": 14500,
+            "cpuTimeP95": 21193,
+            "cpuTimeP99": 61317
+          },
+          "sum": {
+            "cpuTimeUs": 347516,
+            "errors": 0,
+            "requests": 20,
+            "subrequests": 20
+          }
+        }
+      ]
+    },
+    {
+      "phase": "enabled-unavailable",
+      "surface": "mcp-context",
+      "sampleCount": 20,
+      "startedAt": "2026-10-29T10:02:09.098Z",
+      "endedAt": "2026-10-29T10:02:41.704Z",
+      "metricsReadAt": "2026-10-29T10:02:56.820443Z",
+      "httpStatus": 200,
+      "errors": false,
+      "rows": [
+        {
+          "dimensions": {
+            "status": "success"
+          },
+          "max": {
+            "cpuTime": 154705,
+            "wallTime": 2084705
+          },
+          "quantiles": {
+            "cpuTimeP50": 69998,
+            "cpuTimeP95": 154705,
+            "cpuTimeP99": 154705
+          },
+          "sum": {
+            "cpuTimeUs": 784566,
+            "errors": 0,
+            "requests": 11,
+            "subrequests": 23
+          }
+        }
+      ]
+    }
+  ],
+  "maintenance": {
+    "providerCpuAvailable": false,
+    "baselineIndependentSamples": 1,
+    "observations": [
+      {
+        "observedAt": "2026-10-29T09:17:30.438311Z",
+        "phase": "disabled",
+        "phaseStartedAt": "2026-10-29T09:14:13.401434Z",
+        "lastAttemptAt": 1793265305155,
+        "lastSuccessAt": 1793265305679,
+        "status": "ok",
+        "lastPurgedCount": 0
+      },
+      {
+        "observedAt": "2026-10-29T09:20:31.369218Z",
+        "phase": "disabled",
+        "phaseStartedAt": "2026-10-29T09:14:13.401434Z",
+        "lastAttemptAt": 1793265605224,
+        "lastSuccessAt": 1793265607161,
+        "status": "ok",
+        "lastPurgedCount": 0
+      },
+      {
+        "observedAt": "2026-10-29T09:25:47.953528Z",
+        "phase": "disabled",
+        "phaseStartedAt": "2026-10-29T09:14:13.401434Z",
+        "lastAttemptAt": 1793265904603,
+        "lastSuccessAt": 1793265906168,
+        "status": "ok",
+        "lastPurgedCount": 0
+      },
+      {
+        "observedAt": "2026-10-29T09:30:19.323328Z",
+        "phase": "disabled",
+        "phaseStartedAt": "2026-10-29T09:14:13.401434Z",
+        "lastAttemptAt": 1793266204694,
+        "lastSuccessAt": 1793266205921,
+        "status": "ok",
+        "lastPurgedCount": 0
+      },
+      {
+        "observedAt": "2026-10-29T09:35:35.829855Z",
+        "phase": "disabled",
+        "phaseStartedAt": "2026-10-29T09:14:13.401434Z",
+        "lastAttemptAt": 1793266504853,
+        "lastSuccessAt": 1793266506498,
+        "status": "ok",
+        "lastPurgedCount": 0
+      },
+      {
+        "observedAt": "2026-10-29T09:40:07.188296Z",
+        "phase": "success",
+        "phaseStartedAt": "2026-10-29T09:36:08.587424Z",
+        "lastAttemptAt": 1793266804778,
+        "lastSuccessAt": 1793266805390,
+        "status": "ok",
+        "lastPurgedCount": 0
+      },
+      {
+        "observedAt": "2026-10-29T09:45:23.662002Z",
+        "phase": "success",
+        "phaseStartedAt": "2026-10-29T09:36:08.587424Z",
+        "lastAttemptAt": 1793267105025,
+        "lastSuccessAt": 1793267105617,
+        "status": "ok",
+        "lastPurgedCount": 0
+      },
+      {
+        "observedAt": "2026-10-29T09:50:40.130306Z",
+        "phase": "success",
+        "phaseStartedAt": "2026-10-29T09:36:08.587424Z",
+        "lastAttemptAt": 1793267404570,
+        "lastSuccessAt": 1793267406041,
+        "status": "ok",
+        "lastPurgedCount": 0
+      },
+      {
+        "observedAt": "2026-10-29T09:55:11.785026Z",
+        "phase": "success",
+        "phaseStartedAt": "2026-10-29T09:36:08.587424Z",
+        "lastAttemptAt": 1793267705257,
+        "lastSuccessAt": 1793267706834,
+        "status": "ok",
+        "lastPurgedCount": 0
+      },
+      {
+        "observedAt": "2026-10-29T10:00:28.267063Z",
+        "phase": "success",
+        "phaseStartedAt": "2026-10-29T09:36:08.587424Z",
+        "lastAttemptAt": 1793268006305,
+        "lastSuccessAt": 1793268009563,
+        "status": "ok",
+        "lastPurgedCount": 0
+      },
+      {
+        "observedAt": "2026-10-29T10:05:44.929822Z",
+        "phase": "unavailable",
+        "phaseStartedAt": "2026-10-29T10:01:02.013238Z",
+        "lastAttemptAt": 1793268305229,
+        "lastSuccessAt": 1793268305781,
+        "status": "ok",
+        "lastPurgedCount": 0
+      },
+      {
+        "observedAt": "2026-10-29T10:10:16.256443Z",
+        "phase": "unavailable",
+        "phaseStartedAt": "2026-10-29T10:01:02.013238Z",
+        "lastAttemptAt": 1793268604822,
+        "lastSuccessAt": 1793268605291,
+        "status": "ok",
+        "lastPurgedCount": 0
+      },
+      {
+        "observedAt": "2026-10-29T10:15:32.639402Z",
+        "phase": "unavailable",
+        "phaseStartedAt": "2026-10-29T10:01:02.013238Z",
+        "lastAttemptAt": 1793268904700,
+        "lastSuccessAt": 1793268905347,
+        "status": "ok",
+        "lastPurgedCount": 0
+      },
+      {
+        "observedAt": "2026-10-29T10:20:49.097635Z",
+        "phase": "unavailable",
+        "phaseStartedAt": "2026-10-29T10:01:02.013238Z",
+        "lastAttemptAt": 1793269204710,
+        "lastSuccessAt": 1793269205263,
+        "status": "ok",
+        "lastPurgedCount": 0
+      },
+      {
+        "observedAt": "2026-10-29T10:25:19.873640Z",
+        "phase": "unavailable",
+        "phaseStartedAt": "2026-10-29T10:01:02.013238Z",
+        "lastAttemptAt": 1793269504667,
+        "lastSuccessAt": 1793269506188,
+        "status": "ok",
+        "lastPurgedCount": 0
+      }
+    ],
+    "providerQuery": {
+      "readAt": "2026-10-29T10:25:23.645932Z",
+      "startedAt": "2026-10-29T09:00:00Z",
+      "endedAt": "2026-10-29T10:25:23.113369Z",
+      "httpStatus": 200,
+      "errors": false,
+      "sampleCount": 0,
+      "rows": [],
+      "requestVariablesPersisted": false
+    }
+  },
+  "providerWallTimeUnit": "microseconds",
+  "destinationReadback": {
+    "label": "final-disabled",
+    "readAt": "2026-10-29T10:26:50.394951Z",
+    "matchingTotal": 94,
+    "returned": 94,
+    "windowOldest": "2026-10-29T09:36:13.199Z",
+    "windowNewest": "2026-10-29T10:00:09.901Z",
+    "allowlistFailures": [],
+    "groups": [
+      {
+        "eventType": "maintenance.memory.completed",
+        "outcome": "success",
+        "path": null,
+        "tool": null,
+        "httpStatus": null,
+        "count": 5
+      },
+      {
+        "eventType": "maintenance.main.completed",
+        "outcome": "success",
+        "path": null,
+        "tool": null,
+        "httpStatus": null,
+        "count": 5
+      },
+      {
+        "eventType": "http.completed",
+        "outcome": "success",
+        "path": "/mcp",
+        "tool": null,
+        "httpStatus": 200,
+        "count": 21
+      },
+      {
+        "eventType": "mcp.tool.completed",
+        "outcome": "success",
+        "path": null,
+        "tool": "get_class_sessions",
+        "httpStatus": null,
+        "count": 1
+      },
+      {
+        "eventType": "mcp.tool.completed",
+        "outcome": "success",
+        "path": null,
+        "tool": "get_account_context",
+        "httpStatus": null,
+        "count": 20
+      },
+      {
+        "eventType": "http.completed",
+        "outcome": "success",
+        "path": "/api/auth/jwks",
+        "tool": null,
+        "httpStatus": 200,
+        "count": 2
+      },
+      {
+        "eventType": "http.completed",
+        "outcome": "denied",
+        "path": "/mcp",
+        "tool": null,
+        "httpStatus": 401,
+        "count": 20
+      },
+      {
+        "eventType": "http.completed",
+        "outcome": "success",
+        "path": "/",
+        "tool": null,
+        "httpStatus": 200,
+        "count": 20
+      }
+    ],
+    "distinctInvocationTraces": 68,
+    "httpToolCorrelatedTraces": 21,
+    "maintenanceCorrelatedTraces": 5,
+    "reconstructedEventUtf8Bytes": {
+      "min": 319,
+      "max": 350
+    },
+    "reconstructedBatchUtf8Bytes": {
+      "min": 340,
+      "max": 673
+    },
+    "payloadMethod": "reconstruct received allowlisted fields with original 24-character ISO timestamps; excludes transport headers and dropped events",
+    "detailReadChecked": true,
+    "detailRawContextMatches": true,
+    "actualTraceValuesPersisted": false,
+    "privatePayloadPersisted": false
+  },
+  "finalReadComparison": {
+    "phase": "final-disabled",
+    "at": "2026-10-29T10:26:32.529Z",
+    "contextOk": true,
+    "contextUnchanged": true,
+    "scheduleOk": true,
+    "scheduleUnchanged": true,
+    "coverage": "complete",
+    "sessionCount": 0
+  },
+  "finalAnonymousSmoke": {
+    "at": "2026-10-29T10:26:32.680900Z",
+    "exitCode": 0,
+    "passedChecks": 11,
+    "mailStage": "configured",
+    "rawOutputPersisted": false
+  },
+  "disabledConfiguration": {
+    "verifiedAt": "2026-10-29T10:25:50.506823Z",
+    "enabled": "false",
+    "originalConfigurationPreserved": true,
+    "moduleExact": true,
+    "bindingCount": 17,
+    "secretCount": 7,
+    "bundleSha256": "1e2cc09f33dd0202bbc1746761fb75ef2fe13aa50bd2997a65731aa11875103d"
+  },
+  "httpContractComparison": [
+    {
+      "phase": "baseline",
+      "surface": "landing",
+      "distinctBodyDigests": 1,
+      "sameBodyDigestSetAsBaseline": true,
+      "sameAllowedHeaderSetAsBaseline": true
+    },
+    {
+      "phase": "baseline",
+      "surface": "auth-challenge",
+      "distinctBodyDigests": 1,
+      "sameBodyDigestSetAsBaseline": true,
+      "sameAllowedHeaderSetAsBaseline": true
+    },
+    {
+      "phase": "baseline",
+      "surface": "auth-discovery",
+      "distinctBodyDigests": 1,
+      "sameBodyDigestSetAsBaseline": true,
+      "sameAllowedHeaderSetAsBaseline": true
+    },
+    {
+      "phase": "reviewed-disabled",
+      "surface": "landing",
+      "distinctBodyDigests": 1,
+      "sameBodyDigestSetAsBaseline": true,
+      "sameAllowedHeaderSetAsBaseline": true
+    },
+    {
+      "phase": "reviewed-disabled",
+      "surface": "auth-challenge",
+      "distinctBodyDigests": 1,
+      "sameBodyDigestSetAsBaseline": true,
+      "sameAllowedHeaderSetAsBaseline": true
+    },
+    {
+      "phase": "reviewed-disabled",
+      "surface": "auth-discovery",
+      "distinctBodyDigests": 1,
+      "sameBodyDigestSetAsBaseline": true,
+      "sameAllowedHeaderSetAsBaseline": true
+    },
+    {
+      "phase": "enabled-success",
+      "surface": "landing",
+      "distinctBodyDigests": 1,
+      "sameBodyDigestSetAsBaseline": true,
+      "sameAllowedHeaderSetAsBaseline": true
+    },
+    {
+      "phase": "enabled-success",
+      "surface": "auth-challenge",
+      "distinctBodyDigests": 1,
+      "sameBodyDigestSetAsBaseline": true,
+      "sameAllowedHeaderSetAsBaseline": true
+    },
+    {
+      "phase": "enabled-success",
+      "surface": "auth-discovery",
+      "distinctBodyDigests": 1,
+      "sameBodyDigestSetAsBaseline": true,
+      "sameAllowedHeaderSetAsBaseline": true
+    },
+    {
+      "phase": "enabled-unavailable",
+      "surface": "landing",
+      "distinctBodyDigests": 1,
+      "sameBodyDigestSetAsBaseline": true,
+      "sameAllowedHeaderSetAsBaseline": true
+    },
+    {
+      "phase": "enabled-unavailable",
+      "surface": "auth-challenge",
+      "distinctBodyDigests": 1,
+      "sameBodyDigestSetAsBaseline": true,
+      "sameAllowedHeaderSetAsBaseline": true
+    },
+    {
+      "phase": "enabled-unavailable",
+      "surface": "auth-discovery",
+      "distinctBodyDigests": 1,
+      "sameBodyDigestSetAsBaseline": true,
+      "sameAllowedHeaderSetAsBaseline": true
+    }
+  ],
+  "rawHeadersTokensIdentitiesAndTraceValuesIncluded": false
+}
