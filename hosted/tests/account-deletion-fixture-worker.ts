@@ -9,6 +9,7 @@ export { AccountConnection } from '../src/account-connection.js';
 const clockNow=Date.now;let clockOffset=0;Date.now=()=>clockNow()+clockOffset;
 let clockAfterBatch=0;
 let deferred:(()=>Promise<Response>)|undefined;
+let scheduledSettlements:string[]=[];
 export default {async fetch(request:Request,env:HostedEnvironment,ctx:ExecutionContext){
  const path=new URL(request.url).pathname;
  if(path==='/__fixture/clock'){clockOffset+=Number(request.headers.get('x-fixture-ms')??0);return new Response(null,{status:204});}
@@ -19,6 +20,8 @@ export default {async fetch(request:Request,env:HostedEnvironment,ctx:ExecutionC
   if(key==='batch')return async(statements:D1PreparedStatement[])=>{const result=await target.batch(statements);clockOffset+=clockAfterBatch;clockAfterBatch=0;return result;};
   const value=Reflect.get(target,key);return typeof value==='function'?value.bind(target):value;
  }})};}
+ if(path==='/__fixture/scheduled-settlements')return Response.json(scheduledSettlements);
+ if(path==='/__fixture/scheduled' && request.headers.has('x-fixture-telemetry')){scheduledSettlements=[];const nativeContext=ctx;ctx={waitUntil(promise:Promise<unknown>){nativeContext.waitUntil(promise);void promise.then(()=>scheduledSettlements.push('fulfilled'),()=>scheduledSettlements.push('rejected'));}} as ExecutionContext;env={...env,LOGNORTH_ENABLED:'true',LOGNORTH_URL:'https://telemetry.example.invalid',LOGNORTH_API_KEY:'lgn-'+ 'a'.repeat(64),LOGNORTH_ENVIRONMENT:'synthetic',LOGNORTH_RELEASE:'scheduled-test',...(request.headers.has('x-fixture-authority-fault')?{RECOVERY_AUTHORITY_ID:'wrong-authority'}:{})};}
  if(path==='/__fixture/scheduled'){try{await production.scheduled({cron:'*/5 * * * *',scheduledTime:Date.now(),noRetry(){}} as ScheduledController,env,ctx);return Response.json({outcome:'ok'});}catch{return Response.json({outcome:'failed'},{status:503});}}
  if(path==='/__fixture/watchdog-status')return Response.json(await recoveryMaintenanceStatus(env));
  if(path==='/__fixture/defer-query'){

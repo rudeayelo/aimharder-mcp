@@ -145,11 +145,28 @@ export async function handleHostedRequest(request:Request,env:HostedEnvironment,
 
 export default {
   scheduled:async(_controller:ScheduledController,env:HostedEnvironment,ctx:ExecutionContext)=>{
-    const result=await maintainDeletedAccounts(env);
-    ctx.waitUntil((async()=>{
+    const telemetry=createTelemetry(env);
+    const mainStarted=performance.now();
+    let result:Awaited<ReturnType<typeof maintainDeletedAccounts>>;
+    try{result=await maintainDeletedAccounts(env);}
+    catch(error){
+      telemetry?.maintenance('main',mainStarted,{outcome:'technical_failure',code:'MAINTENANCE_MAIN_FAILED'});
+      if(telemetry)ctx.waitUntil(telemetry.flush());
+      throw error;
+    }
+    telemetry?.maintenance('main',mainStarted,result.status==='ok'?{outcome:'success'}:
+      result.status==='failed'?{outcome:'technical_failure',code:'MAINTENANCE_MAIN_FAILED'}:
+      result.status==='overdue'?{outcome:'technical_failure',code:'MAINTENANCE_OVERDUE'}:{outcome:'unclassified'});
+    const memoryStarted=performance.now();
+    const deferred=(async()=>{
       const memory=await Promise.allSettled(result.memoryPurgeSubjects.map(async subject=>{await eraseDeletedAccountMemory(env,subject);await recordDeletedMemoryErased(env,subject);}));
-      if(memory.some(outcome=>outcome.status==='rejected'))throw new Error('Deleted account memory cleanup requires operator attention');
-    })());
+      const failed=memory.some(outcome=>outcome.status==='rejected');
+      telemetry?.maintenance('memory',memoryStarted,failed?{outcome:'technical_failure',code:'MAINTENANCE_MEMORY_FAILED'}:{outcome:'success'});
+      if(failed)throw new Error('Deleted account memory cleanup requires operator attention');
+    })();
+    // Preserve the application's original rejection independently of bounded export.
+    ctx.waitUntil(deferred);
+    if(telemetry)ctx.waitUntil(deferred.then(()=>telemetry.flush(),()=>telemetry.flush()));
     if(result.status!=='ok')throw new Error('Recovery cleanup requires operator attention');
   },
   fetch: (request: Request, env: HostedEnvironment,ctx?:ExecutionContext) => handleHostedRequest(request, env,undefined,ctx),

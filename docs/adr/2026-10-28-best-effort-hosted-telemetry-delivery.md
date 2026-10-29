@@ -29,7 +29,5 @@ disabled implementation; it does not authorize deployment or activation. The
 initial HTTP/account-context slice implements the accepted invocation-local,
 bounded one-attempt delivery through Worker `waitUntil`, with synthetic native
 Worker/SDK evidence recorded in [validation](../validation.md#initial-hosted-observability-path-97-2026-10-29).
-The decision and its loss/uncertainty boundaries are unchanged. Remaining tool
-and maintenance instrumentation and separately authorized native acceptance
-remain pending; the original design-interview authorization boundary above is
+The decision and its loss/uncertainty boundaries are unchanged. Subsequent read-tool and maintenance instrumentation has local native-harness evidence in [validation](../validation.md); separately authorized actual-Worker acceptance remains pending; the original design-interview authorization boundary above is
 historical context.

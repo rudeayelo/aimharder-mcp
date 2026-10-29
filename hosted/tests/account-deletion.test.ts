@@ -16,6 +16,10 @@ const googleProfiles=new Map<string,{email:string;sub:string}>();
 const logins: string[] = [];
 const identities: string[] = [];
 let rejectA = false;
+type MaintenanceEvent={trace_id:string;duration_ms:number;context:{event_type:string;outcome:string;code?:string}};
+const maintenanceBatches:MaintenanceEvent[][]=[];
+const telemetryWarnings:string[]=[];
+let telemetryReply:()=>Promise<Response>|Response=()=>Response.json({created:2},{status:201});
 const unexpected: string[] = [];
 function failOutbound(): never { unexpected.push('Unexpected outbound request'); throw new Error('Unexpected outbound request'); }
 const requests: {url: URL; cookie: string}[] = [];
@@ -32,12 +36,13 @@ function post(path: string, body: unknown, cookie = '', requestOrigin = origin) 
   return worker.dispatchFetch(origin + path, { method: 'POST', headers: { origin: requestOrigin, cookie, 'content-type': 'application/json' }, body: JSON.stringify(body), redirect: 'manual' });
 }
 async function start(keys: Record<string,string> = {first:syntheticKey}, active = 'first') {
-  worker = new Miniflare(convertV4MiniflareOptions({ modules: true, scriptPath: 'dist/account-deletion-fixture-worker.js', port: 8805,
+  worker = new Miniflare(convertV4MiniflareOptions({ handleStructuredLogs:entry=>telemetryWarnings.push(entry.message), modules: true, scriptPath: 'dist/account-deletion-fixture-worker.js', port: 8805,
     compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'], d1Databases: ['AUTH_DB','RECOVERY_DB'], resourcePersistencePath: directory,
     durableObjects: { ACCOUNT_CONNECTIONS: { className: 'AccountConnection', useSQLite: true } },
     bindings: { RECOVERY_AUTHORITY_ID:'synthetic-authority', BASE_URL: origin, AUTH_SECRET: 'synthetic-account-connection-auth-secret-long-enough',
       GOOGLE_CLIENT_ID:'synthetic-google-client',GOOGLE_CLIENT_SECRET:'synthetic-google-secret',RESEND_API_KEY:'synthetic-resend',MAIL_FROM:'noreply@example.invalid',VAULT_KEYS: JSON.stringify(keys), VAULT_ACTIVE_KEY_ID: active },
     outboundService: async request => {
+      if(request.url==='https://telemetry.example.invalid/api/v1/events/batch'){maintenanceBatches.push((await request.json() as {events:MaintenanceEvent[]}).events);return telemetryReply();}
       if(request.url==='https://oauth2.googleapis.com/token'){
         const body=new URLSearchParams(await request.text());const profile=googleProfiles.get(body.get('code')??'');if(!profile)return Response.json({error:'invalid_grant'},{status:400});
         const jwt=[Buffer.from('{"alg":"RS256","typ":"JWT"}').toString('base64url'),Buffer.from(JSON.stringify({...profile,email_verified:true,name:'Synthetic Google Participant',iss:'https://accounts.google.com',aud:'synthetic-google-client',iat:Math.floor(Date.now()/1000),exp:Math.floor(Date.now()/1000)+3600})).toString('base64url'),'synthetic-signature'].join('.');
@@ -96,6 +101,7 @@ async function call(cookie: string, name: string, args: Record<string, unknown> 
 }
 beforeAll(async()=>{await buildWorker('tests/account-deletion-fixture-worker.ts', 'dist/account-deletion-fixture-worker.js');});
 beforeEach(async()=>{
+  maintenanceBatches.length=0;telemetryWarnings.length=0;telemetryReply=()=>Response.json({created:2},{status:201});
   directory = await mkdtemp(join(tmpdir(),'aimharder-vault-synthetic-'));
   await start();
   const db = await worker.getD1Database('AUTH_DB');
@@ -505,4 +511,75 @@ test.each([false,true])('shared verification invalidation preserves deleted-owne
  if(fault){expect(await db.prepare("SELECT id FROM verification WHERE id='synthetic-late-issuer'").first()).not.toBeNull();await recovery.exec('DROP TRIGGER synthetic_other_authority_fault');expect((await worker.dispatchFetch(origin+'/__fixture/scheduled')).status).toBe(503);}
  expect(await db.prepare("SELECT id FROM verification WHERE id='synthetic-late-issuer'").first()).toBeNull();
  expect(await (await worker.dispatchFetch(origin+'/__fixture/watchdog-status')).json()).toMatchObject({status:'overdue',remainingDeletedIdentities:0});expect(writes).toEqual([]);
+});
+
+async function scheduledTelemetry(){return worker.dispatchFetch(origin+'/__fixture/scheduled',{headers:{'x-fixture-telemetry':'true'}});}
+async function maintenanceBatch(){await expect.poll(()=>maintenanceBatches.length).toBe(1);expect(maintenanceBatches).toHaveLength(1);return maintenanceBatches[0]!;}
+test('scheduled completed no-op exports both real phases once under one trace without participant state',async()=>{
+ maintenanceBatches.length=0;
+ expect((await scheduledTelemetry()).status).toBe(200);const events=await maintenanceBatch();
+ expect(events.map(event=>[event.context.event_type,event.context.outcome])).toEqual([['maintenance.main.completed','success'],['maintenance.memory.completed','success']]);
+ expect(new Set(events.map(event=>event.trace_id)).size).toBe(1);expect(events.every(event=>Number.isInteger(event.duration_ms)&&event.duration_ms>=0)).toBe(true);
+ expect(JSON.stringify(events)).not.toMatch(/portal-fixture|example.invalid|subject|tombstone|invitation|account|synthetic-a/);
+});
+
+test('scheduled durable purge success and subsequent no-op use independent invocation traces',async()=>{
+ await restoredDeletedFixture();expect((await scheduledTelemetry()).status).toBe(200);const first=await maintenanceBatch();
+ expect(first.map(e=>e.context.outcome)).toEqual(['success','success']);
+ expect(await (await worker.dispatchFetch(origin+'/__fixture/watchdog-status')).json()).toMatchObject({status:'ok',remainingDeletedIdentities:0});
+ maintenanceBatches.length=0;expect((await scheduledTelemetry()).status).toBe(200);const next=await maintenanceBatch();
+ expect(next[0]!.trace_id).not.toBe(first[0]!.trace_id);expect(next.map(e=>e.context.outcome)).toEqual(['success','success']);
+ expect(writes).toEqual([]);
+});
+test('scheduled main failure retains independent deferred no-op and cleanup denial',async()=>{
+ const db=await worker.getD1Database('AUTH_DB');await db.exec("CREATE TRIGGER telemetry_delete_fault BEFORE DELETE ON user BEGIN SELECT RAISE(ABORT,'private failure canary'); END");
+ expect((await post('/api/portal/account/delete',{confirmed:true},a())).status).toBe(503);
+ expect((await scheduledTelemetry()).status).toBe(503);const events=await maintenanceBatch();
+ expect(events.map(e=>[e.context.outcome,e.context.code])).toEqual([['technical_failure','MAINTENANCE_MAIN_FAILED'],['success',undefined]]);
+ expect(JSON.stringify(events)).not.toContain('private failure canary');expect((await worker.dispatchFetch(origin+'/account',{headers:{cookie:a()}})).status).toBe(401);
+});
+test('scheduled overdue remains technical failure after a later successful no-op purge',async()=>{
+ await restoredDeletedFixture();await worker.dispatchFetch(origin+'/__fixture/clock',{headers:{'x-fixture-ms':String(24*86400000)}});
+ for(let n=0;n<2;n++){
+  maintenanceBatches.length=0;expect((await scheduledTelemetry()).status).toBe(503);const events=await maintenanceBatch();
+  expect(events.map(e=>[e.context.outcome,e.context.code])).toEqual([['technical_failure','MAINTENANCE_OVERDUE'],['success',undefined]]);
+ }
+ expect(await (await worker.dispatchFetch(origin+'/__fixture/watchdog-status')).json()).toMatchObject({status:'overdue',remainingDeletedIdentities:0});
+});
+test('unavailable main cleanup never fabricates an unstarted memory completion',async()=>{
+ telemetryReply=()=>Response.json({created:1},{status:201});
+ expect((await worker.dispatchFetch(origin+'/__fixture/scheduled',{headers:{'x-fixture-telemetry':'true','x-fixture-authority-fault':'true'}})).status).toBe(503);
+ const events=await maintenanceBatch();expect(events).toHaveLength(1);expect(events[0]!.context).toMatchObject({event_type:'maintenance.main.completed',outcome:'technical_failure',code:'MAINTENANCE_MAIN_FAILED'});
+});
+test('deferred rejection stays independently rejected while main succeeds and exporter is unavailable',async()=>{
+ await restoredDeletedFixture();const recovery=await worker.getD1Database('RECOVERY_DB');
+ await recovery.exec("CREATE TRIGGER telemetry_memory_fault BEFORE UPDATE ON recovery_deleted WHEN NEW.memoryClearedAt IS NOT OLD.memoryClearedAt BEGIN SELECT RAISE(ABORT,'private deferred canary'); END");
+ telemetryReply=()=>{throw new Error('private exporter outage');};
+ expect((await scheduledTelemetry()).status).toBe(200);const events=await maintenanceBatch();
+ expect(events.map(e=>[e.context.outcome,e.context.code])).toEqual([['success',undefined],['technical_failure','MAINTENANCE_MEMORY_FAILED']]);
+ await expect.poll(async()=>await(await worker.dispatchFetch(origin+'/__fixture/scheduled-settlements')).json()).toContain('rejected');
+ expect(JSON.stringify(events)).not.toMatch(/private|portal-fixture|upstream-a/);
+ expect(await (await worker.dispatchFetch(origin+'/__fixture/watchdog-status')).json()).toMatchObject({status:'ok',remainingDeletedIdentities:0});
+});
+test('scheduled export waits for held deferred cleanup without delaying the main purge response',async()=>{
+ synthetic=bookingSource;const bearer=await token(a());let release!:()=>void;let entered!:()=>void;
+ const held=new Promise<void>(r=>release=r),arrived=new Promise<void>(r=>entered=r);
+ synthetic=async request=>{if(new URL(request.url).pathname==='/api/bookings'){entered();await held;}return bookingSource(request);};
+ const reading=call(a(),'get_class_sessions',{startDate:'2026-10-25',endDate:'2026-10-25'},bearer);await arrived;
+ try{
+  const db=await worker.getD1Database('AUTH_DB');await db.exec("CREATE TRIGGER telemetry_held_fault BEFORE DELETE ON user BEGIN SELECT RAISE(ABORT,'synthetic held fault'); END");
+  expect((await post('/api/portal/account/delete',{confirmed:true},a())).status).toBe(503);await db.exec('DROP TRIGGER telemetry_held_fault');
+  expect((await scheduledTelemetry()).status).toBe(200);expect(maintenanceBatches).toHaveLength(0);
+  expect(await(await worker.dispatchFetch(origin+'/__fixture/scheduled-settlements')).json()).toEqual([]);
+ }finally{release();await reading;}
+ const events=await maintenanceBatch();expect(events.map(e=>e.context.outcome)).toEqual(['success','success']);
+});
+test('scheduled exporter deadline settles a stalled acknowledgement after main failure has already propagated',async()=>{
+ const db=await worker.getD1Database('AUTH_DB');await db.exec("CREATE TRIGGER telemetry_timeout_fault BEFORE DELETE ON user BEGIN SELECT RAISE(ABORT,'synthetic timeout fault'); END");
+ expect((await post('/api/portal/account/delete',{confirmed:true},a())).status).toBe(503);
+ telemetryReply=()=>new Response(new ReadableStream(),{status:201});
+ expect((await scheduledTelemetry()).status).toBe(503);expect(telemetryWarnings.join(' ')).not.toContain('timeout');
+ await maintenanceBatch();await expect.poll(()=>telemetryWarnings.join(' '),{timeout:5000}).toContain('timeout');
+ await expect.poll(async()=>await(await worker.dispatchFetch(origin+'/__fixture/scheduled-settlements')).json()).toEqual(['fulfilled','fulfilled']);
+ expect(maintenanceBatches).toHaveLength(1);
 });
