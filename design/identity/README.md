@@ -1,5 +1,7 @@
 # Kettlebell robot identity trials
 
+Latest motion candidate: [side-bounce dance](video/atomic-emotes/trial-08-side-bounce-dance/README.md), generated from the existing pose references. The 24-frame edit retains four low bounce phases and returns to neutral; owner acceptance remains pending.
+
 Latest motion output: [hop with closed-eye anticipation and landing rock](video/atomic-emotes/trial-07-guided-hop/README.md), completed after the provider delay. Source and two-second 12 fps review edit are saved; owner acceptance remains pending. Earlier pending entries below are historical.
 
 Current pending motion: [hop with closed-eye anticipation and landing rock](video/atomic-emotes/trial-07-guided-hop/README.md), still processing in Runway. Prior approved rocking and retained delight assets are unchanged; the new hop awaits output and visual review.

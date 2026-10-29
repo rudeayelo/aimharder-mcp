@@ -1,0 +1,29 @@
+{
+  "preparedAt": "2026-10-29T22:01:11.133510+00:00",
+  "model": "kling_4",
+  "durationSeconds": 3,
+  "ratio": "auto_720p",
+  "plannedCredits": 39,
+  "promptSha256": "b06abae0f0be793b8f6be5ef26c8aafc095a846d4e83129f22ff91568bf24c9f",
+  "firstFrame": "../../reference-pack/01-front-neutral.png",
+  "lastFrame": "../../reference-pack/01-front-neutral.png",
+  "referenceFiles": [
+    "../dance-reference/airborne.png",
+    "../dance-reference/lean-left.png"
+  ],
+  "submissionState": "accepted",
+  "transport": "provider-ephemeral-uploads",
+  "submittedAt": "2026-10-29T22:01:15.766499+00:00",
+  "taskId": "25e8b279-1d8c-4124-9c37-425dcfa61baa",
+  "estimatedCost": {
+    "credits": 39
+  },
+  "status": "SUCCEEDED",
+  "lastCheckedAt": "2026-10-29T22:02:48.938479+00:00",
+  "progress": 0.58,
+  "outputCount": 1,
+  "completedAt": "2026-10-29T22:02:49.899713+00:00",
+  "sourceBytes": 1422802,
+  "sourceSha256": "ad9b923e52cf6387fa3c218e0e63ddde6d6515d2753fa22aeb498c651a91d2fc",
+  "balanceDecreaseCredits": 39
+}

@@ -1,5 +1,7 @@
 # Video input preparation
 
+Latest emote candidate: [four-beat side-bounce dance](atomic-emotes/trial-08-side-bounce-dance/README.md), using existing pose references, one 39-credit generation and a two-second 12 fps edit. Original and edit are available for review; no new images or additional generation were required.
+
 Completion update: [hop, anticipation and landing rock](atomic-emotes/trial-07-guided-hop/README.md) is now available after the long provider delay. One existing task succeeded; no duplicate generation. The two-second 12 fps review edit and source are preserved. Earlier pending entries below describe the waiting period.
 
 Current pending request: [hop, closed-eye anticipation and landing rock](atomic-emotes/trial-07-guided-hop/README.md). The existing Kling 4 task is still running; references and a self-updating local review page are prepared, but no finished video is claimed. No duplicate generation was submitted.

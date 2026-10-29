@@ -1,5 +1,7 @@
 # Atomic kettle emotes
 
+Latest emote: [side-bounce dance](trial-08-side-bounce-dance/README.md), one successful 39-credit Kling 4 task using existing airborne/lean images as unpositioned references and neutral first/last keyframes. The two-second 12 fps edit shows four bounce phases with stronger leans and some squash-like deformation; owner review is pending. The owner liked and retained the preceding hop. Surprise remains deferred.
+
 Completion update: the [hop with closed-eye anticipation and landing rock](trial-07-guided-hop/README.md) succeeded after the provider delay. The same task produced one take; original and two-second 12 fps edit are preserved. Frame inspection confirms the requested main beats, with a brief lid-like reopening transition and stronger motion than the reference targets. Browser playback and owner review remain pending. Earlier pending entries below are historical.
 
 Current pending generation: [hop with closed-eye anticipation and landing rock](trial-07-guided-hop/README.md). One Kling 4 task was accepted with three ordered middle poses; it remains in progress after a long provider delay. No clip is accepted or visually reviewed yet. A local follow-up processes that same task on completion without submitting another paid request. Dance remains queued and surprise deferred.

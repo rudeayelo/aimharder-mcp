@@ -1,0 +1,22 @@
+{
+  "newImagesGenerated": false,
+  "files": [
+    {
+      "file": "airborne.png",
+      "source": "../hop-reference/airborne.png",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 1540030,
+      "sha256": "83f0d0cf04a1b3a1423d6aaaa51cd24b03b4fce1f39c97130d5888ce45ac3958"
+    },
+    {
+      "file": "lean-left.png",
+      "source": "../rock-reference/rock-left.png",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 1573646,
+      "sha256": "5dc782e5f107929659cfe086c7d1b9dffeb34e36e85ee04e196fa410d1fb9dbb"
+    }
+  ],
+  "videoPrompt": "guided-video-prompt.txt"
+}

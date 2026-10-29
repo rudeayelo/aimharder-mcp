@@ -53,7 +53,7 @@
       "title": "Side-bounce dance",
       "file": "prompts/07-side-bounce-dance.txt",
       "sha256": "03b3c71a7ac47322179f5fc15a4699cc69177fb82d6e66197f809d684e17e3b4",
-      "status": "Queued by owner; not generated"
+      "status": "Generated once in trial-08-side-bounce-dance with an expanded guided prompt; owner review pending."
     }
   ]
 }

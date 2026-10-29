@@ -1,5 +1,7 @@
 # Guided hop with closed-eye anticipation and landing rock
 
+Owner feedback: the owner likes this hop clip and moved on to the queued dance. It is retained as an approved motion candidate; earlier owner-review statements below describe the inspection checkpoint. Final logo composition and cross-emote runtime acceptance remain pending.
+
 Generation requested 2026-10-29 after the owner approved the small-hop emote and added two acting requirements: close the eyes during anticipation and rock a little on the base after landing. The [catalog prompt](../prompts/06-small-hop.txt) was updated to match these requirements.
 
 ## Inputs
