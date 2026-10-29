@@ -1,0 +1,169 @@
+{
+  "date": "2026-10-29",
+  "configuration": {
+    "at": "2026-10-29T17:05:01.877580Z",
+    "enabled": "false",
+    "bindingCount": 17,
+    "secretCount": 7,
+    "protectedConfigurationUnchanged": true,
+    "moduleSha256": "1e2cc09f33dd0202bbc1746761fb75ef2fe13aa50bd2997a65731aa11875103d"
+  },
+  "scheduledQueries": {
+    "original": {
+      "readAt": "2026-10-29T17:05:11.827288Z",
+      "startedAt": "2026-10-29T09:00:00Z",
+      "endedAt": "2026-10-29T10:25:50Z",
+      "httpStatus": 200,
+      "errors": false,
+      "sampleCount": 0,
+      "rows": []
+    },
+    "recent": {
+      "readAt": "2026-10-29T17:05:12.180029Z",
+      "startedAt": "2026-10-29T16:00:00Z",
+      "endedAt": "2026-10-29T17:05:01.877580Z",
+      "httpStatus": 200,
+      "errors": false,
+      "sampleCount": 0,
+      "rows": []
+    },
+    "unfiltered": {
+      "readAt": "2026-10-29T17:05:13.028323Z",
+      "startedAt": "2026-10-29T09:00:00Z",
+      "endedAt": "2026-10-29T17:05:01.877580Z",
+      "httpStatus": 200,
+      "errors": false,
+      "returnedRowCount": 0,
+      "targetCount": 0,
+      "otherScriptNamesPersisted": false
+    }
+  },
+  "analyticsAccess": {
+    "readAt": "2026-10-29T17:05:13.687384Z",
+    "httpStatus": 200,
+    "errors": false,
+    "settings": [
+      {
+        "workersInvocationsAdaptive": {
+          "enabled": true
+        },
+        "workersInvocationsScheduled": {
+          "availableFields": [
+            "cpuTimeUs",
+            "cron",
+            "datetime",
+            "environmentName",
+            "scheduledDatetime",
+            "scriptName",
+            "status"
+          ],
+          "enabled": true,
+          "maxDuration": 604800,
+          "notOlderThan": 7776000
+        }
+      }
+    ]
+  },
+  "maintenance": {
+    "readAt": "2026-10-29T17:05:13.462480Z",
+    "httpStatus": 200,
+    "rows": [
+      {
+        "lastAttemptAt": 1793293504715,
+        "lastSuccessAt": 1793293505312,
+        "status": "ok",
+        "lastPurgedCount": 0
+      }
+    ]
+  },
+  "subscription": {
+    "readAt": "2026-10-29T17:05:13.140469Z",
+    "httpStatus": 403,
+    "success": false
+  },
+  "accountSettings": {
+    "at": "2026-10-29T17:06:39.653419Z",
+    "httpStatus": 200,
+    "success": true,
+    "defaultUsageModel": "standard",
+    "notSubscriptionEvidence": true
+  },
+  "patchedDiscoveryCpu": {
+    "readAt": "2026-10-29T17:07:27.519462Z",
+    "startedAt": "2026-10-29T16:42:55.948Z",
+    "endedAt": "2026-10-29T16:43:09.630Z",
+    "controlledSamples": 20,
+    "httpStatus": 200,
+    "errors": false,
+    "rows": [
+      {
+        "dimensions": {
+          "status": "success"
+        },
+        "max": {
+          "cpuTime": 168017,
+          "wallTime": 2880366
+        },
+        "quantiles": {
+          "cpuTimeP50": 21597,
+          "cpuTimeP95": 168017,
+          "cpuTimeP99": 168017
+        },
+        "sum": {
+          "cpuTimeUs": 646422,
+          "errors": 0,
+          "requests": 19,
+          "subrequests": 21
+        }
+      }
+    ],
+    "cpuUnit": "microseconds",
+    "association": "script and UTC window; adaptive estimates, not trace matching"
+  },
+  "alternativeDatasetFields": {
+    "AccountWorkersOverviewDataAdaptiveGroups": [
+      "confidence",
+      "dimensions",
+      "sum"
+    ],
+    "AccountWorkersOverviewDataAdaptiveGroupsDimensions": [
+      "date",
+      "datetime",
+      "datetimeFifteenMinutes",
+      "datetimeFiveMinutes",
+      "datetimeHour",
+      "datetimeMinute",
+      "usageModel"
+    ],
+    "AccountWorkersOverviewDataAdaptiveGroupsSum": [
+      "standardCpuTimeUs",
+      "unboundDurationUs"
+    ],
+    "AccountWorkersInvocationsByOwnerAndScriptGroupsDimensions": [
+      "date",
+      "datetime",
+      "datetimeFifteenMinutes",
+      "datetimeFiveMinutes",
+      "datetimeHour",
+      "datetimeMinute"
+    ],
+    "AccountWorkersInvocationsByOwnerAndScriptGroupsSum": [
+      "cpuTimeUs",
+      "requests"
+    ]
+  },
+  "dashboard": {
+    "state": "sign-in required",
+    "currentPlanIndependentlyVerified": false,
+    "checkedOn": "2026-10-29"
+  },
+  "actions": {
+    "deployment": false,
+    "telemetryActivation": false,
+    "persistentPlatformLogging": false,
+    "tailConsumerOrRealtimeSession": false,
+    "planChange": false,
+    "sportingWrite": false
+  },
+  "acceptance": "incomplete"
+}
