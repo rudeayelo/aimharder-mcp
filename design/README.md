@@ -4,7 +4,7 @@ Design source: [ahmcp.pen](ahmcp.pen). Issue [#95](https://github.com/rudeayelo/
 
 ## Review sequence
 
-The owner narrowed the current delivery on 2026-10-29: define basic visual elements first, then compare two identity trials made with GPT Image, then try one public home page. Define the remaining screens only after that exploration. The complete #95 inventory remains outstanding. No final navigation, identity or screen design is selected by this checkpoint.
+The owner narrowed the current delivery on 2026-10-29: define basic visual elements first, then compare two identity trials made with GPT Image, then try one public home page. Define the remaining screens only after that exploration. The complete #95 inventory remains outstanding. No final navigation, identity or screen design is selected by this checkpoint. The subsequent [kettlebell robot identity trials](identity/README.md) are now available for review; neither has been selected.
 
 The editable file currently contains two foundation boards and three shared components: primary action, labeled input and status message. It contains no product screens. Text and UI examples use fictional data. The components illustrate appearance, not working controls.
 
@@ -69,6 +69,6 @@ White on brand blue is **3.30:1**: do not use for normal text. Primary dark text
 - State samples include default, hover, pressed, disabled, focused, invalid credentials, verified connection, pending authorization and expired invitation. They are specimens, not a complete state inventory.
 - Focus requires a 3px ring with a 2px white gap in implementation. The current drawing illustrates the ring; the gap and actual keyboard behavior still need verification. Keep visible labels, inline error association, focus restoration, underlined links and 48px touch targets. Static artwork cannot establish keyboard or screen-reader behavior.
 - No runtime, API, auth, MCP, provider, support-inbox or deployment behavior changed. No API research update is needed. Reviewed identity/custody, client authorization, invited admission, activity-role, self-service and hosted Madrid ADRs; their decisions are unchanged, so no new ADR is warranted for these reversible visual candidates.
-- No behavioral tests were added: this checkpoint changes design/documentation only. Full implementation verification belongs to subsequent deliveries. GPT Image trials, the public home-page experiment, mobile layouts, final navigation and the remaining #95 inventory have not been produced.
+- No behavioral tests were added: this checkpoint changes design/documentation only. Full implementation verification belongs to subsequent deliveries. Two subsequent GPT Image trials are linked above; the public home-page experiment, mobile layouts, final navigation and the remaining #95 inventory have not been produced.
 
-Next review: settle or adjust these foundations, then generate two distinct identity trials without treating either as approved. Use the selected result for the single public home-page experiment before defining the remaining screens.
+Next review: settle or adjust these foundations and compare the two identity trials without treating either as approved. Use the selected result for the single public home-page experiment before defining the remaining screens.
