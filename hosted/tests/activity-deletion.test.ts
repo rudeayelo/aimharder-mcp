@@ -94,12 +94,13 @@ async function call(cookie: string, name: string, args: Record<string, unknown> 
     const result=await client.callTool({ name, arguments: args }) as {isError?:boolean;structuredContent?:Record<string,unknown>;content:unknown};
     if(telemetryMode!=='off' && result.structuredContent && name.includes('activity_deletion')){
       const outcomes:Record<string,string>={'ready':'success','missing':'denied','ambiguous':'denied','unsupported':'denied','foreign-owner':'technical_failure','foreign-gym':'technical_failure','stale':'denied','observed-absent':'success','still-visible':'uncertain','conflicting-identity':'uncertain','uncertain':'uncertain','incomplete':name.startsWith('prepare')?'technical_failure':'uncertain'};
-      const event=await toolEvent(name,offset);expect(event.context.outcome).toBe(outcomes[String(result.structuredContent.status)]);
+      const event=await toolEvent(name,offset,outcomes[String(result.structuredContent.status)]);expect(event.context.outcome).toBe(outcomes[String(result.structuredContent.status)]);
       expect(event.context.error_class!==undefined).toBe(['uncertain','technical_failure'].includes(String(event.context.outcome)));
     }
     const serialized=JSON.stringify(result);
     if(telemetryMode!=='off' && result.isError && name.includes('activity_') && /ACCESS_RESTRICTED|ACTIVITY_REFERENCE_INVALID|ACTION_OUTCOME_UNCERTAIN/.test(serialized)){
-      const event=await toolEvent(name,offset);expect(event.context.outcome).toBe(serialized.includes('ACTION_OUTCOME_UNCERTAIN')?'uncertain':'denied');
+      const expected=serialized.includes('ACTION_OUTCOME_UNCERTAIN')?'uncertain':'denied';
+      const event=await toolEvent(name,offset,expected);expect(event.context.outcome).toBe(expected);
     }
     return result;
   } finally { await client.close(); }
@@ -342,8 +343,8 @@ test('suspension during a possibly sent deletion preserves original read-back an
  expect((await call(b(),'execute_activity_deletion',{actionReference,sourceActivityId:501,confirmed:true})).isError).toBe(true);expect(writes).toHaveLength(1);await policy('user',false);
 });
 
-async function toolEvent(name:string,offset=0){
- for(let i=0;i<100;i++){const event=telemetryEvents.slice(offset).findLast(e=>e.context.tool===name);if(event)return event;await new Promise(resolve=>setTimeout(resolve,10));}
+async function toolEvent(name:string,offset=0,outcome?:string){
+ for(let i=0;i<100;i++){const event=telemetryEvents.slice(offset).findLast(e=>e.context.tool===name&&(!outcome||e.context.outcome===outcome));if(event)return event;await new Promise(resolve=>setTimeout(resolve,10));}
  throw new Error('Missing synthetic telemetry tool event');
 }
 test('deletion completion distinguishes observed absence and execution uncertainty without private fields',async()=>{
@@ -369,7 +370,8 @@ test('exporter modes preserve exact deletion confirmation, consumed references a
   if(mode==='off')expectedPreparation=publicPreparation;else expect(publicPreparation).toEqual(expectedPreparation);
   const input={actionReference:prepared.structuredContent!.actionReference,sourceActivityId:501,confirmed:true};
   expect((await call(a(),'execute_activity_deletion',{...input,confirmed:false})).isError).toBe(true);expect(writes).toEqual([]);
-  const result=await call(a(),'execute_activity_deletion',input);expect(result.structuredContent).toMatchObject({status:'observed-absent',responseStatus:'http-ok',observedState:'absent',readbackCoverage:{status:'complete'}});
+  const executions=await Promise.all([call(a(),'execute_activity_deletion',input),call(a(),'execute_activity_deletion',input)]);
+  expect(executions.filter(value=>value.isError)).toHaveLength(1);const result=executions.find(value=>!value.isError)!;expect(result.structuredContent).toMatchObject({status:'observed-absent',responseStatus:'http-ok',observedState:'absent',readbackCoverage:{status:'complete'}});
   if(mode==='off')expectedExecution=result.structuredContent;else expect(result.structuredContent).toEqual(expectedExecution);
   expect((await call(a(),'execute_activity_deletion',input)).isError).toBe(true);expect(writes).toHaveLength(1);
   if(mode==='off')expect(telemetryEvents).toEqual([]);

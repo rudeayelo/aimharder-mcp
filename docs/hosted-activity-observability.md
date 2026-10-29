@@ -17,12 +17,13 @@ Role denial and invalid references remain expected denials. The existing `ACTION
 
 The existing authenticated HTTP/MCP SDK journeys run against the native Worker, D1 and account Durable Object with synthetic upstream responses. Every returned activity result in these journeys is checked against its telemetry classification, including restart/recovery, held preflight, role changes, foreign identity, changed source, overlapping execution and uncertain read-back. Additional preparation cases cover publication draft/missing/unsupported and deletion missing/ambiguous/incomplete/unsupported.
 
-The exporter matrix compares complete public structured previews (excluding fresh opaque references and expiration) and execution results across disabled, accepting, rejecting and two-second timeout receivers. It checks role gates, explicit confirmation, consumed-reference rejection and exactly one POST/DELETE. Hostile sporting text and private-detail markers must be absent from received events and platform-warning output. Each preparation/execution trace remains separate. These observations establish synthetic behavior only; they do not establish deployed ingestion, native provider CPU overhead, permanent erasure or RM effects.
+The exporter matrix compares complete public structured previews (excluding fresh opaque references and expiration) and execution results across disabled, accepting, rejecting and two-second timeout receivers. It checks role gates, explicit confirmation, overlapping execution, consumed-reference rejection and exactly one POST/DELETE. Hostile sporting text and private-detail markers must be absent from received events and platform-warning output. Each preparation/execution trace remains separate. These observations establish synthetic behavior only; they do not establish deployed ingestion, native provider CPU overhead, permanent erasure or RM effects.
 
 Verified commands on 2026-10-29:
 
 - `pnpm --dir hosted exec vitest run tests/activity-publication.test.ts --no-file-parallelism --testTimeout=30000`: 23 tests passed.
 - `pnpm --dir hosted exec vitest run tests/activity-deletion.test.ts --no-file-parallelism --testTimeout=30000`: 20 tests passed.
+- `pnpm --dir hosted exec vitest run tests/activity-deletion.test.ts tests/telemetry.test.ts --no-file-parallelism --testTimeout=30000`: 30 tests passed after integrating the read-tool slice, including unknown/missing activity-state fallback through the synthetic HTTP receiver harness.
 - `pnpm --dir hosted exec tsc --noEmit`: passed.
 
 The existing activity feature contracts, confirmation model and local stdio behavior are unchanged. The delivery ADR remains applicable without a new architecture decision. Actual controlled validation remains separately gated by [the native procedure](hosted-telemetry-native-validation.md).

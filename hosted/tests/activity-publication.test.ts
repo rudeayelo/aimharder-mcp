@@ -94,12 +94,13 @@ async function call(cookie: string, name: string, args: Record<string, unknown> 
     const result=await client.callTool({ name, arguments: args }) as {isError?:boolean;structuredContent?:Record<string,unknown>;content:unknown};
     if(telemetryMode!=='off' && result.structuredContent && name.includes('activity_publication')){
       const outcomes:Record<string,string>={draft:'success',ready:'success',missing:'denied',unsupported:'denied',confirmed:'success',rejected:'denied',stale:'denied',uncertain:'uncertain'};
-      const event=await toolEvent(name,offset);expect(event.context.outcome).toBe(outcomes[String(result.structuredContent.status)]);
+      const event=await toolEvent(name,offset,outcomes[String(result.structuredContent.status)]);expect(event.context.outcome).toBe(outcomes[String(result.structuredContent.status)]);
       expect(event.context.error_class!==undefined).toBe(event.context.outcome==='uncertain');
     }
     const serialized=JSON.stringify(result);
     if(telemetryMode!=='off' && result.isError && name.includes('activity_') && /ACCESS_RESTRICTED|ACTIVITY_REFERENCE_INVALID|ACTION_OUTCOME_UNCERTAIN/.test(serialized)){
-      const event=await toolEvent(name,offset);expect(event.context.outcome).toBe(serialized.includes('ACTION_OUTCOME_UNCERTAIN')?'uncertain':'denied');
+      const expected=serialized.includes('ACTION_OUTCOME_UNCERTAIN')?'uncertain':'denied';
+      const event=await toolEvent(name,offset,expected);expect(event.context.outcome).toBe(expected);
     }
     return result;
   } finally { await client.close(); }
@@ -371,8 +372,8 @@ test('connection replacement waits for an original-account publication read-back
  expect(disconnected.isError).toBe(true);expect(JSON.stringify(disconnected)).toContain('ACTION_OUTCOME_UNCERTAIN');expect(requests).toEqual([]);expect(publicationWrites).toBe(1);
 });
 
-async function toolEvent(name:string,offset=0){
- for(let i=0;i<100;i++){const event=telemetryEvents.slice(offset).findLast(e=>e.context.tool===name);if(event)return event;await new Promise(resolve=>setTimeout(resolve,10));}
+async function toolEvent(name:string,offset=0,outcome?:string){
+ for(let i=0;i<100;i++){const event=telemetryEvents.slice(offset).findLast(e=>e.context.tool===name&&(!outcome||e.context.outcome===outcome));if(event)return event;await new Promise(resolve=>setTimeout(resolve,10));}
  throw new Error('Missing synthetic telemetry tool event');
 }
 test('exporter modes preserve publication role controls, exact confirmation, trace isolation and one POST',async()=>{
@@ -389,7 +390,8 @@ test('exporter modes preserve publication role controls, exact confirmation, tra
   const reference=prepared.structuredContent!.actionReference as string;
   const preparationTrace=telemetryEvents.findLast(e=>e.context.tool==='prepare_activity_publication')?.trace_id;
   expect((await call(a(),'execute_activity_publication',{actionReference:reference,confirmed:false})).isError).toBe(true);expect(publicationWrites).toBe(0);
-  const result=await executePublication(reference);expect(result.structuredContent).toMatchObject({status:'confirmed',observedEntry:'matched'});
+  const executions=await Promise.all([executePublication(reference),executePublication(reference)]);
+  expect(executions.filter(value=>value.isError)).toHaveLength(1);const result=executions.find(value=>!value.isError)!;expect(result.structuredContent).toMatchObject({status:'confirmed',observedEntry:'matched'});
   if(mode==='off')expectedExecution=result.structuredContent;else expect(result.structuredContent).toEqual(expectedExecution);
   expect((await executePublication(reference)).isError).toBe(true);expect(publicationWrites).toBe(1);
   if(mode==='off')expect(telemetryEvents).toEqual([]);
