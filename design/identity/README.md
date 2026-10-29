@@ -1,5 +1,7 @@
 # Kettlebell robot identity trials
 
+Latest motion candidate: [playful rock](video/atomic-emotes/trial-06-guided-rock/README.md), with a generated lean reference and a two-second 12 fps review edit. Body, face and handle broadly move together; amplitude and logo-size acceptance remain pending.
+
 Latest motion candidate: [delight](video/atomic-emotes/trial-05-guided-delight/README.md), prepared with a GPT Image target pose and Kling 4. The full expression and a locally restrained edit are available; cadence and logo-size readability await owner review.
 
 Latest motion candidate: [curious gaze guided by a GPT Image pose](video/atomic-emotes/trial-04-guided-curious-glance/README.md), with a local return edit. It improves full-eye translation; owner acceptance and logo-size review remain pending. A separate WAN comparison and all original outputs are preserved.

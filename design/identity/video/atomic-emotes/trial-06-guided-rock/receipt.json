@@ -1,0 +1,26 @@
+{
+  "preparedAt": "2026-10-29T20:08:14.434904+00:00",
+  "model": "kling_4",
+  "durationSeconds": 3,
+  "ratio": "auto_720p",
+  "plannedCredits": 39,
+  "promptSha256": "1b4fb1d749ad6da9f6261a79b03a9f9e355a994d292689834e9eab30a86d9982",
+  "firstFrame": "../../reference-pack/01-front-neutral.png",
+  "lastFrame": "../../reference-pack/01-front-neutral.png",
+  "referenceFiles": [],
+  "middleFrame": "../curious-reference/rock-left.png",
+  "submissionState": "accepted",
+  "transport": "provider-ephemeral-uploads",
+  "submittedAt": "2026-10-29T20:08:17.421409+00:00",
+  "taskId": "37c25e2f-6804-428a-89e7-10932019e3c3",
+  "estimatedCost": {
+    "credits": 39
+  },
+  "status": "SUCCEEDED",
+  "lastCheckedAt": "2026-10-29T20:12:51.125870+00:00",
+  "outputCount": 1,
+  "completedAt": "2026-10-29T20:12:52.205029+00:00",
+  "sourceBytes": 942636,
+  "sourceSha256": "9efa14fdd74763d7568c811e9ece506bb541ff889121721f1f2d2e3dfdeea95b",
+  "balanceDecreaseCredits": 39
+}

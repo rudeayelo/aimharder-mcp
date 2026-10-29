@@ -1,5 +1,7 @@
 # Atomic kettle emotes
 
+Latest emote: [guided playful rock](trial-06-guided-rock/README.md), with a GPT Image left-lean pose and one successful 39-credit Kling 4 task. The two-second 12 fps edit retains the generated broader left/right rocking; owner review is pending. The owner chose to keep subtle delight as a minor variation. Surprise is deferred; small hop remains ungenerated.
+
 Latest emote: [guided delight](trial-05-guided-delight/README.md), using a [GPT Image target](delight-reference/README.md) as the middle keyframe. One 39-credit Kling 4 task succeeded. The generated expression over-enlarges the eyes; a subtle local edit uses its early poses and reverses them for the return. Both versions are retained for review. Surprise, playful rock and small hop remain ungenerated.
 
 Latest comparison: [WAN 3.0](trial-03-wan-curious-glance/README.md) also changes the eye shapes. A [GPT Image target pose](curious-reference/README.md) was then supplied as a middle keyframe to [Kling 4](trial-04-guided-curious-glance/README.md), yielding a clearer rightward gaze. The proposed clean edit reverses the outbound poses to remove a generated leftward overshoot. This round consumed 69 Runway credits; owner acceptance remains pending.

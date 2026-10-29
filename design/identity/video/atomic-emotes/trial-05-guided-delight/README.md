@@ -1,5 +1,7 @@
 # Guided delight emote
 
+Owner response: the subtle variant is considered very subtle, but the owner chose to retain it as a minor additional emote. This is an explicit keep decision, not acceptance of the unedited oversized expression or final logo-size validation.
+
 Generated 2026-10-29 after the owner approved creating the delight target with GPT Image and using it as an intermediate video pose. One accepted `kling_4` task succeeded. Estimated cost and separately observed credit decrease both equal **39 credits (USD 0.39 in credit face value before tax)**. No further video generation was submitted.
 
 ## Watch
