@@ -849,7 +849,18 @@
     "secretCount": 7,
     "cron": "*/5 * * * *",
     "producerModuleSha256": "1e2cc09f33dd0202bbc1746761fb75ef2fe13aa50bd2997a65731aa11875103d",
-    "protectedSecretValuesWrittenToReceipt": false
+    "protectedSecretValuesWrittenToReceipt": false,
+    "freshPostCleanupMaintenance": {
+      "at": "2026-10-29T23:59:15.370548Z",
+      "mainMaintenance": {
+        "lastAttemptAt": 1793318104878,
+        "lastSuccessAt": 1793318107503,
+        "status": "ok",
+        "lastPurgedCount": 0
+      },
+      "successAfterCleanup": true,
+      "purgedRecords": 0
+    }
   },
   "checks": {
     "observerContractPrivacyTests": 8,
@@ -860,7 +871,14 @@
       "elapsedSeconds": 0.543,
       "originalDeadlineUnchanged": true
     },
-    "focusedReviewUnresolvedFindings": 0
+    "focusedReviewUnresolvedFindings": 0,
+    "finalReview": {
+      "fixedPoint": "f83ac5d7d086441c042d749541f7407aeb9a78a5",
+      "reviewedCommit": "fe01fd0",
+      "standardsUnresolvedFindings": 0,
+      "specUnresolvedFindings": 0
+    },
+    "relativeDocumentationLinksChecked": 981
   },
   "acceptance": {
     "nativeAcceptanceComplete": false,
