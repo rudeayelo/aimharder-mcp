@@ -29,3 +29,7 @@ The owner subsequently authorized one isolated validation deployment, existing p
 ## Temporary compatibility deployment review (2026-10-29)
 
 The owner later explicitly requested applying the reviewed downstream filter patch. The [follow-up receipt](../hosted-telemetry-compatibility-validation.md) verifies actual discovery observations with the same accepted fields/static route identity and final disabling. No producer field, persistent identity, reader access, global retention/notification setting or sporting-write scope changed. The scope/privacy decision remains unchanged; the temporary image/rollback choice is recorded in the [delivery ADR](2026-10-28-best-effort-hosted-telemetry-delivery.md#temporary-destination-compatibility-decision-2026-10-29).
+
+## Temporary CPU validation review (2026-10-29)
+
+The owner-authorized [scheduled CPU capture](../hosted-telemetry-cpu-capture.md) uses a disposable observer with a closed scheduled timing/outcome projection; HTTP/private trace content is not serialized or persisted. Eight local privacy/contract checks, received-event allowlist checks and independent observer/tail removal are recorded. Transport closure leaves the final comparison cell incomplete. The accepted event schema, participant/access boundaries and sporting/recovery authority remain unchanged; no permanent observer or sustained activation is accepted.

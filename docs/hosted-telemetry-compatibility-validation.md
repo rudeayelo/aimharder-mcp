@@ -1,6 +1,6 @@
 # Native discovery telemetry after the temporary LogNorth patch
 
-Status: the owner explicitly requested applying the prepared patch while the next official LogNorth release is unavailable. The temporary image is active; the controlled AimHarder validation concluded with collection/export **disabled** at **2026-10-29T16:44:40.286757Z**. The discovery-storage gap from the [earlier native run](hosted-telemetry-native-receipt.md) is resolved for the observed endpoint. #102/#94 remain open for the resource-evidence gaps below.
+Status: the owner explicitly requested applying the prepared patch while the next official LogNorth release is unavailable. The temporary image is active; the controlled AimHarder validation concluded with collection/export **disabled** at **2026-10-29T16:44:40.286757Z**. The discovery-storage gap from the [earlier native run](hosted-telemetry-native-receipt.md) is resolved for the observed endpoint. #102/#94 remain open. The later [bounded scheduled CPU capture](hosted-telemetry-cpu-capture.md) establishes scheduled CPU and baseline evidence but stops at 2/5 unavailable samples; the resource gaps below describe this earlier checkpoint.
 
 ## Deployed image and preservation
 

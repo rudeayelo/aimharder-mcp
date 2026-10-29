@@ -76,3 +76,15 @@ The [fresh Paid follow-up](../hosted-telemetry-resource-followup.md#owner-report
 ### Authenticated Paid verification review (2026-10-29)
 
 The signed-in Workers plans view now confirms Paid as the current subscription. The same Worker's Cron events view still has no CPU rows, despite independently successful maintenance. This resolves the subscription-evidence gap without resolving scheduled CPU or the baseline comparison. No decision, delivery/privacy bound, budget target or activation authority changes; earlier unavailable-plan statements remain historical. The [dashboard receipt](../hosted-telemetry-dashboard-validation.json) records the current evidence and unchanged disabled service configuration.
+
+## Temporary scheduled CPU observer (2026-10-29)
+
+Status: accepted for the owner-authorized bounded measurement only, after the owner accepted the proposed temporary capture/comparison. The [capture procedure](../hosted-telemetry-cpu-capture.md) uses runtime Tail Worker CPU getters with verified integer-millisecond units, a scheduled-only technical projection, a transient consumer tail and no public endpoint/storage/persistent platform logging. It is separate from the production LogNorth exporter and its event schema.
+
+The observer does not modify either producer artifact or the diagnostic delivery decision. Native comparison can switch between the retained pre-instrumentation and reviewed production artifacts while preserving resources; final cleanup restores the reviewed artifact, exact original LogNorth settings with export disabled, and removes the owned observer/tail. The maximum whole-run bound is two hours, with independent cleanup starting five minutes earlier. No recurring monitor or permanent tail destination is added. The existing Paid plan is used; no new subscription, permission expansion, shared LogNorth change, sporting write or sustained activation is authorized. The observer's own CPU is separate, and cost/capacity remains evidence-dependent.
+
+This scoped validation choice resolves how to investigate the unavailable scheduled metrics; it is not evidence that capture or native acceptance has passed. Results and actual cleanup must be recorded after execution. Scope/privacy, original delivery limits, recovery authority and budget target remain unchanged.
+
+### Actual partial observer result (2026-10-29)
+
+The [bounded scheduled CPU capture](../hosted-telemetry-cpu-capture.md) establishes the native timing source, five baseline, five disabled and five reachable samples plus five received maintenance pairs. The transient capture connection closed after only two unavailable samples; the controller stopped and independently verified restoration/deletion within the unchanged two-hour whole-run bound. Native acceptance remains incomplete for that cell. A prepared 35-minute unavailable-only repetition is unexecuted and requires separate owner authorization; it does not extend the original window. Scope/privacy, recovery authority, delivery bounds, budget target and the separate sustained-activation gate are unchanged.
