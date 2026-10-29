@@ -17,6 +17,14 @@ Both were generated with the built-in GPT Image tool using separate prompts, wit
 
 ## Review and next step
 
+### Selected circular face and limited expression exploration
+
+The owner explicitly selected the dark circular face. Preserve orange recessed eyes; body color remains unselected. The intended use is limited: beside the logo on the public home page and occasional incidental placements. Do not expand this into a comprehensive character, pet or animation system.
+
+The subsequent [six-expression sheet](robot-emote-study.png) explores neutral, happy, wink, curious, surprised and focused using the blue body as an explicitly provisional constant. Built-in GPT Image used the earlier color sheet's blue circular-face variant as reference. Expressions change only eyes and small whole-body tilts; no mouth, limbs, eyebrows or props were added. Visual review confirms the six distinguishable poses and the shared circular face, while exact geometry and recess shading still vary slightly as expected in raster explorations. Focused reads more sternly than the other poses and may be unnecessary for the intended use.
+
+Recommendation for owner review: neutral beside the logo, with an occasional blink, small curious tilt or brief happy expression if motion is later chosen. These are proposals, not selected behavior. No animation, rig, runtime state mapping or interaction has been implemented. Small-size legibility and reduced-motion treatment remain checks for the limited final placement, rather than justification for a broader mascot system.
+
 ### Symbol color and recessed-eye studies
 
 The owner likes the corrected Krona-inspired direction while explicitly noting it still differs from the actual specimen. This is preference for an exploration, not selection of an exact font. At the owner's request, subsequent work focuses on the symbol before proceeding to the public home page.
