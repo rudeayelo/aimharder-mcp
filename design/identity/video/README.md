@@ -1,5 +1,7 @@
 # Video input preparation
 
+Latest local edit: [two quick blinks](atomic-emotes/double-blink/README.md), assembled from existing poses into exactly 24 frames at 12 fps. No new generation or credit expenditure.
+
 Latest execution: [atomic blink with Kling 4](atomic-emotes/trial-01-blink/README.md), one successful 39-credit task, delivered as exactly two seconds at 12 fps with shared neutral holds. Eye closure is a single slit per eye in the inspected sequence; timing and boundary transitions await owner acceptance.
 
 Current direction, 2026-10-29: the owner now wants **two-second atomic emotes**, each starting and ending at the same neutral pose, for later combination in code. The [atomic prompt package](atomic-emotes/README.md) supersedes the composite six-second choreography as the next experiment. It contains six complete prompts and a proposed Kling 4 comparison; no new videos have been generated. Kling 4 requires at least three source seconds, so the proposed two-second delivery includes a reviewed retime and common neutral boundaries. Earlier entries below are historical checkpoints.

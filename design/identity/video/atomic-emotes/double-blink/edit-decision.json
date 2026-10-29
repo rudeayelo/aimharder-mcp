@@ -1,0 +1,39 @@
+{
+  "fps": 12,
+  "frames": 24,
+  "durationSeconds": 2,
+  "source": "../trial-01-blink/source.mp4",
+  "sourceFrameIndexBase": 0,
+  "poses": {
+    "open": "../trial-01-blink/neutral-plate.png",
+    "half-closed": 17,
+    "closed": 27
+  },
+  "sequence": [
+    "open",
+    "open",
+    "open",
+    "open",
+    "half-closed",
+    "closed",
+    "closed",
+    "half-closed",
+    "open",
+    "open",
+    "open",
+    "open",
+    "half-closed",
+    "closed",
+    "closed",
+    "half-closed",
+    "open",
+    "open",
+    "open",
+    "open",
+    "open",
+    "open",
+    "open",
+    "open"
+  ],
+  "additionalGenerations": 0
+}

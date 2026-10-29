@@ -1,5 +1,7 @@
 # Kling 4 atomic blink trial
 
+Subsequent edit: the [double blink](../double-blink/README.md) reuses three poses from this take for two quick blinks, with no additional generation. The files below preserve the original slow-blink experiment.
+
 Generated 2026-10-29 after the owner requested the first atomic blink trial. One accepted `kling_4` task succeeded. Provider estimate and observed balance decrease both equal **39 credits**, equivalent to USD 0.39 in credit face value before tax. No additional generation was submitted.
 
 ## Watch and inspect
