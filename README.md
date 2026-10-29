@@ -82,6 +82,10 @@ The hosted [AimHarder connection slice](https://github.com/rudeayelo/aimharder-m
 
 ## Contributing
 
+The [LogNorth observability research](docs/research/2026-10-28-lognorth-observability.md) records verified installation observations and proposed integration options; no telemetry integration is enabled by that research.
+
+The accepted [hosted observability specification](docs/lognorth-observability-spec.md), published as [issue #94](https://github.com/rudeayelo/aimharder-mcp/issues/94), defines bounded, default-off LogNorth integration and future acceptance requirements. No integration is implemented or enabled.
+
 The server runs locally over stdio with one account per instance and no persistent storage. The TypeScript API client is separate from the MCP layer; see the [architecture decision](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/adr/2026-09-21-api-client-separated-from-interfaces.md).
 
 Report bugs or propose changes in [GitHub Issues](https://github.com/rudeayelo/aimharder-mcp/issues). Keep credentials and private activity out of reports. See the [development guide](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/development.md) to contribute code.
