@@ -8,6 +8,10 @@ AimHarder organizes scheduled classes, workout content, personal bookings, and p
 A person invited to use the hosted AimHarder service with their own AimHarder account.
 _Avoid_: Gym administrator or another member's account holder as an implied role.
 
+**Self-service onboarding**:
+An invited participant's setup of their service access, AimHarder connection and AI client without administrator intervention after invitation.
+_Avoid_: Treating routine operator registration or private delivery of client configuration as self-service.
+
 **Portal account**:
 A participant's identity in the hosted service, distinct from their AimHarder account and their identities in AI clients.
 _Avoid_: AimHarder account when referring to portal access.
