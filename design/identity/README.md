@@ -1,5 +1,7 @@
 # Kettlebell robot identity trials
 
+Latest motion candidate: [curious gaze guided by a GPT Image pose](video/atomic-emotes/trial-04-guided-curious-glance/README.md), with a local return edit. It improves full-eye translation; owner acceptance and logo-size review remain pending. A separate WAN comparison and all original outputs are preserved.
+
 Latest motion trial: [curious glance](video/atomic-emotes/trial-02-curious-glance/README.md). Kling 4 produced unwanted lid-like occlusion instead of preserving the eye capsules. The review clip is available; it is not an accepted emote.
 
 Current blink timing: the owner preferred 2× speed. The [double-blink delivery](video/atomic-emotes/double-blink/README.md) now lasts one second at 24 fps, preserving all 24 frames and shared neutral endpoints. No new generation was required; earlier two-second entries are historical.

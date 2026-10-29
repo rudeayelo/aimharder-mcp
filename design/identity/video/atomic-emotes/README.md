@@ -1,5 +1,7 @@
 # Atomic kettle emotes
 
+Latest comparison: [WAN 3.0](trial-03-wan-curious-glance/README.md) also changes the eye shapes. A [GPT Image target pose](curious-reference/README.md) was then supplied as a middle keyframe to [Kling 4](trial-04-guided-curious-glance/README.md), yielding a clearer rightward gaze. The proposed clean edit reverses the outbound poses to remove a generated leftward overshoot. This round consumed 69 Runway credits; owner acceptance remains pending.
+
 Latest generation: [curious glance with Kling 4](trial-02-curious-glance/README.md), one successful task at 39 credits. The model introduces lid-like eye occlusion and changes the orange capsule shapes, so the take is a review artifact rather than an accepted emote. The other four prompts remain ungenerated.
 
 Timing update: the owner preferred the double blink at 2× playback speed. Its [current delivery](double-blink/README.md) is therefore one second at 24 fps, retaining all 24 poses/holds. This supersedes the two-second duration for this emote; the other ungenerated prompts retain their preparation targets.

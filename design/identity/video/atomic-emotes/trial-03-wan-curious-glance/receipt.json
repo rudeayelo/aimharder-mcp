@@ -1,0 +1,26 @@
+{
+  "preparedAt": "2026-10-29T16:46:59.801170+00:00",
+  "model": "wan3",
+  "durationSeconds": 3,
+  "ratio": "auto_720p",
+  "plannedCredits": 30,
+  "promptSha256": "777cef174d144876e57fbb485cf95787baa0addcf0cb6fad428e91e209564390",
+  "firstFrame": "../../reference-pack/01-front-neutral.png",
+  "lastFrame": "../../reference-pack/01-front-neutral.png",
+  "referenceFiles": [],
+  "audio": false,
+  "submissionState": "accepted",
+  "transport": "provider-ephemeral-uploads",
+  "submittedAt": "2026-10-29T16:47:01.284067+00:00",
+  "taskId": "049f1b05-31e4-4ea7-bf89-5fedb2004a8c",
+  "estimatedCost": {
+    "credits": 30
+  },
+  "status": "SUCCEEDED",
+  "lastCheckedAt": "2026-10-29T16:48:28.529622+00:00",
+  "outputCount": 1,
+  "completedAt": "2026-10-29T16:48:29.562770+00:00",
+  "sourceBytes": 1642777,
+  "sourceSha256": "f5c67c7c75f99ccf1961fde0bb6939e3d009a249d74195708ee4fda923647051",
+  "balanceDecreaseCredits": 30
+}

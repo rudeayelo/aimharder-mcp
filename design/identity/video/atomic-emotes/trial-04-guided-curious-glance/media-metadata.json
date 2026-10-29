@@ -1,0 +1,98 @@
+{
+  "processingFilter": "setpts=(48/73)*(PTS-STARTPTS),fps=12,scale=940:940:flags=lanczos",
+  "neutralReplacementFramesOneBased": [
+    1,
+    2,
+    3,
+    22,
+    23,
+    24
+  ],
+  "source.mp4": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "avg_frame_rate": "0/0",
+        "duration": "3.041995",
+        "nb_frames": "133"
+      },
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 940,
+        "height": 940,
+        "avg_frame_rate": "24/1",
+        "duration": "3.041667",
+        "nb_frames": "73"
+      }
+    ],
+    "format": {
+      "duration": "3.041995",
+      "size": "443992"
+    },
+    "sha256": "c94e90169ada7098910906b9fe909279c6e32a0aecb3775f5c27a39662c32d96"
+  },
+  "retimed-2s-12fps.mp4": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 940,
+        "height": 940,
+        "avg_frame_rate": "12/1",
+        "duration": "2.000000",
+        "nb_frames": "24"
+      }
+    ],
+    "format": {
+      "duration": "2.000000",
+      "size": "208320"
+    },
+    "sha256": "8bd8b94fea6918bc0c87d61d9be2cf1c78b6e1b4d274aa7eeaae4dd10824d53e"
+  },
+  "glance-2s-12fps.mp4": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 940,
+        "height": 940,
+        "avg_frame_rate": "12/1",
+        "duration": "2.000000",
+        "nb_frames": "24"
+      }
+    ],
+    "format": {
+      "duration": "2.000000",
+      "size": "197379"
+    },
+    "sha256": "4255d86ec13ccf0df28e5e3a333960b4d8904176d93c76dd394038e0bbc097f9"
+  },
+  "curious-clean-2s-12fps.mp4": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 940,
+        "height": 940,
+        "avg_frame_rate": "12/1",
+        "duration": "2.000000",
+        "nb_frames": "24"
+      }
+    ],
+    "format": {
+      "duration": "2.000000",
+      "size": "192315"
+    },
+    "sha256": "c1f313cfe3fb4b1a9f015b066cd658c64a48a07a5f42f62d62cc52398993f55f"
+  }
+}

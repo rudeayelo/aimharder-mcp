@@ -1,0 +1,11 @@
+{
+  "generator": "Built-in GPT Image tool",
+  "input": "../../reference-pack/01-front-neutral.png",
+  "output": "curious-right.png",
+  "width": 1254,
+  "height": 1254,
+  "bytes": 1553703,
+  "sha256": "356854cbe12a44325906e8eb1ec294cbb2732f3a7ce877248ed0811aeefdae96",
+  "imagePrompt": "image-prompt.txt",
+  "guidedVideoPrompt": "guided-video-prompt.txt"
+}
