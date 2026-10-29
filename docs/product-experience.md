@@ -10,7 +10,7 @@ The owner accepted the following recommendations on 2026-10-28:
 - Cover the whole remote-service experience: the public website, invitations and sign-in, AimHarder connection, AI-client authorization, settings, administration, errors and transactional email. Review instructions visible in the AI chat as well. Changes to tool behavior require a specific decision.
 - Keep `ahmcp.link` as the intended public domain. The owner's earlier mention of `ahmcp.com` was a mistake, not a migration request.
 - Make the GitHub README a product entry point with immediately discoverable hosted remote and local npm usage paths, shared capabilities, and separate setup guides. Link technical details and validation evidence from the relevant sections.
-- Keep the website design in a pen.dev `.pen` file. The file location and screen inventory have not yet been selected.
+- Keep the website design in a pen.dev `.pen` file. The later design handoff fixes the path as `design/ahmcp.pen`; #95 resolves the concrete screen/state inventory within its required coverage.
 
 The owner also accepted the following recommendations in the second round:
 
@@ -21,7 +21,7 @@ The owner also accepted the following recommendations in the second round:
 - Use a restrained, approachable visual direction with readable typography, generous spacing, one accent color and clearly labeled fictional conversation examples.
 - Prioritize invitation acceptance, sign-in and AimHarder connection on mobile, with desktop layouts as well. Adapt help to the selected AI client. Mobile website design does not establish mobile setup capability in every client.
 
-The owner emphasized that onboarding for the different clients must be **very clear and concise**. Client selection, prerequisites, step wording, expected results and recovery instructions must serve that requirement. The exact guide structure and client coverage are still open.
+The owner emphasized that onboarding for the different clients must be **very clear and concise**. Client selection, prerequisites, step wording, expected results and recovery instructions must serve that requirement. Later decisions fix the initial guide coverage as ChatGPT, Hermes and Other clients with concrete requirements; #95 resolves the guide presentation.
 
 In the third round, the owner accepted client-specific instructions and corrected the remaining proposals:
 
@@ -100,7 +100,7 @@ Suggested question groups and coverage:
 
 Each answer should resolve one question and provide a relevant next action when needed. Keep setup instructions in the client guides and recovery instructions contextual to the actual state. Do not add search, ticket tracking or a custom support inbox to the portal for this small FAQ.
 
-Recommend making **FAQ** a persistent secondary link rather than a primary navigation item. The exact placement remains a proposal awaiting the owner's decision. Do not add private configuration, sporting data, credentials or diagnostic logs to contact links automatically.
+Recommend making **FAQ** a persistent secondary link rather than a primary navigation item. Its final placement is delegated to #95, rather than awaiting another owner preference round. Do not add private configuration, sporting data, credentials or diagnostic logs to contact links automatically.
 
 ## Design-reference research
 
@@ -130,3 +130,18 @@ The ticket is open; its creation does not complete the `.pen` design or validate
 - Final screen inventory, `.pen` location and design-review criteria.
 
 Resolve the visual/navigation branches in #95 and record implementation/operational follow-ups separately. Do not treat an unresolved branch, reference screenshot or intended UI as implemented or live-validated behavior.
+
+## Specification completeness review (2026-10-29)
+
+Review of this brief, #95, #92 and the two October 28 product-amendment ADRs found no additional essential owner decision needed before starting the design ticket. The product brief is sufficient for that work. The full implementation specification remains incomplete until the delegated design and technical follow-ups produce their concrete contracts and acceptance evidence.
+
+The remaining work falls into these areas:
+
+- **Design:** #95 resolves the visual system, navigation, copy, screen/state inventory and responsive presentation and supplies the reviewable `.pen` artifact.
+- **Self-service client setup:** specify and verify controlled registration/configuration delivery, exact callbacks, independently managed installations, conditional generic-client compatibility and the completion criterion for the suggested first query. Do not infer successful use from consent or introduce unrequested telemetry.
+- **Hosted Madrid policy:** reconcile service-selected configuration with action prerequisites and truthful provenance; preserve manually configured backend overrides and specify their effective behavior.
+- **Interface and wording:** implement the selected web/email designs and assign the accepted review of instructions, errors and confirmations visible in the AI chat to explicit implementation/verification work. The design ticket alone does not change MCP behavior.
+- **Support activation:** configure and verify receiving/reply handling for the accepted address and provider, preserving existing mail routing and checking account-specific conditions.
+- **Documentation and acceptance:** #92 covers both usage paths. Add a final integrated journey in which an invited participant completes setup without operator intervention and makes a useful query in each initially supported remote client. Keep local-path checks, conditional generic support and actual-client evidence distinct.
+
+These are follow-up specification/delivery areas, not newly created issues or additional accepted features. Consolidate them into a parent specification and an ordered implementation plan after the design handoff defines the interface contracts. Existing verified documentation corrections in #92 can proceed independently of final visual decisions.
