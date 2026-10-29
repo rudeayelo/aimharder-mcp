@@ -2,6 +2,8 @@
 
 Status: accepted product brief recorded on 2026-10-28; remaining visual and navigation decisions delegated to [design ticket #95](https://github.com/rudeayelo/aimharder-mcp/issues/95). This document separates accepted requirements, historical proposals and pending engineering. No final screen design, implementation or deployment is approved by this record alone.
 
+Parent specification: [#103 — Deliver the remote MCP UX/UI and GitHub documentation](https://github.com/rudeayelo/aimharder-mcp/issues/103), published on 2026-10-29 with `ready-for-agent` and `wayfinder:map`. It is the canonical tracker specification, including 72 user stories, implementation/testing decisions, scope boundaries and an ordered delivery map. Existing #95 and #92 are linked as native sub-issues, with #95 first. The parent does not implement or complete its deliveries.
+
 ## Accepted direction
 
 The owner accepted the following recommendations on 2026-10-28:
@@ -144,4 +146,6 @@ The remaining work falls into these areas:
 - **Support activation:** configure and verify receiving/reply handling for the accepted address and provider, preserving existing mail routing and checking account-specific conditions.
 - **Documentation and acceptance:** #92 covers both usage paths. Add a final integrated journey in which an invited participant completes setup without operator intervention and makes a useful query in each initially supported remote client. Keep local-path checks, conditional generic support and actual-client evidence distinct.
 
-These are follow-up specification/delivery areas, not newly created issues or additional accepted features. Consolidate them into a parent specification and an ordered implementation plan after the design handoff defines the interface contracts. Existing verified documentation corrections in #92 can proceed independently of final visual decisions.
+These are follow-up specification/delivery areas, not additional accepted features. At the owner's explicit `to-spec` request, they are now consolidated in parent #103. The design handoff and technical deliveries resolve the remaining concrete contracts within that specification. Apart from existing #95/#92, further implementation packages have not yet been published as separate child tickets. Existing verified documentation corrections in #92 can proceed independently of final visual decisions.
+
+The proposed primary test boundary is the existing public Worker HTTP interface, consumed by browser journeys and an actual MCP SDK, with external AimHarder/Google/mail responses simulated in automated tests. The specification records existing portal/auth/connection/lifecycle test prior art, visual/accessibility review, separate actual-client/provider evidence and local-package/document checks. The skill's test-boundary check was presented to the owner asynchronously; an unanswered check is not treated as approval or execution evidence. Incorporate any subsequent correction before implementation.
