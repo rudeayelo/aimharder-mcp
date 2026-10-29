@@ -4,7 +4,7 @@ import { handleHostedRequest } from '../src/worker.js';
 import type { HostedEnvironment } from '../src/auth.js';
 
 export default {
-  async fetch(request: Request, env: HostedEnvironment) {
+  async fetch(request: Request, env: HostedEnvironment,ctx?:ExecutionContext) {
     if (new URL(request.url).pathname === '/__fixture') {
       const start = performance.now();
       const hash = await hashPassword('synthetic-portal-password');
@@ -54,7 +54,7 @@ export default {
       ]);
       return Response.json({ hashMilliseconds });
     }
-    return handleHostedRequest(request, env, async (subject) =>
+    return handleHostedRequest(request, {...env,...(request.headers.has('x-fixture-telemetry-off')?{LOGNORTH_ENABLED:'false'}:{})}, async (subject) =>
       subject === 'portal-fixture'
         ? {
             username: 'upstream@example.invalid',
@@ -62,7 +62,7 @@ export default {
             gymTimeZones: {},
             defaultGym: undefined,
           }
-        : null
+        : null,ctx
     );
   },
 };

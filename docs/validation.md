@@ -1116,3 +1116,32 @@ After the positive journey, B was publicly deleted with 204. Current disposable 
 ## Main integration and fresh pilot deployment (2026-10-28)
 
 The owner-requested [main integration and code-only test deployment](hosted-test-environment.md#main-integration-and-verified-test-deployment-2026-10-28) used merged PR #89 source `30e4f3838043dca04efe14f73a3b8fd3684f0840`. Independent provider main-module hashing matched the built artifact; returned bindings/configuration, namespace, routing and cron remained preserved. Eleven configured-mail anonymous checks and a fresh authenticated remote Pilot account-context comparison passed. The deployed bytes equal the prior active artifact, so no new behavior or repeated full client acceptance is claimed. The final documentation update changes no executable source or ADR decision; its own protected-branch CI is separate from the deployed-artifact evidence.
+
+## Initial hosted observability path (#97, 2026-10-29)
+
+The default-off HTTP/account-context slice passed **10 focused hosted tests in
+2 files** using the native local Worker and MCP SDK harness. The touched
+portal/Google/account-connection regression run passed **40 tests in 5 files**;
+hosted typecheck/build also passed. The external receiver was synthetic. Tests cover correlated
+HTTP/tool completion, safe typed denials/technical/unknown results, private route
+normalization, concurrent traces, count/UTF-8 bounds and overflow priority,
+oversize discard, rejection/redirect/malformed/partial/count-mismatched/oversize
+acknowledgements, complete-attempt deadlines including response bodies, and no
+retry. SDK comparisons preserve public results, upstream authentication/query
+counts and released recovery leases with exporter success/rejection/timeout and
+disabled modes. No actual sporting write was performed.
+
+The source acknowledgement shape (`created`, optional validation `errors`) and
+Bearer app-key ingestion were freshly checked against the pinned v0.29.0
+[ingestion source](https://github.com/karloscodes/lognorth/blob/abaa5c6952c1f3ca2a5a8789a07253de6367e314/internal/http/ingest.go).
+This is source/fixture evidence, not installed-service delivery/read-back.
+Cloudflare's maintained execution-context documentation confirms `waitUntil`
+keeps background work independent of the returned response; no CPU claim is
+inferred from local wall-clock timing.
+
+The remaining 17 tools and scheduled phases are separate implementation slices.
+Relevant scope/privacy and best-effort-delivery ADRs remain the accepted decisions;
+no architecture or security policy is replaced. Native hosted read-back,
+installation retention/notification/access checks, measured provider CPU overhead,
+notification receipt and sustained activation remain pending. No deployment,
+real secret provisioning or shared installation change occurred.

@@ -13,7 +13,7 @@
   "triggers": { "crons": ["*/5 * * * *"] },
   "observability": { "enabled": false },
   "routes": [{ "pattern": "pilot-test.ahmcp.link", "custom_domain": true }],
-  "vars": { "BASE_URL": "https://pilot-test.ahmcp.link", "RECOVERY_AUTHORITY_ID": "REPLACE_WITH_PINNED_AUTHORITY_ID" },
+  "vars": { "LOGNORTH_ENABLED": "false", "BASE_URL": "https://pilot-test.ahmcp.link", "RECOVERY_AUTHORITY_ID": "REPLACE_WITH_PINNED_AUTHORITY_ID" },
   "d1_databases": [
     {
       "binding": "AUTH_DB",
@@ -48,3 +48,6 @@
 // Deletion/restore stage: RECOVERY_DB is independent and MUST NOT be restored
 // with AUTH_DB. Bootstrap its pinned head through the trusted operator process;
 // missing bindings/head fail closed. See ../docs/hosted-account-deletion.md.
+
+// Optional observability stays disabled. Supply LOGNORTH_API_KEY only as an app-key
+// platform secret after separate activation approval, never in this manifest.

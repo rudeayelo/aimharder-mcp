@@ -21,3 +21,15 @@ Instrument every hosted HTTP completion, tool completion and maintenance-phase c
 Lost events are permitted. Unsampled instrumentation does not establish exhaustive received history, exact aggregate totals or an audit trail. Exporter failure must never replay an AimHarder action. Moving to durable delivery, retries or sampling requires an explicit revision of this decision. Native resource overhead and end-to-end delivery remain unverified; no plan upgrade or deployment is implied.
 
 The owner accepted automated privacy/classification/isolation/failure checks using synthetic sporting writes, followed by separately authorized actual-Worker LogNorth read-back and before/after CPU measurement. Instrumentation that introduces incompatible Free-limit failures must not be activated as accepted; report evidence and alternatives rather than purchasing an upgrade. Rollback disables collection/export without changing existing service bindings. This ADR records acceptance requirements, not passed runtime checks.
+
+## Implementation evidence (2026-10-29)
+
+The later owner request to implement specification #94 authorizes the initially
+disabled implementation; it does not authorize deployment or activation. The
+initial HTTP/account-context slice implements the accepted invocation-local,
+bounded one-attempt delivery through Worker `waitUntil`, with synthetic native
+Worker/SDK evidence recorded in [validation](../validation.md#initial-hosted-observability-path-97-2026-10-29).
+The decision and its loss/uncertainty boundaries are unchanged. Remaining tool
+and maintenance instrumentation and separately authorized native acceptance
+remain pending; the original design-interview authorization boundary above is
+historical context.

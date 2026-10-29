@@ -1,3 +1,4 @@
+import { createTelemetry, classifyAccountContext, classifyError } from './telemetry.js';
 import { requireMcpAuth } from '@better-auth/mcp';
 import { createMcpHandler, McpServer } from '@modelcontextprotocol/server';
 import { CfWorkerJsonSchemaValidator } from '@modelcontextprotocol/server/validators/cf-worker';
@@ -69,17 +70,21 @@ async function dispatchHostedRequest(
               },
             },
             async ({ gymId }) => {
+              const started=performance.now();
+              let outcome: import('./telemetry.js').Classification={outcome:'unclassified'};
               try {
                 if (!claims.sub) throw new Error('Missing subject');
                 if (!resolveConnection) {
                   const response = await accountOperation(env, claims.sub, { kind: 'context', ...(gymId ? { gymId } : {}) });
                   const result = await response.json() as Record<string, unknown>;
+                  outcome=classifyAccountContext(result,response.status);
                   if (!response.ok || result.status !== 'connected') return { isError: true, content: [{ type: 'text', text: JSON.stringify(result) }] };
                   const { status: _status, ...context } = result;
                   return { content: [{ type: 'text', text: JSON.stringify(context) }], structuredContent: context };
                 }
                 const connection = await resolveConnection(claims.sub);
-                if (!connection)
+                if (!connection) {
+                  outcome={outcome:'denied',code:'NOT_CONNECTED'};
                   return {
                     isError: true,
                     content: [
@@ -89,17 +94,20 @@ async function dispatchHostedRequest(
                       },
                     ],
                   };
+                }
                 const result = await new AimHarderClient(connection).getAccountContext(gymId);
+                outcome={outcome:'success'};
                 return {
                   content: [{ type: 'text', text: JSON.stringify(result) }],
                   structuredContent: { ...result },
                 };
               } catch (error) {
+                outcome=classifyError(error);
                 return {
                   isError: true,
                   content: [{ type: 'text', text: JSON.stringify({ error: safeError(error) }) }],
                 };
-              }
+              } finally { env.TELEMETRY?.tool('get_account_context',started,outcome); }
             }
           );
           if (!resolveConnection && claims.sub) {
@@ -120,13 +128,21 @@ async function dispatchHostedRequest(
   )(request);
 }
 
-export async function handleHostedRequest(request:Request,env:HostedEnvironment,resolveConnection?:ResolveConnection):Promise<Response>{
-  let lease:string|null;
-  try{lease=await acquireRecoveryLease(env,null);}catch{return Response.json({error:'Service recovery is unavailable.'},{status:503});}
-  if(!lease)return Response.json({error:'Service recovery is unavailable.'},{status:503});
-  try{return await dispatchHostedRequest(request,{...env,RECOVERY_LEASE:lease},resolveConnection);}
-  finally{await releaseRecoveryLease(env,lease);}
+export async function handleHostedRequest(request:Request,env:HostedEnvironment,resolveConnection?:ResolveConnection,ctx?:Pick<ExecutionContext,'waitUntil'>):Promise<Response>{
+  const started=performance.now();
+  const telemetry=ctx?createTelemetry(env):undefined;
+  let response:Response|undefined;
+  let thrown=false;
+  try {
+    let lease:string|null;
+    try{lease=await acquireRecoveryLease(env,null);}catch{telemetry?.httpOutcome({outcome:'technical_failure',code:'RECOVERY_UNAVAILABLE'});return response=Response.json({error:'Service recovery is unavailable.'},{status:503});}
+    if(!lease){telemetry?.httpOutcome({outcome:'technical_failure',code:'RECOVERY_UNAVAILABLE'});return response=Response.json({error:'Service recovery is unavailable.'},{status:503});}
+    try{return response=await dispatchHostedRequest(request,{...env,RECOVERY_LEASE:lease,...(telemetry?{TELEMETRY:telemetry}:{})},resolveConnection);}
+    finally{await releaseRecoveryLease(env,lease);}
+  }catch(error){thrown=true;throw error;}
+  finally{if(telemetry){telemetry.http(request,started,thrown?undefined:response,thrown);ctx!.waitUntil(telemetry.flush());}}
 }
+
 export default {
   scheduled:async(_controller:ScheduledController,env:HostedEnvironment,ctx:ExecutionContext)=>{
     const result=await maintainDeletedAccounts(env);
@@ -136,5 +152,5 @@ export default {
     })());
     if(result.status!=='ok')throw new Error('Recovery cleanup requires operator attention');
   },
-  fetch: (request: Request, env: HostedEnvironment) => handleHostedRequest(request, env),
+  fetch: (request: Request, env: HostedEnvironment,ctx?:ExecutionContext) => handleHostedRequest(request, env,undefined,ctx),
 };

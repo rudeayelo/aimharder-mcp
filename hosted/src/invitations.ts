@@ -21,7 +21,7 @@ export async function handleInvitations(request: Request, env: HostedEnvironment
     return Response.json({ message: 'Request origin rejected.' }, { status: 403 });
   if (path === '/api/portal/invitations' && request.method === 'GET') return Response.json({ invitations: await listInvitations(env) });
   if (path === '/api/portal/invitations' && request.method === 'POST') {
-    if (!mailConfigured(env)) return Response.json({ message: 'Email delivery is unavailable. Please try later.' }, { status: 503 });
+    if (!mailConfigured(env)) {env.TELEMETRY?.httpOutcome({outcome:'denied',code:'EMAIL_UNAVAILABLE'});return Response.json({ message: 'Email delivery is unavailable. Please try later.' }, { status: 503 });}
     const parsed = z.object({ email: z.email().max(254) }).strict().safeParse(await request.json().catch(() => null));
     if (!parsed.success) return Response.json({ message: 'Enter a valid email address.' }, { status: 400 });
     const email = normalizeEmail(parsed.data.email);
