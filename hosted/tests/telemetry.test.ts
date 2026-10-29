@@ -46,6 +46,7 @@ test('account-context classifications never serialize upstream payloads or unkno
     [{status:'authentication-required',error:{code:'AUTHENTICATION_FAILED',message:'SECRET',accessibleGymIds:['SECRET']}},'denied','AUTHENTICATION_FAILED'],
     [{status:'authentication-required',error:{code:'IDENTITY_MISMATCH',message:'SECRET'}},'technical_failure','IDENTITY_MISMATCH'],
     [{status:'invalid-settings',error:{code:'INVALID_TIME_ZONE_CONFIGURATION'}},'denied','INVALID_TIME_ZONE_CONFIGURATION'],
+    [{status:'connected',account:{authenticated:true},gyms:[],selectedGym:{},error:{code:'IDENTITY_MISMATCH',message:'SECRET'}},'technical_failure','IDENTITY_MISMATCH'],
     [{status:'connected',secret:'SECRET'},'unclassified',undefined],
     [{status:'SECRET',error:{code:'SECRET',message:'SECRET'}},'unclassified',undefined],
   ] as const){

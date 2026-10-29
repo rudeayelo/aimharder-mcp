@@ -1,3 +1,4 @@
+import { queryToolNames } from './query-outcome.js';
 import { activityOutcomeCodes } from './activity-outcome.js';
 import { AimHarderError } from '../../src/errors.js';
 
@@ -10,12 +11,12 @@ export interface TelemetryConfiguration {
   LOGNORTH_ENVIRONMENT?: string;
   LOGNORTH_RELEASE?: string;
 }
-const toolNames = ['get_account_context','get_class_sessions','get_upcoming_bookings','get_booking_history','get_published_workouts','get_personal_activity','get_exercise_1rm','find_exercise_1rm','get_exercise_rm_progression','prepare_activity_publication','execute_activity_publication','prepare_booking_cancellation','execute_booking_cancellation','execute_late_booking_cancellation','prepare_activity_deletion','execute_activity_deletion','prepare_booking_creation','execute_booking_creation'] as const;
+const toolNames = new Set(['get_account_context',...Object.values(queryToolNames)]);
 const messages = { 'http.completed': 'Hosted HTTP request completed', 'mcp.tool.completed': 'Hosted MCP tool completed', 'maintenance.main.completed': 'Scheduled deletion maintenance completed', 'maintenance.memory.completed': 'Scheduled memory maintenance completed' } as const;
 const priority: Record<Outcome,number> = {success:0,denied:1,partial:2,uncertain:3,technical_failure:3,unclassified:3};
 const issues = { technical_failure: ['HostedTechnicalFailure','Hosted operation failed technically'], uncertain: ['HostedWriteUncertain','Hosted write effect is unconfirmed'], unclassified: ['HostedClassifierFailure','Hosted outcome has no supported classification'] } as const;
 // Labels and codes originate in source catalogs, never arbitrary upstream strings.
-const deniedCodes = new Set(['AUTHENTICATION_FAILED','ACCESS_RESTRICTED','SESSION_EXPIRED','INVALID_CONFIGURATION','INVALID_TIME_ZONE_CONFIGURATION','NO_ACCESSIBLE_GYMS','DEFAULT_GYM_REQUIRED','GYM_NOT_ACCESSIBLE','GYM_TIME_ZONE_REQUIRED','CONFIRMED_GYM_TIME_ZONE_REQUIRED','INVALID_CLASS_QUERY','INVALID_WORKOUT_QUERY','INVALID_ACTIVITY_QUERY','INVALID_EXERCISE_QUERY','INVALID_BOOKING_PREPARATION_QUERY','INVALID_CANCELLATION_PREPARATION_QUERY','INVALID_BOOKING_EXECUTION_QUERY','INVALID_LATE_CANCELLATION_QUERY','BOOKING_REFERENCE_INVALID','INVALID_ACTIVITY_PUBLICATION_QUERY','INVALID_ACTIVITY_DELETION_EXECUTION_QUERY','ACTIVITY_REFERENCE_INVALID']);
+const deniedCodes = new Set(['AUTHENTICATION_FAILED','ACCESS_RESTRICTED','SESSION_EXPIRED','INVALID_CONFIGURATION','INVALID_TIME_ZONE_CONFIGURATION','NO_ACCESSIBLE_GYMS','DEFAULT_GYM_REQUIRED','ALREADY_CONNECTED','CONNECTION_CHANGED','GYM_NOT_ACCESSIBLE','GYM_TIME_ZONE_REQUIRED','CONFIRMED_GYM_TIME_ZONE_REQUIRED','INVALID_CLASS_QUERY','INVALID_WORKOUT_QUERY','INVALID_ACTIVITY_QUERY','INVALID_EXERCISE_QUERY','INVALID_BOOKING_PREPARATION_QUERY','INVALID_CANCELLATION_PREPARATION_QUERY','INVALID_BOOKING_EXECUTION_QUERY','INVALID_LATE_CANCELLATION_QUERY','BOOKING_REFERENCE_INVALID','INVALID_ACTIVITY_PUBLICATION_QUERY','INVALID_ACTIVITY_DELETION_EXECUTION_QUERY','ACTIVITY_REFERENCE_INVALID']);
 const technicalCodes = new Set(['IDENTITY_MISMATCH','REQUEST_FAILED','INVALID_RESPONSE','UNSUPPORTED_MEMBERSHIP','INVALID_CLASS_RESPONSE','INVALID_BOOKING_RESPONSE','INVALID_WORKOUT_RESPONSE','INVALID_ACTIVITY_RESPONSE','INVALID_EXERCISE_RESPONSE','INVALID_ACTIVITY_PREFERENCES','INVALID_ACTIVITY_SOURCE','ACTIVITY_LIMIT']);
 const codes = new Set<string>([...activityOutcomeCodes,'BOOKING_NOT_EXECUTABLE','BOOKING_EFFECT_UNCONFIRMED','BOOKING_STALE','BOOKING_REFUSED','BOOKING_WAITLISTED','BOOKING_CREDIT_CONFIRMATION_REQUIRED',...deniedCodes,...technicalCodes,'ACTION_OUTCOME_UNCERTAIN','BOOKING_HISTORY_PARTIAL','PERSONAL_ACTIVITY_INCOMPLETE','RM_ENRICHMENT_INCOMPLETE','MAINTENANCE_MAIN_FAILED','MAINTENANCE_OVERDUE','MAINTENANCE_MEMORY_FAILED','HTTP_DENIED','HTTP_FAILURE','HTTP_UNCLASSIFIED','EMAIL_UNAVAILABLE','GOOGLE_UNAVAILABLE','RECOVERY_UNAVAILABLE','NOT_CONNECTED']);
 function classifyCode(code:unknown):Classification {
@@ -30,13 +31,18 @@ export function classifyError(error: unknown): Classification {
 }
 export function classifyAccountContext(envelope: Record<string,unknown>,httpStatus?:number): Classification {
   if(!envelope || typeof envelope!=='object' || Array.isArray(envelope))return {outcome:'unclassified'};
-  if(envelope.status==='connected' && typeof envelope.account==='object' && envelope.account!==null && 'authenticated' in envelope.account && envelope.account.authenticated===true && Array.isArray(envelope.gyms) && typeof envelope.selectedGym==='object' && envelope.selectedGym!==null)return {outcome:'success'};
   const error=envelope.error;
-  if(typeof error==='object' && error!==null && 'code' in error)return classifyCode(error.code);
+  if(error!==undefined && error!==null){
+    return typeof error==='object' && 'code' in error ? classifyCode(error.code) : {outcome:'unclassified'};
+  }
+  if(envelope.status==='connected' && typeof envelope.account==='object' && envelope.account!==null && 'authenticated' in envelope.account && envelope.account.authenticated===true && Array.isArray(envelope.gyms) && typeof envelope.selectedGym==='object' && envelope.selectedGym!==null)return {outcome:'success'};
   if(envelope.status==='unavailable' && !error){
     if(httpStatus===403)return {outcome:'denied',code:'ACCESS_RESTRICTED'};
     if(httpStatus===503)return {outcome:'technical_failure',code:'REQUEST_FAILED'};
   }
+  if(!error && envelope.status==='default-gym-required')return {outcome:'denied',code:'DEFAULT_GYM_REQUIRED'};
+  if(!error && envelope.status==='connection-changed')return {outcome:'denied',code:'CONNECTION_CHANGED'};
+  if(!error && envelope.status==='already-connected')return {outcome:'denied',code:'ALREADY_CONNECTED'};
   if(envelope.status==='invalid-settings' && !error)return {outcome:'denied',code:'INVALID_CONFIGURATION'};
   if(envelope.status==='not-connected')return {outcome:'denied',code:'NOT_CONNECTED'};
   return {outcome:'unclassified'};
@@ -96,7 +102,7 @@ export class TelemetryInvocation {
     }
   }
   tool(tool:string,started:number,classification:Classification){
-    if(!(toolNames as readonly string[]).includes(tool))return;
+    if(!toolNames.has(tool))return;
     this.record('mcp.tool.completed',started,classification,{tool});
   }
   maintenance(phase:'main'|'memory',started:number,classification:Classification){this.record(`maintenance.${phase}.completed`,started,classification);}

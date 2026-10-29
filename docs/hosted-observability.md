@@ -4,11 +4,16 @@ The integration implements [specification #94](https://github.com/rudeayelo/aimh
 
 ## Runtime boundaries
 
-`hosted/src/telemetry.ts` owns an invocation-local buffer, static route/tool/message catalogs, privacy allowlist and bounded single-attempt HTTP exporter. The production HTTP wrapper records after application cleanup and recovery-lease release, then registers export with `waitUntil`. Tool classifiers inspect trusted account state before MCP serialization. Local stdio is outside this integration.
+`hosted/src/telemetry.ts` owns an invocation-local buffer, static route/message catalogs, the shared account-query tool catalog, privacy allowlist and bounded single-attempt HTTP exporter. The production HTTP wrapper records after application cleanup and recovery-lease release, then registers export with `waitUntil`. Tool classifiers inspect trusted account state before MCP serialization. Local stdio is outside this integration.
 
 Only registered tool callbacks count as tool usage. HTTP transport completion is a separate observation: an MCP tool error inside HTTP 200 must retain both transport success and its independently classified tool outcome. Invalid arguments rejected before callback execution produce no fabricated tool event. Preparation and execution have different request traces; no participant, account, client, gym, booking, activity or action-reference identity joins them.
 
-Use `context.http_status` for actual HTTP status. Technical, uncertain and classifier outcomes carry static issue fields; ordinary denials and partial retrieval do not automatically produce issues. An uncertain sporting effect remains unconfirmed even if a later independent check finds that it happened. Deletion's observed absence does not establish permanence or physical erasure. Documented feed/history/search limits alone do not establish partial retrieval.
+Use `context.http_status` for actual HTTP status. Portal/API configuration refusals
+`default-gym-required`, `already-connected` and `connection-changed` are expected
+`denied` outcomes with the closed codes `DEFAULT_GYM_REQUIRED`,
+`ALREADY_CONNECTED` and `CONNECTION_CHANGED`; they do not create classifier
+issues. A returned error takes precedence over a contradictory connected envelope,
+so an identity mismatch remains a technical failure. Technical, uncertain and classifier outcomes carry static issue fields; ordinary denials and partial retrieval do not automatically produce issues. An uncertain sporting effect remains unconfirmed even if a later independent check finds that it happened. Deletion's observed absence does not establish permanence or physical erasure. Documented feed/history/search limits alone do not establish partial retrieval.
 
 The exporter collects at most 32 events and 65,536 UTF-8 bytes including the JSON envelope. Events above 2,048 bytes are discarded whole. Priority is technical/uncertain/unclassified, partial, denied, then success, preserving arrival order within ties. One attempt has a two-second deadline including acknowledgement processing and a 4 KiB acknowledgement cap. Complete acceptance requires HTTP 201, the exact submitted `created` count and no event errors. No redirect, retry, persistent buffer, durable queue, shutdown hook or recursive exporter event is used.
 

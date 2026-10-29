@@ -1212,3 +1212,32 @@ The receiver observes one final aggregate batch after existing deferred work set
 The stalled-acknowledgement run verifies timeout warning, bounded final settlement and no retry. The Miniflare outbound bridge does not forward its response stream cancellation to the host receiver's `cancel` callback, so remote receipt of cancellation is not claimed by this evidence. Production exporter abort/cancel behavior remains the shared delivery implementation. Platform termination may prevent any completion evidence.
 
 Reviewed the observability scope/privacy, best-effort delivery and independent deletion/restoration ADRs: existing decisions remain applicable, with no new architecture, security, retention or validation policy. The maintenance runbook now explains phase evidence and authority boundaries. Local stdio, public tool schemas and API contracts are unaffected; no package changeset is needed. Actual Worker LogNorth read-back, inherited installation settings, measured provider CPU and notifications remain separate acceptance work. No deployment or activation was performed. This does not supply cron-absence alerts, uptime monitoring or physical-erasure evidence.
+
+## Hosted telemetry review corrections (#94, 2026-10-29)
+
+The final two-axis review found three known portal/API configuration refusals
+being emitted as classifier failures. Actual production HTTP requests in the
+native synthetic account-connection harness now verify HTTP 422
+`default-gym-required` and HTTP 409 `already-connected` / `connection-changed`
+export `denied` with the static codes `DEFAULT_GYM_REQUIRED`,
+`ALREADY_CONNECTED` and `CONNECTION_CHANGED`, without issue fields. The
+connection-change case holds an upstream identity request while changing a
+synthetic stored revision, then checks the production compare-and-swap refusal
+and its externally received completion event. No production data or live request
+is involved. Each refusal assertion failed as `unclassified` before its fix.
+
+A supplemental native exporter-boundary case showed a contradictory connected
+account envelope with `IDENTITY_MISMATCH` incorrectly classified as success;
+it now exports `technical_failure` with the known code. The exporter tool
+allowlist derives from the same source-owned callback catalog used by query
+completion, plus `get_account_context`, removing duplicated tool names.
+
+Verification after correction: 51/51 tests passed across account connection,
+connection lifecycle, telemetry, schedule queries and activity queries. Hosted
+TypeScript checks, the Worker build and `git diff --check` passed. Documentation
+links in the changed documents resolve locally. The scope/privacy and
+best-effort delivery ADRs were reviewed: their decisions remain unchanged, so no
+new ADR is needed. Public API contracts, local stdio and account behavior are
+unchanged. Actual Worker validation under #102, provider CPU measurements,
+shared installation settings, notification evidence and remote disabling remain
+unperformed; this correction authorizes no deployment or activation.
