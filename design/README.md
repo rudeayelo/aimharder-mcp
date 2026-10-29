@@ -1,5 +1,7 @@
 # Visual foundations — work in progress
 
+Current stage, 2026-10-29: mascot exploration has established a blue body, dark circular face and orange recessed eyes, with a retained motion set. The owner has returned to [wordmark composition](identity/wordmark-study/README.md): three exact-font candidates and existing mascot clips in an isolated review board. The `.pen` foundations below are unchanged and still provisional. The single public home page and remaining #95 screens are later stages.
+
 Design source: [ahmcp.pen](ahmcp.pen). Issue [#95](https://github.com/rudeayelo/aimharder-mcp/issues/95), under [#103](https://github.com/rudeayelo/aimharder-mcp/issues/103).
 
 ## Review sequence

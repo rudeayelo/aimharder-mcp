@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-29",
+  "source": "Google Fonts official repository; files unchanged",
+  "fonts": [
+    {
+      "file": "assets/KronaOne-Regular.ttf",
+      "bytes": 35168,
+      "sha256": "273463916f96a4707e697e3013d955cde8154b4e6d635a55132e7a12f276534c",
+      "capHeightPerEm": 0.76318359375
+    },
+    {
+      "file": "assets/BigShoulders.ttf",
+      "bytes": 320800,
+      "sha256": "4b4b24aa6f799aa73cdcd5b6fa840cbcbbb38b81fa9fa82c25126a4530c1ba44",
+      "capHeightPerEm": 0.8
+    },
+    {
+      "file": "assets/Aldrich-Regular.ttf",
+      "bytes": 56548,
+      "sha256": "bcabd8e6db3e8cb59242e8dbdef30bfd9b25be600e2e8f506618008f99138d47",
+      "capHeightPerEm": 0.7001953125
+    }
+  ],
+  "downloadUrls": {
+    "BigShoulders.ttf": "https://raw.githubusercontent.com/google/fonts/main/ofl/bigshoulders/BigShoulders%5Bopsz%2Cwght%5D.ttf",
+    "BigShoulders-OFL.txt": "https://raw.githubusercontent.com/google/fonts/main/ofl/bigshoulders/OFL.txt",
+    "Aldrich-Regular.ttf": "https://raw.githubusercontent.com/google/fonts/main/ofl/aldrich/Aldrich-Regular.ttf",
+    "Aldrich-OFL.txt": "https://raw.githubusercontent.com/google/fonts/main/ofl/aldrich/OFL.txt"
+  }
+}

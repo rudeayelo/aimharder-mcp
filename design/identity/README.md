@@ -1,5 +1,7 @@
 # Kettlebell robot identity trials
 
+Current brand-design stage: the owner considers the motion set sufficient and has returned to the wordmark. The [real-font composition study](wordmark-study/README.md) compares Krona One, Big Shoulders 600 and Aldrich with the selected circular-face character, preserves the earlier generated lettering reference and reuses existing motion clips only. No final typeface or public home page is selected.
+
 Latest motion candidate: [side-bounce dance](video/atomic-emotes/trial-08-side-bounce-dance/README.md), generated from the existing pose references. The 24-frame edit retains four low bounce phases and returns to neutral; owner acceptance remains pending.
 
 Latest motion output: [hop with closed-eye anticipation and landing rock](video/atomic-emotes/trial-07-guided-hop/README.md), completed after the provider delay. Source and two-second 12 fps review edit are saved; owner acceptance remains pending. Earlier pending entries below are historical.
