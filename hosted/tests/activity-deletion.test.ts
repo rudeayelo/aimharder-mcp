@@ -6,6 +6,9 @@ import { afterAll, afterEach, beforeAll, beforeEach, expect, test } from 'vitest
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
 import { buildWorker } from '../build.mjs';
+let telemetryMode: 'off'|'success'|'reject'|'timeout' = 'success';
+const telemetryEvents: Array<{trace_id:string;context:Record<string,unknown>}> = [];
+const telemetryWarnings: string[] = [];
 const origin = 'http://localhost:8804';
 const syntheticKey = Buffer.alloc(32, 17).toString('base64');
 let worker: Miniflare;
@@ -30,12 +33,14 @@ function post(path: string, body: unknown, cookie = '', requestOrigin = origin) 
   return worker.dispatchFetch(origin + path, { method: 'POST', headers: { origin: requestOrigin, cookie, 'content-type': 'application/json' }, body: JSON.stringify(body), redirect: 'manual' });
 }
 async function start(keys: Record<string,string> = {first:syntheticKey}, active = 'first') {
-  worker = new Miniflare(convertV4MiniflareOptions({ modules: true, scriptPath: 'dist/activity-deletion-fixture-worker.js', port: 8804,
+  worker = new Miniflare(convertV4MiniflareOptions({ handleStructuredLogs:entry=>telemetryWarnings.push(entry.message), modules: true, scriptPath: 'dist/activity-deletion-fixture-worker.js', port: 8804,
     compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'], d1Databases: ['AUTH_DB','RECOVERY_DB'], resourcePersistencePath: directory,
     durableObjects: { ACCOUNT_CONNECTIONS: { className: 'AccountConnection', useSQLite: true } },
     bindings: { RECOVERY_AUTHORITY_ID:'synthetic-authority', BASE_URL: origin, AUTH_SECRET: 'synthetic-account-connection-auth-secret-long-enough',
-      VAULT_KEYS: JSON.stringify(keys), VAULT_ACTIVE_KEY_ID: active },
+      LOGNORTH_ENABLED:telemetryMode==='off'?'false':'true', LOGNORTH_URL:'https://telemetry.synthetic.invalid', LOGNORTH_API_KEY:'lgn-'+'a'.repeat(64), LOGNORTH_ENVIRONMENT:'synthetic', LOGNORTH_RELEASE:'ticket100', VAULT_KEYS: JSON.stringify(keys), VAULT_ACTIVE_KEY_ID: active },
     outboundService: async request => {
+      if(new URL(request.url).origin==='https://telemetry.synthetic.invalid'){const body=await request.json() as {events:typeof telemetryEvents};telemetryEvents.push(...body.events);if(telemetryMode==='timeout')return new Promise(()=>{});return Response.json({created:body.events.length},{status:telemetryMode==='reject'?503:201});}
+
       if(new URL(request.url).pathname==='/execution-guard'&&holdGuard){const held=holdGuard;holdGuard=undefined;enteredGuard?.();await held;return new Response(null,{status:204});}
       if(new URL(request.url).origin==='https://synthetic-scheduler.invalid'){const matches=new URL(request.url).pathname===interrupt;const hit=matches&&interruptSkip--<=0;if(hit){interrupt=undefined;interruptSkip=0;}return new Response(null,{status:hit?503:204});}
       if (new URL(request.url).origin === origin) return worker.dispatchFetch(request);
@@ -85,7 +90,18 @@ async function call(cookie: string, name: string, args: Record<string, unknown> 
   try {
     await client.connect(new StreamableHTTPClientTransport(new URL(origin+'/mcp'), { requestInit: { headers: { authorization: `Bearer ${bearer}` } } }));
 
-    return await client.callTool({ name, arguments: args }) as {isError?:boolean;structuredContent?:Record<string,unknown>;content:unknown};
+    const offset=telemetryEvents.length;
+    const result=await client.callTool({ name, arguments: args }) as {isError?:boolean;structuredContent?:Record<string,unknown>;content:unknown};
+    if(telemetryMode!=='off' && result.structuredContent && name.includes('activity_deletion')){
+      const outcomes:Record<string,string>={'ready':'success','missing':'denied','ambiguous':'denied','unsupported':'denied','foreign-owner':'technical_failure','foreign-gym':'technical_failure','stale':'denied','observed-absent':'success','still-visible':'uncertain','conflicting-identity':'uncertain','uncertain':'uncertain','incomplete':name.startsWith('prepare')?'technical_failure':'uncertain'};
+      const event=await toolEvent(name,offset);expect(event.context.outcome).toBe(outcomes[String(result.structuredContent.status)]);
+      expect(event.context.error_class!==undefined).toBe(['uncertain','technical_failure'].includes(String(event.context.outcome)));
+    }
+    const serialized=JSON.stringify(result);
+    if(telemetryMode!=='off' && result.isError && name.includes('activity_') && /ACCESS_RESTRICTED|ACTIVITY_REFERENCE_INVALID|ACTION_OUTCOME_UNCERTAIN/.test(serialized)){
+      const event=await toolEvent(name,offset);expect(event.context.outcome).toBe(serialized.includes('ACTION_OUTCOME_UNCERTAIN')?'uncertain':'denied');
+    }
+    return result;
   } finally { await client.close(); }
 }
 beforeAll(async () => {
@@ -324,4 +340,54 @@ test('suspension during a possibly sent deletion preserves original read-back an
  expect((await call(b(),'execute_activity_deletion',{actionReference,sourceActivityId:501,confirmed:true})).structuredContent).toMatchObject({status:'observed-absent',observedState:'absent'});
  const recovered=requests.filter(value=>value.url.host==='aimharder.es');expect(recovered.map(value=>value.url.pathname)).toContain('/api/activityCalendar');expect(recovered.every(value=>value.cookie==='amhrdrauth=synthetic-b')).toBe(true);expect(writes).toEqual(['amhrdrauth=synthetic-b']);
  expect((await call(b(),'execute_activity_deletion',{actionReference,sourceActivityId:501,confirmed:true})).isError).toBe(true);expect(writes).toHaveLength(1);await policy('user',false);
+});
+
+async function toolEvent(name:string,offset=0){
+ for(let i=0;i<100;i++){const event=telemetryEvents.slice(offset).findLast(e=>e.context.tool===name);if(event)return event;await new Promise(resolve=>setTimeout(resolve,10));}
+ throw new Error('Missing synthetic telemetry tool event');
+}
+test('deletion completion distinguishes observed absence and execution uncertainty without private fields',async()=>{
+ removed=false;writes=[];synthetic=deletionSource;telemetryEvents.length=0;
+ const prepared=await call(a(),'prepare_activity_deletion',target);
+ expect((await toolEvent('prepare_activity_deletion')).context).toMatchObject({outcome:'success'});
+ const preparationTrace=(await toolEvent('prepare_activity_deletion')).trace_id;
+ const reference=prepared.structuredContent!.actionReference;
+ const result=await call(a(),'execute_activity_deletion',{actionReference:reference,sourceActivityId:501,confirmed:true});
+ expect(result.structuredContent?.status).toBe('observed-absent');
+ const event=await toolEvent('execute_activity_deletion');expect(event.context).toMatchObject({outcome:'success',code:'observed_absent'});expect(event.trace_id).not.toBe(preparationTrace);
+ expect(JSON.stringify(telemetryEvents)).not.toContain(String(reference));
+ for(const marker of ['Existing own entry','Sentadilla','private-canary','sourceActivityId','shared-gym','synthetic-a','Own score'])expect(JSON.stringify(telemetryEvents)).not.toContain(marker);
+});
+
+test('exporter modes preserve exact deletion confirmation, consumed references and one DELETE',async()=>{
+ let expectedPreparation:unknown;let expectedExecution:unknown;
+ for(const mode of ['off','success','reject','timeout'] as const){
+  await worker.dispose();telemetryMode=mode;await start();telemetryEvents.length=0;removed=false;writes=[];synthetic=deletionSource;
+  expect((await call(b(),'prepare_activity_deletion',target)).isError).toBe(true);expect(writes).toEqual([]);
+  const prepared=await call(a(),'prepare_activity_deletion',target);expect(prepared.structuredContent?.status).toBe('ready');
+  const {actionReference:opaqueReference,expiresAt:expiration,...publicPreparation}=prepared.structuredContent!;
+  if(mode==='off')expectedPreparation=publicPreparation;else expect(publicPreparation).toEqual(expectedPreparation);
+  const input={actionReference:prepared.structuredContent!.actionReference,sourceActivityId:501,confirmed:true};
+  expect((await call(a(),'execute_activity_deletion',{...input,confirmed:false})).isError).toBe(true);expect(writes).toEqual([]);
+  const result=await call(a(),'execute_activity_deletion',input);expect(result.structuredContent).toMatchObject({status:'observed-absent',responseStatus:'http-ok',observedState:'absent',readbackCoverage:{status:'complete'}});
+  if(mode==='off')expectedExecution=result.structuredContent;else expect(result.structuredContent).toEqual(expectedExecution);
+  expect((await call(a(),'execute_activity_deletion',input)).isError).toBe(true);expect(writes).toHaveLength(1);
+  if(mode==='off')expect(telemetryEvents).toEqual([]);
+  if(mode==='timeout')await new Promise(resolve=>setTimeout(resolve,2100));
+ }
+ telemetryMode='success';
+ for(const marker of ['Existing own entry','Sentadilla','private-canary','shared-gym','synthetic-a','Own score'])expect(JSON.stringify(telemetryWarnings)).not.toContain(marker);
+});
+
+test('missing, ambiguous, unreadable-calendar and unsupported deletion previews never become write uncertainty',async()=>{
+ await worker.dispose();telemetryMode='success';await start();removed=false;writes=[];
+ for(const variant of ['missing','ambiguous','incomplete','unsupported'] as const){
+  synthetic=request=>{const path=new URL(request.url).pathname;
+   if(path==='/api/activityCalendar'){if(variant==='incomplete')return new Response(null,{status:500});return Response.json({workouts:variant==='missing'?{}:{'2026-03-29':{rates:{ids:variant==='ambiguous'?[501,502]:[501]},TIPOWODs:{}}}});}
+   if(path==='/api/activity/workout')return Response.json({malformed:'HOSTILE_PRIVATE_DETAIL'});
+   return failOutbound();
+  };
+  const result=await call(a(),'prepare_activity_deletion',{date:target.date});expect(result.structuredContent?.status).toBe(variant);expect(result.structuredContent).not.toHaveProperty('actionReference');
+ }
+ expect(writes).toEqual([]);expect(JSON.stringify(telemetryEvents)).not.toContain('HOSTILE_PRIVATE_DETAIL');
 });

@@ -104,3 +104,13 @@ test('known configuration denials at HTTP 503 remain denials and hostile paths u
   const denied=await worker.dispatchFetch('http://localhost:8787/mcp',{method:'POST'});expect(denied.status).toBe(503);await settle();
   expect(batches.at(-1)!.events[0]!.context).toMatchObject({outcome:'technical_failure',code:'RECOVERY_UNAVAILABLE',http_status:503});
 });
+
+test('unknown and missing activity result variants create classifier issues without exporting future values',async()=>{
+ for(const kind of ['prepare-activity-publication','execute-activity-publication','prepare-activity-deletion','execute-activity-deletion']){
+  for(const result of [{status:'HOSTILE_FUTURE_ACTIVITY_VARIANT',draft:'HOSTILE_PRIVATE_DRAFT'},{}]){
+   await invoke('?activityKind='+kind,result);const event=batches.at(-1)!.events[0]!;
+   expect(event.context).toMatchObject({event_type:'mcp.tool.completed',tool:kind.replaceAll('-','_'),outcome:'unclassified',error_class:'HostedClassifierFailure'});
+   expect(JSON.stringify(event)).not.toContain('HOSTILE');
+  }
+ }
+});

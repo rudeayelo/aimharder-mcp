@@ -33,3 +33,10 @@ The decision and its loss/uncertainty boundaries are unchanged. Remaining tool
 and maintenance instrumentation and separately authorized native acceptance
 remain pending; the original design-interview authorization boundary above is
 historical context.
+
+The activity slice [#100](https://github.com/rudeayelo/aimharder-mcp/issues/100)
+now explicitly classifies preparation, publication and deletion read-back through
+the same trusted account result boundary. [Synthetic activity evidence](../hosted-activity-observability.md)
+preserves observed calendar absence as a narrow success and continued visibility,
+identity conflict and incomplete execution read-back as distinct uncertainty
+issues. This does not change the accepted delivery decision or authorize activation.
