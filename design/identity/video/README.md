@@ -1,5 +1,7 @@
 # Video input preparation
 
+Generation update, 2026-10-29: the owner explicitly authorized the [first actual Runway trial](trial-01/README.md), which is now available as original and 12 fps MP4s. One accepted Kling O3 Standard task succeeded after a rejected oversized inline request was corrected using ephemeral uploads. Estimated cost and observed credit decrease both equal 78 credits. Visual deviations and pending owner acceptance are documented in the trial; earlier no-generation statements below describe the preparation checkpoint.
+
 Current update, 2026-10-29: the [multi-reference pack and final prompt](reference-pack/README.md) now supersede the initial single-frame-only, five-second proposal below. It adds three-quarter/profile/rear views, eye-emote references and a review storyboard for a six-second hop with a roughly 30° tilted 360° turn and diminishing side-to-side landing rebounds. The planned model is now Kling O3 Standard via Runway so references and endpoint frames can be supplied. No Runway video generation has been performed; historical source details below document the earlier draft.
 
 Status: prepared input for owner review, 2026-10-29. No Runway generation request has been made for this delivery. No Runway credits were consumed. Part of the ongoing staged design under [#95](https://github.com/rudeayelo/aimharder-mcp/issues/95); no home-page implementation or deployment.

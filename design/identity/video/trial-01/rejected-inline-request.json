@@ -1,0 +1,25 @@
+{
+  "preparedAt": "2026-10-29T11:06:17.726633+00:00",
+  "model": "klingO3_standard",
+  "durationSeconds": 6,
+  "ratio": "960:960",
+  "audio": false,
+  "plannedCredits": 78,
+  "promptSha256": "bef47370171bb30e368494deba9a2336021efaeef794e7cd460561b151a2ec07",
+  "firstFrame": "../reference-pack/01-front-neutral.png",
+  "lastFrame": "../reference-pack/01-front-neutral.png",
+  "referenceFiles": [
+    "02-three-quarter.png",
+    "03-profile.png",
+    "04-rear.png",
+    "05-eye-emotes.png"
+  ],
+  "storyboardSubmitted": false,
+  "submissionState": "http-rejected",
+  "submittedAt": "2026-10-29T11:06:17.754480+00:00",
+  "httpStatus": 413,
+  "responseKeys": [
+    "message"
+  ],
+  "validationIssues": []
+}

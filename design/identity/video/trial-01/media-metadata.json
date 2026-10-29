@@ -1,0 +1,44 @@
+{
+  "source.mp4": {
+    "sha256": "64da0347dd297a21bdf642b36b2dd9f531f3390f9d22f9cf0af73f1b97ce14c6",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 960,
+          "height": 960,
+          "r_frame_rate": "24/1",
+          "avg_frame_rate": "24/1",
+          "nb_frames": "145"
+        }
+      ],
+      "format": {
+        "duration": "6.041667",
+        "size": "2837544"
+      }
+    }
+  },
+  "kettle-12fps.mp4": {
+    "sha256": "a3cd52addd6fd7046690c56b352d06cfb39b099780b7ea76d7bd4ec6699df505",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 960,
+          "height": 960,
+          "r_frame_rate": "12/1",
+          "avg_frame_rate": "12/1",
+          "nb_frames": "73"
+        }
+      ],
+      "format": {
+        "duration": "6.083333",
+        "size": "1266753"
+      }
+    }
+  }
+}

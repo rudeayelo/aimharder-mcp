@@ -1,0 +1,32 @@
+{
+  "preparedAt": "2026-10-29T11:07:51.422654+00:00",
+  "model": "klingO3_standard",
+  "durationSeconds": 6,
+  "ratio": "960:960",
+  "audio": false,
+  "plannedCredits": 78,
+  "promptSha256": "bef47370171bb30e368494deba9a2336021efaeef794e7cd460561b151a2ec07",
+  "firstFrame": "../reference-pack/01-front-neutral.png",
+  "lastFrame": "../reference-pack/01-front-neutral.png",
+  "referenceFiles": [
+    "02-three-quarter.png",
+    "03-profile.png",
+    "04-rear.png",
+    "05-eye-emotes.png"
+  ],
+  "storyboardSubmitted": false,
+  "submissionState": "accepted",
+  "transport": "provider-ephemeral-uploads",
+  "submittedAt": "2026-10-29T11:08:02.219236+00:00",
+  "taskId": "d6fab123-8d8f-47ce-99c7-7e0e860e0181",
+  "estimatedCost": {
+    "credits": 78
+  },
+  "status": "SUCCEEDED",
+  "lastCheckedAt": "2026-10-29T11:10:55.410951+00:00",
+  "outputCount": 1,
+  "completedAt": "2026-10-29T11:10:56.463536+00:00",
+  "sourceBytes": 2837544,
+  "sourceSha256": "64da0347dd297a21bdf642b36b2dd9f531f3390f9d22f9cf0af73f1b97ce14c6",
+  "balanceDecreaseCredits": 78
+}
