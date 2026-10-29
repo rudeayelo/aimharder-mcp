@@ -1173,3 +1173,32 @@ new decision. Local stdio, public tool schemas and API behavior are unchanged; n
 package changeset is required for this hosted-only slice. No deployment or live
 requests occurred; actual LogNorth read-back, provider CPU, notification delivery
 and sustained activation remain pending. Real manifests retain disabled telemetry.
+
+## Booking tool observations (#99, 2026-10-29)
+
+The five hosted booking tools passed **33 focused tests in 3 files**:
+`booking-creation.test.ts` (15), `booking-cancellation.test.ts` (17) and
+`booking-outcome.test.ts` (1). Hosted typecheck passed. These use public
+portal/OAuth and authenticated MCP SDK over native workerd/D1/SQLite with
+synthetic upstream HTTP and a synthetic LogNorth receiver. Future/unreachable
+unknown discriminants are explicitly separated into the focused classifier
+guard; supported variants cross real callbacks and the exporter.
+
+Tests observe every current preparation/execution status, including separate
+late cancellation, expected refusals/stale references, waitlist, pending
+credit-loss confirmation, confirmed effects and static uncertainty issues.
+Disabled, accepted, rejected and timed-out telemetry preserve exact previews,
+confirmation rejection, distinct late references, reference consumption,
+original-account restart reconciliation and at-most-one dispatch per action.
+Existing native account-isolation, held preflight, revocation, queue and durable
+fault/recovery journeys run with enabled telemetry. Preparation and execution
+have separate generated traces; private class, gym, cookie, action-reference
+and acknowledgement canaries do not appear in collected tool events or
+platform warnings. No exporter response is retried.
+
+The relevant booking and best-effort delivery ADRs were reviewed; no sporting
+scope, confirmation, custody, dispatch or persistence decision changed. Local
+stdio and upstream API contracts are unchanged. This is synthetic evidence,
+not real booking/cancellation validation, installed-service delivery, measured
+provider CPU overhead or deployment/activation acceptance. No live write,
+provider mutation or deployment occurred.

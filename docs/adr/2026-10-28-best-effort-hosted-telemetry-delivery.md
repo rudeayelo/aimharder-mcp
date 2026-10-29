@@ -40,3 +40,15 @@ the same trusted account result boundary. [Synthetic activity evidence](../hoste
 preserves observed calendar absence as a narrow success and continued visibility,
 identity conflict and incomplete execution read-back as distinct uncertainty
 issues. This does not change the accepted delivery decision or authorize activation.
+
+
+The #99 booking slice applies this decision to all five hosted booking tools.
+Typed non-executable preparations, capacity/state refusals, stale references and
+pending credit-loss confirmation are expected denials; uncertain execution and
+unknown variants retain separate static issue classes. No sporting payload or
+action reference enters either telemetry sink, and no preparation/execution
+correlation crosses requests. Public native synthetic HTTP/SDK evidence covers
+all current booking variants and delivery-mode preservation in
+[validation](../validation.md#booking-tool-observations-99-2026-10-29).
+This adds no architectural, authentication, scope, storage or dispatch decision;
+real Worker export/CPU acceptance and activation remain separate.
