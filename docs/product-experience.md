@@ -1,5 +1,7 @@
 # Product experience design
 
+Design checkpoint, 2026-10-29: the owner requested staged work on #95: basic visual elements, then two GPT Image identity trials, then one public home-page experiment, and only then the remaining screens. The [provisional foundation boards and rationale](../design/README.md) are now available in [design/ahmcp.pen](../design/ahmcp.pen). Colors, typography and controls remain candidates; no final navigation or identity is selected and #95 is incomplete. Later stages have not been generated. The historical brief and research below remain context, not approval of these candidates.
+
 Status: accepted product brief recorded on 2026-10-28; remaining visual and navigation decisions delegated to [design ticket #95](https://github.com/rudeayelo/aimharder-mcp/issues/95). This document separates accepted requirements, historical proposals and pending engineering. No final screen design, implementation or deployment is approved by this record alone.
 
 Parent specification: [#103 — Deliver the remote MCP UX/UI and GitHub documentation](https://github.com/rudeayelo/aimharder-mcp/issues/103), published on 2026-10-29 with `ready-for-agent` and `wayfinder:map`. It is the canonical tracker specification, including 72 user stories, implementation/testing decisions, scope boundaries and an ordered delivery map. Existing #95 and #92 are linked as native sub-issues, with #95 first. The parent does not implement or complete its deliveries.

@@ -1,0 +1,810 @@
+{
+  "version": "2.21",
+  "children": [
+    {
+      "type": "frame",
+      "id": "NXGWi",
+      "x": 0,
+      "y": 0,
+      "name": "00 Foundations / provisional / review first",
+      "clip": true,
+      "width": 1200,
+      "fill": "$paper",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": 48,
+      "children": [
+        {
+          "type": "text",
+          "id": "dyogc",
+          "name": "AimHarder MCP / Visual system",
+          "fill": "$ink",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "AimHarder MCP / Visual system",
+          "lineHeight": 1.5,
+          "fontFamily": "$font",
+          "fontSize": 36,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "QsKTE",
+          "name": "A clear connection from your gym to your chat. Selected design di",
+          "fill": "$muted",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "PROVISIONAL FOUNDATIONS · 29 October 2026 · Identity exploration follows review",
+          "lineHeight": 1.5,
+          "fontFamily": "$font",
+          "fontSize": 18
+        },
+        {
+          "type": "frame",
+          "id": "CTKzX",
+          "name": "Palette",
+          "width": "fill_container",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "pMmA7",
+              "name": "Brand blue",
+              "width": "fill_container",
+              "height": 80,
+              "fill": "$brand",
+              "layout": "vertical",
+              "padding": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "PGA18",
+                  "name": "Brand blue",
+                  "fill": "$ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Brand blue",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "V8JE0",
+              "name": "Accessible action",
+              "width": "fill_container",
+              "height": 80,
+              "fill": "$action",
+              "layout": "vertical",
+              "padding": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "yEMuH",
+                  "name": "Accessible action",
+                  "fill": "$paper",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Accessible action",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "O1JT6",
+              "name": "First query",
+              "width": "fill_container",
+              "height": 80,
+              "fill": "$accent",
+              "layout": "vertical",
+              "padding": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "J2742z",
+                  "name": "First query",
+                  "fill": "$ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Orange candidate",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "YhsvR",
+              "name": "Selection",
+              "width": "fill_container",
+              "height": 80,
+              "fill": "$selected",
+              "layout": "vertical",
+              "padding": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "BxT3w",
+                  "name": "Selection",
+                  "fill": "$ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Selection",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "oNEGM",
+              "name": "Error",
+              "width": "fill_container",
+              "height": 80,
+              "fill": "$error",
+              "layout": "vertical",
+              "padding": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "nX1r4",
+                  "name": "Error",
+                  "fill": "$paper",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Error",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "Ikpk1",
+          "name": "Geist 400 / 500 / 600 · 16px body · 24 / 32px headings · 56px dis",
+          "fill": "$ink",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Geist 400 / 500 / 600 · 16px body · 24 / 32px headings · 56px display",
+          "lineHeight": 1.5,
+          "fontFamily": "$font",
+          "fontSize": 20
+        },
+        {
+          "type": "text",
+          "id": "P8atge",
+          "name": "4px spacing base · 16–24px task gaps · 48px controls · 10px contr",
+          "fill": "$muted",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "4px spacing base · 16–24px task gaps · 48px controls · 10px control radius · white surfaces and quiet separators",
+          "lineHeight": 1.5,
+          "fontFamily": "$font",
+          "fontSize": 16
+        },
+        {
+          "type": "frame",
+          "id": "lJ6Sr",
+          "name": "Shared controls",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "children": [
+            {
+              "id": "l39CS",
+              "type": "ref",
+              "ref": "UEEFt",
+              "name": "Primary action",
+              "width": "fill_container",
+              "height": 48,
+              "descendants": {
+                "ugUJO": {
+                  "content": "Primary action",
+                  "fill": "$paper"
+                }
+              }
+            },
+            {
+              "id": "uiY2g",
+              "type": "ref",
+              "ref": "UEEFt",
+              "name": "Secondary action",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$paper",
+              "stroke": "$control",
+              "strokeWidth": 1,
+              "descendants": {
+                "ugUJO": {
+                  "content": "Secondary action",
+                  "fill": "$ink"
+                }
+              }
+            },
+            {
+              "id": "fgONs",
+              "type": "ref",
+              "ref": "mEDaF",
+              "name": "Persistent visible label",
+              "width": "fill_container",
+              "descendants": {
+                "jt1qz": {
+                  "content": "Persistent visible label"
+                },
+                "KGbmu": {
+                  "content": "Example value"
+                }
+              }
+            },
+            {
+              "id": "RiloL",
+              "type": "ref",
+              "ref": "PjJf8",
+              "name": "State is always named",
+              "width": "fill_container",
+              "fill": "$selected",
+              "descendants": {
+                "pJUkY": {
+                  "content": "State is always named",
+                  "fill": "$action"
+                },
+                "IgGED": {
+                  "content": "Color reinforces meaning; it never carries meaning alone."
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "Mm3KA",
+          "name": "Blue is the brand. A darker derived blue carries accessible white",
+          "fill": "$ink",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Official blue anchors the identity. A derived dark blue supports readable white action labels. Orange is a candidate accent: evaluate its role in the identity trials before adopting it.",
+          "lineHeight": 1.5,
+          "fontFamily": "$font",
+          "fontSize": 16
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "UEEFt",
+      "x": 1300,
+      "y": 0,
+      "name": "Component / Primary action",
+      "reusable": true,
+      "width": 300,
+      "height": 48,
+      "fill": "$action",
+      "cornerRadius": 10,
+      "padding": [
+        12,
+        20
+      ],
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "ugUJO",
+          "name": "Continue",
+          "fill": "$paper",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Continue",
+          "lineHeight": 1.5,
+          "fontFamily": "$font",
+          "fontSize": 16,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "mEDaF",
+      "x": 1640,
+      "y": 0,
+      "name": "Component / Labeled input",
+      "reusable": true,
+      "width": 350,
+      "layout": "vertical",
+      "gap": 8,
+      "children": [
+        {
+          "type": "text",
+          "id": "jt1qz",
+          "name": "Email address",
+          "fill": "$ink",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Email address",
+          "lineHeight": 1.5,
+          "fontFamily": "$font",
+          "fontSize": 14,
+          "fontWeight": "500"
+        },
+        {
+          "type": "frame",
+          "id": "giRsB",
+          "name": "Input boundary",
+          "width": "fill_container",
+          "fill": "$paper",
+          "cornerRadius": 10,
+          "stroke": "$control",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "padding": 12,
+          "children": [
+            {
+              "type": "text",
+              "id": "KGbmu",
+              "name": "alex@example.com",
+              "fill": "$muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "alex@example.com",
+              "lineHeight": 1.5,
+              "fontFamily": "$font",
+              "fontSize": 16
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "PjJf8",
+      "x": 2040,
+      "y": 0,
+      "name": "Component / Status message",
+      "reusable": true,
+      "width": 340,
+      "fill": "$selected",
+      "cornerRadius": 10,
+      "layout": "vertical",
+      "gap": 8,
+      "padding": 16,
+      "children": [
+        {
+          "type": "text",
+          "id": "pJUkY",
+          "name": "AimHarder verified",
+          "fill": "$action",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "AimHarder verified",
+          "lineHeight": 1.5,
+          "fontFamily": "$font",
+          "fontSize": 16,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "IgGED",
+          "name": "Your own account is connected.",
+          "fill": "$ink",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Your own account is connected.",
+          "lineHeight": 1.5,
+          "fontFamily": "$font",
+          "fontSize": 14
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Bjaja",
+      "x": 0,
+      "y": 1000,
+      "name": "01 Controls and states / provisional",
+      "clip": true,
+      "width": 1200,
+      "fill": "$paper",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": 48,
+      "children": [
+        {
+          "type": "text",
+          "id": "dYbow",
+          "name": "Controls that explain their state",
+          "fill": "$ink",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Controls that explain their state",
+          "lineHeight": 1.5,
+          "fontFamily": "$font",
+          "fontSize": 36,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "w99kI",
+          "name": "48px minimum control height · Visible labels · Meaning beyond col",
+          "fill": "$muted",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "48px minimum control height · Visible labels · Meaning beyond color",
+          "lineHeight": 1.5,
+          "fontFamily": "$font",
+          "fontSize": 18
+        },
+        {
+          "type": "frame",
+          "id": "Row5H",
+          "name": "Interaction state samples",
+          "width": "fill_container",
+          "gap": 24,
+          "children": [
+            {
+              "type": "frame",
+              "id": "QI9Eo",
+              "name": "Default",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "zwNaP",
+                  "name": "Default",
+                  "fill": "$muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Default",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "gBJeV",
+                  "type": "ref",
+                  "ref": "UEEFt",
+                  "name": "Default action",
+                  "width": "fill_container",
+                  "fill": "$action",
+                  "descendants": {
+                    "ugUJO": {
+                      "content": "Continue",
+                      "fill": "$paper"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "WMGgH",
+              "name": "Hover",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "MIOqk",
+                  "name": "Hover",
+                  "fill": "$muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Hover",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "KtNbX",
+                  "type": "ref",
+                  "ref": "UEEFt",
+                  "name": "Hover action",
+                  "width": "fill_container",
+                  "fill": "$hover",
+                  "descendants": {
+                    "ugUJO": {
+                      "content": "Continue",
+                      "fill": "$paper"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "uIRPX",
+              "name": "Pressed",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "GuogB",
+                  "name": "Pressed",
+                  "fill": "$muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Pressed",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "AYm0R",
+                  "type": "ref",
+                  "ref": "UEEFt",
+                  "name": "Pressed action",
+                  "width": "fill_container",
+                  "fill": "$focus",
+                  "descendants": {
+                    "ugUJO": {
+                      "content": "Continue",
+                      "fill": "$paper"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "JRCkB",
+              "name": "Disabled",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "NKVkM",
+                  "name": "Disabled",
+                  "fill": "$muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Disabled",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "C7ldyb",
+                  "type": "ref",
+                  "ref": "UEEFt",
+                  "name": "Disabled action",
+                  "width": "fill_container",
+                  "fill": "$line",
+                  "descendants": {
+                    "ugUJO": {
+                      "content": "Unavailable",
+                      "fill": "$ink"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Lg9vB",
+          "name": "Keyboard focus",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": 8,
+          "children": [
+            {
+              "id": "o0NM1",
+              "type": "ref",
+              "ref": "UEEFt",
+              "name": "Focused primary action",
+              "width": 320,
+              "stroke": "$focus",
+              "strokeWidth": 3,
+              "strokeAlignment": "outer"
+            },
+            {
+              "type": "text",
+              "id": "vSCbK",
+              "name": "Focus: 3px dark-blue ring, separated by a 2px white gap in implem",
+              "fill": "$muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Focus: 3px dark-blue ring, separated by a 2px white gap in implementation. Restore focus after dialogs.",
+              "lineHeight": 1.5,
+              "fontFamily": "$font",
+              "fontSize": 14
+            }
+          ]
+        },
+        {
+          "id": "j609SS",
+          "type": "ref",
+          "ref": "mEDaF",
+          "name": "AimHarder email",
+          "width": "fill_container",
+          "descendants": {
+            "jt1qz": {
+              "content": "AimHarder email"
+            },
+            "KGbmu": {
+              "content": "alex@example.com"
+            }
+          }
+        },
+        {
+          "id": "iaAzs",
+          "type": "ref",
+          "ref": "PjJf8",
+          "name": "Check your email and password",
+          "width": "fill_container",
+          "fill": "#FFF0EE",
+          "descendants": {
+            "pJUkY": {
+              "content": "Check your email and password",
+              "fill": "$error"
+            },
+            "IgGED": {
+              "content": "We could not connect. Check your AimHarder credentials and try again."
+            }
+          }
+        },
+        {
+          "id": "RzWJ3",
+          "type": "ref",
+          "ref": "PjJf8",
+          "name": "AimHarder verified",
+          "width": "fill_container",
+          "fill": "#EAF5EF",
+          "descendants": {
+            "pJUkY": {
+              "content": "AimHarder verified",
+              "fill": "$success"
+            },
+            "IgGED": {
+              "content": "Verified during connection. This does not verify a client or a query."
+            }
+          }
+        },
+        {
+          "id": "NvAjP",
+          "type": "ref",
+          "ref": "PjJf8",
+          "name": "Authorization pending",
+          "width": "fill_container",
+          "fill": "$selected",
+          "descendants": {
+            "pJUkY": {
+              "content": "Authorization pending",
+              "fill": "$action"
+            },
+            "IgGED": {
+              "content": "Configuration saved. Continue in your client, then review access."
+            }
+          }
+        },
+        {
+          "id": "z3yiJM",
+          "type": "ref",
+          "ref": "PjJf8",
+          "name": "Invitation expired",
+          "width": "fill_container",
+          "fill": "#FFF4DE",
+          "descendants": {
+            "pJUkY": {
+              "content": "Invitation expired",
+              "fill": "$warning"
+            },
+            "IgGED": {
+              "content": "Ask the person who invited you for a new invitation."
+            }
+          }
+        },
+        {
+          "type": "text",
+          "id": "I13Ni0",
+          "name": "Links are underlined. Selected items also have a marker and a lab",
+          "fill": "$muted",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Links are underlined. Selected items also have a marker and a label. Loading keeps the action label visible; disabled controls explain what is missing.",
+          "lineHeight": 1.5,
+          "fontFamily": "$font",
+          "fontSize": 16
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "brand": {
+      "type": "color",
+      "value": "#2490F4"
+    },
+    "action": {
+      "type": "color",
+      "value": "#1765B0"
+    },
+    "hover": {
+      "type": "color",
+      "value": "#12528F"
+    },
+    "ink": {
+      "type": "color",
+      "value": "#14283F"
+    },
+    "muted": {
+      "type": "color",
+      "value": "#516174"
+    },
+    "paper": {
+      "type": "color",
+      "value": "#FFFFFF"
+    },
+    "surface": {
+      "type": "color",
+      "value": "#F4F7FA"
+    },
+    "line": {
+      "type": "color",
+      "value": "#CFD8E3"
+    },
+    "control": {
+      "type": "color",
+      "value": "#73849A"
+    },
+    "accent": {
+      "type": "color",
+      "value": "#FFAB62"
+    },
+    "selected": {
+      "type": "color",
+      "value": "#E9F3FE"
+    },
+    "success": {
+      "type": "color",
+      "value": "#176443"
+    },
+    "error": {
+      "type": "color",
+      "value": "#B42318"
+    },
+    "warning": {
+      "type": "color",
+      "value": "#805000"
+    },
+    "focus": {
+      "type": "color",
+      "value": "#004AAD"
+    },
+    "font": {
+      "type": "string",
+      "value": "Geist"
+    },
+    "unit": {
+      "type": "number",
+      "value": 4
+    }
+  },
+  "fileToken": "86bdcb74-42d5-44dd-ba55-a1c6861e4fbb"
+}
