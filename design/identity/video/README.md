@@ -1,5 +1,7 @@
 # Video input preparation
 
+Current update, 2026-10-29: the [multi-reference pack and final prompt](reference-pack/README.md) now supersede the initial single-frame-only, five-second proposal below. It adds three-quarter/profile/rear views, eye-emote references and a review storyboard for a six-second hop with a roughly 30° tilted 360° turn and diminishing side-to-side landing rebounds. The planned model is now Kling O3 Standard via Runway so references and endpoint frames can be supplied. No Runway video generation has been performed; historical source details below document the earlier draft.
+
 Status: prepared input for owner review, 2026-10-29. No Runway generation request has been made for this delivery. No Runway credits were consumed. Part of the ongoing staged design under [#95](https://github.com/rudeayelo/aimharder-mcp/issues/95); no home-page implementation or deployment.
 
 ## Current direction
@@ -29,7 +31,7 @@ Visual inspection confirms a single sharp still character, recognizable open han
 
 Reuse this exact master frame for initial comparisons and change one motion instruction at a time. Do not feed the multi-character sheet, the wordmark or the experimental SVG screenshot as the first frame. Do not assume alpha survives or is generated: the proposed first experiment uses an opaque white background. A transparent final asset, if required, needs a separately verified extraction/export workflow.
 
-**Important 360° limitation:** the rear has not been drawn or owner-reviewed. The prompt proposes a smooth blue rear, with the face only on the front surface. A single frontal frame leaves the model to infer depth and rear geometry. Check that the face disappears behind the body rather than duplicating or floating across it, and that the handle remains attached. If that is unstable, simplify the rotation first; a later explicit rear/side design or a model with additional reference/keyframe support may be appropriate. Extra reference boards are not inputs to the current Gen-4.5 request shape.
+**Initial 360° limitation, subsequently addressed with references:** the initial draft had no rear view. The new pack now includes plain-blue rear and profile proposals, not yet owner-reviewed, and a compatible multi-reference model plan. Reference images reduce ambiguity but do not establish stable geometry. Check that the face disappears behind the body rather than duplicating or floating across it, and that the handle remains attached. Extra reference boards remain unsupported by the historical Gen-4.5 request shape below.
 
 ## Current source contracts checked
 

@@ -19,6 +19,8 @@ Both were generated with the built-in GPT Image tool using separate prompts, wit
 
 ### Current choice: blue prerecorded-video direction
 
+The owner subsequently requested a more dynamic turn with approximately 30° axis inclination, side-to-side landing rebounds and subtle eye motion/size changes. The [current multi-reference pack](video/reference-pack/README.md) supplies six images (including the existing master), a final six-second prompt and the intended provider input mapping. No video has been generated or accepted. This supersedes the simple hop-and-spin prompt as the current shot direction.
+
 The owner subsequently rejected the flat SVG cursor-following direction as too close to Grok Bot, selected the blue body for the existing dark circular-face/orange recessed-eye character, and requested a cute stop-motion-style hop with a full turn at 12 fps. The [video input package](video/README.md) now contains a clean single-character first frame and a motion prompt for review. No Runway video has been generated in this preparation delivery. Possible later random selection among four or five pre-generated clips is deferred. The historical prototype and earlier body-color uncertainty below are superseded by these choices; no final wordmark font, video or home page is selected.
 
 ### Flat SVG motion alternative

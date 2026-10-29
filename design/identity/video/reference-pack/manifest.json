@@ -1,0 +1,53 @@
+{
+  "created": "2026-10-29",
+  "images": [
+    {
+      "file": "01-front-neutral.png",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 1265283,
+      "dataUriCharacters": 1687066,
+      "sha256": "8877e4f830912a62264840deb6cefda02199e86e6f091d2ca7cc893f3c96d794"
+    },
+    {
+      "file": "02-three-quarter.png",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 1591167,
+      "dataUriCharacters": 2121578,
+      "sha256": "92863844fa2d31b44dacbaa9faca5b791f58ecd1738b3611b015725d30d1789d"
+    },
+    {
+      "file": "03-profile.png",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 1560913,
+      "dataUriCharacters": 2081242,
+      "sha256": "5a04bf64dbad362b8a73ac222c93768a69dcfa67aa12969e1ba2f9950debc3d3"
+    },
+    {
+      "file": "04-rear.png",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 1580582,
+      "dataUriCharacters": 2107466,
+      "sha256": "8b6ceba26e2123f667e89c234bc049692490e7e60e8bfb8a1fbeca1956aa4f59"
+    },
+    {
+      "file": "05-eye-emotes.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 1390910,
+      "dataUriCharacters": 1854570,
+      "sha256": "b862a8d840a95bd232df15b9e1b99ca4c9db0dee68cb0ca12a6d269388e6d5be"
+    },
+    {
+      "file": "06-motion-storyboard.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 1394983,
+      "dataUriCharacters": 1860002,
+      "sha256": "56e13012103c7a68dc6063db781598575e56e1c85b745943435878db8194eaa0"
+    }
+  ]
+}
