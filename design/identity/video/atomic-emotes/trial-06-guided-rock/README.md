@@ -1,5 +1,7 @@
 # Guided playful rock
 
+Owner feedback: the owner explicitly loves this delivered rocking clip and wants a related dance with two small rebounds toward each side. The current clip is retained as an approved motion candidate. Final logo composition and cross-emote runtime acceptance remain pending. Earlier owner-review statements below describe the generation checkpoint.
+
 Prepared and generated 2026-10-29 after the owner chose a body-motion emote next. Surprise is deferred because of its similarity to the delight expression; this does not authorize generation of the remaining emotes.
 
 ## Input

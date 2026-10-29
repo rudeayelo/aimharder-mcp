@@ -1,5 +1,5 @@
 {
-  "status": "Prepared prompts only; no generation submitted",
+  "status": "Prompt catalog; execution, owner feedback and per-clip timing are recorded in README.md and trial documentation. Remaining prompts are not generation requests.",
   "date": "2026-10-29",
   "master": "../reference-pack/01-front-neutral.png",
   "masterSha256": "8877e4f830912a62264840deb6cefda02199e86e6f091d2ca7cc893f3c96d794",
@@ -46,6 +46,13 @@
       "title": "Small hop",
       "file": "prompts/06-small-hop.txt",
       "sha256": "ee67bf5eada6c02e9285348c86db5ab858ebb88c5f16a35ea6d7c27751b0a31a"
+    },
+    {
+      "id": "07-side-bounce-dance",
+      "title": "Side-bounce dance",
+      "file": "prompts/07-side-bounce-dance.txt",
+      "sha256": "03b3c71a7ac47322179f5fc15a4699cc69177fb82d6e66197f809d684e17e3b4",
+      "status": "Queued by owner; not generated"
     }
   ]
 }
