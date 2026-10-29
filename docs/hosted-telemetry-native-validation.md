@@ -1,6 +1,6 @@
 # Controlled native telemetry validation
 
-Status: reusable procedure for [#102](https://github.com/rudeayelo/aimharder-mcp/issues/102), under [specification #94](https://github.com/rudeayelo/aimharder-mcp/issues/94). The owner separately authorized the 2026-10-29 controlled run; its [actual receipt](hosted-telemetry-native-receipt.md) records deployment, protected secret provisioning, temporary activation, provider measurements and verified disabling. Native acceptance remains incomplete; sustained activation is not authorized.
+Status: reusable procedure for [#102](https://github.com/rudeayelo/aimharder-mcp/issues/102), under [specification #94](https://github.com/rudeayelo/aimharder-mcp/issues/94). The owner separately authorized the 2026-10-29 controlled run; its [actual receipt](hosted-telemetry-native-receipt.md) records deployment, protected secret provisioning, temporary activation, provider measurements and verified disabling. The later [temporary LogNorth compatibility validation](hosted-telemetry-compatibility-validation.md) separately verified discovery delivery and again disabled export. Native acceptance remains incomplete for resource evidence; sustained activation is not authorized.
 
 ## Authorization scope
 

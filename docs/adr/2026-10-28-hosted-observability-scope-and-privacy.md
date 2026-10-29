@@ -23,3 +23,7 @@ The later owner request authorized implementation on an integration branch. The 
 ## Controlled native review (2026-10-29)
 
 The owner subsequently authorized one isolated validation deployment, existing protected app-key provisioning and temporary activation bounded to two hours, followed by disabling. The [actual receipt](../hosted-telemetry-native-receipt.md) records provider read-back, effective shared settings/access, observed delivery/privacy, CPU estimates and verified disabling. No shared LogNorth setting, plan, participant access or sporting-write scope changed. The destination's dot-path filter prevents discovery-event storage; missing maintenance CPU and current-plan evidence leave native acceptance incomplete. The existing decision is unchanged, and sustained activation remains a subsequent decision. Earlier authorization statements describe their historical stage.
+
+## Temporary compatibility deployment review (2026-10-29)
+
+The owner later explicitly requested applying the reviewed downstream filter patch. The [follow-up receipt](../hosted-telemetry-compatibility-validation.md) verifies actual discovery observations with the same accepted fields/static route identity and final disabling. No producer field, persistent identity, reader access, global retention/notification setting or sporting-write scope changed. The scope/privacy decision remains unchanged; the temporary image/rollback choice is recorded in the [delivery ADR](2026-10-28-best-effort-hosted-telemetry-delivery.md#temporary-destination-compatibility-decision-2026-10-29).

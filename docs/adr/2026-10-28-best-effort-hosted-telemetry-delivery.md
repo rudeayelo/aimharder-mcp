@@ -54,3 +54,11 @@ real Worker export/CPU acceptance and activation remain separate.
 ## Controlled native review (2026-10-29)
 
 The owner subsequently authorized one isolated validation deployment, existing protected app-key provisioning and temporary activation bounded to two hours, followed by disabling. The [actual receipt](../hosted-telemetry-native-receipt.md) records provider read-back, effective shared settings/access, observed delivery/privacy, CPU estimates and verified disabling. No shared LogNorth setting, plan, participant access or sporting-write scope changed. The destination's dot-path filter prevents discovery-event storage; missing maintenance CPU and current-plan evidence leave native acceptance incomplete. The existing decision is unchanged, and sustained activation remains a subsequent decision. Earlier authorization statements describe their historical stage.
+
+## Temporary destination compatibility decision (2026-10-29)
+
+Status: accepted by the owner's explicit request to apply the prepared patch until an official fixed LogNorth release is available.
+
+Decision: deploy the tested local 0.29.0 image containing only the exact `/.well-known/` filter exception, already merged upstream in PR #94. Pin the local image with `pull_policy: never`, preserve existing Compose resources/environment/data/global policy, retain a verified backup and original image/configuration, and verify delivery through a separately bounded ten-minute Worker activation with independent disabling. This is a temporary operational distribution choice, not a permanent fork, new telemetry field or delivery-policy change.
+
+Consequences: the [actual follow-up](../hosted-telemetry-compatibility-validation.md) verifies all twenty discovery observations and final disabling in under three minutes. Later official replacement requires the normal reviewed upgrade and repeat checks; no automatic update or sustained activation is scheduled. Stored events are retained across code rollback. The prior missing CPU/current-plan/baseline evidence still prevents complete native acceptance. The original best-effort, privacy and account/recovery boundaries are unchanged; no previous ADR is superseded.
