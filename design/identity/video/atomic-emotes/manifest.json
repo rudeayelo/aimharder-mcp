@@ -1,0 +1,51 @@
+{
+  "status": "Prepared prompts only; no generation submitted",
+  "date": "2026-10-29",
+  "master": "../reference-pack/01-front-neutral.png",
+  "masterSha256": "8877e4f830912a62264840deb6cefda02199e86e6f091d2ca7cc893f3c96d794",
+  "proposedModel": "kling_4",
+  "sourceDurationSeconds": 3,
+  "deliveryDurationSeconds": 2,
+  "deliveryFps": 12,
+  "deliveryFrames": 24,
+  "proposedQuality": "auto_720p",
+  "firstAndLastUseSameMaster": true,
+  "prompts": [
+    {
+      "id": "01-blink",
+      "title": "Blink",
+      "file": "prompts/01-blink.txt",
+      "sha256": "3af42645f400894156b1042c164d72f1b1da0ee293c3ff1aa08bb073493a6b81"
+    },
+    {
+      "id": "02-curious-glance",
+      "title": "Curious glance",
+      "file": "prompts/02-curious-glance.txt",
+      "sha256": "0016d9e34dcd043004e881be1be9d5ea9c9ac8744787d77f1da29b0f3facd66d"
+    },
+    {
+      "id": "03-delight",
+      "title": "Delight",
+      "file": "prompts/03-delight.txt",
+      "sha256": "9d72127da48ee44290de78eea56e31ddb654d77fe716e9f68640939cdc87abe1"
+    },
+    {
+      "id": "04-surprise",
+      "title": "Surprise",
+      "file": "prompts/04-surprise.txt",
+      "sha256": "0e3948ebdb4ede721201cfc3ce6569d8d4f9b8040fd05eecd0309b468b1ba70f"
+    },
+    {
+      "id": "05-playful-rock",
+      "title": "Playful rock",
+      "file": "prompts/05-playful-rock.txt",
+      "sha256": "66419c3a147eca5257392583a0c3b021e0ee3d0309f9dc544aa8890fad35e860"
+    },
+    {
+      "id": "06-small-hop",
+      "title": "Small hop",
+      "file": "prompts/06-small-hop.txt",
+      "sha256": "ee67bf5eada6c02e9285348c86db5ab858ebb88c5f16a35ea6d7c27751b0a31a"
+    }
+  ]
+}

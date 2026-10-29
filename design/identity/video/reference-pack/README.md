@@ -1,5 +1,7 @@
 # Kettle video reference pack
 
+Current direction: [atomic two-second emotes](../atomic-emotes/README.md) replace the composite shot as the next experiment. The neutral master remains authoritative; the next proposed comparison omits this multi-emote sheet and turnaround views. The six-second prompt below is retained as historical input to trial 01.
+
 Subsequent execution: the owner authorized [trial 01](../trial-01/README.md), which now contains an actual generated take, its 12 fps edit, receipts and visual-review limits. The no-generation statements below describe this reference package's original preparation delivery, not the later execution status.
 
 Prepared 2026-10-29 for [design #95](https://github.com/rudeayelo/aimharder-mcp/issues/95). This is the current reference package and final shot prompt, superseding the earlier single-frame-only five-second draft. No Runway request was sent and no video was generated in this delivery. All new images used the built-in GPT Image tool, with the prior front master as the design reference. Full image-generation prompts and file hashes are included.
