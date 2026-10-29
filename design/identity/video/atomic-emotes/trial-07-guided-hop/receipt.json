@@ -1,0 +1,29 @@
+{
+  "preparedAt": "2026-10-29T20:44:42.854108+00:00",
+  "model": "kling_4",
+  "durationSeconds": 3,
+  "ratio": "auto_720p",
+  "plannedCredits": 39,
+  "promptSha256": "4b08a019ac23bfb4d7402316989ba1bdfbf8da87742a49fe4bbe9957c8c7c577",
+  "firstFrame": "../../reference-pack/01-front-neutral.png",
+  "lastFrame": "../../reference-pack/01-front-neutral.png",
+  "referenceFiles": [],
+  "middleFrames": [
+    "../hop-reference/anticipation-closed.png",
+    "../hop-reference/airborne.png",
+    "../hop-reference/landing-rock.png"
+  ],
+  "submissionState": "accepted",
+  "transport": "provider-ephemeral-uploads",
+  "submittedAt": "2026-10-29T20:44:48.476725+00:00",
+  "taskId": "be50a07e-9976-4220-af03-4f43b21e5ab0",
+  "estimatedCost": {
+    "credits": 39
+  },
+  "status": "SUCCEEDED",
+  "lastCheckedAt": "2026-10-29T21:05:16.280831+00:00",
+  "outputCount": 1,
+  "completedAt": "2026-10-29T21:05:17.362095+00:00",
+  "sourceBytes": 991613,
+  "sourceSha256": "66cb3b807b41b0a2da82f998abf9c522d525aef7faab9bdea8640ba61039fbb0"
+}

@@ -8,7 +8,7 @@
   "firstFrame": "../../reference-pack/01-front-neutral.png",
   "lastFrame": "../../reference-pack/01-front-neutral.png",
   "referenceFiles": [],
-  "middleFrame": "../curious-reference/delight.png",
+  "middleFrame": "../delight-reference/delight.png",
   "submissionState": "accepted",
   "transport": "provider-ephemeral-uploads",
   "submittedAt": "2026-10-29T17:04:10.620308+00:00",
@@ -22,5 +22,6 @@
   "completedAt": "2026-10-29T17:07:04.482494+00:00",
   "sourceBytes": 553133,
   "sourceSha256": "77eadc92e7de12135ad8e4e000b9b4eaca172428a1ffccb681f1aa02140aa434",
-  "balanceDecreaseCredits": 39
+  "balanceDecreaseCredits": 39,
+  "metadataCorrection": "Relative middleFrame label corrected to the actual uploaded asset path; no generation or uploaded content changed."
 }

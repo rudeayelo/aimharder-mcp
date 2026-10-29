@@ -1,5 +1,9 @@
 # Atomic kettle emotes
 
+Completion update: the [hop with closed-eye anticipation and landing rock](trial-07-guided-hop/README.md) succeeded after the provider delay. The same task produced one take; original and two-second 12 fps edit are preserved. Frame inspection confirms the requested main beats, with a brief lid-like reopening transition and stronger motion than the reference targets. Browser playback and owner review remain pending. Earlier pending entries below are historical.
+
+Current pending generation: [hop with closed-eye anticipation and landing rock](trial-07-guided-hop/README.md). One Kling 4 task was accepted with three ordered middle poses; it remains in progress after a long provider delay. No clip is accepted or visually reviewed yet. A local follow-up processes that same task on completion without submitting another paid request. Dance remains queued and surprise deferred.
+
 Owner feedback and queue update: the owner loves the [playful rock](trial-06-guided-rock/README.md) and requested a related [side-bounce dance prompt](prompts/07-side-bounce-dance.txt): two small rebounds toward each side, then neutral. The new dance is queued only; no images, videos or paid requests were made for it. The proposed next distinct emote is the existing [single small hop](prompts/06-small-hop.txt), pending the owner’s instruction to generate it. Surprise remains deferred.
 
 Latest emote: [guided playful rock](trial-06-guided-rock/README.md), with a GPT Image left-lean pose and one successful 39-credit Kling 4 task. The two-second 12 fps edit retains the generated broader left/right rocking; owner review is pending. The owner chose to keep subtle delight as a minor variation. Surprise is deferred; small hop remains ungenerated.

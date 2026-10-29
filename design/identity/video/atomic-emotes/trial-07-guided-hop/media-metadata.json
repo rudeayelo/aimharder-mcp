@@ -1,0 +1,78 @@
+{
+  "processingFilter": "setpts=(48/73)*(PTS-STARTPTS),fps=12,scale=940:940:flags=lanczos",
+  "neutralReplacementFramesOneBased": [
+    1,
+    2,
+    3,
+    22,
+    23,
+    24
+  ],
+  "source.mp4": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "avg_frame_rate": "0/0",
+        "duration": "3.041995",
+        "nb_frames": "133"
+      },
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 940,
+        "height": 940,
+        "avg_frame_rate": "24/1",
+        "duration": "3.041667",
+        "nb_frames": "73"
+      }
+    ],
+    "format": {
+      "duration": "3.041995",
+      "size": "991613"
+    },
+    "sha256": "66cb3b807b41b0a2da82f998abf9c522d525aef7faab9bdea8640ba61039fbb0"
+  },
+  "retimed-2s-12fps.mp4": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 940,
+        "height": 940,
+        "avg_frame_rate": "12/1",
+        "duration": "2.000000",
+        "nb_frames": "24"
+      }
+    ],
+    "format": {
+      "duration": "2.000000",
+      "size": "314305"
+    },
+    "sha256": "5204265bc131db5601529a9632a7f45bac1aee6439780c21c5407d11d1e05e54"
+  },
+  "hop-2s-12fps.mp4": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 940,
+        "height": 940,
+        "avg_frame_rate": "12/1",
+        "duration": "2.000000",
+        "nb_frames": "24"
+      }
+    ],
+    "format": {
+      "duration": "2.000000",
+      "size": "304370"
+    },
+    "sha256": "f40254789b4f235b000d9623b0199cc2180d29a09db0e1422e1ad0dd244af06b"
+  }
+}

@@ -8,7 +8,7 @@
   "firstFrame": "../../reference-pack/01-front-neutral.png",
   "lastFrame": "../../reference-pack/01-front-neutral.png",
   "referenceFiles": [],
-  "middleFrame": "../curious-reference/rock-left.png",
+  "middleFrame": "../rock-reference/rock-left.png",
   "submissionState": "accepted",
   "transport": "provider-ephemeral-uploads",
   "submittedAt": "2026-10-29T20:08:17.421409+00:00",
@@ -22,5 +22,6 @@
   "completedAt": "2026-10-29T20:12:52.205029+00:00",
   "sourceBytes": 942636,
   "sourceSha256": "9efa14fdd74763d7568c811e9ece506bb541ff889121721f1f2d2e3dfdeea95b",
-  "balanceDecreaseCredits": 39
+  "balanceDecreaseCredits": 39,
+  "metadataCorrection": "Relative middleFrame label corrected to the actual uploaded asset path; no generation or uploaded content changed."
 }

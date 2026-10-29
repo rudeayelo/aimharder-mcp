@@ -1,5 +1,9 @@
 # Video input preparation
 
+Completion update: [hop, anticipation and landing rock](atomic-emotes/trial-07-guided-hop/README.md) is now available after the long provider delay. One existing task succeeded; no duplicate generation. The two-second 12 fps review edit and source are preserved. Earlier pending entries below describe the waiting period.
+
+Current pending request: [hop, closed-eye anticipation and landing rock](atomic-emotes/trial-07-guided-hop/README.md). The existing Kling 4 task is still running; references and a self-updating local review page are prepared, but no finished video is claimed. No duplicate generation was submitted.
+
 Latest emote candidate: [playful rock](atomic-emotes/trial-06-guided-rock/README.md), one 39-credit Kling 4 task using a GPT Image lean pose. The character rocks left/right and settles; amplitudes exceed the requested small leans. The two-second 12 fps edit awaits owner review.
 
 Latest emote candidate: [guided delight](atomic-emotes/trial-05-guided-delight/README.md), with a GPT Image middle pose, full generated take and a restrained two-second 12 fps pose edit. One successful task cost 39 credits; owner acceptance remains pending.
