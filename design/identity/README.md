@@ -1,5 +1,7 @@
 # Kettlebell robot identity trials
 
+Latest motion trial: [curious glance](video/atomic-emotes/trial-02-curious-glance/README.md). Kling 4 produced unwanted lid-like occlusion instead of preserving the eye capsules. The review clip is available; it is not an accepted emote.
+
 Current blink timing: the owner preferred 2× speed. The [double-blink delivery](video/atomic-emotes/double-blink/README.md) now lasts one second at 24 fps, preserving all 24 frames and shared neutral endpoints. No new generation was required; earlier two-second entries are historical.
 
 Latest motion edit: [two quick blinks](video/atomic-emotes/double-blink/README.md), locally assembled from the existing Kling 4 take; two seconds at 12 fps, no new generation.

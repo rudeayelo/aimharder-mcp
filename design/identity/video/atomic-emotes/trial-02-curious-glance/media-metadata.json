@@ -1,0 +1,69 @@
+{
+  "source.mp4": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "avg_frame_rate": "0/0",
+        "duration": "3.041995",
+        "nb_frames": "133"
+      },
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 940,
+        "height": 940,
+        "avg_frame_rate": "24/1",
+        "duration": "3.041667",
+        "nb_frames": "73"
+      }
+    ],
+    "format": {
+      "duration": "3.041995",
+      "size": "277558"
+    },
+    "sha256": "dd5fe0b68634825dae72bfeb61553239fc240389e26cde9f27a7e599bec6b873"
+  },
+  "retimed-2s-12fps.mp4": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 940,
+        "height": 940,
+        "avg_frame_rate": "12/1",
+        "duration": "2.000000",
+        "nb_frames": "24"
+      }
+    ],
+    "format": {
+      "duration": "2.000000",
+      "size": "154519"
+    },
+    "sha256": "d3a7046a0de08ca56856b18ca962bbd095a96e391a3c7c20be45851c5d4ce2aa"
+  },
+  "glance-2s-12fps.mp4": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 940,
+        "height": 940,
+        "avg_frame_rate": "12/1",
+        "duration": "2.000000",
+        "nb_frames": "24"
+      }
+    ],
+    "format": {
+      "duration": "2.000000",
+      "size": "157909"
+    },
+    "sha256": "82bb1a344dbf617e7e74ad3c094536a47b0f26d83a6fd6533c043ab10ce3e70c"
+  }
+}

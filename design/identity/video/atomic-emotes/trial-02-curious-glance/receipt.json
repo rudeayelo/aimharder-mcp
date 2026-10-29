@@ -1,0 +1,25 @@
+{
+  "preparedAt": "2026-10-29T16:40:28.139877+00:00",
+  "model": "kling_4",
+  "durationSeconds": 3,
+  "ratio": "auto_720p",
+  "plannedCredits": 39,
+  "promptSha256": "777cef174d144876e57fbb485cf95787baa0addcf0cb6fad428e91e209564390",
+  "firstFrame": "../../reference-pack/01-front-neutral.png",
+  "lastFrame": "../../reference-pack/01-front-neutral.png",
+  "referenceFiles": [],
+  "submissionState": "accepted",
+  "transport": "provider-ephemeral-uploads",
+  "submittedAt": "2026-10-29T16:40:29.792125+00:00",
+  "taskId": "ec11871c-7e88-4555-94e0-5fcc241dc7b6",
+  "estimatedCost": {
+    "credits": 39
+  },
+  "status": "SUCCEEDED",
+  "lastCheckedAt": "2026-10-29T16:43:01.337511+00:00",
+  "outputCount": 1,
+  "completedAt": "2026-10-29T16:43:02.058764+00:00",
+  "sourceBytes": 277558,
+  "sourceSha256": "dd5fe0b68634825dae72bfeb61553239fc240389e26cde9f27a7e599bec6b873",
+  "balanceDecreaseCredits": 39
+}

@@ -1,5 +1,7 @@
 # Video input preparation
 
+Latest generation: [atomic curious-glance trial](atomic-emotes/trial-02-curious-glance/README.md), one 39-credit Kling 4 task, with original and two-second review edit. The unchanged-eye-shape requirement is not met; this emote is not accepted.
+
 Current blink timing: the owner preferred 2× speed. The [double-blink delivery](atomic-emotes/double-blink/README.md) now lasts one second at 24 fps, preserving all 24 frames and shared neutral endpoints. No new generation was required; earlier two-second entries are historical.
 
 Latest local edit: [two quick blinks](atomic-emotes/double-blink/README.md), assembled from existing poses into exactly 24 frames at 12 fps. No new generation or credit expenditure.
