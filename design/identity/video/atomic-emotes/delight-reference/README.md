@@ -1,0 +1,7 @@
+# Delight target pose
+
+Created 2026-10-29 with the built-in GPT Image tool, following the owner's approval of the next emote. The [neutral master](../../reference-pack/01-front-neutral.png) was the edit target. [The generated pose](delight.png) is a single frame with slightly larger orange capsule eyes, intended to convey subtle delight while the body remains still.
+
+The [exact image prompt](image-prompt.txt) requests about 10% enlargement of both full eyes and their rims around their existing centers, preserving the body, face boundary, camera, material and background. Visual inspection confirms two fully visible capsules, a restrained enlargement and the same overall composition; exact 10% scaling in both dimensions and pixel-identical body/material preservation are not established. Whether this reads as delight at logo size needs owner review. No eyelids, pupils, mouth or extra face parts were requested.
+
+The image was copied unchanged from the built-in GPT Image result into this repository. Actual dimensions, bytes and checksum are in [manifest.json](manifest.json). No Runway image-generation task was used. This target is supplied as the middle keyframe in [the guided video trial](../trial-05-guided-delight/README.md), between two assignments of the same neutral master. The [video prompt](guided-video-prompt.txt) describes a single enlargement and return, without other gestures.

@@ -1,0 +1,11 @@
+{
+  "generator": "Built-in GPT Image tool",
+  "input": "../../reference-pack/01-front-neutral.png",
+  "output": "delight.png",
+  "width": 1254,
+  "height": 1254,
+  "bytes": 1542697,
+  "sha256": "fd5efa7be2e0c9c7d4f801688ff1ce47ffd1565d894562edac566bd84a887ebf",
+  "imagePrompt": "image-prompt.txt",
+  "guidedVideoPrompt": "guided-video-prompt.txt"
+}

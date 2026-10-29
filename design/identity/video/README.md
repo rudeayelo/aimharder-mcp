@@ -1,5 +1,7 @@
 # Video input preparation
 
+Latest emote candidate: [guided delight](atomic-emotes/trial-05-guided-delight/README.md), with a GPT Image middle pose, full generated take and a restrained two-second 12 fps pose edit. One successful task cost 39 credits; owner acceptance remains pending.
+
 Latest motion candidate: [guided curious gaze](atomic-emotes/trial-04-guided-curious-glance/README.md), using a GPT Image target pose as a middle keyframe and locally reversing the return to remove overshoot. The separate WAN model comparison also failed the eye-shape constraint. Total new Runway cost: 69 credits. Both comparisons and the two-second clean edit are preserved.
 
 Latest generation: [atomic curious-glance trial](atomic-emotes/trial-02-curious-glance/README.md), one 39-credit Kling 4 task, with original and two-second review edit. The unchanged-eye-shape requirement is not met; this emote is not accepted.

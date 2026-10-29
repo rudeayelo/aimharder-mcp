@@ -1,5 +1,7 @@
 # Kettlebell robot identity trials
 
+Latest motion candidate: [delight](video/atomic-emotes/trial-05-guided-delight/README.md), prepared with a GPT Image target pose and Kling 4. The full expression and a locally restrained edit are available; cadence and logo-size readability await owner review.
+
 Latest motion candidate: [curious gaze guided by a GPT Image pose](video/atomic-emotes/trial-04-guided-curious-glance/README.md), with a local return edit. It improves full-eye translation; owner acceptance and logo-size review remain pending. A separate WAN comparison and all original outputs are preserved.
 
 Latest motion trial: [curious glance](video/atomic-emotes/trial-02-curious-glance/README.md). Kling 4 produced unwanted lid-like occlusion instead of preserving the eye capsules. The review clip is available; it is not an accepted emote.
