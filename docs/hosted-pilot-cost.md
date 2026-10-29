@@ -2,6 +2,10 @@
 
 The accepted target is **20 invited participants and at most EUR 10/month in service operating cost**. These measurements and assumptions were collected on 2026-10-19 for [ticket #84](https://github.com/rudeayelo/aimharder-mcp/issues/84). Sustainable full-runtime capacity and an all-in cost conclusion remain **unverified**. No purchases or plan changes are authorized. Functional success above a nominal CPU allowance does not establish a reliable free service.
 
+## Owner-selected Paid plan (2026-10-29)
+
+The owner reports having completed the Cloudflare upgrade to Paid. This later owner action replaces the Free-only premise for future capacity assessment; it does not rewrite the historical Free observations or establish when earlier invocations ran under a paid subscription. The [capacity-reference amendment](adr/2026-10-28-best-effort-hosted-telemetry-delivery.md#owner-selected-paid-capacity-reference-2026-10-29) preserves the existing budget target and remaining measurement gates. No invoice, current subscription or all-in monthly cost was independently verified; the fresh subscription read still returns 403. The agent made no purchase or plan change. Earlier no-upgrade statements describe their original authorization stage; no additional purchase or plan change is authorized by the owner's report.
+
 ## Owner-directed deferral (2026-10-27)
 
 The owner deferred cost and capacity validation for the current round, prioritizing [lifecycle and isolation](hosted-pilot-acceptance.md#current-validation-priority-2026-10-27). No new cost or capacity measurements were taken for this checkpoint. The accepted 20-participant/EUR 10-per-month planning target remains unchanged and its feasibility remains unverified; deferral is not budget acceptance or a readiness conclusion. The existing observations, assumptions and outstanding measurements below remain historical evidence and deferred work. No purchase or plan change is authorized.

@@ -1,0 +1,107 @@
+{
+  "date": "2026-10-29",
+  "plan": {
+    "ownerReportedCurrentPlan": "Paid",
+    "ownerPerformedUpgrade": true,
+    "independentlyVerified": false,
+    "effectiveUpgradeTimestampKnown": false,
+    "subscriptionRead": {
+      "readAt": "2026-10-29T20:45:56.368689Z",
+      "httpStatus": 403,
+      "success": false
+    },
+    "dashboard": "sign-in required on the available computer"
+  },
+  "configuration": {
+    "exactProjectionMatch": false,
+    "scheduleMetadataOnlyChanged": true,
+    "at": "2026-10-29T20:45:47.434573Z",
+    "enabled": "false",
+    "bindingCount": 17,
+    "secretCount": 7,
+    "protectedConfigurationUnchanged": true,
+    "moduleSha256": "1e2cc09f33dd0202bbc1746761fb75ef2fe13aa50bd2997a65731aa11875103d"
+  },
+  "cron": {
+    "expression": "*/5 * * * *",
+    "modifiedAt": "2026-10-29T20:28:39.346029Z",
+    "metadataChangeAttribution": "unknown; not proof of upgrade time"
+  },
+  "scheduledQueries": {
+    "original": {
+      "readAt": "2026-10-29T20:45:54.533359Z",
+      "startedAt": "2026-10-29T09:00:00Z",
+      "endedAt": "2026-10-29T10:25:50Z",
+      "httpStatus": 200,
+      "errors": false,
+      "sampleCount": 0,
+      "rows": []
+    },
+    "recent": {
+      "readAt": "2026-10-29T20:45:54.864799Z",
+      "startedAt": "2026-10-29T16:00:00Z",
+      "endedAt": "2026-10-29T20:45:47.434573Z",
+      "httpStatus": 200,
+      "errors": false,
+      "sampleCount": 0,
+      "rows": []
+    },
+    "unfiltered": {
+      "readAt": "2026-10-29T20:45:56.267066Z",
+      "startedAt": "2026-10-29T09:00:00Z",
+      "endedAt": "2026-10-29T20:45:47.434573Z",
+      "httpStatus": 200,
+      "errors": false,
+      "returnedRowCount": 0,
+      "targetCount": 0,
+      "otherScriptNamesPersisted": false
+    }
+  },
+  "maintenance": {
+    "readAt": "2026-10-29T20:45:56.521655Z",
+    "httpStatus": 200,
+    "rows": [
+      {
+        "lastAttemptAt": 1793306705169,
+        "lastSuccessAt": 1793306706987,
+        "status": "ok",
+        "lastPurgedCount": 0
+      }
+    ]
+  },
+  "analyticsAccess": {
+    "readAt": "2026-10-29T20:45:56.706758Z",
+    "httpStatus": 200,
+    "errors": false,
+    "settings": [
+      {
+        "workersInvocationsAdaptive": {
+          "enabled": true
+        },
+        "workersInvocationsScheduled": {
+          "availableFields": [
+            "cpuTimeUs",
+            "cron",
+            "datetime",
+            "environmentName",
+            "scheduledDatetime",
+            "scriptName",
+            "status"
+          ],
+          "enabled": true,
+          "maxDuration": 604800,
+          "notOlderThan": 7776000
+        }
+      }
+    ]
+  },
+  "agentActions": {
+    "deployment": false,
+    "activation": false,
+    "purchaseOrPlanChange": false,
+    "platformLoggingChange": false,
+    "readerGrant": false,
+    "sportingWrite": false
+  },
+  "nativeAcceptance": "incomplete"
+}

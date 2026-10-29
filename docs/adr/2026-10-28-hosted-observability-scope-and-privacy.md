@@ -2,6 +2,8 @@
 
 Status: accepted for scope and privacy on 2026-10-28. The owner confirmed the consolidated specification, published as [issue #94](https://github.com/rudeayelo/aimharder-mcp/issues/94); implementation and deployment are not authorized by this ADR.
 
+Capacity amendment (2026-10-29): the Free-only planning premise below is superseded by the owner-selected Paid reference in the [delivery ADR amendment](2026-10-28-best-effort-hosted-telemetry-delivery.md#owner-selected-paid-capacity-reference-2026-10-29). The scope/privacy decision remains accepted and unchanged; current subscription is owner-reported pending independent verification.
+
 ## Context
 
 The owner wants LogNorth to support diagnosis and aggregate operational understanding of the hosted AimHarder MCP service while remaining on Workers Free. Cross-request participant tracking would aid individual support but would create additional persistent identifying telemetry outside the minimal operational purpose.
