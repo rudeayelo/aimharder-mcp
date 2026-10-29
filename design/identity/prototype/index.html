@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AimHarder MCP — symbol motion prototype</title>
+<style>
+@font-face{font-family:Krona;src:url('./assets/KronaOne-Regular.ttf') format('truetype');font-display:swap}
+:root{font-family:system-ui,sans-serif;color:#14283f;background:#fff;color-scheme:light;--body:#2490f4;--face:#101c2c;--eyes:#ffab62}
+*{box-sizing:border-box}body{margin:0}main{max-width:1140px;margin:auto;padding:36px 28px 100px}header{display:flex;justify-content:space-between;align-items:center;gap:16px;border-bottom:1px solid #cfd8e3;padding-bottom:22px}header p{margin:0;font-size:14px;color:#516174}.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:650}h1{font-size:28px;font-weight:550;letter-spacing:-.04em;margin:34px 0 8px}.intro{color:#516174;margin:0;line-height:1.6;max-width:620px}.stage{display:grid;place-items:center;min-height:320px;padding:10px 0}.large-symbol{width:260px;height:260px;overflow:visible}.wordmark{display:flex;align-items:center;justify-content:center;gap:14px;white-space:nowrap;font-family:Krona,sans-serif;font-size:clamp(15px,3.25vw,38px);margin:6px 0 44px;line-height:1}.wordmark .aim{color:#2490f4}.logo-symbol{width:2.7em;height:2.7em;flex:none;margin-top:-.4em;margin-bottom:-.3em}.wordmark-label{text-align:center;color:#516174;font-size:12px;margin-top:0}.controls{display:grid;grid-template-columns:1fr 1fr;gap:36px;border-top:1px solid #cfd8e3;padding-top:28px}fieldset{border:0;padding:0;margin:0;min-width:0}legend{font-size:13px;font-weight:600;margin-bottom:12px}.buttons{display:flex;gap:8px;flex-wrap:wrap}button{font:inherit;font-size:14px;min-height:44px;padding:10px 15px;border:1px solid #73849a;border-radius:8px;background:#fff;color:#14283f;cursor:pointer}button[aria-pressed=true]{background:#14283f;color:white;border-color:#14283f}button:focus-visible,select:focus-visible{outline:3px solid #1765b0;outline-offset:3px}button:disabled{opacity:.5;cursor:default}.state{margin:24px 0 0;font-size:13px;line-height:1.6;color:#516174}footer{font-size:12px;color:#516174;margin-top:28px;line-height:1.6}.switcher{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);display:flex;gap:14px;align-items:center;background:#14283f;color:white;border-radius:12px;padding:8px;z-index:2;max-width:calc(100% - 24px);font-size:13px;white-space:nowrap}.switcher button{border:0;color:white;background:transparent;min-width:44px;padding:8px}.switcher button:focus-visible{outline-color:#ffab62}.switcher span{min-width:145px;text-align:center}.symbol{display:block}.body-fill{fill:var(--body)}.face-fill{fill:var(--face)}.eye-fill{fill:var(--eyes)}.eye-line{fill:none;stroke:var(--eyes);stroke-width:10;stroke-linecap:round}.dark-preview{background:#f4f7fa;padding:16px;border-radius:8px}select{font:inherit;padding:9px;border:1px solid #73849a;border-radius:8px;color:#14283f;background:white;min-height:44px}label{font-size:13px;display:flex;align-items:center;gap:8px;margin-top:16px}
+.switcher{position:relative;left:auto;transform:none;width:max-content;margin:0 auto 24px;bottom:auto}
+@media(max-width:600px){main{padding:24px 18px 40px}header{align-items:start}header p{max-width:120px;text-align:right;font-size:12px}h1{font-size:24px}.intro{font-size:14px}.controls{grid-template-columns:1fr;gap:22px}.stage{min-height:285px}.large-symbol{width:230px;height:230px}.wordmark{gap:5px;font-size:clamp(12px,3.3vw,20px);margin-bottom:32px}.logo-symbol{width:2.5em;height:2.5em}.switcher{bottom:12px}}
+</style>
+<main>
+<header><span class="eyebrow">AimHarder MCP / Motion study</span><p>Prototype · Flat SVG</p></header>
+<h1>A little movement. The same character.</h1>
+<p class="intro">Move your cursor around the page. Try an expression, then compare eye movement with a subtle turn.</p>
+<div class="stage" id="stage"><svg class="symbol large-symbol" role="img" aria-label="Kettlebell robot with a dark circular face and orange eyes" viewBox="0 0 320 320" data-symbol="large"></svg></div>
+<div class="wordmark" aria-label="AimHarder MCP"><span><span class="aim">AIM</span>HARDER</span><svg class="symbol logo-symbol" aria-hidden="true" viewBox="0 0 320 320" data-symbol="logo"></svg><span>MCP</span></div>
+<p class="wordmark-label">Krona One · Actual font file · Provisional blue body</p>
+<div class="controls">
+<fieldset><legend>Expression</legend><div class="buttons" id="expressions"><button type="button" data-expression="neutral" aria-pressed="true">Neutral</button><button type="button" data-expression="happy" aria-pressed="false">Happy</button><button type="button" data-expression="wink" aria-pressed="false">Wink</button><button type="button" data-expression="curious" aria-pressed="false">Curious</button></div></fieldset>
+<fieldset><legend>Playback</legend><div class="buttons"><button type="button" id="blink">Blink once</button><button type="button" id="pause" aria-pressed="false">Pause motion</button><button type="button" id="reset">Reset</button></div><label for="body-color">Body color <select id="body-color"><option value="#2490f4">Blue</option><option value="#f398bc">Pink</option><option value="#f5d35a">Yellow</option><option value="#70bd91">Green</option><option value="#a58bdc">Violet</option><option value="#14283f">Navy</option></select></label></fieldset>
+</div>
+<p class="state" id="state" role="status" aria-live="polite"></p>
+<footer>Local symbol experiment, separate from the public website. No textures, shadows or 3D runtime. On touch screens, tap the stage to change its gaze. Reduced-motion preferences keep the symbol still.</footer>
+</main>
+<nav class="switcher" aria-label="Motion variant"><button type="button" id="previous" aria-label="Previous motion variant">←</button><span id="variant-label"></span><button type="button" id="next" aria-label="Next motion variant">→</button></nav>
+<script>
+// Throwaway prototype: does a flat, cursor-following symbol work beside the logo?
+// ?variant=eyes, ?variant=parallax, ?variant=static compare motion, not page layouts.
+(() => {
+  const variants=['eyes','parallax','static'];
+  const names={eyes:'A · Eyes only',parallax:'B · Gentle turn',static:'C · Static'};
+  const motion=matchMedia('(prefers-reduced-motion: reduce)');
+  const pointer=matchMedia('(pointer: fine)');
+  let variant=variants.includes(new URL(location.href).searchParams.get('variant'))?new URL(location.href).searchParams.get('variant'):'parallax';
+  let expression='neutral', paused=false, pointerAt=null, blinkAt=-Infinity, nextBlink=performance.now()+3800, frame=0, last=0;
+  const models=[...document.querySelectorAll('[data-symbol]')].map((svg,index)=>{
+    const clip='face-clip-'+index;
+    svg.innerHTML=`<defs><clipPath id="${clip}"><circle cx="160" cy="202" r="75"/></clipPath></defs><g data-part="body"><path class="body-fill" fill-rule="evenodd" d="M112 30H208C236 30 253 50 253 76V128H225V78C225 65 219 58 206 58H114C101 58 95 65 95 78V128H67V76C67 50 84 30 112 30Z"/><path class="body-fill" d="M88 111C104 97 124 91 160 91C196 91 216 97 232 111C259 135 280 177 280 216C280 264 251 290 160 290C69 290 40 264 40 216C40 177 61 135 88 111Z"/><g data-part="face"><circle class="face-fill" cx="160" cy="202" r="75"/><g clip-path="url(#${clip})"><g data-part="gaze"><g data-part="blink"><path class="eye-fill" data-eye="left"/><path class="eye-fill" data-eye="right"/></g></g></g></g></g>`;
+    return {svg,body:svg.querySelector('[data-part=body]'),face:svg.querySelector('[data-part=face]'),gaze:svg.querySelector('[data-part=gaze]'),blink:svg.querySelector('[data-part=blink]'),eyes:[...svg.querySelectorAll('[data-eye]')],x:0,y:0};
+  });
+  const still=()=>paused||motion.matches||variant==='static';
+  function capsule(cx,cy,w,h){const r=w/2;return `M${cx-r} ${cy-h/2+r}a${r} ${r} 0 0 1 ${w} 0v${h-w}a${r} ${r} 0 0 1 ${-w} 0Z`;}
+  function drawEyes(model){model.eyes.forEach((eye,i)=>{const x=i?184:136;eye.classList.remove('eye-line');eye.classList.add('eye-fill');if(expression==='happy'){eye.setAttribute('d',`M${x-9} 205Q${x} 185 ${x+9} 205`);eye.classList.remove('eye-fill');eye.classList.add('eye-line');}else if(expression==='wink'&&i===1){eye.setAttribute('d',`M${x-8} 202h16`);eye.classList.remove('eye-fill');eye.classList.add('eye-line');}else eye.setAttribute('d',capsule(x,202,14,expression==='curious'&&i===1?19:30));});}
+  function renderStatus(){document.getElementById('state').textContent=`${names[variant]} · ${expression} · ${motion.matches?'Reduced motion: static':paused?'Paused':variant==='static'?'Static':pointer.matches?'Cursor tracking + occasional blink':'Touch gaze + occasional blink'}`;document.getElementById('variant-label').textContent=names[variant];document.getElementById('pause').setAttribute('aria-pressed',String(paused));document.getElementById('pause').textContent=paused?'Resume motion':'Pause motion';document.getElementById('pause').disabled=motion.matches||variant==='static';document.getElementById('blink').disabled=still();}
+  function draw(t){const dt=Math.min((t-last)/1000,.05)||.016;last=t;const smoothing=1-Math.exp(-dt*10);const freeze=still();if(!freeze&&t>=nextBlink){blinkAt=t;nextBlink=t+4200+Math.random()*1800;}const elapsed=t-blinkAt;const blink=freeze||elapsed>180?1:Math.max(.06,Math.abs(elapsed-90)/90);let moving=false;models.forEach(model=>{const r=model.svg.getBoundingClientRect();const tx=!freeze&&pointerAt?Math.tanh((pointerAt.x-r.x-r.width/2)/300):0;const ty=!freeze&&pointerAt?Math.tanh((pointerAt.y-r.y-r.height/2)/230):0;model.x=freeze?0:model.x+(tx-model.x)*smoothing;model.y=freeze?0:model.y+(ty-model.y)*smoothing;const x=model.x,y=model.y;const turn=variant==='parallax'&&!freeze;const tilt=freeze?0:(turn?x*3:0)+(expression==='curious'?-6:expression==='wink'?3:0);model.body.setAttribute('transform',`translate(160 190) rotate(${tilt}) scale(${turn?1-Math.abs(x)*.025:1} 1) translate(-160 -190)`);model.face.setAttribute('transform',turn?`translate(${x*11} ${y*6}) translate(160 202) scale(${1-Math.abs(x)*.08} 1) translate(-160 -202)`:'');model.gaze.setAttribute('transform',`translate(${x*11} ${y*7})`);model.blink.setAttribute('transform',`translate(0 202) scale(1 ${blink}) translate(0 -202)`);moving||=Math.abs(tx-x)>.002||Math.abs(ty-y)>.002;});frame=freeze?0:requestAnimationFrame(draw);}
+  function start(){if(!frame){last=performance.now();frame=requestAnimationFrame(draw);}}
+  function changeVariant(step){variant=variants[(variants.indexOf(variant)+step+variants.length)%variants.length];const url=new URL(location.href);url.searchParams.set('variant',variant);history.replaceState({},'',url);blinkAt=-Infinity;renderStatus();start();}
+  document.getElementById('previous').onclick=()=>changeVariant(-1);document.getElementById('next').onclick=()=>changeVariant(1);
+  document.getElementById('expressions').addEventListener('click',e=>{const button=e.target.closest('[data-expression]');if(!button)return;expression=button.dataset.expression;document.querySelectorAll('[data-expression]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));models.forEach(drawEyes);renderStatus();start();});
+  document.getElementById('blink').onclick=()=>{if(still())return;blinkAt=performance.now();nextBlink=blinkAt+4500;start();};
+  document.getElementById('pause').onclick=()=>{paused=!paused;blinkAt=-Infinity;renderStatus();start();};
+  document.getElementById('reset').onclick=()=>{pointerAt=null;expression='neutral';blinkAt=-Infinity;nextBlink=performance.now()+3800;models.forEach(drawEyes);document.querySelectorAll('[data-expression]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.expression==='neutral')));renderStatus();start();};
+  document.getElementById('body-color').onchange=e=>document.documentElement.style.setProperty('--body',e.target.value);
+  document.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'&&pointer.matches){pointerAt={x:e.clientX,y:e.clientY};start();}});
+  document.documentElement.addEventListener('pointerleave',()=>{pointerAt=null;start();});
+  document.getElementById('stage').addEventListener('pointerdown',e=>{pointerAt={x:e.clientX,y:e.clientY};start();});
+  document.addEventListener('keydown',e=>{if(e.target.closest('button,input,select,textarea,[contenteditable]'))return;if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();changeVariant(e.key==='ArrowRight'?1:-1);}});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(frame);frame=0;}else{nextBlink=performance.now()+3800;start();}});
+  motion.addEventListener('change',()=>{blinkAt=-Infinity;renderStatus();start();});
+  models.forEach(drawEyes);renderStatus();start();
+})();
+</script>
+</html>

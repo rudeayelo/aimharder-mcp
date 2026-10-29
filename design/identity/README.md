@@ -17,6 +17,10 @@ Both were generated with the built-in GPT Image tool using separate prompts, wit
 
 ## Review and next step
 
+### Flat SVG motion alternative
+
+The owner proposed a flat, texture-free/shadow-free pseudo-3D symbol with animated cursor-following gaze, inspired by the Grok Bot header. An isolated [motion prototype](prototype/README.md) on `codex/95-symbol-motion-prototype` compares eye-only motion, a gentle face/body turn and a static version, using actual Krona One for the adjacent wordmark sample. This is a throwaway interaction experiment, not the public home-page design or a selected replacement for the sculptural mark. Only the resulting owner-approved decision belongs in the final handoff; keep the experimental code out of production delivery.
+
 ### Selected circular face and limited expression exploration
 
 The owner explicitly selected the dark circular face. Preserve orange recessed eyes; body color remains unselected. The intended use is limited: beside the logo on the public home page and occasional incidental placements. Do not expand this into a comprehensive character, pet or animation system.
