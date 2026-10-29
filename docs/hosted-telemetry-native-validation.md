@@ -8,6 +8,8 @@ After the implementation and synthetic checks are reviewable, request authorizat
 
 Technical failures, classifier failures and uncertain synthetic observations can create grouped issues and trigger existing new/regression notifications. Describe that effect before obtaining authorization. Do not change shared retention, channels, quiet hours, rules or uptime monitors. Sustained activation requires a later decision after evidence is reviewed.
 
+Bound the controlled activation to two hours, then restore collection/export to disabled even if measurements or indexing remain incomplete. Stop sooner on incompatible Free-limit failures. Record smaller samples and unavailable measurements as incomplete acceptance; the time bound never authorizes extending activation or changing the plan.
+
 ## Preflight receipt
 
 1. Pin the integration commit and production bundle SHA-256. Complete local checks and inspect the bundle for fixture-only routes or synthetic upstream adapters. Use the existing [test-environment procedure](hosted-test-environment.md) and pinned tooling.
