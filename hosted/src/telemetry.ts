@@ -14,23 +14,29 @@ const messages = { 'http.completed': 'Hosted HTTP request completed', 'mcp.tool.
 const priority: Record<Outcome,number> = {success:0,denied:1,partial:2,uncertain:3,technical_failure:3,unclassified:3};
 const issues = { technical_failure: ['HostedTechnicalFailure','Hosted operation failed technically'], uncertain: ['HostedWriteUncertain','Hosted write effect is unconfirmed'], unclassified: ['HostedClassifierFailure','Hosted outcome has no supported classification'] } as const;
 // Labels and codes originate in source catalogs, never arbitrary upstream strings.
-const codes = new Set(['HTTP_DENIED','HTTP_FAILURE','HTTP_UNCLASSIFIED','EMAIL_UNAVAILABLE','GOOGLE_UNAVAILABLE','INVALID_TIME_ZONE_CONFIGURATION','RECOVERY_UNAVAILABLE','NOT_CONNECTED','REQUEST_FAILED','IDENTITY_MISMATCH','AUTHENTICATION_FAILED','ACCESS_RESTRICTED','SESSION_EXPIRED','INVALID_RESPONSE','NO_ACCESSIBLE_GYMS','UNSUPPORTED_MEMBERSHIP','DEFAULT_GYM_REQUIRED','GYM_NOT_ACCESSIBLE','INVALID_CONFIGURATION']);
+const deniedCodes = new Set(['AUTHENTICATION_FAILED','ACCESS_RESTRICTED','SESSION_EXPIRED','INVALID_CONFIGURATION','INVALID_TIME_ZONE_CONFIGURATION','NO_ACCESSIBLE_GYMS','DEFAULT_GYM_REQUIRED','GYM_NOT_ACCESSIBLE','GYM_TIME_ZONE_REQUIRED','CONFIRMED_GYM_TIME_ZONE_REQUIRED','INVALID_CLASS_QUERY','INVALID_WORKOUT_QUERY','INVALID_ACTIVITY_QUERY','INVALID_EXERCISE_QUERY','INVALID_BOOKING_PREPARATION_QUERY','INVALID_CANCELLATION_PREPARATION_QUERY','INVALID_BOOKING_EXECUTION_QUERY','INVALID_LATE_CANCELLATION_QUERY','BOOKING_REFERENCE_INVALID','INVALID_ACTIVITY_PUBLICATION_QUERY','INVALID_ACTIVITY_DELETION_EXECUTION_QUERY','ACTIVITY_REFERENCE_INVALID']);
+const technicalCodes = new Set(['IDENTITY_MISMATCH','REQUEST_FAILED','INVALID_RESPONSE','UNSUPPORTED_MEMBERSHIP','INVALID_CLASS_RESPONSE','INVALID_BOOKING_RESPONSE','INVALID_WORKOUT_RESPONSE','INVALID_ACTIVITY_RESPONSE','INVALID_EXERCISE_RESPONSE','INVALID_ACTIVITY_PREFERENCES','INVALID_ACTIVITY_SOURCE','ACTIVITY_LIMIT']);
+const codes = new Set([...deniedCodes,...technicalCodes,'ACTION_OUTCOME_UNCERTAIN','BOOKING_HISTORY_PARTIAL','PERSONAL_ACTIVITY_INCOMPLETE','RM_ENRICHMENT_INCOMPLETE','HTTP_DENIED','HTTP_FAILURE','HTTP_UNCLASSIFIED','EMAIL_UNAVAILABLE','GOOGLE_UNAVAILABLE','RECOVERY_UNAVAILABLE','NOT_CONNECTED']);
+function classifyCode(code:unknown):Classification {
+  if(typeof code!=='string')return {outcome:'unclassified'};
+  if(deniedCodes.has(code))return {outcome:'denied',code};
+  if(technicalCodes.has(code))return {outcome:'technical_failure',code};
+  if(code==='ACTION_OUTCOME_UNCERTAIN')return {outcome:'uncertain',code};
+  return {outcome:'unclassified'};
+}
 export function classifyError(error: unknown): Classification {
-  if (!(error instanceof AimHarderError)) return {outcome:'technical_failure',code:'REQUEST_FAILED'};
-  const denied = ['AUTHENTICATION_FAILED','ACCESS_RESTRICTED','SESSION_EXPIRED','DEFAULT_GYM_REQUIRED','GYM_NOT_ACCESSIBLE','INVALID_CONFIGURATION','INVALID_TIME_ZONE_CONFIGURATION'];
-  return codes.has(error.code) ? {outcome: denied.includes(error.code)?'denied':'technical_failure',code:error.code} : {outcome:'unclassified'};
+  return error instanceof AimHarderError ? classifyCode(error.code) : {outcome:'technical_failure',code:'REQUEST_FAILED'};
 }
 export function classifyAccountContext(envelope: Record<string,unknown>,httpStatus?:number): Classification {
   if(!envelope || typeof envelope!=='object' || Array.isArray(envelope))return {outcome:'unclassified'};
   if(envelope.status==='connected' && typeof envelope.account==='object' && envelope.account!==null && 'authenticated' in envelope.account && envelope.account.authenticated===true && Array.isArray(envelope.gyms) && typeof envelope.selectedGym==='object' && envelope.selectedGym!==null)return {outcome:'success'};
-  const error = envelope.error;
-  const code = typeof error==='object' && error!==null && 'code' in error ? error.code : undefined;
-  if(typeof code==='string' && codes.has(code))return {outcome:['AUTHENTICATION_FAILED','ACCESS_RESTRICTED','SESSION_EXPIRED','DEFAULT_GYM_REQUIRED','GYM_NOT_ACCESSIBLE','INVALID_CONFIGURATION','INVALID_TIME_ZONE_CONFIGURATION'].includes(code)?'denied':'technical_failure',code};
-  if(envelope.status==='unavailable' && !envelope.error){
+  const error=envelope.error;
+  if(typeof error==='object' && error!==null && 'code' in error)return classifyCode(error.code);
+  if(envelope.status==='unavailable' && !error){
     if(httpStatus===403)return {outcome:'denied',code:'ACCESS_RESTRICTED'};
     if(httpStatus===503)return {outcome:'technical_failure',code:'REQUEST_FAILED'};
   }
-  if(['invalid-settings','default-gym-required','already-connected','connection-changed'].includes(String(envelope.status)) && !envelope.error)return {outcome:'denied',code:'INVALID_CONFIGURATION'};
+  if(envelope.status==='invalid-settings' && !error)return {outcome:'denied',code:'INVALID_CONFIGURATION'};
   if(envelope.status==='not-connected')return {outcome:'denied',code:'NOT_CONNECTED'};
   return {outcome:'unclassified'};
 }

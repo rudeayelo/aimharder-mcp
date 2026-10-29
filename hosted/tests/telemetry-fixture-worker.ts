@@ -1,4 +1,5 @@
 // Synthetic telemetry-boundary harness. Never bundled into the application.
+import {classifyReadOutcome,queryToolNames} from '../src/query-outcome.js';
 import { createTelemetry, TelemetryInvocation, classifyAccountContext } from '../src/telemetry.js';
 import type { HostedEnvironment } from '../src/auth.js';
 import { handleHostedRequest } from '../src/worker.js';
@@ -21,7 +22,8 @@ export default {
         telemetry?.tool('get_account_context',start,{outcome:'technical_failure',code:'IDENTITY_MISMATCH'});
       }else{
         const envelope=await request.json() as Record<string,unknown>;
-        telemetry?.tool('get_account_context',start,classifyAccountContext(envelope));
+        const kind=url.searchParams.get('kind');
+        telemetry?.tool(kind ? queryToolNames[kind] ?? 'unknown' : 'get_account_context',start,kind ? classifyReadOutcome(kind,envelope) ?? {outcome:'unclassified'} : classifyAccountContext(envelope));
       }
       if(telemetry)ctx.waitUntil((async()=>{await telemetry.flush();await telemetry.flush();})());
       return Response.json({ok:true});

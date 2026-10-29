@@ -93,9 +93,8 @@ Invalid enabled configuration disables only telemetry with a fixed diagnostic.
 Omitted/false activation sends nothing and produces no disabled-mode warnings.
 
 Delivery uses one invocation-local, bounded batch through `waitUntil`, with no
-retry or persistent buffer. HTTP and account-context tool observations are the
-initial implemented slice; the [observability specification](lognorth-observability-spec.md)
-defines the remaining tool/maintenance coverage and later native acceptance.
+retry or persistent buffer. HTTP and all nine read-tool observations are implemented; the [observability specification](lognorth-observability-spec.md)
+defines the remaining action-tool/maintenance coverage and later native acceptance.
 To disable, set `LOGNORTH_ENABLED=false` through a separately authorized
 configuration deployment, preserving other bindings/secrets. An already-started
 batch may finish within its two-second deadline; disabling does not erase stored

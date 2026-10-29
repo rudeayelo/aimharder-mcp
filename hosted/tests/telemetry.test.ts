@@ -104,3 +104,19 @@ test('known configuration denials at HTTP 503 remain denials and hostile paths u
   const denied=await worker.dispatchFetch('http://localhost:8787/mcp',{method:'POST'});expect(denied.status).toBe(503);await settle();
   expect(batches.at(-1)!.events[0]!.context).toMatchObject({outcome:'technical_failure',code:'RECOVERY_UNAVAILABLE',http_status:503});
 });
+
+test('future or missing read discriminants remain classifier issues in the trusted-envelope native harness',async()=>{
+ for(const kind of ['class-sessions','upcoming-bookings','booking-history','published-workouts','personal-activity','exercise-1rm','find-exercise-1rm','exercise-progression']){
+  await invoke('?kind='+kind,{status:'SECRET_FUTURE',coverage:{status:'SECRET_FUTURE'},secret:'SECRET'});
+  const event=batches.at(-1)!.events[0]!;
+  expect(event.context).toMatchObject({outcome:'unclassified',error_class:'HostedClassifierFailure'});expect(JSON.stringify(event)).not.toContain('SECRET');
+ }
+});
+test('every safe client error code maps to a closed diagnostic without safeError gym identifiers',async()=>{
+ const denied=['AUTHENTICATION_FAILED','ACCESS_RESTRICTED','SESSION_EXPIRED','INVALID_CONFIGURATION','INVALID_TIME_ZONE_CONFIGURATION','NO_ACCESSIBLE_GYMS','DEFAULT_GYM_REQUIRED','GYM_NOT_ACCESSIBLE','GYM_TIME_ZONE_REQUIRED','CONFIRMED_GYM_TIME_ZONE_REQUIRED','INVALID_CLASS_QUERY','INVALID_WORKOUT_QUERY','INVALID_ACTIVITY_QUERY','INVALID_EXERCISE_QUERY','INVALID_BOOKING_PREPARATION_QUERY','INVALID_CANCELLATION_PREPARATION_QUERY','INVALID_BOOKING_EXECUTION_QUERY','INVALID_LATE_CANCELLATION_QUERY','BOOKING_REFERENCE_INVALID','INVALID_ACTIVITY_PUBLICATION_QUERY','INVALID_ACTIVITY_DELETION_EXECUTION_QUERY','ACTIVITY_REFERENCE_INVALID'];
+ const technical=['IDENTITY_MISMATCH','REQUEST_FAILED','INVALID_RESPONSE','UNSUPPORTED_MEMBERSHIP','INVALID_CLASS_RESPONSE','INVALID_BOOKING_RESPONSE','INVALID_WORKOUT_RESPONSE','INVALID_ACTIVITY_RESPONSE','INVALID_EXERCISE_RESPONSE','INVALID_ACTIVITY_PREFERENCES','INVALID_ACTIVITY_SOURCE','ACTIVITY_LIMIT'];
+ for(const [codes,outcome] of [[denied,'denied'],[technical,'technical_failure'],[['ACTION_OUTCOME_UNCERTAIN'],'uncertain']] as const)for(const code of codes){
+  await invoke('',{status:'authentication-required',error:{code,message:'SECRET',accessibleGymIds:['SECRET']}});
+  const event=batches.at(-1)!.events[0]!;expect(event.context).toMatchObject({outcome,code});expect(JSON.stringify(event)).not.toContain('SECRET');
+ }
+});
