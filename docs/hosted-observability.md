@@ -1,6 +1,6 @@
 # Hosted completion telemetry
 
-The integration implements [specification #94](https://github.com/rudeayelo/aimharder-mcp/issues/94) in stages on `codex/94-lognorth-integration`. Collection and export are disabled by default. The [configuration contract](configuration.md#optional-hosted-lognorth-configuration) describes the five operator settings; the [native validation procedure](hosted-telemetry-native-validation.md) is staged separately from implementation.
+The integration implements [specification #94](https://github.com/rudeayelo/aimharder-mcp/issues/94) on `codex/94-lognorth-integration`. Collection and export are disabled by default. The [configuration contract](configuration.md#optional-hosted-lognorth-configuration) describes the five operator settings; the [native validation procedure](hosted-telemetry-native-validation.md) is staged separately from implementation.
 
 ## Runtime boundaries
 
@@ -19,10 +19,10 @@ Only fixed warning categories and numeric counters reach the platform console. L
 | Ticket | Local implementation evidence | Native acceptance |
 | --- | --- | --- |
 | [#97](https://github.com/rudeayelo/aimharder-mcp/issues/97) | HTTP/account-context and bounded exporter implemented; focused native workerd/SDK and affected regression checks recorded in [validation](validation.md#initial-hosted-observability-path-97-2026-10-29) | Not performed |
-| [#98](https://github.com/rudeayelo/aimharder-mcp/issues/98) | Read-tool slice in progress | Not performed |
-| [#99](https://github.com/rudeayelo/aimharder-mcp/issues/99) | Booking slice in progress; synthetic writes only | Not performed |
-| [#100](https://github.com/rudeayelo/aimharder-mcp/issues/100) | Activity slice in progress; synthetic writes only | Not performed |
-| [#101](https://github.com/rudeayelo/aimharder-mcp/issues/101) | Maintenance slice pending | Not performed |
+| [#98](https://github.com/rudeayelo/aimharder-mcp/issues/98) | All nine read tools implemented; native SDK and supplemental classification checks recorded in [validation](validation.md#hosted-read-tool-completion-telemetry-98-2026-10-29) | Not performed |
+| [#99](https://github.com/rudeayelo/aimharder-mcp/issues/99) | All five booking tools implemented; [native SDK evidence](validation.md#booking-tool-observations-99-2026-10-29), synthetic writes only | Not performed |
+| [#100](https://github.com/rudeayelo/aimharder-mcp/issues/100) | All four activity tools implemented; [native SDK evidence](hosted-activity-observability.md), synthetic writes only | Not performed |
+| [#101](https://github.com/rudeayelo/aimharder-mcp/issues/101) | Both phases implemented; [native maintenance evidence](validation.md#hosted-maintenance-completion-telemetry-101-2026-10-29) | Not performed |
 | [#102](https://github.com/rudeayelo/aimharder-mcp/issues/102) | Controlled validation/rollback procedure staged | Separate authorization required |
 
 The [scope/privacy ADR](adr/2026-10-28-hosted-observability-scope-and-privacy.md) and [delivery ADR](adr/2026-10-28-best-effort-hosted-telemetry-delivery.md) remain applicable. No participant diagnostics surface, reader grant, account schema, AimHarder API contract or local stdio behavior is added. Actual Worker ingestion/read-back, effective shared retention/notification/access checks, measured provider CPU overhead and demonstrated remote disabling remain outstanding under #102. The staged procedure identifies possible existing notification effects before any validation activation.

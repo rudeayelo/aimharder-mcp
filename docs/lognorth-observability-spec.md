@@ -2,6 +2,8 @@
 
 Status: accepted by final owner confirmation on 2026-10-28 and published as [specification #94](https://github.com/rudeayelo/aimharder-mcp/issues/94), labeled `ready-for-agent`. The owner accepted decisions Q1–Q19 in five interview rounds and then confirmed the consolidated contract. This document authorizes no implementation, secret provisioning, configuration change or deployment. GitHub is the canonical issue/spec tracker under the [tracker convention](agents/issue-tracker.md); this file preserves the supporting repository contract.
 
+Implementation update (2026-10-29): the later owner request authorized the [default-off integration](hosted-observability.md), including HTTP, all 18 tools and both scheduled phases. Local native workerd/SDK tests use synthetic external services and sporting writes. This supersedes only the historical unimplemented status below; the accepted contract is unchanged. Actual Worker read-back/settings/access/CPU/remote-disable evidence remains pending under #102 and requires separate authorization. No telemetry deployment or activation has occurred.
+
 ## Purpose and scope
 
 Provide technical diagnosis and aggregate operational understanding of the hosted AimHarder MCP service using the existing LogNorth installation while remaining on Workers Free. Cover portal, authentication, all 18 hosted MCP tools and scheduled deletion maintenance. Local stdio instrumentation, durable delivery, participant tracking, portal diagnostics, uptime pings, recurring functional journeys and alerts for missing cron executions are outside this delivery.
@@ -162,7 +164,7 @@ Native read-back, measured resource overhead, notification receipt and activatio
 
 ## Delivery, activation and rollback boundaries
 
-This task delivers the reviewed specification, research and ADRs. The confirmed self-contained spec is published in [issue #94](https://github.com/rudeayelo/aimharder-mcp/issues/94). It describes the supporting ADRs without depending on unpublished repository paths. Implementation needs a subsequent user request. Final specification confirmation is not production/deployment approval.
+The original design task delivered the reviewed specification, research and ADRs. The confirmed self-contained spec is published in [issue #94](https://github.com/rudeayelo/aimharder-mcp/issues/94). It describes the supporting ADRs without depending on unpublished repository paths. That subsequent implementation request has now been received and the initially disabled code is implemented. Final specification confirmation and the implementation request do not authorize deployment.
 
 A later implementation delivery must include code, relevant checks, updated operator/validation documentation and an acceptance record, initially disabled. Sustained activation is a separate authorized step after native evidence; uploading secrets, changing a deployment or shared LogNorth settings is not part of this interview.
 
@@ -170,6 +172,6 @@ Rollback means disabling `LOGNORTH_ENABLED` in operator configuration through an
 
 ## Review status
 
-Product decisions Q1–Q19 and the consolidated event/configuration, classification and bounded-export contract were confirmed by the owner on 2026-10-28. Specification #94 was published with 46 user stories and the `ready-for-agent` label; a fresh read-back verified the exact issue body and label. No implementation is validated or activated. Documentation checks cover local links, whitespace and consistency. Runtime tests are deferred until implementation.
+Product decisions Q1–Q19 and the consolidated event/configuration, classification and bounded-export contract were confirmed by the owner on 2026-10-28. Specification #94 was published with 46 user stories and the `ready-for-agent` label; a fresh read-back verified the exact issue body and label. At specification publication, no implementation was validated or activated. Subsequent local implementation checks are recorded in the [delivery ledger](hosted-observability.md); actual Worker acceptance and activation remain pending.
 
 The owner confirmed shared understanding and explicitly requested publication through `to-spec`. Normal documented source-view limits remain distinct from partial retrieval; only the latter is classified `partial` by itself. The interview is complete.
