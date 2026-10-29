@@ -7,6 +7,9 @@ import { afterAll, afterEach, beforeAll, beforeEach, expect, test } from 'vitest
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
 import { buildWorker } from '../build.mjs';
+let telemetryMode: 'off'|'success'|'reject'|'timeout' = 'success';
+const telemetryEvents: Array<{trace_id:string;context:Record<string,unknown>}> = [];
+const telemetryWarnings: string[] = [];
 const origin = 'http://localhost:8801';
 const syntheticKey = Buffer.alloc(32, 17).toString('base64');
 let worker: Miniflare;
@@ -31,12 +34,14 @@ function post(path: string, body: unknown, cookie = '', requestOrigin = origin) 
   return worker.dispatchFetch(origin + path, { method: 'POST', headers: { origin: requestOrigin, cookie, 'content-type': 'application/json' }, body: JSON.stringify(body), redirect: 'manual' });
 }
 async function start(keys: Record<string,string> = {first:syntheticKey}, active = 'first') {
-  worker = new Miniflare(convertV4MiniflareOptions({ modules: true, scriptPath: 'dist/activity-publication-fixture-worker.js', port: 8801,
+  worker = new Miniflare(convertV4MiniflareOptions({ handleStructuredLogs:entry=>telemetryWarnings.push(entry.message), modules: true, scriptPath: 'dist/activity-publication-fixture-worker.js', port: 8801,
     compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'], d1Databases: ['AUTH_DB','RECOVERY_DB'], resourcePersistencePath: directory,
     durableObjects: { ACCOUNT_CONNECTIONS: { className: 'AccountConnection', useSQLite: true } },
     bindings: { RECOVERY_AUTHORITY_ID:'synthetic-authority', BASE_URL: origin, AUTH_SECRET: 'synthetic-account-connection-auth-secret-long-enough',
-      VAULT_KEYS: JSON.stringify(keys), VAULT_ACTIVE_KEY_ID: active },
+      LOGNORTH_ENABLED:telemetryMode==='off'?'false':'true', LOGNORTH_URL:'https://telemetry.synthetic.invalid', LOGNORTH_API_KEY:'lgn-'+'a'.repeat(64), LOGNORTH_ENVIRONMENT:'synthetic', LOGNORTH_RELEASE:'ticket100', VAULT_KEYS: JSON.stringify(keys), VAULT_ACTIVE_KEY_ID: active },
     outboundService: async request => {
+      if(new URL(request.url).origin==='https://telemetry.synthetic.invalid'){const body=await request.json() as {events:typeof telemetryEvents};telemetryEvents.push(...body.events);if(telemetryMode==='timeout')return new Promise(()=>{});return Response.json({created:body.events.length},{status:telemetryMode==='reject'?503:201});}
+
       if(new URL(request.url).origin==='https://synthetic-scheduler.invalid'){if(new URL(request.url).pathname==='/activity-guard/before')await finalGuard?.();const matches=new URL(request.url).pathname===interrupt;const hit=matches&&interruptSkip--<=0;if(hit){interrupt=undefined;interruptSkip=0;}return new Response(null,{status:hit?503:204});}
       if (new URL(request.url).origin === origin) return worker.dispatchFetch(request);
       if (request.url === 'https://login.aimharder.es/api/login' && request.method === 'POST') {
@@ -85,7 +90,19 @@ async function call(cookie: string, name: string, args: Record<string, unknown> 
   try {
     await client.connect(new StreamableHTTPClientTransport(new URL(origin+'/mcp'), { requestInit: { headers: { authorization: `Bearer ${bearer}` } } }));
 
-    return await client.callTool({ name, arguments: args }) as {isError?:boolean;structuredContent?:Record<string,unknown>;content:unknown};
+    const offset=telemetryEvents.length;
+    const result=await client.callTool({ name, arguments: args }) as {isError?:boolean;structuredContent?:Record<string,unknown>;content:unknown};
+    if(telemetryMode!=='off' && result.structuredContent && name.includes('activity_publication')){
+      const outcomes:Record<string,string>={draft:'success',ready:'success',missing:'denied',unsupported:'denied',confirmed:'success',rejected:'denied',stale:'denied',uncertain:'uncertain'};
+      const event=await toolEvent(name,offset,outcomes[String(result.structuredContent.status)]);expect(event.context.outcome).toBe(outcomes[String(result.structuredContent.status)]);
+      expect(event.context.error_class!==undefined).toBe(event.context.outcome==='uncertain');
+    }
+    const serialized=JSON.stringify(result);
+    if(telemetryMode!=='off' && result.isError && name.includes('activity_') && /ACCESS_RESTRICTED|ACTIVITY_REFERENCE_INVALID|ACTION_OUTCOME_UNCERTAIN/.test(serialized)){
+      const expected=serialized.includes('ACTION_OUTCOME_UNCERTAIN')?'uncertain':'denied';
+      const event=await toolEvent(name,offset,expected);expect(event.context.outcome).toBe(expected);
+    }
+    return result;
   } finally { await client.close(); }
 }
 beforeAll(async () => {
@@ -353,4 +370,45 @@ test('connection replacement waits for an original-account publication read-back
  expect((await post('/api/portal/aimharder/disconnect',{},a())).status).toBe(200);
  const disconnected=await executePublication(prepared.structuredContent!.actionReference as string);
  expect(disconnected.isError).toBe(true);expect(JSON.stringify(disconnected)).toContain('ACTION_OUTCOME_UNCERTAIN');expect(requests).toEqual([]);expect(publicationWrites).toBe(1);
+});
+
+async function toolEvent(name:string,offset=0,outcome?:string){
+ for(let i=0;i<100;i++){const event=telemetryEvents.slice(offset).findLast(e=>e.context.tool===name&&(!outcome||e.context.outcome===outcome));if(event)return event;await new Promise(resolve=>setTimeout(resolve,10));}
+ throw new Error('Missing synthetic telemetry tool event');
+}
+test('exporter modes preserve publication role controls, exact confirmation, trace isolation and one POST',async()=>{
+ let expectedPreparation:unknown;let expectedExecution:unknown;
+ for(const mode of ['off','success','reject','timeout'] as const){
+  await worker.dispose();telemetryMode=mode;await start();
+  await post('/api/portal/aimharder/disconnect',{},a());
+  expect((await post('/api/portal/aimharder',{username:'upstream-a@example.invalid',password:'synthetic-upstream-password',gymTimeZones:{'shared-gym':'Europe/Madrid'}},a())).status).toBe(200);
+  telemetryEvents.length=0;resetPublication();sourceNotes='HOSTILE_SPORTING_CONTENT';
+  expect((await preparePublication(b())).isError).toBe(true);expect(publicationWrites).toBe(0);
+  const prepared=await preparePublication();expect(prepared.structuredContent?.status).toBe('ready');
+  const {actionReference:opaqueReference,expiresAt:expiration,...publicPreparation}=prepared.structuredContent!;
+  if(mode==='off')expectedPreparation=publicPreparation;else expect(publicPreparation).toEqual(expectedPreparation);
+  const reference=prepared.structuredContent!.actionReference as string;
+  const preparationTrace=telemetryEvents.findLast(e=>e.context.tool==='prepare_activity_publication')?.trace_id;
+  expect((await call(a(),'execute_activity_publication',{actionReference:reference,confirmed:false})).isError).toBe(true);expect(publicationWrites).toBe(0);
+  const executions=await Promise.all([executePublication(reference),executePublication(reference)]);
+  expect(executions.filter(value=>value.isError)).toHaveLength(1);const result=executions.find(value=>!value.isError)!;expect(result.structuredContent).toMatchObject({status:'confirmed',observedEntry:'matched'});
+  if(mode==='off')expectedExecution=result.structuredContent;else expect(result.structuredContent).toEqual(expectedExecution);
+  expect((await executePublication(reference)).isError).toBe(true);expect(publicationWrites).toBe(1);
+  if(mode==='off')expect(telemetryEvents).toEqual([]);
+  else {const event=telemetryEvents.find(e=>e.context.tool==='execute_activity_publication');expect(event?.trace_id).not.toBe(preparationTrace);expect(JSON.stringify(telemetryEvents)).not.toContain(reference);}
+  if(mode==='timeout')await new Promise(resolve=>setTimeout(resolve,2100));
+  for(const marker of ['HOSTILE_SPORTING_CONTENT','sourceActivityId','actualLoads','shared-gym','synthetic-a','Sample lift','audience'])expect(JSON.stringify(telemetryEvents)).not.toContain(marker);
+ }
+ telemetryMode='success';
+ for(const marker of ['HOSTILE_SPORTING_CONTENT','shared-gym','synthetic-a','Sample lift'])expect(JSON.stringify(telemetryWarnings)).not.toContain(marker);
+});
+
+test('publication draft and non-executable preparation results have explicit telemetry outcomes',async()=>{
+ resetPublication();
+ expect((await call(a(),'prepare_activity_publication',{sourceActivityId:sourceId})).structuredContent?.status).toBe('draft');
+ synthetic=request=>{const url=new URL(request.url);if(url.pathname==='/api/activity'&&url.search)return Response.json({timeLineContent:'7',timeLineFormat:'0',elements:[],curDate:'20260928'});return publicationSource(request);};
+ expect((await preparePublication()).structuredContent?.status).toBe('missing');
+ resetPublication();
+ expect((await preparePublication(a(),{variantLabel:'unsupported-variant'})).structuredContent?.status).toBe('unsupported');
+ expect(publicationWrites).toBe(0);
 });

@@ -26,7 +26,7 @@ export class AccountConnection extends ProductionAccountConnection {
   super(state,{...env,AUTH_DB:database});
  }
 }
-export default { async fetch(request: Request, env: HostedEnvironment) {
+export default { async fetch(request: Request, env: HostedEnvironment,ctx:ExecutionContext) {
   if(new URL(request.url).pathname==='/__fixture/journal-inventory'){
     await env.AUTH_DB.prepare('DELETE FROM portal_action_journal WHERE expires<=?').bind(Date.now()).run();
     const rows=(await env.AUTH_DB.prepare('SELECT userId,revision,referenceDigest,expires,facts FROM portal_action_journal WHERE userId=?').bind('portal-fixture').all<{userId:string;revision:string;referenceDigest:string;expires:number;facts:string|null}>()).results;
@@ -38,5 +38,5 @@ export default { async fetch(request: Request, env: HostedEnvironment) {
     await env.AUTH_DB.prepare("UPDATE portal_participant SET role='admin' WHERE userId='portal-fixture'").run();
     return response;
   }
-  return production.fetch(request, env);
+  return production.fetch(request, env,ctx);
 } };

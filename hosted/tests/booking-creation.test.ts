@@ -10,6 +10,9 @@ import { buildWorker } from '../build.mjs';
 const origin = 'http://localhost:8801';
 const syntheticKey = Buffer.alloc(32, 17).toString('base64');
 let worker: Miniflare;
+let telemetryMode='success';
+const batches:Array<{events:Array<{trace_id:string;duration_ms:number;context:Record<string,unknown>}>}>=[];
+const warnings:string[]=[];
 let directory: string;
 const logins: string[] = [];
 const identities: string[] = [];
@@ -30,12 +33,13 @@ function post(path: string, body: unknown, cookie = '', requestOrigin = origin) 
   return worker.dispatchFetch(origin + path, { method: 'POST', headers: { origin: requestOrigin, cookie, 'content-type': 'application/json' }, body: JSON.stringify(body), redirect: 'manual' });
 }
 async function start(keys: Record<string,string> = {first:syntheticKey}, active = 'first') {
-  worker = new Miniflare(convertV4MiniflareOptions({ modules: true, scriptPath: 'dist/booking-creation-fixture-worker.js', port: 8801,
+  worker = new Miniflare(convertV4MiniflareOptions({ handleStructuredLogs:entry=>warnings.push(entry.message), modules: true, scriptPath: 'dist/booking-creation-fixture-worker.js', port: 8801,
     compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'], d1Databases: ['AUTH_DB','RECOVERY_DB'], resourcePersistencePath: directory,
     durableObjects: { ACCOUNT_CONNECTIONS: { className: 'AccountConnection', useSQLite: true } },
-    bindings: { RECOVERY_AUTHORITY_ID:'synthetic-authority', BASE_URL: origin, AUTH_SECRET: 'synthetic-account-connection-auth-secret-long-enough',
+    bindings: { LOGNORTH_ENABLED:telemetryMode==='off'?'false':'true',LOGNORTH_URL:'https://telemetry.example.invalid',LOGNORTH_API_KEY:'lgn-'+ 'a'.repeat(64),LOGNORTH_ENVIRONMENT:'synthetic',LOGNORTH_RELEASE:'ticket99', RECOVERY_AUTHORITY_ID:'synthetic-authority', BASE_URL: origin, AUTH_SECRET: 'synthetic-account-connection-auth-secret-long-enough',
       VAULT_KEYS: JSON.stringify(keys), VAULT_ACTIVE_KEY_ID: active },
     outboundService: async request => {
+      if(new URL(request.url).origin==='https://telemetry.example.invalid'){const batch=await request.json() as typeof batches[number];batches.push(batch);if(telemetryMode==='timeout')return new Promise<Response>(()=>{});return telemetryMode==='rejected'?new Response('PRIVATE ACK',{status:429}):Response.json({created:batch.events.length},{status:201});}
       if(new URL(request.url).origin==='https://synthetic-scheduler.invalid'){const matches=new URL(request.url).pathname===interrupt;const hit=matches&&interruptSkip--<=0;if(hit){interrupt=undefined;interruptSkip=0;}return new Response(null,{status:hit?503:204});}
       if (new URL(request.url).origin === origin) return worker.dispatchFetch(request);
       if (request.url === 'https://login.aimharder.es/api/login' && request.method === 'POST') {
@@ -203,7 +207,7 @@ test('foreign, wrong-gym, stale-revision and changed eligibility references cann
  const stale=await prepare();expect((await post('/api/portal/aimharder/settings',{gymTimeZones:{'shared-gym':'Europe/Madrid'}},a())).status).toBe(200);
  expect((await call(a(),'execute_booking_creation',{actionReference:stale,confirmed:true})).isError).toBe(true);
  const changed=await prepare();synthetic=request=>new URL(request.url).pathname==='/api/bookings'?Response.json(daily([session({enabled:0})])):bookingSource(request);
- expect((await call(a(),'execute_booking_creation',{actionReference:changed,confirmed:true})).structuredContent?.status).toBe('stale');expect(writes).toHaveLength(0);
+ expect((await call(a(),'execute_booking_creation',{actionReference:changed,confirmed:true})).structuredContent?.status).toBe('stale');await expectObservation('execute_booking_creation','denied','BOOKING_STALE');expect(writes).toHaveLength(0);
 });
 
 test('interruptions before consumption, after consumption, after dispatch fence and after result never replay across persistent restart',async()=>{
@@ -242,6 +246,7 @@ test('transport loss, denial, waitlist and incomplete read-back preserve source 
   const actionReference=((await call(b(),'prepare_booking_creation',target)).structuredContent as {actionReference:string}).actionReference;
   const result=await call(b(),'execute_booking_creation',{actionReference,confirmed:true});
   expect(result.structuredContent).toMatchObject({status:variant==='denied'?'rejected':variant==='waitlisted'?'waitlisted':variant==='incomplete'?'uncertain':'confirmed'});
+  await expectObservation('execute_booking_creation',variant==='denied'||variant==='waitlisted'?'denied':variant==='incomplete'?'uncertain':'success',variant==='denied'?'BOOKING_REFUSED':variant==='waitlisted'?'BOOKING_WAITLISTED':variant==='incomplete'?'BOOKING_EFFECT_UNCONFIRMED':undefined);
   expect(writes).toEqual(['amhrdrauth=synthetic-b']);
   expect((await call(b(),'execute_booking_creation',{actionReference,confirmed:true})).isError).toBe(true);
   await worker.dispose();await start();
@@ -332,4 +337,55 @@ test('losing the current connection after a possible send reports uncertainty wi
  const result=await call(b(),'execute_booking_creation',{actionReference,confirmed:true});
  expect(result.isError).toBe(true);expect(JSON.stringify(result)).toContain('ACTION_OUTCOME_UNCERTAIN');expect(writes).toHaveLength(1);
  expect((await call(b(),'get_account_context')).isError).toBe(true);
+});
+
+
+test('telemetry delivery cannot alter exact creation consent, result, consumption or original-account recovery',async()=>{
+ for(const mode of ['off','success','rejected','timeout']){
+  await worker.dispose();telemetryMode=mode;await start({first:syntheticKey,second:Buffer.alloc(32,29).toString('base64')});booked=new Set();writes=[];synthetic=bookingSource;
+  const before=batches.length;
+  const preparation=await call(a(),'prepare_booking_creation',target);
+  expect(preparation.structuredContent).toMatchObject({status:'ready',target,currentState:'unbooked'});
+  const {actionReference}=preparation.structuredContent as {actionReference:string};
+  expect((await call(a(),'execute_booking_creation',{actionReference,confirmed:false})).isError).toBe(true);
+  const result=await call(a(),'execute_booking_creation',{actionReference,confirmed:true});
+  expect(result.structuredContent).toMatchObject({status:'confirmed',target,observedState:'booked'});
+  expect((await call(a(),'execute_booking_creation',{actionReference,confirmed:true})).isError).toBe(true);
+  expect(writes).toEqual(['amhrdrauth=synthetic-a']);
+  await new Promise(resolve=>setTimeout(resolve,mode==='timeout'?2100:60));
+  const events=batches.slice(before).flatMap(batch=>batch.events).filter(event=>event.context.event_type==='mcp.tool.completed');
+  if(mode==='off')expect(events).toEqual([]);
+  else{
+   expect(events.map(event=>[event.context.tool,event.context.outcome])).toEqual([
+    ['prepare_booking_creation','success'],['execute_booking_creation','success'],['execute_booking_creation','denied']]);
+   expect(new Set(events.map(event=>event.trace_id)).size).toBe(3);
+   expect(events.every(event=>event.duration_ms>=0)).toBe(true);
+   const serialized=JSON.stringify({events,warnings});
+   for(const secret of [actionReference,'Metcon','shared-gym','synthetic-a','upstream-a','PRIVATE ACK'])expect(serialized).not.toContain(secret);
+  }
+  await worker.dispose();await start({first:syntheticKey,second:Buffer.alloc(32,29).toString('base64')});
+  expect((await call(a(),'execute_booking_creation',{actionReference,confirmed:true})).structuredContent).toMatchObject({status:'confirmed',target});
+  expect(writes).toHaveLength(1);
+ }
+ telemetryMode='success';
+});
+
+async function expectObservation(tool:string,outcome:string,code?:string){
+ await new Promise(resolve=>setTimeout(resolve,60));
+ const event=batches.flatMap(batch=>batch.events).filter(event=>event.context.tool===tool).at(-1)!;
+ expect(event.context).toMatchObject({outcome,...(code?{code}:{})});
+ expect(event.context.error_class!==undefined).toBe(['uncertain','technical_failure','unclassified'].includes(outcome));
+ return event;
+}
+
+test('every creation preview state reports success or a non-executable denial without private payloads',async()=>{
+ for(const [status,rows] of [
+  ['ready',[session()]],['missing',[]],['ambiguous',[session(),session({id:502})]],
+  ['already-booked',[session({bookState:1})]],['waitlisted',[session({bookState:0})]],['unsupported',[session({enabled:0})]],
+ ]as const){
+  synthetic=request=>new URL(request.url).pathname==='/api/bookings'?Response.json(daily([...rows])):bookingSource(request);
+  const result=await call(a(),'prepare_booking_creation',target);
+  expect(result.structuredContent?.status).toBe(status);
+  await expectObservation('prepare_booking_creation',status==='ready'?'success':'denied',status==='ready'?undefined:'BOOKING_NOT_EXECUTABLE');
+ }
 });

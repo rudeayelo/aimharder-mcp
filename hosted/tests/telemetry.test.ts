@@ -120,3 +120,13 @@ test('every safe client error code maps to a closed diagnostic without safeError
   const event=batches.at(-1)!.events[0]!;expect(event.context).toMatchObject({outcome,code});expect(JSON.stringify(event)).not.toContain('SECRET');
  }
 });
+
+test('unknown and missing activity result variants create classifier issues without exporting future values',async()=>{
+ for(const kind of ['prepare-activity-publication','execute-activity-publication','prepare-activity-deletion','execute-activity-deletion']){
+  for(const result of [{status:'HOSTILE_FUTURE_ACTIVITY_VARIANT',draft:'HOSTILE_PRIVATE_DRAFT'},{}]){
+   await invoke('?activityKind='+kind,result);const event=batches.at(-1)!.events[0]!;
+   expect(event.context).toMatchObject({event_type:'mcp.tool.completed',tool:kind.replaceAll('-','_'),outcome:'unclassified',error_class:'HostedClassifierFailure'});
+   expect(JSON.stringify(event)).not.toContain('HOSTILE');
+  }
+ }
+});

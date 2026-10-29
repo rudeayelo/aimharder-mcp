@@ -1,3 +1,4 @@
+import { classifyActivityOutcome } from '../src/activity-outcome.js';
 // Synthetic telemetry-boundary harness. Never bundled into the application.
 import {classifyReadOutcome,queryToolNames} from '../src/query-outcome.js';
 import { createTelemetry, TelemetryInvocation, classifyAccountContext } from '../src/telemetry.js';
@@ -20,6 +21,9 @@ export default {
         telemetry?.tool('get_account_context',start,{outcome:'partial'});
         telemetry?.tool('get_account_context',start,{outcome:'denied'});
         telemetry?.tool('get_account_context',start,{outcome:'technical_failure',code:'IDENTITY_MISMATCH'});
+      }else if(url.searchParams.has('activityKind')){
+        const kind=url.searchParams.get('activityKind')!;
+        telemetry?.tool(kind.replaceAll('-','_'),start,classifyActivityOutcome(kind,await request.json() as Record<string,unknown>)??{outcome:'unclassified'});
       }else{
         const envelope=await request.json() as Record<string,unknown>;
         const kind=url.searchParams.get('kind');

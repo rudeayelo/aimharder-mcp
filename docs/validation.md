@@ -1174,6 +1174,35 @@ package changeset is required for this hosted-only slice. No deployment or live
 requests occurred; actual LogNorth read-back, provider CPU, notification delivery
 and sustained activation remain pending. Real manifests retain disabled telemetry.
 
+## Booking tool observations (#99, 2026-10-29)
+
+The five hosted booking tools passed **33 focused tests in 3 files**:
+`booking-creation.test.ts` (15), `booking-cancellation.test.ts` (17) and
+`booking-outcome.test.ts` (1). Hosted typecheck passed. These use public
+portal/OAuth and authenticated MCP SDK over native workerd/D1/SQLite with
+synthetic upstream HTTP and a synthetic LogNorth receiver. Future/unreachable
+unknown discriminants are explicitly separated into the focused classifier
+guard; supported variants cross real callbacks and the exporter.
+
+Tests observe every current preparation/execution status, including separate
+late cancellation, expected refusals/stale references, waitlist, pending
+credit-loss confirmation, confirmed effects and static uncertainty issues.
+Disabled, accepted, rejected and timed-out telemetry preserve exact previews,
+confirmation rejection, distinct late references, reference consumption,
+original-account restart reconciliation and at-most-one dispatch per action.
+Existing native account-isolation, held preflight, revocation, queue and durable
+fault/recovery journeys run with enabled telemetry. Preparation and execution
+have separate generated traces; private class, gym, cookie, action-reference
+and acknowledgement canaries do not appear in collected tool events or
+platform warnings. No exporter response is retried.
+
+The relevant booking and best-effort delivery ADRs were reviewed; no sporting
+scope, confirmation, custody, dispatch or persistence decision changed. Local
+stdio and upstream API contracts are unchanged. This is synthetic evidence,
+not real booking/cancellation validation, installed-service delivery, measured
+provider CPU overhead or deployment/activation acceptance. No live write,
+provider mutation or deployment occurred.
+
 ## Hosted maintenance completion telemetry (#101, 2026-10-29)
 
 The existing scheduled/deletion native local Worker harness passed **13 focused tests** (`pnpm exec vitest run tests/account-deletion.test.ts --no-file-parallelism --testTimeout=30000 -t 'scheduled|unavailable main|deferred rejection'`; 22 unrelated cases skipped). Hosted typecheck passed. Evidence covers completed no-op, restored deleted-payload purge, main failure and pre-memory throw, sticky overdue across a subsequent clean retry, independent deferred rejection with failed delivery, held original-account work preventing early export, and a stalled acknowledgement reaching the bounded export deadline after the main error already returned. These use actual local D1 triggers, SQLite-backed account objects and a synthetic outbound receiver. No real AimHarder mutation or deployed cron was exercised.

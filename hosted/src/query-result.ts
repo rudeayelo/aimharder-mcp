@@ -1,3 +1,5 @@
+import { classifyActivityOutcome } from './activity-outcome.js';
+import { classifyBookingOutcome } from './booking-outcome.js';
 import { classifyReadOutcome, queryToolNames } from './query-outcome.js';
 import { classifyAccountContext, classifyError, type Classification } from './telemetry.js';
 import { safeError } from '../../src/errors.js';
@@ -12,7 +14,7 @@ export async function runAccountQuery(env: HostedEnvironment, subject: string, k
     const response = await accountOperation(env, subject, { kind, input, ...(authorization ? {authorization} : {}) });
     const envelope = await response.json() as { status?: string; result?: Record<string, unknown> };
     classification = envelope.status==='queried' && envelope.result && typeof envelope.result==='object' && !Array.isArray(envelope.result)
-      ? classifyReadOutcome(kind,envelope.result) ?? {outcome:'unclassified'}
+      ? classifyReadOutcome(kind,envelope.result) ?? classifyBookingOutcome(kind,envelope) ?? classifyActivityOutcome(kind,envelope.result) ?? {outcome:'unclassified'}
       : classifyAccountContext(envelope,response.status);
     if (!response.ok || envelope.status !== 'queried' || !envelope.result || typeof envelope.result !== 'object')
       return { isError: true, content: [{ type: 'text' as const, text: JSON.stringify(envelope) }] };

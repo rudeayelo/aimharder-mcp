@@ -31,3 +31,22 @@ bounded one-attempt delivery through Worker `waitUntil`, with synthetic native
 Worker/SDK evidence recorded in [validation](../validation.md#initial-hosted-observability-path-97-2026-10-29).
 The decision and its loss/uncertainty boundaries are unchanged. Subsequent read-tool and maintenance instrumentation has local native-harness evidence in [validation](../validation.md); separately authorized actual-Worker acceptance remains pending; the original design-interview authorization boundary above is
 historical context.
+
+The activity slice [#100](https://github.com/rudeayelo/aimharder-mcp/issues/100)
+now explicitly classifies preparation, publication and deletion read-back through
+the same trusted account result boundary. [Synthetic activity evidence](../hosted-activity-observability.md)
+preserves observed calendar absence as a narrow success and continued visibility,
+identity conflict and incomplete execution read-back as distinct uncertainty
+issues. This does not change the accepted delivery decision or authorize activation.
+
+
+The #99 booking slice applies this decision to all five hosted booking tools.
+Typed non-executable preparations, capacity/state refusals, stale references and
+pending credit-loss confirmation are expected denials; uncertain execution and
+unknown variants retain separate static issue classes. No sporting payload or
+action reference enters either telemetry sink, and no preparation/execution
+correlation crosses requests. Public native synthetic HTTP/SDK evidence covers
+all current booking variants and delivery-mode preservation in
+[validation](../validation.md#booking-tool-observations-99-2026-10-29).
+This adds no architectural, authentication, scope, storage or dispatch decision;
+real Worker export/CPU acceptance and activation remain separate.
