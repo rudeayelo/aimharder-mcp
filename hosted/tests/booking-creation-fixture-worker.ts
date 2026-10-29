@@ -40,7 +40,7 @@ export class AccountConnection extends ProductionAccountConnection {
   super(observedState,{...env,AUTH_DB:database});this.holds=holds;
  }
 }
-export default { async fetch(request: Request, env: HostedEnvironment) {
+export default { async fetch(request: Request, env: HostedEnvironment, ctx?:ExecutionContext) {
   if(new URL(request.url).pathname==='/__fixture/holds')return env.ACCOUNT_CONNECTIONS!.get(env.ACCOUNT_CONNECTIONS!.idFromName('portal-fixture')).fetch('https://fixture-holds.internal/',{headers:{'x-fixture-holds':'1'}});
   if(new URL(request.url).pathname==='/__fixture/rewrap'){
     const row=await env.AUTH_DB.prepare('SELECT userId,revision,envelope FROM portal_aimharder_connection WHERE userId=?').bind('portal-fixture').first<ConnectionRow>();
@@ -60,5 +60,5 @@ export default { async fetch(request: Request, env: HostedEnvironment) {
     await env.AUTH_DB.prepare("UPDATE portal_participant SET role='admin' WHERE userId='portal-fixture'").run();
     return response;
   }
-  return production.fetch(request, env);
+  return production.fetch(request, env, ctx);
 } };

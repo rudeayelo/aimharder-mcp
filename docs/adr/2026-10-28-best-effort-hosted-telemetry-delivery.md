@@ -33,3 +33,15 @@ The decision and its loss/uncertainty boundaries are unchanged. Remaining tool
 and maintenance instrumentation and separately authorized native acceptance
 remain pending; the original design-interview authorization boundary above is
 historical context.
+
+
+The #99 booking slice applies this decision to all five hosted booking tools.
+Typed non-executable preparations, capacity/state refusals, stale references and
+pending credit-loss confirmation are expected denials; uncertain execution and
+unknown variants retain separate static issue classes. No sporting payload or
+action reference enters either telemetry sink, and no preparation/execution
+correlation crosses requests. Public native synthetic HTTP/SDK evidence covers
+all current booking variants and delivery-mode preservation in
+[validation](../validation.md#booking-tool-observations-99-2026-10-29).
+This adds no architectural, authentication, scope, storage or dispatch decision;
+real Worker export/CPU acceptance and activation remain separate.

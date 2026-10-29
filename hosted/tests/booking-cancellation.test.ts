@@ -10,6 +10,9 @@ import { buildWorker } from '../build.mjs';
 const origin = 'http://localhost:8802';
 const syntheticKey = Buffer.alloc(32, 17).toString('base64');
 let worker: Miniflare;
+let telemetryMode='success';
+const batches:Array<{events:Array<{trace_id:string;duration_ms:number;context:Record<string,unknown>}>}>=[];
+const warnings:string[]=[];
 let directory: string;
 const logins: string[] = [];
 const identities: string[] = [];
@@ -30,12 +33,13 @@ function post(path: string, body: unknown, cookie = '', requestOrigin = origin) 
   return worker.dispatchFetch(origin + path, { method: 'POST', headers: { origin: requestOrigin, cookie, 'content-type': 'application/json' }, body: JSON.stringify(body), redirect: 'manual' });
 }
 async function start(keys: Record<string,string> = {first:syntheticKey}, active = 'first') {
-  worker = new Miniflare(convertV4MiniflareOptions({ modules: true, scriptPath: 'dist/booking-cancellation-fixture-worker.js', port: 8802,
+  worker = new Miniflare(convertV4MiniflareOptions({ handleStructuredLogs:entry=>warnings.push(entry.message), modules: true, scriptPath: 'dist/booking-cancellation-fixture-worker.js', port: 8802,
     compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'], d1Databases: ['AUTH_DB','RECOVERY_DB'], resourcePersistencePath: directory,
     durableObjects: { ACCOUNT_CONNECTIONS: { className: 'AccountConnection', useSQLite: true } },
-    bindings: { RECOVERY_AUTHORITY_ID:'synthetic-authority', BASE_URL: origin, AUTH_SECRET: 'synthetic-account-connection-auth-secret-long-enough',
+    bindings: { LOGNORTH_ENABLED:telemetryMode==='off'?'false':'true',LOGNORTH_URL:'https://telemetry.example.invalid',LOGNORTH_API_KEY:'lgn-'+ 'a'.repeat(64),LOGNORTH_ENVIRONMENT:'synthetic',LOGNORTH_RELEASE:'ticket99', RECOVERY_AUTHORITY_ID:'synthetic-authority', BASE_URL: origin, AUTH_SECRET: 'synthetic-account-connection-auth-secret-long-enough',
       VAULT_KEYS: JSON.stringify(keys), VAULT_ACTIVE_KEY_ID: active },
     outboundService: async request => {
+      if(new URL(request.url).origin==='https://telemetry.example.invalid'){const batch=await request.json() as typeof batches[number];batches.push(batch);if(telemetryMode==='timeout')return new Promise<Response>(()=>{});return telemetryMode==='rejected'?new Response('PRIVATE ACK',{status:429}):Response.json({created:batch.events.length},{status:201});}
       if(new URL(request.url).origin==='https://synthetic-scheduler.invalid'){const matches=new URL(request.url).pathname===interrupt;const hit=matches&&interruptSkip--<=0;if(hit){interrupt=undefined;interruptSkip=0;}return new Response(null,{status:hit?503:204});}
       if (new URL(request.url).origin === origin) return worker.dispatchFetch(request);
       if (request.url === 'https://login.aimharder.es/api/login' && request.method === 'POST') {
@@ -173,7 +177,7 @@ test('foreign, expired, wrong-gym, changed revision and reservation references s
  const expired=await prepare();await worker.dispatchFetch(origin+'/__fixture/clock',{headers:{'x-fixture-ms':'121000'}});
  expect((await call(a(),'execute_booking_cancellation',{actionReference:expired,confirmed:true})).isError).toBe(true);
  const changed=await prepare();synthetic=request=>new URL(request.url).pathname==='/api/bookings'?Response.json(daily([session({bookState:1,idres:902})])):bookingSource(request);
- expect((await call(a(),'execute_booking_cancellation',{actionReference:changed,confirmed:true})).structuredContent?.status).toBe('stale');expect(writes).toHaveLength(0);
+ expect((await call(a(),'execute_booking_cancellation',{actionReference:changed,confirmed:true})).structuredContent?.status).toBe('stale');await expectObservation('execute_booking_cancellation','denied','BOOKING_STALE');expect(writes).toHaveLength(0);
 });
 
 test('revocation and expiry during held fresh checks deny cancellation while the other account remains independent',async()=>{
@@ -224,6 +228,7 @@ test('transport loss, denial, incomplete or conflicting reads never invent a cre
   const {actionReference}=(await call(b(),'prepare_booking_cancellation',target)).structuredContent as {actionReference:string};
   const result=await call(b(),'execute_booking_cancellation',{actionReference,confirmed:true});
   expect(result.structuredContent).toMatchObject({status:variant==='denied'?'rejected':'uncertain',credit:{balance:null,entitlementPeriod:null}});
+  await expectObservation('execute_booking_cancellation',variant==='denied'?'denied':'uncertain',variant==='denied'?'BOOKING_REFUSED':'BOOKING_EFFECT_UNCONFIRMED');
   expect((await call(b(),'execute_booking_cancellation',{actionReference,confirmed:true})).isError).toBe(true);
   await worker.dispose();await start();expect((await call(b(),'execute_booking_cancellation',{actionReference,confirmed:true})).structuredContent?.status).toBe(variant==='denied'?'rejected':'uncertain');expect(writes).toHaveLength(1);
  }
@@ -311,4 +316,91 @@ test('a missing original connection after possible cancellation cannot resurrect
  const db=await worker.getD1Database('AUTH_DB');await db.prepare('DELETE FROM portal_aimharder_connection WHERE userId=?').bind('other-participant').run();
  await worker.dispose();await start();requests.length=0;
  const recovered=await call(b(),'execute_booking_cancellation',{actionReference,confirmed:true});expect(recovered.isError).toBe(true);expect(JSON.stringify(recovered)).toContain('ACTION_OUTCOME_UNCERTAIN');expect(requests).toHaveLength(0);expect(writes).toHaveLength(1);
+});
+
+
+test('telemetry preserves separate late-credit-loss confirmation and one dispatch per reference in every delivery mode',async()=>{
+ for(const mode of ['off','success','rejected','timeout']){
+  await worker.dispose();telemetryMode=mode;await start();booked=new Set(['amhrdrauth=synthetic-a']);writes=[];
+  synthetic=async request=>{
+   if(new URL(request.url).pathname==='/api/cancelBook'){
+    writes.push(request.headers.get('cookie')!);
+    const late=new URLSearchParams(await (request as Request).text()).get('late');
+    if(late==='0')return Response.json({cancelState:2});
+    booked.clear();return Response.json({cancelState:1});
+   }return bookingSource(request);
+  };
+  const before=batches.length;
+  const prepared=(await call(a(),'prepare_booking_cancellation',target)).structuredContent as {actionReference:string};
+  expect(prepared).toMatchObject({status:'ready',target,currentState:'booked'});
+  const warning=(await call(a(),'execute_booking_cancellation',{actionReference:prepared.actionReference,confirmed:true})).structuredContent as {actionReference:string};
+  expect(warning).toMatchObject({status:'pending-credit-loss',target,observedState:'booked'});
+  expect(warning.actionReference).not.toBe(prepared.actionReference);
+  expect((await call(a(),'execute_late_booking_cancellation',{actionReference:warning.actionReference,confirmedCreditLoss:false})).isError).toBe(true);
+  expect(writes).toHaveLength(1);
+  expect((await call(a(),'execute_late_booking_cancellation',{actionReference:warning.actionReference,confirmedCreditLoss:true})).structuredContent).toMatchObject({status:'confirmed',target,observedState:'unbooked'});
+  expect((await call(a(),'execute_late_booking_cancellation',{actionReference:warning.actionReference,confirmedCreditLoss:true})).isError).toBe(true);
+  expect(writes).toHaveLength(2);
+  await new Promise(resolve=>setTimeout(resolve,mode==='timeout'?2100:60));
+  const events=batches.slice(before).flatMap(batch=>batch.events).filter(event=>event.context.event_type==='mcp.tool.completed');
+  if(mode==='off')expect(events).toEqual([]);
+  else{
+   expect(events.map(event=>[event.context.tool,event.context.outcome])).toEqual([
+    ['prepare_booking_cancellation','success'],['execute_booking_cancellation','denied'],['execute_late_booking_cancellation','success'],['execute_late_booking_cancellation','denied']]);
+   expect(events[1]!.context.code).toBe('BOOKING_CREDIT_CONFIRMATION_REQUIRED');
+   expect(events[1]!.context.error_class).toBeUndefined();
+   expect(new Set(events.map(event=>event.trace_id)).size).toBe(4);
+   const serialized=JSON.stringify({events,warnings});
+   for(const secret of [prepared.actionReference,warning.actionReference,'Metcon','shared-gym','synthetic-a','PRIVATE ACK'])expect(serialized).not.toContain(secret);
+  }
+  await worker.dispose();await start();
+  expect((await call(a(),'execute_booking_cancellation',{actionReference:prepared.actionReference,confirmed:true})).structuredContent?.status).toBe('uncertain');
+  expect(writes).toHaveLength(2);
+ }
+ telemetryMode='success';
+});
+
+async function expectObservation(tool:string,outcome:string,code?:string){
+ await new Promise(resolve=>setTimeout(resolve,60));
+ const event=batches.flatMap(batch=>batch.events).filter(event=>event.context.tool===tool).at(-1)!;
+ expect(event.context).toMatchObject({outcome,...(code?{code}:{})});
+ expect(event.context.error_class!==undefined).toBe(['uncertain','technical_failure','unclassified'].includes(outcome));
+ return event;
+}
+
+test('every cancellation preview state reports an explicit non-executable denial without claiming a technical failure',async()=>{
+ for(const [status,rows] of [
+  ['ready',[session({bookState:1,idres:901})]],['missing',[]],['ambiguous',[session({bookState:1,idres:901}),session({id:502,bookState:1,idres:902})]],
+  ['already-cancelled',[session({cancelledId:901,idres:901})]],['unsupported',[session({bookState:0,idres:901})]],['unsupported',[session({enabled:0,idres:901})]],
+ ]as const){
+  synthetic=request=>new URL(request.url).pathname==='/api/bookings'?Response.json(daily([...rows])):bookingSource(request);
+  const result=await call(a(),'prepare_booking_cancellation',target);
+  expect(result.structuredContent?.status).toBe(status);
+  await expectObservation('prepare_booking_cancellation',status==='ready'?'success':'denied',status==='ready'?undefined:'BOOKING_NOT_EXECUTABLE');
+ }
+});
+
+test('late execution distinguishes refused, uncertain and stale effects without another cancellation dispatch',async()=>{
+ for(const variant of ['rejected','uncertain','stale'] as const){
+  booked=new Set(['amhrdrauth=synthetic-a']);writes=[];let late=false;
+  synthetic=async request=>{
+   const path=new URL(request.url).pathname;
+   if(path==='/api/cancelBook'){
+    writes.push(request.headers.get('cookie')!);
+    late=new URLSearchParams(await (request as Request).text()).get('late')==='1';
+    return Response.json({cancelState:late?3:2});
+   }
+   if(late&&variant==='uncertain')return new Response(null,{status:500});
+   return bookingSource(request);
+  };
+  const standard=(await call(a(),'prepare_booking_cancellation',target)).structuredContent as {actionReference:string};
+  const warning=(await call(a(),'execute_booking_cancellation',{actionReference:standard.actionReference,confirmed:true})).structuredContent as {actionReference:string};
+  if(variant==='stale')booked.clear();
+  const result=await call(a(),'execute_late_booking_cancellation',{actionReference:warning.actionReference,confirmedCreditLoss:true});
+  expect(result.structuredContent?.status).toBe(variant);
+  await expectObservation('execute_late_booking_cancellation',variant==='uncertain'?'uncertain':'denied',variant==='uncertain'?'BOOKING_EFFECT_UNCONFIRMED':variant==='stale'?'BOOKING_STALE':'BOOKING_REFUSED');
+  expect(writes).toHaveLength(variant==='stale'?1:2);
+  expect((await call(a(),'execute_late_booking_cancellation',{actionReference:warning.actionReference,confirmedCreditLoss:true})).isError).toBe(true);
+  expect(writes).toHaveLength(variant==='stale'?1:2);
+ }
 });

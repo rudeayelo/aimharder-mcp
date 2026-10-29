@@ -40,3 +40,23 @@ The implemented [residency amendment](adr/2026-10-21-bounded-preparation-residen
 Fourteen public journeys use actual portal/OAuth, MCP SDK v2 HTTP, workerd, D1, persistent SQLite account objects and the real shared AimHarder client. External AimHarder HTTP, fixture time and failures around real durable journal writes are synthetic. They cover pre-existing own reservations for both roles, exact previews and strict confirmations, separate late reference/consequence confirmation, concurrency and independent accounts, foreign/wrong-gym/expired/revision/reservation changes, revocation/expiry during held preflight, interrupted consumption/dispatch/result, persistent restart and original-identity and missing-connection protection, denied/lost/incomplete/conflicting outcomes and post-send and recovery bookkeeping failures, plus explicit wrong-gym denial before protected recovery reads for creation and cancellation. Unexpected external requests fail the harness. No real cancellation, mail, provider mutation, purchase or plan change occurred.
 
 The [historical 9NBC standard cancellation](api-research.md#live-standard-open-box-cycle-2026-09-25) remains separate API evidence; the later [actual Hermes checkpoint](#actual-hermes-standard-cancellation-2026-10-21) adds a confirmed hosted standard-cancellation journey under the unchanged contract. Late cancellation, other gyms and credit effects remain unverified live. The later [ChatGPT standard-cancellation observation](#owner-reported-chatgpt-standard-cancellation-2026-10-21) has manual evidence and uncaptured-confirmation limits; remaining lifecycle enforcement and cost/load measurements stay separate. Migration `0006-action-journal.sql` must already be active before deploying this code; this ticket adds no migration, provider binding or public maintenance route. Local stdio inputs, outputs and eighteen-tool surface remain unchanged.
+
+
+## Default-off technical observations (#99, 2026-10-29)
+
+Hosted booking callbacks classify the trusted account result before MCP
+serialization and record one tool completion in the invocation-local telemetry
+buffer. Ready preparations and confirmed executions are successful; missing,
+ambiguous, already-booked/cancelled, waitlisted, unsupported, stale and refused
+results are expected denials. A normal cancellation's pending credit-loss result
+is a distinct denial requiring the existing separate confirmation. An uncertain
+execution creates the static `HostedWriteUncertain` issue; it does not assert
+that the booking or cancellation failed. Unknown variants create only a static
+classifier issue.
+
+The exporter receives no preview, action reference, target, reservation, account,
+gym or sporting payload. Preparation and execution retain separate random
+request traces. Collection remains disabled by default, uses the existing
+bounded one-attempt delivery, and changes no confirmation, consumption, queue,
+recovery or dispatch contract. See the [technical observation validation](validation.md#booking-tool-observations-99-2026-10-29)
+for synthetic evidence and the separate deployment/acceptance limits.

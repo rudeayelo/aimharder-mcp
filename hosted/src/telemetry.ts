@@ -14,7 +14,7 @@ const messages = { 'http.completed': 'Hosted HTTP request completed', 'mcp.tool.
 const priority: Record<Outcome,number> = {success:0,denied:1,partial:2,uncertain:3,technical_failure:3,unclassified:3};
 const issues = { technical_failure: ['HostedTechnicalFailure','Hosted operation failed technically'], uncertain: ['HostedWriteUncertain','Hosted write effect is unconfirmed'], unclassified: ['HostedClassifierFailure','Hosted outcome has no supported classification'] } as const;
 // Labels and codes originate in source catalogs, never arbitrary upstream strings.
-const codes = new Set(['HTTP_DENIED','HTTP_FAILURE','HTTP_UNCLASSIFIED','EMAIL_UNAVAILABLE','GOOGLE_UNAVAILABLE','INVALID_TIME_ZONE_CONFIGURATION','RECOVERY_UNAVAILABLE','NOT_CONNECTED','REQUEST_FAILED','IDENTITY_MISMATCH','AUTHENTICATION_FAILED','ACCESS_RESTRICTED','SESSION_EXPIRED','INVALID_RESPONSE','NO_ACCESSIBLE_GYMS','UNSUPPORTED_MEMBERSHIP','DEFAULT_GYM_REQUIRED','GYM_NOT_ACCESSIBLE','INVALID_CONFIGURATION']);
+const codes = new Set(['BOOKING_NOT_EXECUTABLE','BOOKING_EFFECT_UNCONFIRMED','BOOKING_STALE','BOOKING_REFUSED','BOOKING_WAITLISTED','BOOKING_CREDIT_CONFIRMATION_REQUIRED','BOOKING_REFERENCE_INVALID','ACTION_OUTCOME_UNCERTAIN','HTTP_DENIED','HTTP_FAILURE','HTTP_UNCLASSIFIED','EMAIL_UNAVAILABLE','GOOGLE_UNAVAILABLE','INVALID_TIME_ZONE_CONFIGURATION','RECOVERY_UNAVAILABLE','NOT_CONNECTED','REQUEST_FAILED','IDENTITY_MISMATCH','AUTHENTICATION_FAILED','ACCESS_RESTRICTED','SESSION_EXPIRED','INVALID_RESPONSE','NO_ACCESSIBLE_GYMS','UNSUPPORTED_MEMBERSHIP','DEFAULT_GYM_REQUIRED','GYM_NOT_ACCESSIBLE','INVALID_CONFIGURATION']);
 export function classifyError(error: unknown): Classification {
   if (!(error instanceof AimHarderError)) return {outcome:'technical_failure',code:'REQUEST_FAILED'};
   const denied = ['AUTHENTICATION_FAILED','ACCESS_RESTRICTED','SESSION_EXPIRED','DEFAULT_GYM_REQUIRED','GYM_NOT_ACCESSIBLE','INVALID_CONFIGURATION','INVALID_TIME_ZONE_CONFIGURATION'];
@@ -25,6 +25,8 @@ export function classifyAccountContext(envelope: Record<string,unknown>,httpStat
   if(envelope.status==='connected' && typeof envelope.account==='object' && envelope.account!==null && 'authenticated' in envelope.account && envelope.account.authenticated===true && Array.isArray(envelope.gyms) && typeof envelope.selectedGym==='object' && envelope.selectedGym!==null)return {outcome:'success'};
   const error = envelope.error;
   const code = typeof error==='object' && error!==null && 'code' in error ? error.code : undefined;
+  if(code==='ACTION_OUTCOME_UNCERTAIN')return {outcome:'uncertain',code};
+  if(code==='BOOKING_REFERENCE_INVALID')return {outcome:'denied',code};
   if(typeof code==='string' && codes.has(code))return {outcome:['AUTHENTICATION_FAILED','ACCESS_RESTRICTED','SESSION_EXPIRED','DEFAULT_GYM_REQUIRED','GYM_NOT_ACCESSIBLE','INVALID_CONFIGURATION','INVALID_TIME_ZONE_CONFIGURATION'].includes(code)?'denied':'technical_failure',code};
   if(envelope.status==='unavailable' && !envelope.error){
     if(httpStatus===403)return {outcome:'denied',code:'ACCESS_RESTRICTED'};
