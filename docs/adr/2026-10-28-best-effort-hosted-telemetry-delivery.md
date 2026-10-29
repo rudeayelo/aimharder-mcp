@@ -65,10 +65,14 @@ Consequences: the [actual follow-up](../hosted-telemetry-compatibility-validatio
 
 ## Owner-selected Paid capacity reference (2026-10-29)
 
-Status: accepted amendment to the Free-only planning premise, based on the owner's report that they have completed the Cloudflare upgrade to Paid. The agent did not purchase or change the plan. Independent current-subscription verification remains unavailable: a fresh subscription read returns 403 and the available browser requires sign-in. The upgrade's effective time is not independently known.
+Status: accepted amendment to the Free-only planning premise, based on the owner's report that they have completed the Cloudflare upgrade to Paid. The agent did not purchase or change the plan. At this amendment's original checkpoint, independent current-subscription verification was unavailable: the subscription read returned 403 and the browser required sign-in. The later [authenticated dashboard verification](../hosted-telemetry-resource-followup.md#authenticated-dashboard-verification-2026-10-29) independently confirms Paid as the current plan. The upgrade's exact effective time remains unknown.
 
 Use the owner-selected Paid plan as the reference for subsequent capacity investigation, subject to confirming actual subscription and effective Worker limits. This supersedes only the earlier requirement to remain on Free in this ADR and the scope/privacy ADR's planning context; it does not retroactively establish a plan for earlier measurements. Preserve historical Free observations and distinguish them from later observations under the owner-reported Paid state. The existing service-budget target has not been revised or proven feasible by this report.
 
 Delivery bounds, privacy, account/recovery safety, representative before/after resource measurements and the separate sustained-activation gate remain unchanged. A successful upgrade does not supply missing scheduled CPU or acceptance evidence. No new deployment, logging observer, resource-limit increase, additional purchase or sustained telemetry activation follows from the report.
 
 The [fresh Paid follow-up](../hosted-telemetry-resource-followup.md#owner-reported-upgrade-to-paid-2026-10-29) records unchanged module/bindings/effective cron, disabled export, a new successful main-maintenance receipt and still-empty scheduled CPU views. The full native acceptance remains open.
+
+### Authenticated Paid verification review (2026-10-29)
+
+The signed-in Workers plans view now confirms Paid as the current subscription. The same Worker's Cron events view still has no CPU rows, despite independently successful maintenance. This resolves the subscription-evidence gap without resolving scheduled CPU or the baseline comparison. No decision, delivery/privacy bound, budget target or activation authority changes; earlier unavailable-plan statements remain historical. The [dashboard receipt](../hosted-telemetry-dashboard-validation.json) records the current evidence and unchanged disabled service configuration.
