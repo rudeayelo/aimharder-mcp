@@ -1,5 +1,7 @@
 # Video input preparation
 
+Current blink timing: the owner preferred 2× speed. The [double-blink delivery](atomic-emotes/double-blink/README.md) now lasts one second at 24 fps, preserving all 24 frames and shared neutral endpoints. No new generation was required; earlier two-second entries are historical.
+
 Latest local edit: [two quick blinks](atomic-emotes/double-blink/README.md), assembled from existing poses into exactly 24 frames at 12 fps. No new generation or credit expenditure.
 
 Latest execution: [atomic blink with Kling 4](atomic-emotes/trial-01-blink/README.md), one successful 39-credit task, delivered as exactly two seconds at 12 fps with shared neutral holds. Eye closure is a single slit per eye in the inspected sequence; timing and boundary transitions await owner acceptance.

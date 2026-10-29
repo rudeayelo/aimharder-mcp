@@ -1,5 +1,7 @@
 # Kettlebell robot identity trials
 
+Current blink timing: the owner preferred 2× speed. The [double-blink delivery](video/atomic-emotes/double-blink/README.md) now lasts one second at 24 fps, preserving all 24 frames and shared neutral endpoints. No new generation was required; earlier two-second entries are historical.
+
 Latest motion edit: [two quick blinks](video/atomic-emotes/double-blink/README.md), locally assembled from the existing Kling 4 take; two seconds at 12 fps, no new generation.
 
 Current motion direction, 2026-10-29: [atomic two-second emotes](video/atomic-emotes/README.md), one action per clip with shared neutral endpoints, replace the composite animation as the next experiment. Six prompts are prepared, and the [first Kling 4 blink trial](video/atomic-emotes/trial-01-blink/README.md) now has a two-second 12 fps delivery. The other emotes and production playback integration remain pending.

@@ -1,5 +1,7 @@
 # Double blink edit
 
+Current selection: the owner preferred playback at **2× speed**. The [one-second 24 fps edit](double-blink-1s-24fps.mp4) applies exactly that retime, retaining all 24 frames and neutral endpoint poses, with no interpolation or new generation. FFprobe confirms 24 frames at 24 fps, 1.000000 second and no audio; [metadata](fast-media-metadata.json). The preview defaults to this faster version and retains the two-second edit for comparison. The schedule below documents the earlier 12 fps timing; at the selected speed every hold lasts half as long (each blink 167 ms, the gap 167 ms, final neutral 333 ms). Owner approval of this encoded file remains pending.
+
 Edited 2026-10-29 after the owner approved assembling two quick blinks from the existing [Kling 4 take](../trial-01-blink/README.md). **No new provider request or credit expenditure.**
 
 [Watch the two-second edit](double-blink-2s-12fps.mp4), inspect [all 24 frames](contact-sheet.jpg), or use the [Tailscale comparison preview](https://mini.taild6f227.ts.net:8443/aimharder-emotes-95/double-blink/). The preview requires tailnet access and the running local server. It also offers the previous slow blink for comparison.

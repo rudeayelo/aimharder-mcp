@@ -1,0 +1,20 @@
+{
+  "programs": [],
+  "stream_groups": [],
+  "streams": [
+    {
+      "codec_name": "h264",
+      "codec_type": "video",
+      "width": 940,
+      "height": 940,
+      "avg_frame_rate": "24/1",
+      "duration": "1.000000",
+      "nb_frames": "24"
+    }
+  ],
+  "format": {
+    "duration": "1.000000",
+    "size": "129074"
+  },
+  "sha256": "c2c25b6a7d3a809f94b081f8f983435dd98c8c522139c4a345293958a9d9e3cb"
+}

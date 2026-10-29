@@ -1,5 +1,7 @@
 # Atomic kettle emotes
 
+Timing update: the owner preferred the double blink at 2× playback speed. Its [current delivery](double-blink/README.md) is therefore one second at 24 fps, retaining all 24 poses/holds. This supersedes the two-second duration for this emote; the other ungenerated prompts retain their preparation targets.
+
 Latest edit: the [double blink](double-blink/README.md) assembles two quick blinks into the approved 24-frame schedule using existing poses. It is two seconds at 12 fps, shares neutral opening/closing holds and consumes no additional credits.
 
 Execution update: the owner authorized the [first Kling 4 blink trial](trial-01-blink/README.md). It succeeded at 39 credits and now includes a two-second 12 fps edit with shared neutral boundary holds. Earlier no-generation statements below describe prompt preparation; the other five emotes remain ungenerated.
