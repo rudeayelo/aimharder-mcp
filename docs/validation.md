@@ -1139,12 +1139,40 @@ Cloudflare's maintained execution-context documentation confirms `waitUntil`
 keeps background work independent of the returned response; no CPU claim is
 inferred from local wall-clock timing.
 
-The remaining 17 tools and scheduled phases are separate implementation slices.
+At the #97 checkpoint, the remaining 17 tools and scheduled phases were separate implementation slices.
 Relevant scope/privacy and best-effort-delivery ADRs remain the accepted decisions;
 no architecture or security policy is replaced. Native hosted read-back,
 installation retention/notification/access checks, measured provider CPU overhead,
 notification receipt and sustained activation remain pending. No deployment,
 real secret provisioning or shared installation change occurred.
+
+## Hosted read-tool completion telemetry (#98, 2026-10-29)
+
+All nine read callbacks now record one invocation-local tool completion, including
+account-context denials and HTTP-200 MCP errors. Classification inspects the
+trusted account envelope before MCP serialization, never serialized MCP text.
+Normal bounded search/history/RM/feed coverage stays successful. Recovered booking
+history, incomplete personal activity and optional RM enrichment use distinct
+partial codes; unsupported interpretation and identity mismatch produce technical
+issues. Every safe client error code has a closed mapping; unknown result
+discriminants produce static classifier issues.
+
+The native local Worker/MCP SDK runs passed **26 tests in 2 files**
+(`schedule-queries.test.ts`, `activity-queries.test.ts`), exercising all nine
+callbacks, every RM/search result variant, empty/ambiguous views, partial retrieval,
+unsupported workout interpretation and identity errors against synthetic upstreams.
+Enabled/disabled/rejected-export comparisons preserve exact read outputs and
+upstream requests. Tests inspect the synthetic receiver for one callback event,
+HTTP/tool separation, invocation correlation and absence of sporting/private
+markers. The supplemental trusted-envelope/exporter harness passed **9 tests**,
+including future/missing read discriminants and every safe error code without
+copying error messages or gym identifiers. Hosted typecheck passed.
+
+The scope/privacy and delivery ADRs were reviewed and remain applicable without a
+new decision. Local stdio, public tool schemas and API behavior are unchanged; no
+package changeset is required for this hosted-only slice. No deployment or live
+requests occurred; actual LogNorth read-back, provider CPU, notification delivery
+and sustained activation remain pending. Real manifests retain disabled telemetry.
 
 ## Booking tool observations (#99, 2026-10-29)
 

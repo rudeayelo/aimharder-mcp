@@ -50,10 +50,10 @@ Add a changeset with `pnpm changeset` when a pull request changes the distribute
 ## Hosted observability harness
 
 Run `pnpm --dir hosted exec vitest run tests/worker.test.ts tests/telemetry.test.ts
---no-file-parallelism --testTimeout=30000` as one command. These native local
+tests/schedule-queries.test.ts tests/activity-queries.test.ts --no-file-parallelism --testTimeout=30000` as one command. These native local
 Worker tests use synthetic credentials, an MCP SDK client and a controllable
-external telemetry receiver. They cover HTTP/auth/recovery exits, account-context
-classification, unchanged results/upstream dispatches/lease release across exporter
+external telemetry receiver. They cover HTTP/auth/recovery exits, all nine read-tool
+classifications, unchanged results/upstream dispatches/lease release across exporter
 success/rejection/timeout/disabled modes, privacy, invocation isolation, buffer
 bounds/priority, oversize drops, redirect refusal, bounded acknowledgements and
 one-attempt delivery. They contact no actual AimHarder/LogNorth service.
@@ -64,6 +64,9 @@ classification)` once when the callback settles. The timer uses `performance.now
 no arguments/results, identifiers, arbitrary exception messages or MCP content
 strings belong in telemetry. Source-owned tool/code/route catalogs reject unknown
 labels. `httpOutcome()` carries a private typed HTTP classification for known
-configuration denials, avoiding status-only guesses. Later slices extend these
-closed mappings and add the remaining tools and scheduled phases. No recorder
+configuration denials, avoiding status-only guesses. The read mapping treats limited source views and supported empty/no-RM/selection
+results as success. Partial history retrieval, incomplete personal activity and
+incomplete optional RM enrichment have separate static partial codes. Unsupported
+interpretations and identity mismatches are technical issues; future discriminants
+remain unclassified. Later slices add action classifications and scheduled phases. No recorder
 or buffer is stored in account objects, durable storage or process-global state.
