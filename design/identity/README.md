@@ -17,6 +17,17 @@ Both were generated with the built-in GPT Image tool using separate prompts, wit
 
 ## Review and next step
 
+### Symbol color and recessed-eye studies
+
+The owner likes the corrected Krona-inspired direction while explicitly noting it still differs from the actual specimen. This is preference for an exploration, not selection of an exact font. At the owner's request, subsequent work focuses on the symbol before proceeding to the public home page.
+
+- [Six-color study](robot-color-study.png): dark navy body without a face panel; current blue body with a dark circular face; pink, yellow, green and violet body alternatives with that same dark face. All eyes remain orange. “Background color” was explicitly interpreted in the working update as the kettle body color; the sheet itself stays white. That interpretation is not a confirmed owner clarification.
+- [Recessed-eye detail study](robot-recessed-eyes-study.png): large navy and blue/circular-face views showing pill-shaped cavities with orange interiors, inward edges and inner shadows rather than the original raised eye treatment.
+
+Both sheets use built-in GPT Image, preserve the prior sculptural symbol as reference and are static material/color explorations. Prompts are in [prompts.md](prompts.md). Visual review confirms six requested body colors, dark circular faces in the five colored variants, orange eyes throughout and visible recessed-edge cues in the details. These cues do not establish real 3D geometry or manufacturing feasibility. The detail's orange interiors still have some rounded shading; a future mesh should test genuinely flat cavity floors, depth and bevels. Rendering does not precisely preserve color tokens or identical geometry across variants.
+
+The navy type-color starting point is `#14283F`, with near-black face candidate `#101C2C` and orange eyes `#FFAB62`. Requested alternative body-color candidates in the prompt are pink `#F398BC`, yellow `#F5D35A`, green `#70BD91`, violet `#A58BDC`; blue stays `#2490F4`. These are exploration inputs, not additional adopted brand tokens. No color variant is selected. Eye legibility at small sizes, consistent front/turned poses, actual 3D recesses and animation remain to be tested after owner review. No runtime, API or ADR decision changes.
+
 ### Typography comparison continuation
 
 The owner rejected the initial font approximations and supplied actual specimens. Subsequent [Krona One correction](identity-3d-krona-reference.png) and [Big Shoulders SemiBold 600 correction](identity-3d-big-shoulders-reference.png) use those respective specimens as direct typography references, with the original sculptural board supplying only the robot. Both preserve blue AIM, navy HARDER/MCP and the central robot. These are still GPT Image raster interpretations, not exact font-file compositions; no production typography selection is implied. The initial comparison remains historical evidence of the rejected approximations. Aldrich has not received a specimen-based correction.
