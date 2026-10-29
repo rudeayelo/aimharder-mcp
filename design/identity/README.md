@@ -17,6 +17,12 @@ Both were generated with the built-in GPT Image tool using separate prompts, wit
 
 ## Review and next step
 
+### Typography comparison continuation
+
+At the owner's request, [the 3D typography comparison](identity-3d-type-comparison.png) explores [Krona One](https://fonts.google.com/specimen/Krona+One), [Big Shoulders](https://fonts.google.com/specimen/Big+Shoulders) and [Aldrich](https://fonts.google.com/specimen/Aldrich). The owner also requested the original brand's two-color AIM/HARDER pattern. This trial proposes blue AIM, navy HARDER and navy MCP, preserving the robot between the complete AIMHARDER word and MCP. The exact color assignment remains a proposal.
+
+Generated with built-in GPT Image using the earlier sculptural board as the edit reference; its prompt is recorded in [prompts.md](prompts.md). Visual inspection confirms the three wordmark rows, spelling, color split and robot placement. Lettering is synthesized from font-name instructions, not typeset with the actual font files, so the board is an approximate visual exploration. Font outlines, weights, metrics and uniform robot geometry require an exact composition before choosing production typography. No final font has been selected.
+
 Both outputs were visually inspected: correct wordmark order and spelling, integrated kettlebell handle, two simple eyes, no additional body parts, and no product screens. The tool synthesized lettering rather than identifying or licensing an exact production font. The two images do not yet share precisely identical geometry.
 
 Recommendation for review: choose a flat master silhouette first, then derive its 3D form with identical proportions. Compare navy versus orange eyes at small sizes; orange-on-blue eye contrast and visible blink states still need deliberate refinement. Test favicon-scale legibility, letter spacing, a true one-color mark and reverse usage before final adoption. Do not treat generated raster colors as measured production tokens.
