@@ -1,5 +1,12 @@
 # aimharder-mcp
 
+## 0.5.3
+
+### Patch Changes
+
+- c2925a4: Clarify self-service onboarding terminology in the packaged domain glossary. Hosted product-experience decisions and design references are recorded separately; runtime behavior is unchanged.
+- 477afd1: Document optional hosted LogNorth configuration and its isolated-test activation. Local stdio behavior and tool contracts are unchanged.
+
 ## 0.5.2
 
 ### Patch Changes
