@@ -33,3 +33,7 @@ The owner later explicitly requested applying the reviewed downstream filter pat
 ## Temporary CPU validation review (2026-10-29)
 
 The owner-authorized [scheduled CPU capture](../hosted-telemetry-cpu-capture.md) uses a disposable observer with a closed scheduled timing/outcome projection; HTTP/private trace content is not serialized or persisted. Eight local privacy/contract checks, received-event allowlist checks and independent observer/tail removal are recorded. Transport closure leaves the final comparison cell incomplete. The accepted event schema, participant/access boundaries and sporting/recovery authority remain unchanged; no permanent observer or sustained activation is accepted.
+
+## Unavailable-only repetition review (2026-10-30)
+
+The separately owner-authorized [repetition](../hosted-telemetry-cpu-capture.md) retains the exact closed scheduled projection and adds only numeric/static local connection-close metadata. Five fresh native samples, unchanged actual responses, destination allowlist/retention checks and independently verified owned observer/tail deletion complete bounded validation. Participant identity/data, readers, shared global settings and sporting/recovery authority remain unchanged; no permanent capture or sustained activation is accepted.

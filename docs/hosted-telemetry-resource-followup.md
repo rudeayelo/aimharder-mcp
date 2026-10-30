@@ -1,6 +1,6 @@
 # Resource-evidence follow-up (2026-10-29)
 
-Status: read-only follow-up after the owner requested continuing the pending checks. Native acceptance under #102/#94 remains incomplete. No deployment, telemetry activation, platform logging change, tail observer, plan change or sporting write occurred. The [temporary LogNorth compatibility deployment](hosted-telemetry-compatibility-validation.md) was the latest delivery evidence at that checkpoint. The later owner-authorized [bounded scheduled CPU capture](hosted-telemetry-cpu-capture.md) supplies 17/20 scheduled samples and final cleanup, with the unavailable cell incomplete; its mutations are separate from these historical read-only actions.
+Status: read-only follow-up after the owner requested continuing the pending checks. Native acceptance under #102/#94 was incomplete at this historical checkpoint; the later completed [unavailable-only repetition](hosted-telemetry-cpu-capture.md) records the final bounded resource resolution. No deployment, telemetry activation, platform logging change, tail observer, plan change or sporting write occurred. The [temporary LogNorth compatibility deployment](hosted-telemetry-compatibility-validation.md) was the latest delivery evidence at that checkpoint. The later owner-authorized [bounded scheduled CPU capture](hosted-telemetry-cpu-capture.md) supplies 17/20 scheduled samples and final cleanup, with the unavailable cell incomplete; its mutations are separate from these historical read-only actions.
 
 ## Fresh provider reads
 

@@ -72,3 +72,7 @@ Apply the measured per-operation costs to the explicit 20-participant scenario, 
 ## Partial bounded telemetry measurement (2026-10-29)
 
 Under the independently confirmed Paid reference above, the owner-authorized [bounded scheduled CPU capture](hosted-telemetry-cpu-capture.md) supplies seventeen integer-ms stateless producer samples, including five no-op baseline runs. The last comparison cell is incomplete after transport closure; cleanup restored disabled export and removed the observer. Separate object/observer consumption, loaded purge capacity, storage, shared allowances, complete invoice and the sustainable twenty-participant budget remain unverified. Raw producer WebSocket timing units are still not inferred. No budget/capacity acceptance, further purchase or sustained activation follows.
+
+## Completed bounded telemetry matrix (2026-10-30)
+
+The owner-authorized [unavailable-only repetition](hosted-telemetry-cpu-capture.md) completes four five-sample stateless producer cells under the Paid reference. Its five fresh rows exclude the original interrupted two. The later window and five-sample, zero-purge scope prevent exact causal-overhead, loaded capacity or sustainable monthly-budget claims. Separate object/observer consumption, storage, shared allowances and the complete invoice remain unverified. Export is disabled and the temporary observer is removed; the budget target and deferred capacity work are unchanged.
