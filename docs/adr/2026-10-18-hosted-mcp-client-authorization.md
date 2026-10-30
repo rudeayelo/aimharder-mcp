@@ -4,6 +4,8 @@ Status: accepted engineering implementation for [#73](https://github.com/rudeaye
 
 ## Context
 
+Product-workflow amendment, 2026-10-28: [self-service after invitation](2026-10-28-self-service-invited-onboarding.md) replaces operator intervention as the intended routine onboarding experience. The replacement registration/configuration mechanism is still to be designed and verified; current runtime policy and security checks remain in place. The operator-only workflow below describes the existing implementation, not the target participant experience.
+
 The feasibility slice proved the maintained OAuth/JWT/SDK combination, but had no browser consent UI, operator registration workflow or participant client controls. The maintained resource wrapper verifies JWT cryptography and claims without consulting application admission/revocation. Deleting provider consent alone leaves signed access tokens usable. Revoking one client must preserve other clients and the stable portal identity, and a concurrent refresh must not revive revoked authorization.
 
 ## Decision
