@@ -21,4 +21,4 @@ Only for creation or publication with the relevant switch off, omit `confirmed` 
 
 All paths preserve exact target matching, user-confirmed gym zone, membership/ownership and role/grant checks, two-minute single-use references, at-most-one dispatch and fresh read-back. Unknown results require manual inspection and are never automatically replayed. Disabling confirmation does not infer achieved performance from prescriptions or suggested loads. Clients may independently enforce approval dialogs.
 
-The [decision](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/adr/2026-10-30-account-write-confirmation-preference.md) records the final scope. Release, deployment and actual ChatGPT/Hermes acceptance of this addition remain separate.
+The [decision](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/adr/2026-10-30-account-write-confirmation-preference.md) records the final scope. The [hosted deployment receipt](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-confirmation-switches-deployment.md) records actual activation and native context. Exact npm release verification and actual ChatGPT/Hermes acceptance remain separate.
