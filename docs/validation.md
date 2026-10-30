@@ -1319,3 +1319,25 @@ Final delivery checks: both review axes have zero unresolved findings at `3a3976
 ## Sustained isolated-test telemetry activation (2026-10-30)
 
 The owner explicitly authorized leaving telemetry enabled after bounded native validation completed. The [actual activation receipt](hosted-telemetry-sustained-activation.md) records exact reviewed-module/resource reconciliation, only two changed text bindings, a successful before/after authenticated MCP response comparison and three freshly stored allowlisted observations with matching detail read-back. Export is now enabled on the existing isolated test Worker with environment `pilot-test`. No temporary CPU observer, persistent platform logging, automatic disabling or recurring monitoring is added. Application suites were not repeated for this configuration/documentation-only delivery; sustainable monthly cost/capacity, production launch and main-branch integration remain separate.
+
+## Telemetry main integration (2026-10-30)
+
+The owner authorized integrating the completed telemetry branch and completing the pending release, excluding design-thread issues. Current main was reconciled without conflicts; no design changes were introduced relative to that base. Local verification passed 479 tests, local type/build/package checks, 224 hosted tests with sequential files and 30-second test timeouts, hosted type/build checks, eight observer contract/privacy checks and 1,034 local links. Two-axis review reported zero spec findings and three stale documentation statuses under standards; all three were corrected and independently rechecked with zero remaining findings.
+
+[PR #118](https://github.com/rudeayelo/aimharder-mcp/pull/118) passed [CI](https://github.com/rudeayelo/aimharder-mcp/actions/runs/41040863169) and merged into main as `1aeb78c0ad1d822cda5cf874b74c32f3031fd733`. The implementation issue and native validation issue remain closed. A fresh read-only provider check at `2026-10-30T10:36:59.934875Z` confirmed the existing reviewed module, enabled `pilot-test` exporter, no tail consumer and disabled persistent logging. Main integration did not redeploy that Worker or alter its resources. The previously accepted delivery/privacy and release ADRs remain applicable; no new architectural decision is introduced.
+
+## Automated npm release 0.5.3 (2026-10-30)
+
+Changesets updated the existing [release PR #105](https://github.com/rudeayelo/aimharder-mcp/pull/105) to combine the pending onboarding glossary and hosted telemetry documentation changes in one compatible patch. Its [CI](https://github.com/rudeayelo/aimharder-mcp/actions/runs/41041792733) passed before merge as `10076a7581f049bb9fb8ac67dc47d5dc0dbef760`. The [release workflow](https://github.com/rudeayelo/aimharder-mcp/actions/runs/41042415243) completed successfully, including check/pack and npm publication, and created [tag/GitHub Release v0.5.3](https://github.com/rudeayelo/aimharder-mcp/releases/tag/v0.5.3) at `2026-10-30T10:41:23Z`.
+
+Initial public registry reads returned version 404 and root metadata showing latest `0.5.2`, despite successful publication. No MCP call ran in that failed metadata-stage attempt. A later fresh read returned latest `0.5.3`; the canonical exact-version verification then passed without a fallback installation. Publication acknowledgement and public availability are distinct observations.
+
+The exact registry archive `aimharder-mcp-0.5.3.tgz` has 31 files and 76,914 bytes, with integrity:
+
+```text
+sha512-GqAfv0HXV1a99XT3qHyOUeGrR7SRjULXQzZuLxZCOSRHte2pgPJcJ9xs5RoD0g8CIYo7K5Wx8pTJ7nSq1O3Fow==
+```
+
+A read-only cache-busting archive download matched the registry SHA-512. Every code/documentation file matched the reviewed source/build byte-for-byte. The published manifest matched the reviewed manifest except removal of `packageManager` and `scripts.prepack`; these were the only observed manifest differences. This published archive differs from the earlier `npm pack` check archive, so their size/integrity values are not interchangeable. No hosted code, tests or private evidence were in the archive.
+
+`scripts/registry-check.mjs 0.5.3` passed from a clean temporary npm installation using Node `v24.22.2`: initialization, 18-tool catalog, authenticated account context, accessible/explicit gym selection, inaccessible selection rejection, sanitized errors and empty stderr. Credentials were supplied only to the MCP harness, not npm; raw account responses were not persisted, and the temporary installation was removed. This was read-only; no sporting action, hosted rollout, production launch or cost/capacity acceptance occurred. Local stdio runtime/tool behavior is unchanged by this documentation release.
