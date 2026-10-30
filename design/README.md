@@ -1,6 +1,6 @@
 # Visual foundations — work in progress
 
-Current stage, 2026-10-30: the owner selected **AimHarder Connect** as the working product name and **Krona One** for its wordmark. `aimharder-mcp` remains the technical npm package. The [first public-home structure](home-study/README.md) proposes the message, conversation example, useful prompts, three setup tasks, short FAQ and sign-in entry action; its structure/copy await review before the visual home experiment. Motion exploration is paused at the owner's request for this stage. The `.pen` UI foundations remain provisional, and later #95 screens remain out of the current delivery.
+Current stage, 2026-10-30: the owner selected **AimHarder Connect** as the working product name and **Krona One** for its wordmark. `aimharder-mcp` remains the technical npm package. The [first public-home structure](home-study/README.md) proposes the message, conversation example, useful prompts, three setup tasks, short FAQ and sign-in entry action; its structure/copy await review before the visual home experiment. The home is required in English/Spanish with a flag-free language selector and Light/Dark/System appearance; confirmation controls follow PR #121 in settings and are not a public-home emphasis. Motion exploration is paused at the owner's request for this stage. The `.pen` UI foundations remain provisional, and later #95 screens remain out of the current delivery.
 
 Design source: [ahmcp.pen](ahmcp.pen). Issue [#95](https://github.com/rudeayelo/aimharder-mcp/issues/95), under [#103](https://github.com/rudeayelo/aimharder-mcp/issues/103).
 
@@ -14,7 +14,7 @@ The editable file currently contains two foundation boards and three shared comp
 
 Use the white canvas, typographic hierarchy, Geist family, fine separators and flat controls from the archived [shadcn/ui reference](https://ui.shadcn.com), Refero style `c14c0a94-1037-449e-bf5b-4cb972656ac7`. Its role is visual structure, not its complete navigation or black primary action. The owner-requested AimHarder blue is an explicit palette adaptation. Use generous mobile-friendly controls rather than copying its compact component catalogue.
 
-Revisited Strava (`94a3b2a6-2f79-4721-a2f5-6c5baaff8db9`) and Cron (`0528b40d-d5ef-4783-9206-d42fa97ad1d2`) style records for comparison. Their orange and dark directions remain unselected. Do not import their photography, calendar UI or brand assets. No custom imagery is required for these foundation boards.
+Revisited Strava (`94a3b2a6-2f79-4721-a2f5-6c5baaff8db9`) and Cron (`0528b40d-d5ef-4783-9206-d42fa97ad1d2`) style records for comparison. Their orange and full dark-brand directions remain unselected; the later owner-required Dark appearance is a theme of the selected blue identity, not adoption of those alternatives. Do not import their photography, calendar UI or brand assets. No custom imagery is required for these foundation boards.
 
 Metaview, Cal, Cursor flow 9917, Linear and Family were retrieved again for later bounded interaction work. Their roles remain those in the [research record](../docs/research/2026-10-28-product-experience-references.md); no screen or navigation decision is final here.
 
