@@ -2,6 +2,8 @@
 
 Prepared 2026-10-29 under [#95](https://github.com/rudeayelo/aimharder-mcp/issues/95), after the owner said the motion set is sufficient and requested a return to brand design. This is an isolated brand composition study, not a public home page or additional product screens. No new images, videos or paid generations were requested.
 
+**Decision update — 2026-10-30:** the owner selected Krona One. This three-font board is now historical comparison evidence. Continue with the [Connect naming study](../connect-study/README.md), which compares consumer product names while retaining `aimharder-mcp` for the technical package. No further motion experiments are requested for this stage.
+
 [Interactive comparison](https://mini.taild6f227.ts.net:8443/aimharder-brand-95/wordmark-study/) requires Tailscale and the local server. [Desktop preview](desktop-preview.jpg) and [mobile preview](mobile-preview.jpg) are actual browser captures. Start the existing directory server from the repository root with `python3 -m http.server 8945 --bind 127.0.0.1 --directory design/identity`; the scoped Serve path `/aimharder-brand-95` proxies that port and preserves other routes.
 
 ## Brief and reference lock
@@ -28,7 +30,7 @@ The bundled typography craft reference supports comparing actual glyphs and usin
 
 ## Files and typographic details
 
-[The interactive study](index.html) typesets real lettering, shows a smaller use and all three fonts at a common nominal cap height. It also preserves the generated reference so a preference for custom lettering is not confused with selecting the real Krona One font. Typeface, final tracking, symbol scale and optical spacing remain review candidates. The current first tab is a starting proposal, not a recorded owner selection.
+[The interactive study](index.html) typesets real lettering, shows a smaller use and all three fonts at a common nominal cap height. It also preserves the generated reference so a preference for custom lettering is not confused with selecting the real Krona One font. Typeface, final tracking, symbol scale and optical spacing remain review candidates. At preparation, the first tab was a starting proposal; the owner subsequently selected Krona One as recorded above.
 
 Fonts are bundled unchanged from the [Google Fonts source](https://github.com/google/fonts): [Krona One](https://github.com/google/fonts/tree/main/ofl/kronaone), [Big Shoulders](https://github.com/google/fonts/tree/main/ofl/bigshoulders), [Aldrich](https://github.com/google/fonts/tree/main/ofl/aldrich). The existing Krona font was reused; the other two were downloaded from that official repository. [Font manifest](font-manifest.json) records file hashes, source URLs and cap-height ratios. Individual SIL Open Font License texts are retained in `assets/`.
 
@@ -48,4 +50,4 @@ The 2026-10-30 size revision was visually inspected at the normal 1200px browser
 
 JavaScript syntax, local links, font/media references, checksums and `git diff --check` were checked. No production TypeScript changed and no runtime test suite/typecheck was run for the isolated board. Existing `design/ahmcp.pen` foundation boards remain unchanged; after choosing the wordmark direction, its selected composition can be recorded in that design handoff. No new architecture/security/product ADR is warranted for these reversible visual candidates.
 
-Next review: select the exact typeface or request custom lettering based on the older generated direction; then refine symbol proportions and spacing. Public home-page exploration and the rest of #95 remain later stages.
+Next review: choose the consumer product name in the Connect study, then refine optical spacing and the production wordmark. Public home-page exploration and the rest of #95 remain later stages.

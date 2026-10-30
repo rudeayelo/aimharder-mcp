@@ -1,10 +1,10 @@
 # Visual foundations — work in progress
 
-Current stage, 2026-10-29: mascot exploration has established a blue body, dark circular face and orange recessed eyes, with a retained motion set. The owner has returned to [wordmark composition](identity/wordmark-study/README.md): three exact-font candidates and existing mascot clips in an isolated review board. The `.pen` foundations below are unchanged and still provisional. The single public home page and remaining #95 screens are later stages.
+Current stage, 2026-10-30: the owner selected **Krona One** for the wordmark and ended additional motion exploration for this stage. The [Connect naming study](identity/connect-study/README.md) compares AimHarder Connect and standalone AIHarder using the established blue/circular-face character. Product naming remains under review; `aimharder-mcp` remains the technical npm package. The `.pen` UI foundations below are unchanged and still provisional. The single public home page and remaining #95 screens are later stages.
 
 Design source: [ahmcp.pen](ahmcp.pen). Issue [#95](https://github.com/rudeayelo/aimharder-mcp/issues/95), under [#103](https://github.com/rudeayelo/aimharder-mcp/issues/103).
 
-## Review sequence
+## Review sequence — historical foundation checkpoint
 
 The owner narrowed the current delivery on 2026-10-29: define basic visual elements first, then compare two identity trials made with GPT Image, then try one public home page. Define the remaining screens only after that exploration. The complete #95 inventory remains outstanding. No final navigation, identity or screen design is selected by this checkpoint. The subsequent [kettlebell robot identity trials](identity/README.md) are now available for review; neither has been selected.
 
@@ -37,7 +37,7 @@ The official [AimHarder homepage](https://aimharder.com/) was checked again on 2
 | Error | `#B42318` on `#FFF0EE` | Error explanation and actionable next step. |
 | Warning | `#805000` on `#FFF4DE` | Named attention state, separate from orange brand exploration. |
 
-Geist 400/500/600 is provisional. Body is 16px with 1.5 line height; supporting copy 14px; labels/captions 13–14px; headings 24/32/36px; future display candidate 56px. Use a 4px spacing base, 16–24px task gaps, 10px control corners, 14px grouping corners, 48px control height and minimal elevation. Monospace belongs only to public configuration values when those are designed.
+Krona One Regular 400 is selected for the wordmark. Geist 400/500/600 remains provisional for product UI; the display-font decision does not replace the UI family. Body is 16px with 1.5 line height; supporting copy 14px; labels/captions 13–14px; headings 24/32/36px; future display candidate 56px. Use a 4px spacing base, 16–24px task gaps, 10px control corners, 14px grouping corners, 48px control height and minimal elevation. Monospace belongs only to public configuration values when those are designed.
 
 ## Measured contrast
 
@@ -73,4 +73,4 @@ White on brand blue is **3.30:1**: do not use for normal text. Primary dark text
 - No runtime, API, auth, MCP, provider, support-inbox or deployment behavior changed. No API research update is needed. Reviewed identity/custody, client authorization, invited admission, activity-role, self-service and hosted Madrid ADRs; their decisions are unchanged, so no new ADR is warranted for these reversible visual candidates.
 - No behavioral tests were added: this checkpoint changes design/documentation only. Full implementation verification belongs to subsequent deliveries. Two subsequent GPT Image trials are linked above; the public home-page experiment, mobile layouts, final navigation and the remaining #95 inventory have not been produced.
 
-Next review: settle or adjust these foundations and compare the two identity trials without treating either as approved. Use the selected result for the single public home-page experiment before defining the remaining screens.
+Next review: choose the product name from the Connect naming study, then refine the selected wordmark before the single public home-page experiment and remaining screens. Earlier foundation and image-comparison observations above retain their historical scope.
