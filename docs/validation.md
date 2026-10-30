@@ -8,7 +8,7 @@ Root typecheck/build and all 493 tests across 18 files pass, including packaged-
 
 The two native checkbox switches use the owner's exact labels, accessible `role="switch"`, on/off color, keyboard focus and the existing Save settings flow. A desktop headless Chrome render was visually checked with one switch on and the other off. This static visual check is separate from the HTTP form-save tests; mobile and actual participant acceptance are not claimed.
 
-Affected Markdown local links and diff checks pass. The [ADR](adr/2026-10-30-account-write-confirmation-preference.md) and earlier amendment notices now reflect the final two-switch scope. Upstream API contracts, credential custody, role access and historical MVP evidence are unchanged. No actual sporting writes, npm publication or hosted deployment occurred. Actual ChatGPT/Hermes use of the new preferences remains separate.
+Affected Markdown local links and diff checks pass. The [ADR](adr/2026-10-30-account-write-confirmation-preference.md) and earlier amendment notices now reflect the final two-switch scope. Upstream API contracts, credential custody, role access and historical MVP evidence are unchanged. The implementation checks performed no actual sporting writes or publication. The subsequent [owner-authorized hosted deployment](hosted-confirmation-switches-deployment.md) passed exact provider reconciliation, public smoke and fresh native context. Actual ChatGPT/Hermes use of the new preferences remains separate.
 
 ## Final scoped hosted activity observations (2026-10-28)
 

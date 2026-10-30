@@ -25,3 +25,7 @@ Existing accounts keep both confirmations enabled, and existing true markers sta
 The reference lock preserves the existing portal's type, colors, layout and save flow. Refero's [Hello Ivy preferences](https://refero.design/pages/4fd0f520-5564-47d4-9d6d-d91df1a53ac4) informed separate labeled checkbox preferences; the owner's explicit switch request determines the final interaction. Existing portal colors represent on/off state, with keyboard focus and a native accessible checkbox underneath; no JavaScript is needed.
 
 Automated MCP/HTTP fixtures establish independent modes, persistence and isolation. Actual upstream writes, deployment and ChatGPT/Hermes acceptance remain separate. See the [contract](../write-confirmations.md) and [validation](../validation.md).
+
+## Authorized hosted activation
+
+The owner requested integration and deployment after reviewing the PR. The [2026-10-30 receipt](../hosted-confirmation-switches-deployment.md) records integrated main source, exact provider module/configuration reconciliation, anonymous smoke checks and fresh authenticated native context. No participant preference or sporting record was modified for rollout. This executes the existing accepted decision; it introduces no additional architecture/authentication/role decision. Npm publication and actual client acceptance remain separate.

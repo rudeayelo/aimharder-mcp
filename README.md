@@ -1,6 +1,6 @@
 # aimharder-mcp
 
-The current checkout adds two independent [confirmation preferences](docs/write-confirmations.md) per account: booking creation and workout publication, both enabled by default. Hosted participants use two switches in AimHarder connection settings; local stdio has equivalent environment settings. Cancellation and deletion confirmations remain mandatory. Release, deployment and actual client acceptance remain separate.
+The current checkout adds two independent [confirmation preferences](docs/write-confirmations.md) per account: booking creation and workout publication, both enabled by default. Hosted participants use two switches in AimHarder connection settings; local stdio has equivalent environment settings. Cancellation and deletion confirmations remain mandatory. The [hosted deployment is verified](docs/hosted-confirmation-switches-deployment.md); npm publication and actual client acceptance remain separate.
 
 Ask about your AimHarder classes, workouts, bookings, activity and personal RMs from an AI client. This local [MCP server](https://modelcontextprotocol.io/) also supports confirmed manual booking actions and publication and deletion of your own activity. This is an independent project, neither affiliated with nor endorsed by AimHarder.
 
