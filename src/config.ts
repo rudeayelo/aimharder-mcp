@@ -13,8 +13,9 @@ const environmentSchema = z.object({
   AIMHARDER_PASSWORD: nonEmpty,
   AIMHARDER_DEFAULT_GYM: gymIdSchema.optional(),
   AIMHARDER_GYM_TIME_ZONES: z.string().optional(),
+  AIMHARDER_REQUIRE_WRITE_CONFIRMATION: z.enum(['true', 'false']).optional(),
 });
-export type Configuration = ReturnType<typeof readConfiguration>;
+export type Configuration = Omit<ReturnType<typeof readConfiguration>, 'requireWriteConfirmation'> & { requireWriteConfirmation?: boolean };
 
 export function readConfiguration(environment: Record<string, string | undefined>) {
   const parsed = environmentSchema.safeParse(environment);
@@ -27,6 +28,7 @@ export function readConfiguration(environment: Record<string, string | undefined
   } catch { throw new AimHarderError('INVALID_TIME_ZONE_CONFIGURATION'); }
   return {
     gymTimeZones,
+    requireWriteConfirmation: parsed.data.AIMHARDER_REQUIRE_WRITE_CONFIRMATION !== 'false',
     username: parsed.data.AIMHARDER_USERNAME,
     password: parsed.data.AIMHARDER_PASSWORD,
     defaultGym: parsed.data.AIMHARDER_DEFAULT_GYM,

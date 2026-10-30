@@ -1,5 +1,18 @@
 # Validation record
 
+## Account write-confirmation preference (2026-10-30)
+
+[Issue #120](https://github.com/rudeayelo/aimharder-mcp/issues/120) implements the [account preference](write-confirmations.md), enabled by default. No actual sporting write, npm publication or hosted deployment was performed for this change.
+
+- Root `pnpm typecheck`, `pnpm build` and `pnpm test --no-file-parallelism`: passed, 18 files / 491 tests. This includes the installable archive/harness, strict true/false configuration, policy metadata, default-on omission rejection without consuming a reference, both policy modes for creation, standard/late cancellation, publication and deletion, and existing stale/expiry/duplicate/uncertain-outcome coverage.
+- Hosted `pnpm typecheck` and `pnpm build`: passed. Targeted real workerd/D1 and SDK HTTP tests passed for account connection (9), booking creation (17), booking cancellation (18), activity publication/deletion, connection lifecycle and telemetry (the latter four files total 62). This is 106 passing tests across seven affected files, not a claim that the entire hosted suite ran. These runs used `--no-file-parallelism --testTimeout=20000`; an initial 5-second run timed out in existing multi-restart telemetry tests, and the bounded reruns passed.
+- Hosted preference evidence includes the actual settings form POST/read-back, enabled default for old accounts, disabled-state rendering, strict API types, omitted-update preservation, independent other-account policy, encrypted persistence across worker restart, all five sporting executions without markers, and reference invalidation when enabling confirmations. An enabled-policy omission leaves the fresh reference available for a separately confirmed execution. External sporting HTTP and identities remain synthetic.
+- The existing settings form was rendered in headless Chrome at desktop width with a synthetic gym and disabled preference; the native select, explanatory text and save action were visually checked against the existing form. No new visual system was introduced. This static render is separate from the HTTP form-save tests and does not establish mobile or actual participant acceptance.
+- Affected Markdown file links and `git diff --check` passed. The [new ADR](adr/2026-10-30-account-write-confirmation-preference.md) partially supersedes earlier mandatory-confirmation decisions; their remaining safeguards and historical live evidence are preserved. Upstream API request/response contracts, credential custody, role policy and read-only MVP acceptance did not change, so API research and those other ADR decisions need no new source claim.
+
+Actual ChatGPT/Hermes behavior with the preference disabled, any client-owned approval UI, exact released-package verification and hosted activation remain unverified for this addition.
+
+
 This page records what was checked against AimHarder, what was checked only with anonymized fixtures, and what remains unknown. Live checks used one account at one location (9NBC). They do not establish behavior for every gym. The user defined recent and period activity questions in terms of **activity entries**; earlier physical-session grouping blockers were superseded by [the entry semantics decision](adr/2026-09-22-activity-entry-query-semantics.md).
 
 ## Final scoped hosted activity observations (2026-10-28)

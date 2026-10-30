@@ -336,8 +336,8 @@ function acceptedReadback(options: { response?: unknown; calendar?: unknown; det
   );
 }
 
-test('confirmed reference sends one allowlisted multipart request and requires own readback', async () => {
-  const client = await connect();
+test.each([true, false])('confirmation policy %s preserves publication and own read-back', async requireConfirmation => {
+  const client = await connect({ AIMHARDER_REQUIRE_WRITE_CONFIRMATION: String(requireConfirmation) });
   const prepared = (await prepare(client)).structuredContent as { actionReference: string };
   let form: FormData | undefined;
   acceptedReadback();
@@ -345,7 +345,7 @@ test('confirmed reference sends one allowlisted multipart request and requires o
     form = await request.formData();
     return HttpResponse.json({ errors: [], errorWODsID: [], errorWODsType: [], errorEjerID: [], id: '9001' });
   }));
-  const result = await execute(client, prepared.actionReference);
+  const result = await execute(client, prepared.actionReference, requireConfirmation ? {} : { confirmed: undefined });
   expect(result.structuredContent).toMatchObject({ status: 'confirmed', responseStatus: 'accepted', acceptedResponseId: 9001, observedEntry: 'matched' });
   expect(activityWrites()).toHaveLength(1);
   expect([...form!.keys()].sort()).toEqual(['conCom', 'conComInside', 'selectedDate', 'copyId', 'imagesCargadas', 'ejerRate',
@@ -354,7 +354,7 @@ test('confirmed reference sends one allowlisted multipart request and requires o
   expect(JSON.parse(String(form!.get('TIPOWODs')))).toEqual([{ ...sourceBlock, time: '04:35' }]);
   expect(String(form!.get('copyId'))).toBe(String(sourceId));
   expect(JSON.stringify(result)).not.toMatch(/Publisher Private Name|private-image|synthetic-cookie|synthetic-password/);
-  expect((await execute(client, prepared.actionReference)).isError).toBe(true);
+  expect((await execute(client, prepared.actionReference, requireConfirmation ? {} : { confirmed: undefined })).isError).toBe(true);
   expect(activityWrites()).toHaveLength(1);
 });
 

@@ -48,6 +48,7 @@ export interface AccountContext {
   gyms: Gym[];
   selectedGym: Gym;
   notices: string[];
+  writeConfirmationRequired: boolean;
 }
 interface AccessibleGym { gym: Gym; boxId: number | undefined }
 export interface ClassSchedule {
@@ -96,6 +97,11 @@ export class AimHarderClient {
 
   constructor(private readonly configuration: Configuration, private expectedAccountId?: number) {}
 
+  #requireWriteConfirmation(marker: true | undefined) {
+    if (this.configuration.requireWriteConfirmation !== false && marker !== true)
+      throw new AimHarderError('WRITE_CONFIRMATION_REQUIRED');
+  }
+
   /** Trusted connection setup: identity stays inside the service, outside MCP results. */
   verifyConnection(): Promise<{ identity: number; gyms: Gym[] }> {
     const result = this.#queue.then(async () => {
@@ -122,6 +128,7 @@ export class AimHarderClient {
 
   getAccountContext(gymId?: string): Promise<AccountContext> {
     return this.#query(gymId, async (gyms, selected) => ({
+      writeConfirmationRequired: this.configuration.requireWriteConfirmation !== false,
       account: { authenticated: true }, gyms: gyms.map((entry) => entry.gym), selectedGym: selected.gym,
       notices: gyms.some(({ gym }) => gym.timeZoneStatus === 'assumed')
         ? ['Europe/Madrid is assumed for gyms without an explicit time-zone mapping. Confirm the gym zone for reliable date queries; AimHarder has not supplied an authoritative zone.']
@@ -187,12 +194,14 @@ export class AimHarderClient {
         notices,
       };
       return { status, ...preview, alternatives, ...this.#bookingPreparations.issue(this.#accountId!, boxId, candidate.sourceId, preview) };
-    });
+    }).then(result => ({ ...result, writeConfirmationRequired: this.configuration.requireWriteConfirmation !== false }));
   }
 
   executeBookingCreation(input: BookingExecution, coordination?: ActionExecutionCoordination) {
     const parsed = bookingExecutionSchema.safeParse(input);
     if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_BOOKING_EXECUTION_QUERY'));
+    try { this.#requireWriteConfirmation(parsed.data.confirmed); }
+    catch (error) { return Promise.reject(error); }
     const query = parsed.data;
     return this.#query(query.gymId, async (_gyms, { gym, boxId }, recover) => {
       // The reference is consumed before any source access, including failed preflight reads.
@@ -324,18 +333,22 @@ export class AimHarderClient {
       };
       return { status, ...preview, alternatives,
         ...this.#bookingPreparations.issueCancellation(this.#accountId!, boxId, candidate.reservationId, preview) };
-    });
+    }).then(result => ({ ...result, writeConfirmationRequired: this.configuration.requireWriteConfirmation !== false }));
   }
 
   executeBookingCancellation(input: BookingExecution, coordination?: ActionExecutionCoordination<BookingCancellationDispatch>) {
     const parsed = bookingExecutionSchema.safeParse(input);
     if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_BOOKING_EXECUTION_QUERY'));
+    try { this.#requireWriteConfirmation(parsed.data.confirmed); }
+    catch (error) { return Promise.reject(error); }
     return this.#executeCancellation(parsed.data, false, coordination);
   }
 
   executeLateBookingCancellation(input: LateCancellationExecution, coordination?: ActionExecutionCoordination<BookingCancellationDispatch>) {
     const parsed = lateCancellationExecutionSchema.safeParse(input);
     if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_LATE_CANCELLATION_QUERY'));
+    try { this.#requireWriteConfirmation(parsed.data.confirmedCreditLoss); }
+    catch (error) { return Promise.reject(error); }
     return this.#executeCancellation(parsed.data, true, coordination);
   }
 
@@ -389,7 +402,7 @@ export class AimHarderClient {
 
   async #reconcileBookingCancellation(facts: BookingCancellationDispatch,recover:()=>Promise<void>,recovered=false) {
       const {preview,boxId,sourceId,reservationId,late}=facts; const {gym,target}=preview;
-      const base={action:'cancel' as const,gym,target,credit:preview.credit};
+      const base={action:'cancel' as const,gym,target,credit:preview.credit,writeConfirmationRequired:this.configuration.requireWriteConfirmation !== false};
       const writeIssue=facts.outcome?.writeIssue??true;
       let observedState: 'booked' | 'waitlisted' | 'cancelled' | 'unbooked' | 'unknown' = 'unknown';
       let conflicting = false;
@@ -427,7 +440,7 @@ export class AimHarderClient {
       return { ...base, status, observedState, notices: [
         recovered ? 'An earlier cancellation may have been sent. Only fresh original-account reads were requested; no write was replayed and no executable late reference was restored.' : `One ${late ? 'late' : 'standard'} cancellation request was attempted. Fresh booking reads, not the HTTP response alone, determine the reported state.`,
         status === 'confirmed' ? 'Fresh schedule and upcoming reads support no active booking for the target. No credit balance or refund was verified.'
-          : status === 'pending-credit-loss' ? 'AimHarder indicated possible late credit loss. The reservation remains booked. No second cancellation request was sent. Show the exact class, current state, and possible loss, then obtain a separate explicit account-holder confirmation before a late attempt.'
+          : status === 'pending-credit-loss' ? 'AimHarder indicated possible late credit loss. The reservation remains booked. No second cancellation request was sent. Show the exact class, current state, and possible loss. Obtain separate explicit confirmation before a late attempt when writeConfirmationRequired is true. No late request is automatic.'
             : status === 'rejected' ? 'AimHarder indicated a denial and the reservation remains booked.'
               : 'The cancellation outcome is uncertain. Inspect the reservation directly before preparing another action; no automatic retry was sent.',
       ], ...lateReference };
@@ -590,12 +603,14 @@ export class AimHarderClient {
       const preview = deletionPreview(gym as NonNullable<typeof gym> & { timeZone: string }, entry, coverage);
       return { status: 'ready' as const, ...preview,
         ...this.#activityDeletionPreparations.issue(this.#accountId!, gym.id, boxId, preview) };
-    });
+    }).then(result => ({ ...result, writeConfirmationRequired: this.configuration.requireWriteConfirmation !== false }));
   }
 
   executeActivityDeletion(input: ActivityDeletionExecution, coordination?: ActionExecutionCoordination<ActivityDeletionDispatch>) {
     const parsed = activityDeletionExecutionSchema.safeParse(input);
     if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_ACTIVITY_DELETION_EXECUTION_QUERY'));
+    try { this.#requireWriteConfirmation(parsed.data.confirmed); }
+    catch (error) { return Promise.reject(error); }
     const query = parsed.data;
     return this.#query(query.gymId, async (_gyms, { gym, boxId }, recover) => {
       const stored = this.#activityDeletionPreparations.take(query.actionReference, this.#accountId!, gym.id,
@@ -702,7 +717,7 @@ export class AimHarderClient {
           : observedState === 'still-visible' ? 'The same own entry remains visible in a fresh account calendar and detail view.'
             : observedState === 'conflicting-identity' ? 'The fresh view has conflicting target identity or date; the deletion outcome is uncertain.'
               : 'Fresh account coverage is incomplete; the deletion outcome is uncertain.',
-        responseStatus === 'uncertain' ? 'The DELETE transport or response was uncertain. A new attempt requires a new preview and confirmation.'
+        responseStatus === 'uncertain' ? 'The DELETE transport or response was uncertain. A new explicitly requested attempt requires a new preview and separate confirmation when enabled.'
           : 'The HTTP response was readable, but its deletion semantics have not been verified.',
       ] };
   }
@@ -829,7 +844,7 @@ export class AimHarderClient {
         return { status: 'draft' as const, ...preview,
           notices: [...preview.notices, 'Choose a supported block result or explicitly confirm an actual kilogram load before preparing a write. No action reference was issued.'] };
       return { status: 'ready' as const, ...preview, ...this.#publicationPreparations.issue(this.#accountId!, boxId, preview, query, formSnapshot) };
-    });
+    }).then(result => ({ ...result, writeConfirmationRequired: this.configuration.requireWriteConfirmation !== false }));
   }
 
   async #readPublicationSource(gym: Gym, boxId: number, sourceId: number) {
@@ -866,6 +881,8 @@ export class AimHarderClient {
   executeActivityPublication(input: z.infer<typeof publicationExecutionSchema>, coordination?: ActionExecutionCoordination<ActivityPublicationDispatch>) {
     const parsed = publicationExecutionSchema.safeParse(input);
     if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_ACTIVITY_PUBLICATION_QUERY'));
+    try { this.#requireWriteConfirmation(parsed.data.confirmed); }
+    catch (error) { return Promise.reject(error); }
     const query = parsed.data;
     return this.#query(query.gymId, async (_gyms, { gym, boxId }) => {
       const stored = this.#publicationPreparations.take(query.actionReference, this.#accountId!, gym.id);

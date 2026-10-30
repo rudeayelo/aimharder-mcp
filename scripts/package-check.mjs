@@ -22,7 +22,7 @@ try {
   const paths = archive.files.map(file => file.path);
   assert.ok(paths.includes('dist/index.js'));
   const consumerDocs = new Set([
-    'docs/configuration.md', 'docs/tools.md',
+    'docs/configuration.md', 'docs/tools.md', 'docs/write-confirmations.md',
     'docs/clients/chatgpt-desktop.md', 'docs/clients/claude-desktop.md',
     'docs/clients/codex.md',
     'docs/clients/hermes.md', 'docs/clients/openclaw.md',

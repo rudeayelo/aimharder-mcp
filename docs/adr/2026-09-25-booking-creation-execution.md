@@ -2,6 +2,8 @@
 
 Status: accepted for issue #23 on 2026-09-25; amended with one live standard creation observed under #27 on 2026-09-25.
 
+Confirmation amendment: partially superseded on 2026-10-30 by the [account write-confirmation preference](2026-10-30-account-write-confirmation-preference.md). Separate per-action confirmation is now conditional on that preference, enabled by default. Other decisions and historical receipts below remain unchanged.
+
 ## Decision
 
 Expose `execute_booking_creation` only for a fresh, unused `prepare_booking_creation` reference with an explicit confirmation marker. The MCP client must show the preview and obtain one account-holder confirmation of that exact action. The [2026-10-07 presentation amendment](2026-10-07-booking-creation-without-credit-warning.md) removes creation credit-use warnings and additional credit-use acknowledgement. The marker cannot itself prove human consent. Consume the reference before network access, then recheck the authenticated account, selected membership, confirmed IANA zone, exact schedule session, offered state, and current upcoming view. An existing matching booking, waitlist, or unknown entry blocks the write; absence in that view is not proof of no booking because its horizon is unverified.

@@ -1,5 +1,7 @@
 # aimharder-mcp
 
+The current checkout adds one [write-confirmation preference](docs/write-confirmations.md) per account for all sporting actions. It defaults to enabled; hosted participants can change it in AimHarder connection settings, while local stdio uses `AIMHARDER_REQUIRE_WRITE_CONFIRMATION`. Release, deployment and actual client acceptance of this addition remain separate.
+
 Ask about your AimHarder classes, workouts, bookings, activity and personal RMs from an AI client. This local [MCP server](https://modelcontextprotocol.io/) also supports confirmed manual booking actions and publication and deletion of your own activity. This is an independent project, neither affiliated with nor endorsed by AimHarder.
 
 **Data limits:** Live checks used one account at one location (9NBC). Other gyms may differ, and an empty result from an incomplete view does not prove absence. Activity audience, deletion permanence and RM effects remain unverified. See [coverage and interpretation](docs/tools.md#coverage-and-interpretation) and [validation evidence](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/validation.md).
@@ -98,7 +100,7 @@ The hosted [schedule, workout and booking-view queries](https://github.com/rudea
 
 The hosted [personal activity and RM queries](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-activity-queries.md) likewise preserve own-account activity, bounded exercise discovery, latest 1RM and separate progression, with explicit partial coverage and unknown units. This is synthetic HTTP/isolation evidence; actual client acceptance remains pending.
 
-The hosted [confirmed booking-creation slice](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-booking-creation.md) preserves the exact preview and one separate confirmation for both roles, with durable single-use coordination and original-account read-back after interruptions. Automated writes use synthetic upstream HTTP; deployment, actual client acceptance and later lifecycle flows remain separate.
+The hosted [confirmed booking-creation slice](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-booking-creation.md) preserves the exact preview and the account confirmation policy for both roles, with durable single-use coordination and original-account read-back after interruptions. Automated writes use synthetic upstream HTTP; deployment, actual client acceptance and later lifecycle flows remain separate.
 
 The hosted [own-activity publication slice](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-activity-publication.md) adds independent role access controlled by the administrator, current-policy dispatch checks and single-use recovery. It preserves the existing exact preview, source/result/load rules and separate confirmation. Evidence remains synthetic; each real publication needs its own account-holder confirmation.
 

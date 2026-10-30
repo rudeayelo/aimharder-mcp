@@ -283,6 +283,32 @@ test('the trusted rotation command rewraps encrypted rows with compare-and-swap,
   expect(logins.length + identities.length).toBe(before);
 });
 
+test('write confirmation preference saves through the form, persists across restart, and stays isolated per account', async () => {
+ await worker.dispose();await start({second:Buffer.alloc(32,33).toString('base64')},'second');
+ const cookie=portalCookies.get('participant@example.invalid')!;
+ const other=portalCookies.get('other@example.invalid')!;
+ expect((await context(cookie)).structuredContent).toMatchObject({writeConfirmationRequired:true});
+ const save=await worker.dispatchFetch(origin+'/portal/aimharder/settings',{method:'POST',headers:{origin,cookie,'content-type':'application/x-www-form-urlencoded'},body:new URLSearchParams({defaultGym:'shared-gym','zone:shared-gym':'Europe/Madrid',requireWriteConfirmation:'false'}).toString(),redirect:'manual'});
+ expect(save.status).toBe(303);
+ expect((await context(cookie)).structuredContent).toMatchObject({writeConfirmationRequired:false});
+ const invalidForm=await worker.dispatchFetch(origin+'/portal/aimharder/settings',{method:'POST',headers:{origin,cookie,'content-type':'application/x-www-form-urlencoded'},body:'defaultGym=shared-gym&requireWriteConfirmation=invalid',redirect:'manual'});
+ expect(invalidForm.status).toBe(400);
+ expect((await context(cookie)).structuredContent).toMatchObject({writeConfirmationRequired:false});
+ expect((await context(other)).structuredContent).toMatchObject({writeConfirmationRequired:true});
+ const html=await(await worker.dispatchFetch(origin+'/aimharder',{headers:{cookie}})).text();
+ expect(html).toContain('name="requireWriteConfirmation"');
+ expect(html).toContain('<option value="false" selected>');
+ expect(html).toContain('including possible credit loss');
+ expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'}},cookie)).status).toBe(200);
+ expect((await context(cookie)).structuredContent).toMatchObject({writeConfirmationRequired:false});
+ expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{},requireWriteConfirmation:'false'},cookie)).status).toBe(400);
+ await worker.dispose();await start({second:Buffer.alloc(32,33).toString('base64')},'second');
+ expect((await context(cookie)).structuredContent).toMatchObject({writeConfirmationRequired:false});
+ expect((await context(other)).structuredContent).toMatchObject({writeConfirmationRequired:true});
+ expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'},requireWriteConfirmation:true},cookie)).status).toBe(200);
+ expect((await context(cookie)).structuredContent).toMatchObject({writeConfirmationRequired:true});
+});
+
 test('membership changes leave verified choices available so the owner can repair a lost default through the browser without replacing credentials', async () => {
   const cookie = portalCookies.get('participant@example.invalid')!;
   profiles.get('upstream-a@example.invalid')!.gyms = [

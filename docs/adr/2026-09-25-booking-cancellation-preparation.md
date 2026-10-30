@@ -2,6 +2,8 @@
 
 Status: accepted for issue #24 on 2026-09-25; amended after live evidence for #27 on 2026-09-25. Standard execution is described in [the cancellation execution decision](2026-09-25-booking-cancellation-execution.md).
 
+Confirmation amendment: partially superseded on 2026-10-30 by the [account write-confirmation preference](2026-10-30-account-write-confirmation-preference.md). Separate per-action confirmation is now conditional on that preference, enabled by default. Other decisions and historical receipts below remain unchanged.
+
 ## Decision
 
 Expose `prepare_booking_cancellation` as a read-only MCP tool with the exact class name, gym-local date, start and end time, and optional accessible gym. Require the configured account's current membership and a user-confirmed IANA gym zone. Read its daily schedule and validate the complete response. A unique exact row receives a short-lived reference only when it reports booked state, a positive schedule reservation `idres`, and explicit supported cancellation flags. The `hidden` property may be absent, as in the live schedule and official renderer's action-button conditions; a present nonzero value remains unsupported. An upcoming-booking ID is not treated as a schedule reservation join. Ambiguous, missing, cancelled, waitlisted, inaccessible, or unsupported rows receive no executable reference. Source identifiers remain internal.

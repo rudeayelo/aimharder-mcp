@@ -27,7 +27,7 @@ export const publicationQuerySchema = z.object({
 export type PublicationQuery = z.infer<typeof publicationQuerySchema>;
 export const publicationExecutionSchema = z.object({
   gymId: gymIdSchema.optional(), actionReference: z.string().regex(/^[a-f0-9]{64}$/),
-  confirmed: z.literal(true), acknowledgePossibleDuplicate: z.boolean().optional(),
+  confirmed: z.literal(true).optional(), acknowledgePossibleDuplicate: z.boolean().optional(),
 }).strict();
 
 export type PublicationAudience = { publication: 'everyone' | 'followers' | 'only-me'; wodTvResults: boolean };

@@ -1,5 +1,7 @@
 # Hosted confirmed booking creation
 
+Current confirmation policy (2026-10-30): the [account preference](write-confirmations.md) controls whether separate confirmation is required for every sporting write, including late cancellation and deletion. It defaults to enabled. The flow below uses that default unless recording historical evidence; mandatory-confirmation wording is conditional on the preference. Exact preparation, fresh checks, role policy, single-use execution and no uncertain replay still apply.
+
 Issue [#77](https://github.com/rudeayelo/aimharder-mcp/issues/77) adds the first complete remote sporting write and reusable account coordination. The [coordination ADR](adr/2026-10-19-confirmed-hosted-action-coordination.md) records the storage, dispatch and recovery decisions. The implementation was initially validated synthetically; the [October 21 actual Hermes checkpoint](#actual-hermes-booking-creation-2026-10-21) now confirms one separately authorized real booking.
 
 ## Actual Hermes booking creation (2026-10-21)

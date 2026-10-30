@@ -2,6 +2,8 @@
 
 Status: accepted on 2026-10-19 for [issue #77](https://github.com/rudeayelo/aimharder-mcp/issues/77), extended for [#78](https://github.com/rudeayelo/aimharder-mcp/issues/78). Local synthetic implementation; platform schema/code activation and actual ChatGPT/Hermes acceptance remain separate.
 
+Confirmation amendment: partially superseded on 2026-10-30 by the [account write-confirmation preference](2026-10-30-account-write-confirmation-preference.md). Separate per-action confirmation is now conditional on that preference, enabled by default. Other decisions and historical receipts below remain unchanged.
+
 ## Context
 
 The [account object](2026-10-19-encrypted-aimharder-account-boundary.md) owns an upstream client and serializes complete operations. Its queue and the local client's preparation store cannot alone record whether an interrupted hosted write may have been sent. The first remote write must preserve the [existing booking execution](2026-09-25-booking-creation-execution.md) and [single creation confirmation](2026-10-07-booking-creation-without-credit-warning.md), while providing coordination for later cancellation, activity and connection/access lifecycle tickets.

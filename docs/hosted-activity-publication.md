@@ -1,5 +1,7 @@
 # Hosted own-activity publication
 
+Current confirmation policy (2026-10-30): the [account preference](write-confirmations.md) controls whether separate confirmation is required for every sporting write, including late cancellation and deletion. It defaults to enabled. The flow below uses that default unless recording historical evidence; mandatory-confirmation wording is conditional on the preference. Exact preparation, fresh checks, role policy, single-use execution and no uncertain replay still apply.
+
 Issue [#79](https://github.com/rudeayelo/aimharder-mcp/issues/79) exposes `prepare_activity_publication` and `execute_activity_publication` through the protected hosted MCP endpoint. They run the existing real API client inside the participant-owned account queue. The [role decision](adr/2026-10-19-hosted-activity-role-access.md) and [action coordination](hosted-booking-creation.md) apply. The implementation evidence below is synthetic and did not authorize a real publication. The later [actual remote Pilot observation](#actual-remote-pilot-publication-2026-10-28) is recorded separately.
 
 ## Role access and participant journey

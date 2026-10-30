@@ -11,7 +11,7 @@ export const activityDeletionQuerySchema = z.object({
 export type ActivityDeletionQuery = z.infer<typeof activityDeletionQuerySchema>;
 export const activityDeletionExecutionSchema = z.object({
   gymId: gymIdSchema.optional(), actionReference: z.string().regex(/^[a-f0-9]{64}$/),
-  sourceActivityId: z.number().int().positive().safe(), confirmed: z.literal(true),
+  sourceActivityId: z.number().int().positive().safe(), confirmed: z.literal(true).optional(),
 }).strict();
 export type ActivityDeletionExecution = z.infer<typeof activityDeletionExecutionSchema>;
 

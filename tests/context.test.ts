@@ -296,3 +296,12 @@ test.each([{ gymId: 'https://evil.invalid' }, { gymId: 123 }, { extra: 'unexpect
   expect(result.isError).toBe(true);
   expect(requests).toHaveLength(0);
 });
+
+test.each([undefined, 'true', 'false'])('account context reports write confirmation configuration %s', async value => {
+ const client=await connect(value === undefined ? {} : { AIMHARDER_REQUIRE_WRITE_CONFIRMATION: value });
+ expect((await query(client)).structuredContent).toMatchObject({writeConfirmationRequired:value !== 'false'});
+});
+test.each(['', '0', 'yes', 'FALSE'])('invalid confirmation configuration %s is rejected before authentication', value => {
+ expect(()=>createServer({AIMHARDER_USERNAME:username,AIMHARDER_PASSWORD:password,AIMHARDER_REQUIRE_WRITE_CONFIRMATION:value})).toThrow();
+ expect(requests).toHaveLength(0);
+});
