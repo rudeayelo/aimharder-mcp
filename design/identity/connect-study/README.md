@@ -6,7 +6,7 @@ Prepared 2026-10-30 for #95. The owner selected **Krona One** and ended further 
 
 ## Brief and reference lock
 
-Designing the consumer product wordmark while retaining `aimharder-mcp` as the technical npm package. The owner's proposed product name is **AimHarder Connect**; **AIHarder**, without CONNECT, is the alternative made by removing the M. Neither product name is selected yet. Package/repository names, MCP identifiers, authentication and runtime behavior are unchanged.
+Designing the consumer product wordmark while retaining `aimharder-mcp` as the technical npm package. The owner's proposed product name is **AimHarder Connect**; **AIHarder**, without CONNECT, is the alternative made by removing the M. The owner subsequently selected AimHarder Connect as the working name; AIHarder is retained as an alternative, not the current home-page build target. Package/repository names, MCP identifiers, authentication and runtime behavior are unchanged.
 
 Primary build target: the [existing actual-font wordmark composition](../wordmark-study/README.md), narrowed to owner-selected Krona One 400. Preserve the white review surface, blue AIM / navy HARDER, established enlarged blue sculptural kettle, orange recessed eyes and horizontal composition. For AIHarder, the retained AI prefix takes the same blue role. CONNECT takes the former navy MCP role. The standalone AIHarder variant places the same kettle to the left of the name, following the owner's 2026-10-30 placement refinement.
 
@@ -27,7 +27,7 @@ The font is the unchanged [Krona One file](../wordmark-study/assets/KronaOne-Reg
 
 **AimHarder Connect** retains the complete AimHarder spelling and adds a functional product descriptor. It offers a clear separation between the consumer product and the technical package. **AIHarder** foregrounds the AI pun and shortens the wordmark, while changing the familiar spelling; the owner needs to assess recognition and pronunciation. These are design judgments, not user-research findings or name availability checks.
 
-The two rows are candidates. Krona One is selected; final naming, optical spacing, production master artwork and the single public home-page study remain pending. No domain, trademark, account or package-name availability has been investigated.
+The board preserves the two naming candidates. AimHarder Connect is now the working selection, alongside selected Krona One. Optical spacing, production master artwork and the visual public-home experiment remain pending; the [first home structure](../../home-study/README.md) is proposed. No domain, trademark, account or package-name availability has been investigated.
 
 ## Verification
 

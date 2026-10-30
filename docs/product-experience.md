@@ -1,6 +1,6 @@
 # Product experience design
 
-Design checkpoint, 2026-10-29: the owner requested staged work on #95: basic visual elements, then two GPT Image identity trials, then one public home-page experiment, and only then the remaining screens. The [provisional foundation boards and rationale](../design/README.md) are now available in [design/ahmcp.pen](../design/ahmcp.pen). Two subsequent [kettlebell robot identity trials](../design/identity/README.md) explore the owner's **AIMHARDER [symbol] MCP** arrangement with geometric all-caps lettering and possible 3D animation. Colors, typography and controls remain candidates; no final navigation or identity is selected and #95 is incomplete. The public home page and later screens have not been generated. The historical brief and research below remain context, not approval of these candidates.
+Design checkpoint, 2026-10-30: the owner selected **AimHarder Connect** as the working consumer-product name and **Krona One** for its wordmark; `aimharder-mcp` remains the technical npm package. This supersedes the earlier AimHarder MCP presentation-name requirement below and in #95/#103, without changing technical identifiers, admission, scope or deployment. The staged review now moves from identity/motion to the [first public-home structure](../design/home-study/README.md). That structure and its copy/layout are proposals; no new screen implementation or deployment is authorized by this record. The `.pen` foundations remain provisional and the rest of #95 remains outstanding.
 
 Status: accepted product brief recorded on 2026-10-28; remaining visual and navigation decisions delegated to [design ticket #95](https://github.com/rudeayelo/aimharder-mcp/issues/95). This document separates accepted requirements, historical proposals and pending engineering. No final screen design, implementation or deployment is approved by this record alone.
 
@@ -18,7 +18,7 @@ The owner accepted the following recommendations on 2026-10-28:
 
 The owner also accepted the following recommendations in the second round:
 
-- Retain **AimHarder MCP** as the product name, paired with a plain-language explanation of its benefit. Keep the independent-project disclosure visible. “Your AimHarder training, in your AI chat” was an illustrative line, not final copy.
+- Historical name decision, superseded by the 2026-10-30 working-name checkpoint above: retain **AimHarder MCP** as the product name, paired with a plain-language explanation of its benefit. Keep the independent-project disclosure visible. “Your AimHarder training, in your AI chat” was an illustrative line, not final copy.
 - Explain the product and invitation-only pilot on the public page, with **Sign in** as its primary access action. Invited participants start from their invitation link. Do not add open registration or a waiting list.
 - Use the portal to configure and manage the service. Sporting queries and actions happen in the AI chat; do not add a sporting calendar, training-history view or booking forms to the portal.
 - Guide initial setup through connecting AimHarder, connecting an AI client and trying a first query. The returning-participant home shows connection status and links to settings.

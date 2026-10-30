@@ -1,6 +1,6 @@
 # Visual foundations — work in progress
 
-Current stage, 2026-10-30: the owner selected **Krona One** for the wordmark and ended additional motion exploration for this stage. The [Connect naming study](identity/connect-study/README.md) compares AimHarder Connect and standalone AIHarder using the established blue/circular-face character. Product naming remains under review; `aimharder-mcp` remains the technical npm package. The `.pen` UI foundations below are unchanged and still provisional. The single public home page and remaining #95 screens are later stages.
+Current stage, 2026-10-30: the owner selected **AimHarder Connect** as the working product name and **Krona One** for its wordmark. `aimharder-mcp` remains the technical npm package. The [first public-home structure](home-study/README.md) proposes the message, conversation example, useful prompts, three setup tasks, short FAQ and sign-in entry action; its structure/copy await review before the visual home experiment. Motion exploration is paused at the owner's request for this stage. The `.pen` UI foundations remain provisional, and later #95 screens remain out of the current delivery.
 
 Design source: [ahmcp.pen](ahmcp.pen). Issue [#95](https://github.com/rudeayelo/aimharder-mcp/issues/95), under [#103](https://github.com/rudeayelo/aimharder-mcp/issues/103).
 
@@ -73,4 +73,4 @@ White on brand blue is **3.30:1**: do not use for normal text. Primary dark text
 - No runtime, API, auth, MCP, provider, support-inbox or deployment behavior changed. No API research update is needed. Reviewed identity/custody, client authorization, invited admission, activity-role, self-service and hosted Madrid ADRs; their decisions are unchanged, so no new ADR is warranted for these reversible visual candidates.
 - No behavioral tests were added: this checkpoint changes design/documentation only. Full implementation verification belongs to subsequent deliveries. Two subsequent GPT Image trials are linked above; the public home-page experiment, mobile layouts, final navigation and the remaining #95 inventory have not been produced.
 
-Next review: choose the product name from the Connect naming study, then refine the selected wordmark before the single public home-page experiment and remaining screens. Earlier foundation and image-comparison observations above retain their historical scope.
+Next review: settle the proposed public-home structure and produce one visual home experiment before the remaining screens. Earlier foundation and image-comparison observations above retain their historical scope.
