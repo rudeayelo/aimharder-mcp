@@ -65,3 +65,23 @@ Review/apply exact prepared SQL; independently read back conditional update coun
 Twelve added journeys cross actual portal/OAuth and SDK v2 HTTP, production workerd/D1/SQLite account objects and the real shared upstream client. Only external AimHarder HTTP, fixture time and fault scheduling around real D1 writes are synthetic. They establish exact preview/strict confirmation, both roles, duplicate/foreign/wrong-gym/revision/eligibility/expiry safety, current revocation while preflight is held, independent accounts with overlapping source IDs, bounded one-write transport/denial/waitlist/incomplete branches, persistent restart at consumption/dispatch/result boundaries, original-identity recovery denial, explicit uncertainty after connection loss, retained rejection/conflict evidence after restart, TTL maintenance actual offline journal+connection rotation followed by active-key-only recovery, and post-send response-fact/terminal bookkeeping failures across confirmed/rejected/uncertain results. Encrypted inventory/output omit credential and original-target canaries. Every unexpected external request fails the harness.
 
 The fault scheduler throws before/after real durable writes and then restarts the persisted runtime; it does not claim to kill an actual production process in a particular instruction. A zero-write test after an interruption is not evidence that an earlier real request was absent. At that synthetic implementation checkpoint, actual provider/client behavior and real-source comparison remained unobserved. The later [Hermes creation checkpoint](#actual-hermes-booking-creation-2026-10-21) adds one actual confirmed hosted booking without changing the upstream contract. The later [ChatGPT observation](#owner-reported-chatgpt-creation-2026-10-21) has manual evidence and uncaptured-confirmation limits; cost/load and remaining lifecycle gates stay separate. The historical separately confirmed 9NBC cycle remains independent API evidence.
+
+
+## Default-off technical observations (#99, 2026-10-29)
+
+Hosted booking callbacks classify the trusted account result before MCP
+serialization and record one tool completion in the invocation-local telemetry
+buffer. Ready preparations and confirmed executions are successful; missing,
+ambiguous, already-booked/cancelled, waitlisted, unsupported, stale and refused
+results are expected denials. A normal cancellation's pending credit-loss result
+is a distinct denial requiring the existing separate confirmation. An uncertain
+execution creates the static `HostedWriteUncertain` issue; it does not assert
+that the booking or cancellation failed. Unknown variants create only a static
+classifier issue.
+
+The exporter receives no preview, action reference, target, reservation, account,
+gym or sporting payload. Preparation and execution retain separate random
+request traces. Collection remains disabled by default, uses the existing
+bounded one-attempt delivery, and changes no confirmation, consumption, queue,
+recovery or dispatch contract. See the [technical observation validation](validation.md#booking-tool-observations-99-2026-10-29)
+for synthetic evidence and the separate deployment/acceptance limits.

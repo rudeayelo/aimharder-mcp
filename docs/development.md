@@ -46,3 +46,27 @@ Output contains private account data; keep it out of issues and logs. These exam
 For other live comparisons, build and run `AIMHARDER_LIVE_CHECK=1 node scripts/live-check.mjs` with credentials injected. Optional flags in that script select queries; `AIMHARDER_LIVE_EXERCISE_DATE=YYYY-MM-DD` checks the first 12 distinct source exercises in a matching current-feed WOD until it finds one with 1RM data. It prints only sanitized comparison outcomes and may fail when the current feed lacks that WOD or a qualifying result. Record sanitized results and limits in [validation](validation.md); fixture passes do not establish upstream behavior.
 
 Add a changeset with `pnpm changeset` when a pull request changes the distributed package or its packaged consumer documentation. Internal-only changes need no changeset. The [release procedure](releasing.md) describes version pull requests, CI, npm OIDC setup, and the local live check of each published artifact.
+
+## Hosted observability harness
+
+Run `pnpm --dir hosted exec vitest run tests/worker.test.ts tests/telemetry.test.ts
+tests/schedule-queries.test.ts tests/activity-queries.test.ts --no-file-parallelism --testTimeout=30000` as one command. These native local
+Worker tests use synthetic credentials, an MCP SDK client and a controllable
+external telemetry receiver. They cover HTTP/auth/recovery exits, all nine read-tool
+classifications, unchanged results/upstream dispatches/lease release across exporter
+success/rejection/timeout/disabled modes, privacy, invocation isolation, buffer
+bounds/priority, oversize drops, redirect refusal, bounded acknowledgements and
+one-attempt delivery. They contact no actual AimHarder/LogNorth service.
+
+`HostedEnvironment.TELEMETRY` is an invocation-only recorder. Observe trusted
+account envelopes/results before MCP serialization and call `tool(name, started,
+classification)` once when the callback settles. The timer uses `performance.now()`;
+no arguments/results, identifiers, arbitrary exception messages or MCP content
+strings belong in telemetry. Source-owned tool/code/route catalogs reject unknown
+labels. `httpOutcome()` carries a private typed HTTP classification for known
+configuration denials, avoiding status-only guesses. The read mapping treats limited source views and supported empty/no-RM/selection
+results as success. Partial history retrieval, incomplete personal activity and
+incomplete optional RM enrichment have separate static partial codes. Unsupported
+interpretations and identity mismatches are technical issues; future discriminants
+remain unclassified. Later slices add action classifications and scheduled phases. No recorder
+or buffer is stored in account objects, durable storage or process-global state.

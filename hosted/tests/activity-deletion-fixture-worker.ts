@@ -26,12 +26,12 @@ export class AccountConnection extends ProductionAccountConnection {
   super(state,{...env,AUTH_DB:database});
  }
 }
-export default { async fetch(request: Request, env: HostedEnvironment) {
+export default { async fetch(request: Request, env: HostedEnvironment,ctx:ExecutionContext) {
   if(new URL(request.url).pathname==='/__fixture/clock'){clock.offset+=Number(request.headers.get('x-fixture-ms')??0);for(const subject of ['portal-fixture','other-participant'])await env.ACCOUNT_CONNECTIONS!.get(env.ACCOUNT_CONNECTIONS!.idFromName(subject)).fetch('https://fixture-clock.internal/',{headers:{'x-fixture-clock':String(clock.offset)}});return new Response(null,{status:204});}
   if (new URL(request.url).pathname === '/__fixture') {
     const response = await setup.fetch(request, env);
     await env.AUTH_DB.prepare("UPDATE portal_participant SET role='admin' WHERE userId='portal-fixture'").run();
     return response;
   }
-  return production.fetch(request, env);
+  return production.fetch(request, env,ctx);
 } };

@@ -1,3 +1,4 @@
+import type { TelemetryConfiguration, TelemetryInvocation } from './telemetry.js';
 import { betterAuth } from 'better-auth';
 import { jwt } from 'better-auth/plugins';
 import { mcp } from '@better-auth/mcp';
@@ -6,7 +7,9 @@ import { admitVerifiedIdentity, claimInvitation, canRecover, denyAdmission, dige
 import { issueGrantClaim, readIssuingGrant } from './oauth-grants.js';
 import { mailConfigured, sendPortalMail } from './mail.js';
 
-export interface HostedEnvironment {
+export interface HostedEnvironment extends TelemetryConfiguration {
+  /** Invocation scoped; never persisted in account objects. */
+  TELEMETRY?: TelemetryInvocation;
   AUTH_DB: D1Database;
   RECOVERY_DB?: D1Database;
   RECOVERY_AUTHORITY_ID?: string;
@@ -38,7 +41,7 @@ export function createAuth(env: HostedEnvironment) {
   let issuingGrant: Awaited<ReturnType<typeof readIssuingGrant>> | undefined;
   async function deliver(message: Parameters<typeof sendPortalMail>[1]) {
     try { await sendPortalMail(env, message); }
-    catch { deliveryFailed = true; }
+    catch { deliveryFailed = true; env.TELEMETRY?.httpOutcome({outcome:'technical_failure',code:'EMAIL_UNAVAILABLE'}); }
   }
   return betterAuth({
     baseURL: env.BASE_URL,
@@ -136,7 +139,7 @@ export function createAuth(env: HostedEnvironment) {
         if (ctx.path === '/oauth2/token') issuingGrant = await readIssuingGrant(env, ctx.body);
 
         if (ctx.path === '/sign-in/social' || ctx.path === '/link-social') {
-          if (!googleConfigured(env)) throw new APIError('SERVICE_UNAVAILABLE', { code: 'GOOGLE_UNAVAILABLE', message: 'Google sign-in is unavailable.' });
+          if (!googleConfigured(env)) {env.TELEMETRY?.httpOutcome({outcome:'denied',code:'GOOGLE_UNAVAILABLE'});throw new APIError('SERVICE_UNAVAILABLE', { code: 'GOOGLE_UNAVAILABLE', message: 'Google sign-in is unavailable.' });}
           // Only redirect-based sign-in is supported. Keep scopes fixed to identity.
           if (ctx.body.provider !== 'google' || ctx.body.idToken || ctx.body.scopes?.length || ctx.body.additionalParams) denyAdmission();
           const session = ctx.path === '/link-social' ? await getSessionFromCtx(ctx, { disableCookieCache: true }) : null;
@@ -146,6 +149,7 @@ export function createAuth(env: HostedEnvironment) {
             linkSession: session?.session.id ?? null });
         }
         if (['/sign-up/email', '/send-verification-email', '/request-password-reset'].includes(ctx.path) && !mailConfigured(env)) {
+          env.TELEMETRY?.httpOutcome({outcome:'denied',code:'EMAIL_UNAVAILABLE'});
           throw new APIError('SERVICE_UNAVAILABLE', { code: 'EMAIL_UNAVAILABLE', message: 'Email delivery is unavailable. Please try later.' });
         }
         if (ctx.path === '/sign-up/email') {
@@ -168,7 +172,7 @@ export function createAuth(env: HostedEnvironment) {
         // Better Auth intentionally catches background email callback failures.
         // Recovery must remain generic even if only an eligible recipient reaches
         // a failing sender. Global missing configuration is rejected uniformly above.
-        if (deliveryFailed && ctx.path !== '/request-password-reset') throw new APIError('SERVICE_UNAVAILABLE', { code: 'EMAIL_UNAVAILABLE', message: 'Email delivery is unavailable. Please try later.' });
+        if (deliveryFailed && ctx.path !== '/request-password-reset') {env.TELEMETRY?.httpOutcome({outcome:'technical_failure',code:'EMAIL_UNAVAILABLE'});throw new APIError('SERVICE_UNAVAILABLE', { code: 'EMAIL_UNAVAILABLE', message: 'Email delivery is unavailable. Please try later.' });}
       }),
     },
     databaseHooks: {

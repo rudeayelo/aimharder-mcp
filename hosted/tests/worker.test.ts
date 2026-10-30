@@ -6,6 +6,8 @@ import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/cli
 import { buildWorker } from '../build.mjs';
 let worker: Miniflare;
 const upstream: string[] = [];
+let receiverMode='success';
+const observations: {events: Array<Record<string, any>>}[] = [];
 beforeAll(async () => {
   await buildWorker('tests/fixture-worker.ts', 'dist/fixture-worker.js');
   worker = new Miniflare(
@@ -16,6 +18,12 @@ beforeAll(async () => {
       compatibilityFlags: ['nodejs_compat'],
       outboundService: async (request) => {
         const url = new URL(request.url);
+        if (url.origin === 'https://telemetry.example.invalid') {
+          if(receiverMode==='timeout')return new Promise<Response>(()=>{});
+          if(receiverMode==='rejected')return new Response(null,{status:503});
+          observations.push(await request.json() as {events: Array<Record<string, any>>});
+          return Response.json({created: observations.at(-1)!.events.length}, {status: 201});
+        }
         if (url.origin === 'http://localhost:8787') return worker.dispatchFetch(request);
         upstream.push(`${request.method} ${request.url}`);
         if (request.url === 'https://login.aimharder.es/api/login' && request.method === 'POST') {
@@ -50,6 +58,7 @@ beforeAll(async () => {
       },
       d1Databases: ['AUTH_DB','RECOVERY_DB'],
       bindings: { RECOVERY_AUTHORITY_ID:'synthetic-authority',
+        LOGNORTH_ENABLED: 'true', LOGNORTH_URL: 'https://telemetry.example.invalid', LOGNORTH_API_KEY: 'lgn-'+ 'a'.repeat(64), LOGNORTH_ENVIRONMENT: 'synthetic', LOGNORTH_RELEASE: 'test-97',
         AUTH_SECRET: 'synthetic-local-auth-secret-at-least-32-characters',
         BASE_URL: 'http://localhost:8787',
       },
@@ -67,6 +76,8 @@ afterAll(async () => {
 test('unauthenticated MCP requests advertise maintained OAuth discovery without reaching upstream', async () => {
   const denied = await worker.dispatchFetch('http://localhost:8787/mcp', { method: 'POST' });
   expect(denied.status).toBe(401);
+  await new Promise(resolve => setTimeout(resolve, 50));
+  expect(observations.flatMap(batch => batch.events)).toContainEqual(expect.objectContaining({context: expect.objectContaining({event_type: 'http.completed', path: '/mcp', outcome: 'denied', http_status: 401})}));
   expect(denied.headers.get('www-authenticate')).toContain('oauth-protected-resource');
   const metadata = await worker.dispatchFetch(
     'http://localhost:8787/.well-known/oauth-protected-resource/mcp'
@@ -141,6 +152,7 @@ test('a signed-in participant authorizes a PKCE client and queries their synthet
   expect(tokenResponse.status).toBe(200);
   const tokens = (await tokenResponse.json()) as { access_token: string; refresh_token: string };
   expect(tokens.refresh_token).toBeTruthy();
+  const clientHeaders=new Headers({ authorization: `Bearer ${tokens.access_token}` });
   const client = new Client(
     { name: 'worker-feasibility-harness', version: '1.0.0' },
     { versionNegotiation: { mode: { pin: '2026-07-28' } } }
@@ -148,21 +160,36 @@ test('a signed-in participant authorizes a PKCE client and queries their synthet
   try {
     await client.connect(
       new StreamableHTTPClientTransport(new URL('/mcp', await worker.ready), {
-        requestInit: { headers: { authorization: `Bearer ${tokens.access_token}` } },
+        requestInit: { headers: clientHeaders },
       })
     );
     const result = await client.callTool({ name: 'get_account_context', arguments: {} });
     expect(result.isError).not.toBe(true);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    const toolEvent=observations.flatMap(batch=>batch.events).find(event=>event.context.event_type==='mcp.tool.completed');
+    expect(toolEvent?.context).toMatchObject({tool:'get_account_context',outcome:'success'});
+    const correlated=observations.flatMap(batch=>batch.events).filter(event=>event.trace_id===toolEvent?.trace_id);
+    expect(correlated).toHaveLength(2);
+    expect(correlated.map(event=>event.context.event_type)).toEqual(['mcp.tool.completed','http.completed']);
     expect(result.structuredContent).toMatchObject({
       account: { authenticated: true },
       selectedGym: { id: 'sample-gym', name: 'Synthetic gym' },
     });
+    for(const mode of ['rejected','timeout','disabled']){
+      receiverMode=mode;
+      if(mode==='disabled')clientHeaders.set('x-fixture-telemetry-off','true');
+      const started=performance.now();
+      const comparison=await client.callTool({name:'get_account_context',arguments:{}});
+      expect(comparison).toEqual(result);
+      expect(performance.now()-started).toBeLessThan(1000);
+      const leases=await (await worker.getD1Database('RECOVERY_DB')).prepare('SELECT COUNT(*) AS count FROM recovery_lease').first<{count:number}>();
+      expect(leases?.count).toBe(0);
+    }
+    receiverMode='success';
+    await new Promise(resolve=>setTimeout(resolve,2100));
     for (const secret of ['synthetic-cookie', 'synthetic-upstream-password', 'upstream@example.invalid'])
       expect(JSON.stringify(result)).not.toContain(secret);
-    expect(upstream).toEqual([
-      'POST https://login.aimharder.es/api/login',
-      'GET https://aimharder.es/api/whoami',
-    ]);
+    expect(upstream).toEqual(Array.from({length:4},()=>['POST https://login.aimharder.es/api/login','GET https://aimharder.es/api/whoami']).flat());
   } finally {
     await client.close();
   }

@@ -28,7 +28,7 @@ export async function handleIdentity(request: Request, env: HostedEnvironment, a
           : page('Portal password added', '<p>You can now sign in using Google or your portal password.</p><a href="/account">Account access</a>');
       } catch { return page('Unable to add password', '<p>Use a password with at least eight characters and sign in with Google again before retrying.</p>', 400); }
     }
-    if (!googleConfigured(env)) return page('Google unavailable', '<p>Google sign-in is unavailable. Use your portal password or try later.</p>', 503);
+    if (!googleConfigured(env)) {env.TELEMETRY?.httpOutcome({outcome:'denied',code:'GOOGLE_UNAVAILABLE'});return page('Google unavailable', '<p>Google sign-in is unavailable. Use your portal password or try later.</p>', 503);}
     const form = await request.formData();
     const linking = url.pathname === '/portal/link-google';
     const continuation = new URLSearchParams(String(form.get('oauth_query') ?? ''));

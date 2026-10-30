@@ -1,0 +1,256 @@
+{
+  "date": "2026-10-29",
+  "upstreamPullRequest": "https://github.com/karloscodes/lognorth/pull/94",
+  "upstreamMerge": "b5da82c6f5641c3b2e0324cf90a5752f8955397b",
+  "patchedImage": "sha256:6777f666413a3c4062f1eba4642770bbce79be15c887eb5ac71acb567c6ba5fb",
+  "operatorDeployment": {
+    "startedAt": "2026-10-29T16:40:01.625972+00:00",
+    "verifiedAt": "2026-10-29T16:40:07.216549+00:00",
+    "command": {
+      "exitCode": 0,
+      "timedOut": false
+    },
+    "image": "sha256:6777f666413a3c4062f1eba4642770bbce79be15c887eb5ac71acb567c6ba5fb",
+    "healthy": true,
+    "runtimeConfigurationPreserved": true,
+    "globalPolicyPreserved": true,
+    "backupIntegrity": "ok",
+    "existingBackupsDeleted": 0,
+    "secretValuesPersistedInReceipt": false,
+    "originalImageRetained": true
+  },
+  "access": {
+    "at": "2026-10-29T16:41:35.752Z",
+    "localHealth": 200,
+    "anonymousIngestion": 401,
+    "panel": 302,
+    "panelRedirectsToAccess": true
+  },
+  "workload": {
+    "startedAt": "2026-10-29T16:42:55.948Z",
+    "endedAt": "2026-10-29T16:43:09.630Z",
+    "surface": "oauth-protected-resource-discovery",
+    "sampleCount": 20,
+    "samples": [
+      {
+        "status": 200,
+        "unchangedBody": true,
+        "unchangedHeaders": true,
+        "clientWallTimeMs": 1419
+      },
+      {
+        "status": 200,
+        "unchangedBody": true,
+        "unchangedHeaders": true,
+        "clientWallTimeMs": 562
+      },
+      {
+        "status": 200,
+        "unchangedBody": true,
+        "unchangedHeaders": true,
+        "clientWallTimeMs": 499
+      },
+      {
+        "status": 200,
+        "unchangedBody": true,
+        "unchangedHeaders": true,
+        "clientWallTimeMs": 493
+      },
+      {
+        "status": 200,
+        "unchangedBody": true,
+        "unchangedHeaders": true,
+        "clientWallTimeMs": 434
+      },
+      {
+        "status": 200,
+        "unchangedBody": true,
+        "unchangedHeaders": true,
+        "clientWallTimeMs": 483
+      },
+      {
+        "status": 200,
+        "unchangedBody": true,
+        "unchangedHeaders": true,
+        "clientWallTimeMs": 422
+      },
+      {
+        "status": 200,
+        "unchangedBody": true,
+        "unchangedHeaders": true,
+        "clientWallTimeMs": 400
+      },
+      {
+        "status": 200,
+        "unchangedBody": true,
+        "unchangedHeaders": true,
+        "clientWallTimeMs": 433
+      },
+      {
+        "status": 200,
+        "unchangedBody": true,
+        "unchangedHeaders": true,
+        "clientWallTimeMs": 406
+      },
+      {
+        "status": 200,
+        "unchangedBody": true,
+        "unchangedHeaders": true,
+        "clientWallTimeMs": 403
+      },
+      {
+        "status": 200,
+        "unchangedBody": true,
+        "unchangedHeaders": true,
+        "clientWallTimeMs": 397
+      },
+      {
+        "status": 200,
+        "unchangedBody": true,
+        "unchangedHeaders": true,
+        "clientWallTimeMs": 385
+      },
+      {
+        "status": 200,
+        "unchangedBody": true,
+        "unchangedHeaders": true,
+        "clientWallTimeMs": 436
+      },
+      {
+        "status": 200,
+        "unchangedBody": true,
+        "unchangedHeaders": true,
+        "clientWallTimeMs": 413
+      },
+      {
+        "status": 200,
+        "unchangedBody": true,
+        "unchangedHeaders": true,
+        "clientWallTimeMs": 398
+      },
+      {
+        "status": 200,
+        "unchangedBody": true,
+        "unchangedHeaders": true,
+        "clientWallTimeMs": 386
+      },
+      {
+        "status": 200,
+        "unchangedBody": true,
+        "unchangedHeaders": true,
+        "clientWallTimeMs": 385
+      },
+      {
+        "status": 200,
+        "unchangedBody": true,
+        "unchangedHeaders": true,
+        "clientWallTimeMs": 486
+      },
+      {
+        "status": 200,
+        "unchangedBody": true,
+        "unchangedHeaders": true,
+        "clientWallTimeMs": 406
+      }
+    ]
+  },
+  "mcp": {
+    "enabled": {
+      "at": "2026-10-29T16:43:00.854Z",
+      "ok": true,
+      "unchanged": true
+    },
+    "final": {
+      "at": "2026-10-29T16:45:29.034Z",
+      "ok": true,
+      "unchanged": true
+    }
+  },
+  "readback": {
+    "label": "final-disabled",
+    "readAt": "2026-10-29T16:45:30.734112Z",
+    "matchingTotal": 23,
+    "returned": 23,
+    "windowOldest": "2026-10-29T16:42:57.364Z",
+    "windowNewest": "2026-10-29T16:43:09.481Z",
+    "allowlistFailures": [],
+    "groups": [
+      {
+        "eventType": "http.completed",
+        "outcome": "success",
+        "path": "/.well-known/oauth-protected-resource/mcp",
+        "tool": null,
+        "httpStatus": 200,
+        "count": 20
+      },
+      {
+        "eventType": "http.completed",
+        "outcome": "success",
+        "path": "/mcp",
+        "tool": null,
+        "httpStatus": 200,
+        "count": 1
+      },
+      {
+        "eventType": "mcp.tool.completed",
+        "outcome": "success",
+        "path": null,
+        "tool": "get_account_context",
+        "httpStatus": null,
+        "count": 1
+      },
+      {
+        "eventType": "http.completed",
+        "outcome": "success",
+        "path": "/api/auth/jwks",
+        "tool": null,
+        "httpStatus": 200,
+        "count": 1
+      }
+    ],
+    "distinctInvocationTraces": 22,
+    "httpToolCorrelatedTraces": 1,
+    "maintenanceCorrelatedTraces": 0,
+    "reconstructedEventUtf8Bytes": {
+      "min": 335,
+      "max": 374
+    },
+    "reconstructedBatchUtf8Bytes": {
+      "min": 360,
+      "max": 687
+    },
+    "payloadMethod": "reconstruct received allowlisted fields with original 24-character ISO timestamps; excludes transport headers and dropped events",
+    "detailReadChecked": true,
+    "detailRawContextMatches": true,
+    "actualTraceValuesPersisted": false,
+    "privatePayloadPersisted": false
+  },
+  "disabledConfiguration": {
+    "verifiedAt": "2026-10-29T16:44:40.286757Z",
+    "enabled": "false",
+    "originalConfigurationPreserved": true,
+    "moduleExact": true,
+    "bindingCount": 17,
+    "secretCount": 7,
+    "bundleSha256": "1e2cc09f33dd0202bbc1746761fb75ef2fe13aa50bd2997a65731aa11875103d"
+  },
+  "finalSmoke": {
+    "at": "2026-10-29T16:45:30.093792Z",
+    "exitCode": 0,
+    "passedChecks": 11,
+    "mailStage": "configured"
+  },
+  "cleanup": {
+    "at": "2026-10-29T16:46:33.210700Z",
+    "matchingViewCounts": {
+      "pilot-compat-validation": 23,
+      "pilot-validation": 94
+    },
+    "watchdogStopped": true,
+    "temporarySecretFilesRemaining": 0
+  },
+  "newCpuOrPlanAcceptance": false,
+  "workerSourceCommit": "803c27e9bcd8123694a7442c768f2b65691dbce7",
+  "lognorthBaseCommit": "abaa5c6952c1f3ca2a5a8789a07253de6367e314",
+  "lognorthPatchCommit": "c4d434aecb99f204a409fb8e2cdde4a00afae3e6"
+}

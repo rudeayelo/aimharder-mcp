@@ -7,6 +7,7 @@ import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
 import { buildWorker } from '../build.mjs';
 const origin = 'http://localhost:8798';
+const events:{context:Record<string,unknown>;trace_id:string;duration_ms:number}[]=[];
 let worker: Miniflare;
 let directory: string;
 const cookies: string[] = [];
@@ -38,9 +39,10 @@ beforeAll(async()=>{
  worker=new Miniflare(convertV4MiniflareOptions({modules:true,scriptPath:'dist/activity-query-fixture-worker.js',port:8798,
  compatibilityDate:'2026-10-12',compatibilityFlags:['nodejs_compat'],d1Databases:['AUTH_DB','RECOVERY_DB'],resourcePersistencePath:directory,
  durableObjects:{ACCOUNT_CONNECTIONS:{className:'AccountConnection',useSQLite:true}},
- bindings: { RECOVERY_AUTHORITY_ID:'synthetic-authority',BASE_URL:origin,AUTH_SECRET:'synthetic-activity-query-auth-secret-long-enough',VAULT_KEYS:JSON.stringify({first:Buffer.alloc(32,19).toString('base64')}),VAULT_ACTIVE_KEY_ID:'first'},
+ bindings: {LOGNORTH_ENABLED:'true',LOGNORTH_URL:'https://telemetry.invalid',LOGNORTH_API_KEY:'lgn-'+'a'.repeat(64),LOGNORTH_ENVIRONMENT:'test',LOGNORTH_RELEASE:'synthetic', RECOVERY_AUTHORITY_ID:'synthetic-authority',BASE_URL:origin,AUTH_SECRET:'synthetic-activity-query-auth-secret-long-enough',VAULT_KEYS:JSON.stringify({first:Buffer.alloc(32,19).toString('base64')}),VAULT_ACTIVE_KEY_ID:'first'},
  outboundService:async request=>{
   const url=new URL(request.url);
+  if(url.origin==='https://telemetry.invalid'){const batch=await request.json() as {events:typeof events};events.push(...batch.events);return Response.json({created:batch.events.length},{status:201});}
   if(url.origin===origin)return worker.dispatchFetch(request);
   if(url.href==='https://login.aimharder.es/api/login'&&request.method==='POST'){
    const body=await request.json() as {username:string;password:string}; const owner=accounts.find(a=>a.email===body.username);loginAttempts.push(owner?.id??-1);
@@ -201,6 +203,39 @@ test('unknown units, empty own views and mismatched exercise owners preserve the
  expect((await call('get_exercise_1rm',{exerciseId:101})).structuredContent).toMatchObject({status:'no-1rm',latest1RM:null});
  exerciseReply=owner=>Response.json({...exercise(owner),chartUserId:999});
  const rejected=await call('get_exercise_1rm',{exerciseId:101});expect(rejected.isError).toBe(true);expect(JSON.stringify(rejected)).toContain('IDENTITY_MISMATCH');
+ exerciseReply=owner=>Response.json(exercise(owner));
+});
+
+async function observed(name:string,args:Record<string,unknown>,outcome:string,code?:string) {
+ const before=events.length;const result=await call(name,args);
+ for(let i=0;i<100&&!events.slice(before).some(e=>e.context.tool===name);i++)await new Promise(r=>setTimeout(r,10));
+ const tools=events.slice(before).filter(e=>e.context.tool===name);expect(tools).toHaveLength(1);
+ expect(tools[0]!.context).toMatchObject({outcome,...(code?{code}:{})});
+ expect(events.slice(before).filter(e=>e.trace_id===tools[0]!.trace_id&&e.context.event_type==='http.completed')).toEqual([expect.objectContaining({context:expect.objectContaining({outcome:'success',http_status:200})})]);
+ expect(JSON.stringify(events.slice(before))).not.toMatch(/private-profile|private-history|Own recorded score|upstream-a|activity-a|shared-gym|100.5|sourceActivityId/);
+ return result;
+}
+test('native read telemetry observes supported RM and search variants, progression, partial activity and identity errors without sporting payloads',async()=>{
+ await observed('get_exercise_1rm',{exerciseId:101},'success');
+ await observed('get_exercise_rm_progression',{exerciseId:101,includeWod:true},'success');
+ exerciseReply=owner=>Response.json({...exercise(owner),history:[]});
+ await observed('get_exercise_1rm',{exerciseId:101},'success');
+ exerciseReply=owner=>Response.json({...exercise(owner),chartData1RM:[]});
+ await observed('get_exercise_1rm',{exerciseId:101},'success');
+ exerciseReply=owner=>Response.json(exercise(owner));
+ for(const [status,rows] of [['selected',[{id:101,name:'Barbell lift',type:0}]],['ambiguous',[{id:101,name:'Barbell lift',type:0},{id:102,name:'Dumbbell lift',type:0}]],['empty-view',[]],['unsupported-view',[{id:101,name:'Barbell lift',type:99}]]] as const){
+  searchReply=()=>Response.json({term:'lift',result:rows});
+  const result=await observed('find_exercise_1rm',{name:'lift'},status==='unsupported-view'?'technical_failure':'success');
+  expect(result.structuredContent).toMatchObject({status});
+ }
+ searchReply=()=>Response.json({term:'lift',result:[{id:101,name:'Barbell lift',type:0}]});
+ await observed('find_exercise_1rm',{name:'lift',exerciseId:999},'success');
+ await observed('get_personal_activity',{startDate:'2026-03-29',endDate:'2026-03-29'},'success');
+ detailReply=(owner,id)=>id===owner*10+2?new Response(null,{status:500}):Response.json(activity(owner,id));
+ await observed('get_personal_activity',{startDate:'2026-03-29',endDate:'2026-03-29'},'partial','PERSONAL_ACTIVITY_INCOMPLETE');
+ detailReply=(owner,id)=>Response.json(activity(owner,id));
+ exerciseReply=owner=>Response.json({...exercise(owner),chartUserId:999});
+ await observed('get_exercise_1rm',{exerciseId:101},'technical_failure','IDENTITY_MISMATCH');
  exerciseReply=owner=>Response.json(exercise(owner));
 });
 

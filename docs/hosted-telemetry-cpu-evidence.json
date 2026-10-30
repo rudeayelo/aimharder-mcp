@@ -1,0 +1,907 @@
+{
+  "runDate": "2026-10-29",
+  "recordedAt": "2026-10-29T23:53:49.033110Z",
+  "status": "incomplete: transient capture connection closed during unavailable cell",
+  "planReference": {
+    "currentPlan": "Paid",
+    "independentlyVerified": true,
+    "receipt": "hosted-telemetry-dashboard-validation.json",
+    "purchaseOrPlanChangeByAgent": false,
+    "allInCostOrMonthlyBudgetProven": false,
+    "nativeProducerExplicitLimits": null,
+    "explicitLimitsChanged": false,
+    "documentedPaidCpuReferenceMsForUnderOneHourCron": 30000,
+    "limitsSource": "https://developers.cloudflare.com/workers/platform/limits/#cpu-time"
+  },
+  "source": {
+    "mechanism": "ordinary Tail Worker TraceItem getters projected into closed console packets; ephemeral observer tail",
+    "cpuUnit": "integer milliseconds",
+    "wallUnit": "integer milliseconds",
+    "pinnedPublicWorkerdCommit": "5bc95564678209bb4af091ea6c569824fb417942",
+    "exactHostedRuntimeBuildKnown": false,
+    "rawProducerWebSocketTimingUsed": false,
+    "invocationTimestampSource": "TraceItem.eventTimestamp, associated to independent main watchdog attempt within 5 seconds",
+    "scheduledTimeEncodingAssumed": false,
+    "observerSource": "hosted-telemetry-cpu-observer.mjs",
+    "observerModuleSha256": "c5fd01daef40e788c37ae1e51e9641f67664c996858a2a1fad290c69f33f54ba",
+    "nativeGate": {
+      "at": "2026-10-29T22:29:02.304010Z",
+      "verified": true,
+      "cpuUnit": "integer milliseconds",
+      "runtimeGetterProjection": true,
+      "matchedMainMaintenance": true,
+      "row": {
+        "kind": "scheduled_cpu_v1",
+        "cron": "*/5 * * * *",
+        "invocation_at_ms": 1793312704164,
+        "cpu_ms": 10,
+        "wall_ms": 1929,
+        "outcome": "ok"
+      }
+    },
+    "preactivationObserverConfiguration": {
+      "at": "2026-10-29T23:03:45.643740Z",
+      "deadlineExactlyMatchesOriginalBound": true,
+      "observerCpuLimitMs": 100,
+      "noSecretOrStorageBindings": true,
+      "noPersistentLogging": true,
+      "noRecursiveTail": true,
+      "sourceStillExact": true,
+      "verified": true
+    }
+  },
+  "bound": {
+    "armedAt": "2026-10-29T22:10:12.806267Z",
+    "maximumSeconds": 7200,
+    "deadlineUtc": "2026-10-30T00:10:12.806900+00:00",
+    "restoredAt": "2026-10-29T23:50:06.986060Z",
+    "elapsedToVerifiedCleanupSeconds": 5994.179,
+    "originalDeadlineExtended": false
+  },
+  "phases": [
+    {
+      "phase": "baseline",
+      "targetSamples": 5,
+      "sampleCount": 5,
+      "complete": true,
+      "deploymentStartedAt": "2026-10-29T22:22:16.240670Z",
+      "verifiedAt": "2026-10-29T22:22:36.086675Z",
+      "moduleSha256": "8e4cece5be89c9b102f03265588c403b942c7d9c4a1a439d892fa3de5d2551c0",
+      "enabled": false,
+      "resourcesPreserved": true,
+      "rows": [
+        {
+          "kind": "scheduled_cpu_v1",
+          "cron": "*/5 * * * *",
+          "invocation_at_ms": 1793312704164,
+          "cpu_ms": 10,
+          "wall_ms": 1929,
+          "outcome": "ok"
+        },
+        {
+          "kind": "scheduled_cpu_v1",
+          "cron": "*/5 * * * *",
+          "invocation_at_ms": 1793313004395,
+          "cpu_ms": 9,
+          "wall_ms": 1430,
+          "outcome": "ok"
+        },
+        {
+          "kind": "scheduled_cpu_v1",
+          "cron": "*/5 * * * *",
+          "invocation_at_ms": 1793313304407,
+          "cpu_ms": 10,
+          "wall_ms": 507,
+          "outcome": "ok"
+        },
+        {
+          "kind": "scheduled_cpu_v1",
+          "cron": "*/5 * * * *",
+          "invocation_at_ms": 1793313605100,
+          "cpu_ms": 7,
+          "wall_ms": 641,
+          "outcome": "ok"
+        },
+        {
+          "kind": "scheduled_cpu_v1",
+          "cron": "*/5 * * * *",
+          "invocation_at_ms": 1793313904578,
+          "cpu_ms": 10,
+          "wall_ms": 2200,
+          "outcome": "ok"
+        }
+      ],
+      "mainMaintenanceReceipts": [
+        {
+          "readAt": "2026-10-29T22:29:04.978198Z",
+          "lastAttemptAt": 1793312704685,
+          "lastSuccessAt": 1793312706252,
+          "status": "ok",
+          "lastPurgedCount": 0
+        },
+        {
+          "readAt": "2026-10-29T22:30:10.233786Z",
+          "lastAttemptAt": 1793313004867,
+          "lastSuccessAt": 1793313006043,
+          "status": "ok",
+          "lastPurgedCount": 0
+        },
+        {
+          "readAt": "2026-10-29T22:35:10.905252Z",
+          "lastAttemptAt": 1793313304881,
+          "lastSuccessAt": 1793313305233,
+          "status": "ok",
+          "lastPurgedCount": 0
+        },
+        {
+          "readAt": "2026-10-29T22:40:11.741008Z",
+          "lastAttemptAt": 1793313605470,
+          "lastSuccessAt": 1793313605936,
+          "status": "ok",
+          "lastPurgedCount": 0
+        },
+        {
+          "readAt": "2026-10-29T22:45:12.731708Z",
+          "lastAttemptAt": 1793313905148,
+          "lastSuccessAt": 1793313906915,
+          "status": "ok",
+          "lastPurgedCount": 0
+        }
+      ],
+      "cpuMilliseconds": {
+        "n": 5,
+        "p50": 10,
+        "p95NearestRank": 10,
+        "maximum": 10,
+        "minimum": 7,
+        "sum": 46
+      },
+      "wallMilliseconds": {
+        "n": 5,
+        "p50": 1430,
+        "p95NearestRank": 2200,
+        "maximum": 2200,
+        "minimum": 507,
+        "sum": 6707
+      },
+      "scheduledSubrequests": {
+        "available": false,
+        "reason": "not supplied by closed getter projection; scheduled analytics returned zero rows"
+      },
+      "discoveryResponse": {
+        "at": "2026-10-29T22:29:04.881805Z",
+        "status": 200,
+        "bodySha256": "48eaa12d5f6750df7529a61b51f540af65e740a87fe11eb53bba12a861427666"
+      }
+    },
+    {
+      "phase": "reviewed-disabled",
+      "targetSamples": 5,
+      "sampleCount": 5,
+      "complete": true,
+      "deploymentStartedAt": "2026-10-29T22:45:22.985556Z",
+      "verifiedAt": "2026-10-29T22:45:42.806649Z",
+      "moduleSha256": "1e2cc09f33dd0202bbc1746761fb75ef2fe13aa50bd2997a65731aa11875103d",
+      "enabled": false,
+      "resourcesPreserved": true,
+      "rows": [
+        {
+          "kind": "scheduled_cpu_v1",
+          "cron": "*/5 * * * *",
+          "invocation_at_ms": 1793314204906,
+          "cpu_ms": 8,
+          "wall_ms": 3099,
+          "outcome": "ok"
+        },
+        {
+          "kind": "scheduled_cpu_v1",
+          "cron": "*/5 * * * *",
+          "invocation_at_ms": 1793314504329,
+          "cpu_ms": 8,
+          "wall_ms": 2300,
+          "outcome": "ok"
+        },
+        {
+          "kind": "scheduled_cpu_v1",
+          "cron": "*/5 * * * *",
+          "invocation_at_ms": 1793314804109,
+          "cpu_ms": 12,
+          "wall_ms": 3884,
+          "outcome": "ok"
+        },
+        {
+          "kind": "scheduled_cpu_v1",
+          "cron": "*/5 * * * *",
+          "invocation_at_ms": 1793315104272,
+          "cpu_ms": 15,
+          "wall_ms": 3975,
+          "outcome": "ok"
+        },
+        {
+          "kind": "scheduled_cpu_v1",
+          "cron": "*/5 * * * *",
+          "invocation_at_ms": 1793315404305,
+          "cpu_ms": 11,
+          "wall_ms": 3830,
+          "outcome": "ok"
+        }
+      ],
+      "mainMaintenanceReceipts": [
+        {
+          "readAt": "2026-10-29T22:50:14.475010Z",
+          "lastAttemptAt": 1793314205418,
+          "lastSuccessAt": 1793314207993,
+          "status": "ok",
+          "lastPurgedCount": 0
+        },
+        {
+          "readAt": "2026-10-29T22:55:10.092294Z",
+          "lastAttemptAt": 1793314504860,
+          "lastSuccessAt": 1793314506695,
+          "status": "ok",
+          "lastPurgedCount": 0
+        },
+        {
+          "readAt": "2026-10-29T23:00:10.947250Z",
+          "lastAttemptAt": 1793314804869,
+          "lastSuccessAt": 1793314808353,
+          "status": "ok",
+          "lastPurgedCount": 0
+        },
+        {
+          "readAt": "2026-10-29T23:05:11.622777Z",
+          "lastAttemptAt": 1793315105042,
+          "lastSuccessAt": 1793315108624,
+          "status": "ok",
+          "lastPurgedCount": 0
+        },
+        {
+          "readAt": "2026-10-29T23:10:12.348981Z",
+          "lastAttemptAt": 1793315404808,
+          "lastSuccessAt": 1793315408298,
+          "status": "ok",
+          "lastPurgedCount": 0
+        }
+      ],
+      "cpuMilliseconds": {
+        "n": 5,
+        "p50": 11,
+        "p95NearestRank": 15,
+        "maximum": 15,
+        "minimum": 8,
+        "sum": 54
+      },
+      "wallMilliseconds": {
+        "n": 5,
+        "p50": 3830,
+        "p95NearestRank": 3975,
+        "maximum": 3975,
+        "minimum": 2300,
+        "sum": 17088
+      },
+      "scheduledSubrequests": {
+        "available": false,
+        "reason": "not supplied by closed getter projection; scheduled analytics returned zero rows"
+      },
+      "discoveryResponse": {
+        "at": "2026-10-29T22:45:43.769828Z",
+        "status": 200,
+        "bodySha256": "48eaa12d5f6750df7529a61b51f540af65e740a87fe11eb53bba12a861427666"
+      }
+    },
+    {
+      "phase": "success",
+      "targetSamples": 5,
+      "sampleCount": 5,
+      "complete": true,
+      "deploymentStartedAt": "2026-10-29T23:10:22.967268Z",
+      "verifiedAt": "2026-10-29T23:10:42.895078Z",
+      "moduleSha256": "1e2cc09f33dd0202bbc1746761fb75ef2fe13aa50bd2997a65731aa11875103d",
+      "enabled": true,
+      "resourcesPreserved": true,
+      "rows": [
+        {
+          "kind": "scheduled_cpu_v1",
+          "cron": "*/5 * * * *",
+          "invocation_at_ms": 1793315704474,
+          "cpu_ms": 18,
+          "wall_ms": 2822,
+          "outcome": "ok"
+        },
+        {
+          "kind": "scheduled_cpu_v1",
+          "cron": "*/5 * * * *",
+          "invocation_at_ms": 1793316004398,
+          "cpu_ms": 8,
+          "wall_ms": 622,
+          "outcome": "ok"
+        },
+        {
+          "kind": "scheduled_cpu_v1",
+          "cron": "*/5 * * * *",
+          "invocation_at_ms": 1793316304240,
+          "cpu_ms": 10,
+          "wall_ms": 2294,
+          "outcome": "ok"
+        },
+        {
+          "kind": "scheduled_cpu_v1",
+          "cron": "*/5 * * * *",
+          "invocation_at_ms": 1793316604187,
+          "cpu_ms": 17,
+          "wall_ms": 2185,
+          "outcome": "ok"
+        },
+        {
+          "kind": "scheduled_cpu_v1",
+          "cron": "*/5 * * * *",
+          "invocation_at_ms": 1793316904156,
+          "cpu_ms": 22,
+          "wall_ms": 2119,
+          "outcome": "ok"
+        }
+      ],
+      "mainMaintenanceReceipts": [
+        {
+          "readAt": "2026-10-29T23:15:09.329527Z",
+          "lastAttemptAt": 1793315705078,
+          "lastSuccessAt": 1793315706854,
+          "status": "ok",
+          "lastPurgedCount": 0
+        },
+        {
+          "readAt": "2026-10-29T23:20:10.108806Z",
+          "lastAttemptAt": 1793316004692,
+          "lastSuccessAt": 1793316005074,
+          "status": "ok",
+          "lastPurgedCount": 0
+        },
+        {
+          "readAt": "2026-10-29T23:25:10.934032Z",
+          "lastAttemptAt": 1793316304733,
+          "lastSuccessAt": 1793316306208,
+          "status": "ok",
+          "lastPurgedCount": 0
+        },
+        {
+          "readAt": "2026-10-29T23:30:11.721002Z",
+          "lastAttemptAt": 1793316604768,
+          "lastSuccessAt": 1793316606099,
+          "status": "ok",
+          "lastPurgedCount": 0
+        },
+        {
+          "readAt": "2026-10-29T23:35:12.383619Z",
+          "lastAttemptAt": 1793316905030,
+          "lastSuccessAt": 1793316906364,
+          "status": "ok",
+          "lastPurgedCount": 0
+        }
+      ],
+      "cpuMilliseconds": {
+        "n": 5,
+        "p50": 17,
+        "p95NearestRank": 22,
+        "maximum": 22,
+        "minimum": 8,
+        "sum": 75
+      },
+      "wallMilliseconds": {
+        "n": 5,
+        "p50": 2185,
+        "p95NearestRank": 2822,
+        "maximum": 2822,
+        "minimum": 622,
+        "sum": 10042
+      },
+      "scheduledSubrequests": {
+        "available": false,
+        "reason": "not supplied by closed getter projection; scheduled analytics returned zero rows"
+      },
+      "discoveryResponse": {
+        "at": "2026-10-29T23:10:43.581049Z",
+        "status": 200,
+        "bodySha256": "48eaa12d5f6750df7529a61b51f540af65e740a87fe11eb53bba12a861427666"
+      }
+    },
+    {
+      "phase": "unavailable",
+      "targetSamples": 5,
+      "sampleCount": 2,
+      "complete": false,
+      "deploymentStartedAt": "2026-10-29T23:35:29.131011Z",
+      "verifiedAt": "2026-10-29T23:35:48.613716Z",
+      "moduleSha256": "1e2cc09f33dd0202bbc1746761fb75ef2fe13aa50bd2997a65731aa11875103d",
+      "enabled": true,
+      "resourcesPreserved": true,
+      "rows": [
+        {
+          "kind": "scheduled_cpu_v1",
+          "cron": "*/5 * * * *",
+          "invocation_at_ms": 1793317204653,
+          "cpu_ms": 12,
+          "wall_ms": 1941,
+          "outcome": "ok"
+        },
+        {
+          "kind": "scheduled_cpu_v1",
+          "cron": "*/5 * * * *",
+          "invocation_at_ms": 1793317504412,
+          "cpu_ms": 9,
+          "wall_ms": 3974,
+          "outcome": "ok"
+        }
+      ],
+      "mainMaintenanceReceipts": [
+        {
+          "readAt": "2026-10-29T23:40:10.252214Z",
+          "lastAttemptAt": 1793317205318,
+          "lastSuccessAt": 1793317206887,
+          "status": "ok",
+          "lastPurgedCount": 0
+        },
+        {
+          "readAt": "2026-10-29T23:45:11.036605Z",
+          "lastAttemptAt": 1793317505065,
+          "lastSuccessAt": 1793317508315,
+          "status": "ok",
+          "lastPurgedCount": 0
+        }
+      ],
+      "cpuMilliseconds": {
+        "n": 2,
+        "minimum": 9,
+        "p50": 10.5,
+        "p95NearestRank": 12,
+        "maximum": 12,
+        "sum": 21
+      },
+      "wallMilliseconds": {
+        "n": 2,
+        "minimum": 1941,
+        "p50": 2957.5,
+        "p95NearestRank": 3974,
+        "maximum": 3974,
+        "sum": 5915
+      },
+      "scheduledSubrequests": {
+        "available": false,
+        "reason": "not supplied by closed getter projection; scheduled analytics returned zero rows"
+      },
+      "discoveryResponse": {
+        "at": "2026-10-29T23:35:49.569021Z",
+        "status": 200,
+        "bodySha256": "48eaa12d5f6750df7529a61b51f540af65e740a87fe11eb53bba12a861427666"
+      }
+    }
+  ],
+  "scheduledSampleCount": 17,
+  "targetScheduledSampleCount": 20,
+  "capture": {
+    "droppedIndicated": false,
+    "invalidPackets": 0,
+    "closedBeforeCleanup": true,
+    "closureObservedAt": "2026-10-29T23:49:27.622Z",
+    "driverFailure": {
+      "at": "2026-10-29T23:49:31.399841Z",
+      "failure": "capture_not_reliable",
+      "rawPayloadPersisted": false
+    },
+    "closeCodeRecorded": false,
+    "closureCauseEstablished": false,
+    "rawTracePersisted": false,
+    "persistentProducerOrObserverLoggingEnabled": false,
+    "observerHasPublicEndpoint": false,
+    "observerHasSecretsOrStorage": false,
+    "collectorSameAcrossMeasurementCells": true,
+    "transitionInvocationsExcluded": true
+  },
+  "readback": {
+    "before-activation": {
+      "label": "before-activation",
+      "readAt": "2026-10-29T22:29:03.951000Z",
+      "matchingTotal": 0,
+      "returned": 0,
+      "windowOldest": null,
+      "windowNewest": null,
+      "allowlistFailures": [],
+      "groups": [],
+      "distinctInvocationTraces": 0,
+      "httpToolCorrelatedTraces": 0,
+      "maintenanceCorrelatedTraces": 0,
+      "reconstructedEventUtf8Bytes": {
+        "min": null,
+        "max": null
+      },
+      "reconstructedBatchUtf8Bytes": {
+        "min": null,
+        "max": null
+      },
+      "payloadMethod": "reconstruct received allowlisted fields with original 24-character ISO timestamps; excludes transport headers and dropped events",
+      "detailReadChecked": false,
+      "detailRawContextMatches": false,
+      "actualTraceValuesPersisted": false,
+      "privatePayloadPersisted": false
+    },
+    "success-opening": {
+      "label": "success-opening",
+      "readAt": "2026-10-29T23:11:49.460814Z",
+      "matchingTotal": 5,
+      "returned": 5,
+      "windowOldest": "2026-10-29T23:10:43.575Z",
+      "windowNewest": "2026-10-29T23:11:32.484Z",
+      "allowlistFailures": [],
+      "groups": [
+        {
+          "eventType": "http.completed",
+          "outcome": "success",
+          "path": "/mcp",
+          "tool": null,
+          "httpStatus": 200,
+          "count": 1
+        },
+        {
+          "eventType": "mcp.tool.completed",
+          "outcome": "success",
+          "path": null,
+          "tool": "get_account_context",
+          "httpStatus": null,
+          "count": 1
+        },
+        {
+          "eventType": "http.completed",
+          "outcome": "success",
+          "path": "/api/auth/jwks",
+          "tool": null,
+          "httpStatus": 200,
+          "count": 1
+        },
+        {
+          "eventType": "http.completed",
+          "outcome": "success",
+          "path": "/api/auth/oauth2/token",
+          "tool": null,
+          "httpStatus": 200,
+          "count": 1
+        },
+        {
+          "eventType": "http.completed",
+          "outcome": "success",
+          "path": "/.well-known/oauth-protected-resource/mcp",
+          "tool": null,
+          "httpStatus": 200,
+          "count": 1
+        }
+      ],
+      "distinctInvocationTraces": 4,
+      "httpToolCorrelatedTraces": 1,
+      "maintenanceCorrelatedTraces": 0,
+      "reconstructedEventUtf8Bytes": {
+        "min": 332,
+        "max": 371
+      },
+      "reconstructedBatchUtf8Bytes": {
+        "min": 357,
+        "max": 681
+      },
+      "payloadMethod": "reconstruct received allowlisted fields with original 24-character ISO timestamps; excludes transport headers and dropped events",
+      "detailReadChecked": true,
+      "detailRawContextMatches": true,
+      "actualTraceValuesPersisted": false,
+      "privatePayloadPersisted": false
+    },
+    "success-complete": {
+      "label": "success-complete",
+      "readAt": "2026-10-29T23:35:18.989365Z",
+      "matchingTotal": 15,
+      "returned": 15,
+      "windowOldest": "2026-10-29T23:10:43.575Z",
+      "windowNewest": "2026-10-29T23:35:06.506Z",
+      "allowlistFailures": [],
+      "groups": [
+        {
+          "eventType": "maintenance.memory.completed",
+          "outcome": "success",
+          "path": null,
+          "tool": null,
+          "httpStatus": null,
+          "count": 5
+        },
+        {
+          "eventType": "maintenance.main.completed",
+          "outcome": "success",
+          "path": null,
+          "tool": null,
+          "httpStatus": null,
+          "count": 5
+        },
+        {
+          "eventType": "http.completed",
+          "outcome": "success",
+          "path": "/mcp",
+          "tool": null,
+          "httpStatus": 200,
+          "count": 1
+        },
+        {
+          "eventType": "mcp.tool.completed",
+          "outcome": "success",
+          "path": null,
+          "tool": "get_account_context",
+          "httpStatus": null,
+          "count": 1
+        },
+        {
+          "eventType": "http.completed",
+          "outcome": "success",
+          "path": "/api/auth/jwks",
+          "tool": null,
+          "httpStatus": 200,
+          "count": 1
+        },
+        {
+          "eventType": "http.completed",
+          "outcome": "success",
+          "path": "/api/auth/oauth2/token",
+          "tool": null,
+          "httpStatus": 200,
+          "count": 1
+        },
+        {
+          "eventType": "http.completed",
+          "outcome": "success",
+          "path": "/.well-known/oauth-protected-resource/mcp",
+          "tool": null,
+          "httpStatus": 200,
+          "count": 1
+        }
+      ],
+      "distinctInvocationTraces": 9,
+      "httpToolCorrelatedTraces": 1,
+      "maintenanceCorrelatedTraces": 5,
+      "reconstructedEventUtf8Bytes": {
+        "min": 323,
+        "max": 371
+      },
+      "reconstructedBatchUtf8Bytes": {
+        "min": 357,
+        "max": 681
+      },
+      "payloadMethod": "reconstruct received allowlisted fields with original 24-character ISO timestamps; excludes transport headers and dropped events",
+      "detailReadChecked": true,
+      "detailRawContextMatches": true,
+      "actualTraceValuesPersisted": false,
+      "privatePayloadPersisted": false
+    },
+    "final-disabled": {
+      "label": "final-disabled",
+      "readAt": "2026-10-29T23:52:06.094462Z",
+      "matchingTotal": 15,
+      "returned": 15,
+      "windowOldest": "2026-10-29T23:10:43.575Z",
+      "windowNewest": "2026-10-29T23:35:06.506Z",
+      "allowlistFailures": [],
+      "groups": [
+        {
+          "eventType": "maintenance.memory.completed",
+          "outcome": "success",
+          "path": null,
+          "tool": null,
+          "httpStatus": null,
+          "count": 5
+        },
+        {
+          "eventType": "maintenance.main.completed",
+          "outcome": "success",
+          "path": null,
+          "tool": null,
+          "httpStatus": null,
+          "count": 5
+        },
+        {
+          "eventType": "http.completed",
+          "outcome": "success",
+          "path": "/mcp",
+          "tool": null,
+          "httpStatus": 200,
+          "count": 1
+        },
+        {
+          "eventType": "mcp.tool.completed",
+          "outcome": "success",
+          "path": null,
+          "tool": "get_account_context",
+          "httpStatus": null,
+          "count": 1
+        },
+        {
+          "eventType": "http.completed",
+          "outcome": "success",
+          "path": "/api/auth/jwks",
+          "tool": null,
+          "httpStatus": 200,
+          "count": 1
+        },
+        {
+          "eventType": "http.completed",
+          "outcome": "success",
+          "path": "/api/auth/oauth2/token",
+          "tool": null,
+          "httpStatus": 200,
+          "count": 1
+        },
+        {
+          "eventType": "http.completed",
+          "outcome": "success",
+          "path": "/.well-known/oauth-protected-resource/mcp",
+          "tool": null,
+          "httpStatus": 200,
+          "count": 1
+        }
+      ],
+      "distinctInvocationTraces": 9,
+      "httpToolCorrelatedTraces": 1,
+      "maintenanceCorrelatedTraces": 5,
+      "reconstructedEventUtf8Bytes": {
+        "min": 323,
+        "max": 371
+      },
+      "reconstructedBatchUtf8Bytes": {
+        "min": 357,
+        "max": 681
+      },
+      "payloadMethod": "reconstruct received allowlisted fields with original 24-character ISO timestamps; excludes transport headers and dropped events",
+      "detailReadChecked": true,
+      "detailRawContextMatches": true,
+      "actualTraceValuesPersisted": false,
+      "privatePayloadPersisted": false
+    }
+  },
+  "mcp": {
+    "baseline": {
+      "stage": "pre-instrumentation-baseline",
+      "authenticated": true,
+      "unchangedStructuredResult": true
+    },
+    "reviewed-disabled": {
+      "at": "2026-10-29T22:46:36.140Z",
+      "stage": "reviewed-disabled",
+      "authenticated": true,
+      "unchangedStructuredResult": true
+    },
+    "success": {
+      "at": "2026-10-29T23:11:32.493Z",
+      "stage": "success",
+      "authenticated": true,
+      "unchangedStructuredResult": true
+    },
+    "unavailable": {
+      "at": "2026-10-29T23:37:00.144Z",
+      "stage": "unavailable",
+      "authenticated": true,
+      "unchangedStructuredResult": true
+    },
+    "final-disabled": {
+      "at": "2026-10-29T23:52:17.283Z",
+      "stage": "final-disabled",
+      "authenticated": true,
+      "unchangedStructuredResult": true
+    }
+  },
+  "finalSmoke": {
+    "at": "2026-10-29T23:52:07.476372Z",
+    "exitCode": 0,
+    "passedChecks": 11,
+    "mailStage": "configured",
+    "rawOutputPersisted": false
+  },
+  "cleanup": {
+    "at": "2026-10-29T23:50:06.986060Z",
+    "verified": true,
+    "producerRestored": true,
+    "observerDeleted": true,
+    "tailDetached": true,
+    "exporterDisabled": true,
+    "independentProof": {
+      "at": "2026-10-29T23:50:18.877966Z",
+      "enabled": "false",
+      "tailDetached": true,
+      "reviewedModule": true,
+      "resourcesPreserved": true,
+      "originalVarsRestored": true,
+      "observerDeleted": true,
+      "verified": true
+    },
+    "guard": {
+      "at": "2026-10-29T23:50:21.712172Z",
+      "verified": true,
+      "attempts": [],
+      "independentlyDisabled": true
+    },
+    "processes": {
+      "at": "2026-10-29T23:52:04.473849Z",
+      "watchdogStopped": true,
+      "receiverStopped": true,
+      "temporaryObserverDeleted": true,
+      "rawProcessArgumentsPersisted": false
+    },
+    "retainedViewCounts": {
+      "readAt": "2026-10-29T23:52:07.157887Z",
+      "counts": {
+        "pilot-validation": {
+          "matchingTotal": 94,
+          "returned": 94
+        },
+        "pilot-compat-validation": {
+          "matchingTotal": 23,
+          "returned": 23
+        },
+        "pilot-cpu-validation": {
+          "matchingTotal": 15,
+          "returned": 15
+        }
+      },
+      "rawEventsPersisted": false,
+      "actualTraceValuesPersisted": false
+    },
+    "originalProtectedResourcesAndSettingsPreserved": true,
+    "bindingCount": 17,
+    "secretCount": 7,
+    "cron": "*/5 * * * *",
+    "producerModuleSha256": "1e2cc09f33dd0202bbc1746761fb75ef2fe13aa50bd2997a65731aa11875103d",
+    "protectedSecretValuesWrittenToReceipt": false,
+    "freshPostCleanupMaintenance": {
+      "at": "2026-10-29T23:59:15.370548Z",
+      "mainMaintenance": {
+        "lastAttemptAt": 1793318104878,
+        "lastSuccessAt": 1793318107503,
+        "status": "ok",
+        "lastPurgedCount": 0
+      },
+      "successAfterCleanup": true,
+      "purgedRecords": 0
+    }
+  },
+  "checks": {
+    "observerContractPrivacyTests": 8,
+    "boundedProcessGroupChecks": {
+      "at": "2026-10-29T22:29:41.109936Z",
+      "successfulCommandPreserved": true,
+      "timedOutParentAndDescendantGone": true,
+      "elapsedSeconds": 0.543,
+      "originalDeadlineUnchanged": true
+    },
+    "focusedReviewUnresolvedFindings": 0,
+    "finalReview": {
+      "fixedPoint": "f83ac5d7d086441c042d749541f7407aeb9a78a5",
+      "reviewedCommit": "fe01fd0",
+      "standardsUnresolvedFindings": 0,
+      "specUnresolvedFindings": 0
+    },
+    "relativeDocumentationLinksChecked": 981
+  },
+  "acceptance": {
+    "nativeAcceptanceComplete": false,
+    "scheduledCpuSourceEstablished": true,
+    "fiveSampleBaselineAvailable": true,
+    "unavailableFiveSampleCellComplete": false,
+    "noScheduledRuntimeFailureObservedInCapturedRows": true,
+    "sustainedActivationAuthorized": false,
+    "sustainableCapacityOrExactCausalOverheadProven": false,
+    "newRealSportingWrites": 0,
+    "nativeInjectedFailureOrNotificationReceipt": false
+  },
+  "limitations": [
+    "Five integer-ms samples in each completed sequential cell; p95 is the maximum for n=5.",
+    "Unavailable cell has only two captured samples and is incomplete; three required samples are missing.",
+    "The transport closed without a retained close code/reason; underlying cause is unknown.",
+    "Deployment, cold execution, time order and platform variation are not randomized or controlled.",
+    "Per-invocation module versions are not projected; association uses timestamps after independently verified deployment boundaries.",
+    "All observed main maintenance runs are no-op (zero purge), not loaded purge capacity.",
+    "Producer CPU includes invocation settlement; separate Durable Object invocations and observer consumer CPU are excluded.",
+    "Scheduled subrequest counts are unavailable; received payload sizes are reconstruction, not wire capture.",
+    "No sustained-load, invoice, Free-plan suitability or monthly-budget claim.",
+    "Native sporting writes and injected maintenance failures were not performed; earlier synthetic evidence remains separate.",
+    "Destination reads describe the returned view, not guaranteed complete delivery."
+  ]
+}

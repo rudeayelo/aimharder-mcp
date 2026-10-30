@@ -7,7 +7,10 @@ import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
 import { buildWorker } from '../build.mjs';
 const origin = 'http://localhost:8797';
+const events: {context: Record<string,unknown>; trace_id:string;duration_ms:number}[] = [];
 const syntheticKey = Buffer.alloc(32, 17).toString('base64');
+let telemetryEnabled='true';
+let rejectTelemetry=false;
 let worker: Miniflare;
 let directory: string;
 const logins: string[] = [];
@@ -31,8 +34,10 @@ async function start(keys: Record<string,string> = {first:syntheticKey}, active 
     compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'], d1Databases: ['AUTH_DB','RECOVERY_DB'], resourcePersistencePath: directory,
     durableObjects: { ACCOUNT_CONNECTIONS: { className: 'AccountConnection', useSQLite: true } },
     bindings: { RECOVERY_AUTHORITY_ID:'synthetic-authority', BASE_URL: origin, AUTH_SECRET: 'synthetic-account-connection-auth-secret-long-enough',
+      LOGNORTH_ENABLED:telemetryEnabled,LOGNORTH_URL:'https://telemetry.invalid',LOGNORTH_API_KEY:'lgn-'+ 'a'.repeat(64),LOGNORTH_ENVIRONMENT:'test',LOGNORTH_RELEASE:'synthetic',
       VAULT_KEYS: JSON.stringify(keys), VAULT_ACTIVE_KEY_ID: active },
     outboundService: async request => {
+      if(new URL(request.url).origin==='https://telemetry.invalid'){const batch=await request.json() as {events:typeof events};events.push(...batch.events);if(rejectTelemetry)return new Response('hostile-receiver-canary',{status:500});return Response.json({created:batch.events.length},{status:201});}
       if (new URL(request.url).origin === origin) return worker.dispatchFetch(request);
       if (request.url === 'https://login.aimharder.es/api/login' && request.method === 'POST') {
         const body = await request.json() as { username: string; password: string };
@@ -273,4 +278,50 @@ test('verified gym overrides use their own membership and confirmed zone without
  expect((await call(b(),'get_class_sessions',{...args,gymId:'second-gym'})).structuredContent).toMatchObject({gym:{id:'second-gym',timeZone:'Europe/London',timeZoneStatus:'user-confirmed'},sessions:[{timeZone:'Europe/London'}]});
  expect((await call(b(),'get_class_sessions',args)).structuredContent).toMatchObject({gym:{id:'shared-gym',timeZone:'America/New_York',timeZoneStatus:'user-confirmed'}});
  expect((await call(a(),'get_class_sessions',args)).structuredContent).toMatchObject({gym:{id:'shared-gym',timeZone:'Europe/Madrid',timeZoneStatus:'assumed'}});
+});
+
+async function observed(name:string,args:Record<string,unknown>,outcome:string,code?:string) {
+ const before=events.length;const result=await call(a(),name,args);
+ for(let i=0;i<100&&!events.slice(before).some(e=>e.context.tool===name);i++)await new Promise(r=>setTimeout(r,10));
+ const tools=events.slice(before).filter(e=>e.context.tool===name);
+ expect(tools).toHaveLength(1);expect(tools[0]!.context).toMatchObject({event_type:'mcp.tool.completed',outcome,...(code?{code}:{})});
+ expect(events.slice(before).filter(e=>e.trace_id===tools[0]!.trace_id&&e.context.event_type==='http.completed')).toEqual([expect.objectContaining({context:expect.objectContaining({http_status:200,outcome:'success'})})]);
+ expect(tools[0]!.duration_ms).toBeGreaterThanOrEqual(0);
+ expect(JSON.stringify(events.slice(before))).not.toMatch(/private-canary|upstream-a|synthetic-a|shared-gym|sourceBookingId/);
+ return result;
+}
+test('native MCP completion telemetry distinguishes valid bounded views, recovered partial history, and HTTP 200 tool failures',async()=>{
+ synthetic=()=>Response.json({nextClasses:[],history:[]});
+ await observed('get_upcoming_bookings',{},'success');
+ await observed('get_booking_history',{},'success');
+ synthetic=()=>Response.json({nextClasses:[],history:[booking(),{id:9005}]});
+ await observed('get_booking_history',{},'partial','BOOKING_HISTORY_PARTIAL');
+ synthetic=()=>new Response('private-canary',{status:500});
+ await observed('get_upcoming_bookings',{},'technical_failure','REQUEST_FAILED');
+});
+
+test('native context, empty schedules and workout feed/enrichment distinctions have explicit completion outcomes',async()=>{
+ await observed('get_account_context',{},'success');
+ await observed('get_account_context',{gymId:'inaccessible-gym'},'denied','GYM_NOT_ACCESSIBLE');
+ synthetic=()=>Response.json(daily([]));
+ await observed('get_class_sessions',{startDate:'2026-10-25',endDate:'2026-10-25'},'success');
+ synthetic=published;
+ await observed('get_published_workouts',{date:'2099-11-01',className:'WOD'},'success');
+ await observed('get_published_workouts',{date:'2026-09-24',className:'WOD'},'success');
+ synthetic=request=>new URL(request.url).pathname==='/api/exercise/102/42'?new Response(null,{status:500}):published(request);
+ await observed('get_published_workouts',{date:'2099-11-01',className:'WOD'},'partial','RM_ENRICHMENT_INCOMPLETE');
+ synthetic=request=>new URL(request.url).pathname==='/api/activity/workout'?Response.json({}):published(request);
+ await observed('get_published_workouts',{date:'2099-11-01',className:'WOD'},'technical_failure','INVALID_WORKOUT_RESPONSE');
+});
+
+test('disabled, enabled and rejected export preserve native read output and exact upstream requests',async()=>{
+ const results:unknown[]=[];const observedRequests:string[][]=[];
+ for(const mode of ['disabled','enabled','rejected']){
+  await worker.dispose();telemetryEnabled=mode==='disabled'?'false':'true';rejectTelemetry=mode==='rejected';await start();
+  synthetic=()=>Response.json({nextClasses:[booking()],history:[]});requests.length=0;
+  const before=events.length;results.push(await call(a(),'get_upcoming_bookings'));observedRequests.push(requests.map(r=>r.url.href));
+  if(mode==='disabled')expect(events.length).toBe(before);
+ }
+ expect(results[1]).toEqual(results[0]);expect(results[2]).toEqual(results[0]);expect(observedRequests[1]).toEqual(observedRequests[0]);expect(observedRequests[2]).toEqual(observedRequests[0]);
+ rejectTelemetry=false;
 });

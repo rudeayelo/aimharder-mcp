@@ -1,0 +1,48 @@
+diff --git i/internal/events/ignore.go w/internal/events/ignore.go
+index 82caee0..0fc3be3 100644
+--- i/internal/events/ignore.go
++++ w/internal/events/ignore.go
+@@ -17,6 +17,10 @@ func ShouldIgnorePath(p string) bool {
+ 	if p == "" {
+ 		return false
+ 	}
++	// RFC 8615 reserves this namespace for legitimate discovery endpoints.
++	if strings.HasPrefix(p, "/.well-known/") {
++		return false
++	}
+ 
+ 	p = strings.ToLower(p)
+ 
+diff --git i/internal/events/ignore_test.go w/internal/events/ignore_test.go
+index 00c835e..efdbfc5 100644
+--- i/internal/events/ignore_test.go
++++ w/internal/events/ignore_test.go
+@@ -51,4 +51,28 @@ func TestShouldIgnorePath(t *testing.T) {
+ 			t.Error("expected empty path to not be ignored")
+ 		}
+ 	})
++
++	t.Run("allows well-known discovery endpoints", func(t *testing.T) {
++		for _, p := range []string{
++			"/.well-known/oauth-protected-resource/mcp",
++			"/.well-known/oauth-authorization-server/api/auth",
++			"/.well-known/openid-configuration",
++		} {
++			if ShouldIgnorePath(p) {
++				t.Errorf("expected discovery endpoint %q to NOT be ignored", p)
++			}
++		}
++	})
++
++	t.Run("keeps similar dotfile prefixes ignored", func(t *testing.T) {
++		for _, p := range []string{
++			"/.well-known", "/.well-known.env", "/.well-known-backup/config",
++			"/.well-knownx/openid-configuration",
++			"/.WELL-KNOWN/openid-configuration",
++		} {
++			if !ShouldIgnorePath(p) {
++				t.Errorf("expected dotfile path %q to be ignored", p)
++			}
++		}
++	})
+ }

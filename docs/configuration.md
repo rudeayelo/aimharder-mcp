@@ -73,3 +73,28 @@ To check the connection, call `get_account_context` with `{}`. A successful resu
 - `SESSION_EXPIRED` or `ACCESS_RESTRICTED`: the server stopped after its bounded authentication/retry policy. Check account access in AimHarder; do not infer an empty result.
 
 Live checks used one account at one location (9NBC). Other membership and authentication variants have fixture coverage only. See [validation](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/validation.md).
+
+## Optional hosted LogNorth configuration
+
+Hosted telemetry is disabled by default and does not affect local stdio. The
+example Worker manifest explicitly sets `LOGNORTH_ENABLED` to `false`; anonymous
+preview supplies no telemetry configuration and blocks all outbound providers.
+No installation request, startup probe, deployment or secret provisioning is
+performed by configuring the code.
+
+When separately authorized, operator configuration supplies `LOGNORTH_ENABLED`
+(`true` exactly), `LOGNORTH_URL` (fixed HTTPS origin without credentials, custom
+path, query or fragment), `LOGNORTH_ENVIRONMENT` (1–48 letters/digits/dot/underscore/
+hyphen), and `LOGNORTH_RELEASE` (same alphabet, 1–96 characters). These labels must
+be nonpersonal and identify the actual environment/build. Supply
+`LOGNORTH_API_KEY` solely as a protected platform app-ingestion secret (`lgn-` followed by 64 lowercase hexadecimal digits); agent keys
+are rejected. Never place its value in manifests, issues or command output.
+Invalid enabled configuration disables only telemetry with a fixed diagnostic.
+Omitted/false activation sends nothing and produces no disabled-mode warnings.
+
+Delivery uses one invocation-local, bounded batch through `waitUntil`, with no
+retry or persistent buffer. HTTP, all 18 hosted tools and both maintenance phases are implemented; the [observability specification](lognorth-observability-spec.md) defines their contract. The [controlled native receipt](hosted-telemetry-native-receipt.md) records observed read/maintenance delivery and verified disabling. The later [bounded scheduled CPU capture](hosted-telemetry-cpu-capture.md) establishes scheduled CPU and baseline evidence but stops at 2/5 unavailable samples after transport closure, leaving that original run incomplete. The later [unavailable-only repetition](hosted-telemetry-cpu-capture.md) supplies five fresh samples and completes the required bounded resource matrix. That validation ended with export disabled and the owned temporary observer/tail removed. The later [owner-authorized sustained activation](hosted-telemetry-sustained-activation.md) leaves export enabled only on the existing isolated test Worker with environment `pilot-test`; the example manifest remains default-off. Unpatched LogNorth 0.29.0 drops `context.path` values beginning with `/.`, including legitimate OAuth discovery routes. The owner-authorized [temporary destination patch](hosted-telemetry-compatibility-validation.md) now permits the exact `/.well-known/` namespace; twenty actual discovery observations were read back successfully. Emission alone still does not establish storage, exhaustive history or full native resource acceptance.
+To disable, set `LOGNORTH_ENABLED=false` through a separately authorized
+configuration deployment, preserving other bindings/secrets. An already-started
+batch may finish within its two-second deadline; disabling does not erase stored
+events. Platform logs are not enabled by this integration.

@@ -13,7 +13,17 @@ let worker: Miniflare;
 let directory: string;
 const logins: string[] = [];
 const identities: string[] = [];
+const telemetryEvents: Array<{context:Record<string,unknown>}> = [];
+async function denialEvent(path:string,status:number,code:string) {
+  for(let attempt=0;attempt<100;attempt++){
+    const event=telemetryEvents.find(event=>event.context.path===path && event.context.http_status===status);
+    if(event){expect(event.context).toMatchObject({outcome:'denied',code});expect(event.context.error_class).toBeUndefined();return;}
+    await new Promise(resolve=>setTimeout(resolve,10));
+  }
+  throw new Error('Expected HTTP completion event');
+}
 let holdIdentityA: Promise<void> | undefined;
+let identityHeld: (()=>void) | undefined;
 let expireA = 0;
 let rejectA = false;
 const profiles = new Map([
@@ -29,8 +39,13 @@ async function start(keys: Record<string,string> = {first:syntheticKey}, active 
     compatibilityDate: '2026-10-12', compatibilityFlags: ['nodejs_compat'], d1Databases: ['AUTH_DB','RECOVERY_DB'], resourcePersistencePath: directory,
     durableObjects: { ACCOUNT_CONNECTIONS: { className: 'AccountConnection', useSQLite: true } },
     bindings: { RECOVERY_AUTHORITY_ID:'synthetic-authority', BASE_URL: origin, AUTH_SECRET: 'synthetic-account-connection-auth-secret-long-enough',
-      VAULT_KEYS: JSON.stringify(keys), VAULT_ACTIVE_KEY_ID: active },
+      VAULT_KEYS: JSON.stringify(keys), VAULT_ACTIVE_KEY_ID: active,
+      LOGNORTH_ENABLED:'true',LOGNORTH_URL:'https://telemetry.example.invalid',LOGNORTH_API_KEY:'lgn-'+ 'a'.repeat(64),LOGNORTH_ENVIRONMENT:'synthetic',LOGNORTH_RELEASE:'review-94' },
     outboundService: async request => {
+      if(request.url==='https://telemetry.example.invalid/api/v1/events/batch'){
+        const batch=await request.json() as {events:Array<{context:Record<string,unknown>}>};
+        telemetryEvents.push(...batch.events);return Response.json({created:batch.events.length},{status:201});
+      }
       if (new URL(request.url).origin === origin) return worker.dispatchFetch(request);
       if (request.url === 'https://login.aimharder.es/api/login' && request.method === 'POST') {
         const body = await request.json() as { username: string; password: string };
@@ -47,7 +62,7 @@ async function start(keys: Record<string,string> = {first:syntheticKey}, active 
         const profile = [...profiles.values()].find(value => cookie === `amhrdrauth=${value.cookie}`);
         if (!profile) throw new Error('Unknown synthetic upstream cookie');
         if (profile.cookie === 'synthetic-a') {
-          if (holdIdentityA) { const held = holdIdentityA; holdIdentityA = undefined; await held; }
+          if (holdIdentityA) { const held = holdIdentityA; holdIdentityA = undefined; identityHeld?.(); await held; }
           if (expireA > 0) { expireA--; return Response.json({data:[]}); }
         }
         return Response.json({ data: [{ id: profile.id, roles: profile.gyms }] });
@@ -115,9 +130,11 @@ test('multiple verified gyms require an explicit default and preserve confirmed 
   const cookie = portalCookies.get('other@example.invalid')!;
   profiles.get('upstream-b@example.invalid')!.gyms.push({ role:'client', gym:'Second gym', centre_url:'second-gym.aimharder.es', boid:201 });
   const credentials = {username:'upstream-b@example.invalid', password:'synthetic-upstream-password'};
+  telemetryEvents.length=0;
   const missing = await post('/api/portal/aimharder', credentials, cookie);
   expect(missing.status).toBe(422);
   expect(await missing.json()).toMatchObject({status:'default-gym-required',gyms:[{id:'shared-gym',name:'B gym'},{id:'second-gym',name:'Second gym'}]});
+  await denialEvent('/api/portal/aimharder',422,'DEFAULT_GYM_REQUIRED');
   const connect = await post('/api/portal/aimharder', {...credentials,defaultGym:'second-gym',gymTimeZones:{'shared-gym':'America/New_York','second-gym':'Europe/London'}},cookie);
   expect(connect.status).toBe(200);
   const results = await Promise.all([context(portalCookies.get('participant@example.invalid')!),context(cookie),context(cookie,'shared-gym')]);
@@ -133,8 +150,10 @@ test('browser settings expose verified gym choices and reject foreign origins, i
   expect((await post('/api/portal/aimharder',{})).status).toBe(401);
   expect((await post('/api/portal/aimharder',{},cookie,'https://attacker.invalid')).status).toBe(403);
   const before = logins.length;
+  telemetryEvents.length=0;
   const replacement = await post('/api/portal/aimharder',{username:'upstream-b@example.invalid',password:'private-replacement-canary'},cookie);
   expect(replacement.status).toBe(409);
+  await denialEvent('/api/portal/aimharder',409,'ALREADY_CONNECTED');
   expect(await replacement.text()).not.toContain('private-replacement-canary');
   expect(logins.length).toBe(before);
   expect((await post('/api/portal/aimharder/settings',{defaultGym:'foreign-gym',gymTimeZones:{}},cookie)).status).toBe(400);
@@ -146,6 +165,31 @@ test('browser settings expose verified gym choices and reject foreign origins, i
   expect(html).toContain('name="zone:shared-gym"');
   expect(html).not.toContain('upstream-a@example.invalid');
   expect(html).not.toContain('synthetic-upstream-password');
+});
+
+test('a concurrent connection revision change refuses the password update without a classifier issue', async()=>{
+  const cookie=portalCookies.get('participant@example.invalid')!;
+  const db=await worker.getD1Database('AUTH_DB');
+  const row=await db.prepare('SELECT userId,revision FROM portal_aimharder_connection WHERE userId=(SELECT id FROM user WHERE email=?)').bind('participant@example.invalid').first<{userId:string;revision:string}>();
+  if(!row)throw new Error('Missing synthetic connection');
+  let release!:()=>void;
+  holdIdentityA=new Promise<void>(resolve=>{release=resolve;});
+  const held=new Promise<void>(resolve=>{identityHeld=resolve;});
+  telemetryEvents.length=0;
+  const pending=post('/api/portal/aimharder/password',{password:'synthetic-upstream-password'},cookie);
+  await held;
+  // Simulate a concurrent persistence revision; production compare-and-swap decides the response.
+  await db.prepare('UPDATE portal_aimharder_connection SET revision=? WHERE userId=?').bind('synthetic-concurrent-revision',row.userId).run();
+  release();
+  try{
+    const response=await pending;
+    expect(response.status).toBe(409);
+    expect(await response.json()).toEqual({status:'connection-changed'});
+    await denialEvent('/api/portal/aimharder/password',409,'CONNECTION_CHANGED');
+  }finally{
+    identityHeld=undefined;
+    await db.prepare('UPDATE portal_aimharder_connection SET revision=? WHERE userId=?').bind(row.revision,row.userId).run();
+  }
 });
 
 test('a held account operation, bounded recovery and latched authentication failure do not interrupt another account', async () => {

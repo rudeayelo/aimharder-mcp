@@ -1116,3 +1116,206 @@ After the positive journey, B was publicly deleted with 204. Current disposable 
 ## Main integration and fresh pilot deployment (2026-10-28)
 
 The owner-requested [main integration and code-only test deployment](hosted-test-environment.md#main-integration-and-verified-test-deployment-2026-10-28) used merged PR #89 source `30e4f3838043dca04efe14f73a3b8fd3684f0840`. Independent provider main-module hashing matched the built artifact; returned bindings/configuration, namespace, routing and cron remained preserved. Eleven configured-mail anonymous checks and a fresh authenticated remote Pilot account-context comparison passed. The deployed bytes equal the prior active artifact, so no new behavior or repeated full client acceptance is claimed. The final documentation update changes no executable source or ADR decision; its own protected-branch CI is separate from the deployed-artifact evidence.
+
+## Initial hosted observability path (#97, 2026-10-29)
+
+The default-off HTTP/account-context slice passed **10 focused hosted tests in
+2 files** using the native local Worker and MCP SDK harness. The touched
+portal/Google/account-connection regression run passed **40 tests in 5 files**;
+hosted typecheck/build also passed. The external receiver was synthetic. Tests cover correlated
+HTTP/tool completion, safe typed denials/technical/unknown results, private route
+normalization, concurrent traces, count/UTF-8 bounds and overflow priority,
+oversize discard, rejection/redirect/malformed/partial/count-mismatched/oversize
+acknowledgements, complete-attempt deadlines including response bodies, and no
+retry. SDK comparisons preserve public results, upstream authentication/query
+counts and released recovery leases with exporter success/rejection/timeout and
+disabled modes. No actual sporting write was performed.
+
+The source acknowledgement shape (`created`, optional validation `errors`) and
+Bearer app-key ingestion were freshly checked against the pinned v0.29.0
+[ingestion source](https://github.com/karloscodes/lognorth/blob/abaa5c6952c1f3ca2a5a8789a07253de6367e314/internal/http/ingest.go).
+This is source/fixture evidence, not installed-service delivery/read-back.
+Cloudflare's maintained execution-context documentation confirms `waitUntil`
+keeps background work independent of the returned response; no CPU claim is
+inferred from local wall-clock timing.
+
+At the #97 checkpoint, the remaining 17 tools and scheduled phases were separate implementation slices.
+Relevant scope/privacy and best-effort-delivery ADRs remain the accepted decisions;
+no architecture or security policy is replaced. Native hosted read-back,
+installation retention/notification/access checks, measured provider CPU overhead,
+notification receipt and sustained activation remain pending. No deployment,
+real secret provisioning or shared installation change occurred.
+
+## Hosted read-tool completion telemetry (#98, 2026-10-29)
+
+All nine read callbacks now record one invocation-local tool completion, including
+account-context denials and HTTP-200 MCP errors. Classification inspects the
+trusted account envelope before MCP serialization, never serialized MCP text.
+Normal bounded search/history/RM/feed coverage stays successful. Recovered booking
+history, incomplete personal activity and optional RM enrichment use distinct
+partial codes; unsupported interpretation and identity mismatch produce technical
+issues. Every safe client error code has a closed mapping; unknown result
+discriminants produce static classifier issues.
+
+The native local Worker/MCP SDK runs passed **26 tests in 2 files**
+(`schedule-queries.test.ts`, `activity-queries.test.ts`), exercising all nine
+callbacks, every RM/search result variant, empty/ambiguous views, partial retrieval,
+unsupported workout interpretation and identity errors against synthetic upstreams.
+Enabled/disabled/rejected-export comparisons preserve exact read outputs and
+upstream requests. Tests inspect the synthetic receiver for one callback event,
+HTTP/tool separation, invocation correlation and absence of sporting/private
+markers. The supplemental trusted-envelope/exporter harness passed **9 tests**,
+including future/missing read discriminants and every safe error code without
+copying error messages or gym identifiers. Hosted typecheck passed.
+
+The scope/privacy and delivery ADRs were reviewed and remain applicable without a
+new decision. Local stdio, public tool schemas and API behavior are unchanged; no
+package changeset is required for this hosted-only slice. No deployment or live
+requests occurred; actual LogNorth read-back, provider CPU, notification delivery
+and sustained activation remain pending. Real manifests retain disabled telemetry.
+
+## Booking tool observations (#99, 2026-10-29)
+
+The five hosted booking tools passed **33 focused tests in 3 files**:
+`booking-creation.test.ts` (15), `booking-cancellation.test.ts` (17) and
+`booking-outcome.test.ts` (1). Hosted typecheck passed. These use public
+portal/OAuth and authenticated MCP SDK over native workerd/D1/SQLite with
+synthetic upstream HTTP and a synthetic LogNorth receiver. Future/unreachable
+unknown discriminants are explicitly separated into the focused classifier
+guard; supported variants cross real callbacks and the exporter.
+
+Tests observe every current preparation/execution status, including separate
+late cancellation, expected refusals/stale references, waitlist, pending
+credit-loss confirmation, confirmed effects and static uncertainty issues.
+Disabled, accepted, rejected and timed-out telemetry preserve exact previews,
+confirmation rejection, distinct late references, reference consumption,
+original-account restart reconciliation and at-most-one dispatch per action.
+Existing native account-isolation, held preflight, revocation, queue and durable
+fault/recovery journeys run with enabled telemetry. Preparation and execution
+have separate generated traces; private class, gym, cookie, action-reference
+and acknowledgement canaries do not appear in collected tool events or
+platform warnings. No exporter response is retried.
+
+The relevant booking and best-effort delivery ADRs were reviewed; no sporting
+scope, confirmation, custody, dispatch or persistence decision changed. Local
+stdio and upstream API contracts are unchanged. This is synthetic evidence,
+not real booking/cancellation validation, installed-service delivery, measured
+provider CPU overhead or deployment/activation acceptance. No live write,
+provider mutation or deployment occurred.
+
+## Hosted maintenance completion telemetry (#101, 2026-10-29)
+
+The existing scheduled/deletion native local Worker harness passed **13 focused tests** (`pnpm exec vitest run tests/account-deletion.test.ts --no-file-parallelism --testTimeout=30000 -t 'scheduled|unavailable main|deferred rejection'`; 22 unrelated cases skipped). Hosted typecheck passed. Evidence covers completed no-op, restored deleted-payload purge, main failure and pre-memory throw, sticky overdue across a subsequent clean retry, independent deferred rejection with failed delivery, held original-account work preventing early export, and a stalled acknowledgement reaching the bounded export deadline after the main error already returned. These use actual local D1 triggers, SQLite-backed account objects and a synthetic outbound receiver. No real AimHarder mutation or deployed cron was exercised.
+
+The receiver observes one final aggregate batch after existing deferred work settles, separate correlated main/memory durations and fresh traces between scheduled invocations. Unstarted memory emits nothing; failed main with a completed memory no-op remains two distinct outcomes. Native fixture observation confirms the original deferred promise still rejects independently when exporter delivery fails. Known private/subject markers and arbitrary exception text are absent. Telemetry configuration is copied only into synthetic scheduled calls; adjacent HTTP calls retain disabled telemetry and independent service behavior.
+
+The stalled-acknowledgement run verifies timeout warning, bounded final settlement and no retry. The Miniflare outbound bridge does not forward its response stream cancellation to the host receiver's `cancel` callback, so remote receipt of cancellation is not claimed by this evidence. Production exporter abort/cancel behavior remains the shared delivery implementation. Platform termination may prevent any completion evidence.
+
+Reviewed the observability scope/privacy, best-effort delivery and independent deletion/restoration ADRs: existing decisions remain applicable, with no new architecture, security, retention or validation policy. The maintenance runbook now explains phase evidence and authority boundaries. Local stdio, public tool schemas and API contracts are unaffected; no package changeset is needed. Actual Worker LogNorth read-back, inherited installation settings, measured provider CPU and notifications remain separate acceptance work. No deployment or activation was performed. This does not supply cron-absence alerts, uptime monitoring or physical-erasure evidence.
+
+## Hosted telemetry review corrections (#94, 2026-10-29)
+
+The final two-axis review found three known portal/API configuration refusals
+being emitted as classifier failures. Actual production HTTP requests in the
+native synthetic account-connection harness now verify HTTP 422
+`default-gym-required` and HTTP 409 `already-connected` / `connection-changed`
+export `denied` with the static codes `DEFAULT_GYM_REQUIRED`,
+`ALREADY_CONNECTED` and `CONNECTION_CHANGED`, without issue fields. The
+connection-change case holds an upstream identity request while changing a
+synthetic stored revision, then checks the production compare-and-swap refusal
+and its externally received completion event. No production data or live request
+is involved. Each refusal assertion failed as `unclassified` before its fix.
+
+A supplemental native exporter-boundary case showed a contradictory connected
+account envelope with `IDENTITY_MISMATCH` incorrectly classified as success;
+it now exports `technical_failure` with the known code. The exporter tool
+allowlist derives from the same source-owned callback catalog used by query
+completion, plus `get_account_context`, removing duplicated tool names.
+
+Verification after correction: 51/51 tests passed across account connection,
+connection lifecycle, telemetry, schedule queries and activity queries. Hosted
+TypeScript checks, the Worker build and `git diff --check` passed. Documentation
+links in the changed documents resolve locally. The scope/privacy and
+best-effort delivery ADRs were reviewed: their decisions remain unchanged, so no
+new ADR is needed. Public API contracts, local stdio and account behavior are
+unchanged. Actual Worker validation under #102, provider CPU measurements,
+shared installation settings, notification evidence and remote disabling remain
+unperformed; this correction authorizes no deployment or activation.
+## Complete hosted observability integration receipt (2026-10-29)
+
+Reviewed executable source: `c27de632682b903b230bc7562320fecfe14abdba` on `codex/94-lognorth-integration`. Tickets #97–#101 are implemented and closed; [#102](https://github.com/rudeayelo/aimharder-mcp/issues/102) and parent #94 remain open for separately authorized actual-Worker acceptance. The [implementation ledger](hosted-observability.md) and [controlled native validation procedure](hosted-telemetry-native-validation.md) distinguish those stages.
+
+- Final hosted regression: `pnpm --dir hosted exec vitest run --no-file-parallelism --testTimeout=30000` passed **224 tests in 18 files** (117.52 seconds). Before the review corrections, the integrated regression passed 223 tests; the final run includes the real HTTP compare-and-swap refusal case.
+- Hosted typecheck and production build passed. The production bundle is **4,775,346 bytes**, SHA-256 `1e2cc09f33dd0202bbc1746761fb75ef2fe13aa50bd2997a65731aa11875103d`. Its build metafile contains 911 inputs and no `tests/` inputs. Upload size and local test duration do not establish Worker CPU or Free capacity.
+- Root local typecheck, **479 tests in 18 files**, build and isolated package harness passed. The local runtime is unchanged; the final package recheck after the hosted-status README edit still discovers 18 tools and passes synthetic account selection/error/privacy checks with empty stderr. No npm publication occurred.
+- Two-axis `code-review` compared against `16df2ba706289fb40e36fe96f5465276f2b7e363`. Standards found no hard violation and one duplicated-catalog maintenance concern; Spec found one P2 mapping gap for three known portal configuration refusals. A single implementation follow-up fixed both, added actual HTTP 422/409 observations and a contradictory identity-envelope guard, and passed 51 focused checks. Both reviewers rechecked the correction with **no unresolved findings**. Documentation, affected ADRs and relative links were reviewed; no new architecture/security/scope decision was needed.
+
+An initial baseline command included an extra argument separator, leaving hosted files parallel and causing fixed-port collisions/timeouts. The documented sequential command then passed the unchanged 190-test baseline and the final 224-test integration. These invocation failures are not evidence of a production failure.
+
+All receivers, identities, credentials and sporting effects in these checks are synthetic. No real sporting write, provider configuration/secret change, deployment or telemetry activation ran. Actual ingestion/read-back, installation settings/access, provider CPU comparisons and remote disabling remain unperformed under #102; the proposed activation window is at most two hours followed by disabling. Existing scope/privacy and best-effort-delivery ADRs remain applicable. AimHarder API research and the local stdio contract are unaffected.
+
+## Controlled actual Worker telemetry validation (#102, 2026-10-29)
+
+After the owner separately authorized the concrete deployment, existing protected app-key provisioning and at-most-two-hour activation, the [controlled native receipt](hosted-telemetry-native-receipt.md) records the actual run against reviewed source `803c27e9bcd8123694a7442c768f2b65691dbce7`. Native module bytes match production SHA-256 `1e2cc09f33dd0202bbc1746761fb75ef2fe13aa50bd2997a65731aa11875103d`; no fixture Worker was deployed.
+
+Baseline, reviewed-disabled, reachable-destination and unavailable-destination cells each completed twenty landing requests, twenty MCP challenges, twenty discovery requests and twenty actual authenticated context reads with unchanged public bodies/allowed headers and structured context. The reviewed phases each have five independent main-maintenance success receipts; reachable delivery additionally has five received correlated main/memory pairs. Fresh LogNorth MCP read-back returned 94 matching observations with static fields, distinct HTTP/tool observations and no excluded field observed. No real sporting write or injected participant deletion occurred.
+
+The actual destination drops all twenty legitimate `/.well-known/...` discovery observations through its leading-dot path filter. Scheduled CPU remains unavailable after a delayed provider query covering 09:00–10:25 UTC; only one baseline maintenance completion was independently observed. The subscription API returned 403 and the dashboard required sign-in. Adaptive HTTP/MCP CPU estimates, sample counts, maxima, subrequests, wall duration and their limitations are recorded without claiming sustainable Free capacity. No new limit errors were observed in the controlled cells; issue grouping and notification receipt remain synthetic/unperformed native evidence.
+
+Independent read-back confirms collection/export disabled at 10:25:50 UTC, within 51 minutes of the conservative activation-deployment boundary. All original resources and logging policy are preserved, with seventeen bindings/seven secrets including the five new LogNorth settings. Eleven final configured-mail anonymous smoke checks and fresh unchanged context/empty schedule reads passed. The deadline watchdog and observer stopped; fresh destination reads retained the same 94 events with none from the unavailable/disabled windows. No temporary secret-upload file remains.
+
+The scope/privacy, best-effort delivery and recovery-authority ADRs remain applicable; AimHarder API research and local stdio contracts are unaffected. #102/#94 stay open for incomplete native acceptance. A tested/reviewed [LogNorth compatibility patch](lognorth-well-known-compatibility.patch) and locally built, isolated-health-checked image are prepared, with no shared deployment. Its separate deployment proposal is in the receipt; neither it nor sustained activation is authorized by this completed run.
+
+Final documentation checks passed all 917 relative file/anchor links and project-text diff whitespace. The compatibility artifact is a standard unified patch whose required context prefixes trigger text whitespace checks; instead, it passed `git apply --cached --check` against an independent index of the original pinned LogNorth source, and the modified Go source passed its own whitespace check. The numeric receipt validates sixteen 20-observation CPU cells, fifteen reviewed main-maintenance receipts, the 94-event read-back and final disabled state.
+
+## Temporary LogNorth discovery compatibility deployment (2026-10-29)
+
+After the owner explicitly requested the prepared patch while an official fixed release remains unavailable, the [temporary deployment and native follow-up](hosted-telemetry-compatibility-validation.md) verified a backed-up, healthy downstream image replacement with unchanged runtime configuration, data mount and global policy. The upstream fix is merged in [LogNorth PR #94](https://github.com/karloscodes/lognorth/pull/94); the official version checked during this operation remained 0.29.0.
+
+Twenty actual Worker discovery requests returned HTTP 200 with identical baseline body digests/allowed headers. Fresh LogNorth MCP search/detail reads returned all twenty corresponding `/.well-known/oauth-protected-resource/mcp` success observations, one unchanged account-context HTTP/tool pair and one incidental JWKS event, with no allowlist failure. The prior 94 events remained visible. Independent read-back confirmed export disabled at 16:44:40 UTC, under three minutes after the conservative activation boundary. Eleven final configured-mail anonymous smoke checks and unchanged authenticated context passed. The returned new-environment count stayed 23 after disabling; the one-shot watchdog exited and no temporary secret-upload file remains.
+
+This resolves the observed discovery-storage gap without changing Worker code, original resources or shared access/retention/notification settings. New scheduled CPU/current-plan evidence, a five-sample baseline maintenance comparison and sustained capacity acceptance are not supplied; #102/#94 remain open and sustained activation is not authorized. Original scope/privacy, delivery and recovery-authority decisions remain applicable; local stdio, domain vocabulary and AimHarder API contracts are unaffected. A private persistent Compose rollback file and original image remain available; this code rollback preserves the current database.
+
+Follow-up documentation checks passed all 934 relative file/anchor links and diff whitespace. The new numeric receipt validates twenty unchanged discovery responses, twenty received discovery observations, 23 total new-environment observations, 94 retained prior observations, eleven final smoke checks, unchanged authenticated context and final disabled configuration. No application source changed in this follow-up; the previously validated Worker/module and reviewed/tested LogNorth image were verified by digest instead of rerunning unrelated suites.
+
+## Read-only telemetry resource follow-up (2026-10-29)
+
+The owner requested continuing the pending checks. The [fresh resource receipt](hosted-telemetry-resource-followup.md) and [numeric evidence](hosted-telemetry-resource-followup.json) record unchanged reviewed module/configuration and disabled exporter, fresh successful maintenance authority, empty scheduled-CPU views both with and without the script filter, subscription API 403 and dashboard sign-in requirement. Account-settings `standard` does not verify the subscription. A fresh adaptive query for the prior patched discovery workload returned nineteen estimated invocations for twenty controlled requests, CPU p50 21.597 ms / p95 168.017 ms / available maximum 168.017 ms, twenty-one subrequests and zero runtime errors; sampling/window association prevents a causal-overhead claim. No new workload, deployment, observer, plan or logging change occurred.
+
+Scope/privacy and delivery ADRs were reviewed without changing their decisions. CPU/current-plan/baseline acceptance remains incomplete; local stdio, domain vocabulary and AimHarder API contracts are unaffected. Documentation and sanitized-receipt consistency were checked; no application source changed or unrelated test suite was rerun.
+
+## Owner-reported Workers Paid follow-up (2026-10-29)
+
+After the owner reported completing a Cloudflare upgrade to Paid, fresh read-only checks at 20:45 UTC confirmed the same reviewed module, bindings, compatibility settings, effective five-minute cron and disabled exporter. Exact snapshot comparison detected changed cron modification metadata; field-level comparison established unchanged effective configuration, without restoring or mutating it. Main maintenance independently completed successfully at 20:45:06.987 UTC with zero purged records. Original/recent/unfiltered scheduled-CPU views still return zero rows without errors, subscription access remains 403 and the available dashboard requires sign-in. See the [full follow-up](hosted-telemetry-resource-followup.md#owner-reported-upgrade-to-paid-2026-10-29) and [numeric receipt](hosted-telemetry-paid-plan-followup.json).
+
+The delivery and scope/privacy ADRs now explicitly distinguish the owner-selected Paid capacity reference from the earlier Free premise and independent subscription evidence. Historical measurements and the existing budget target are preserved; no purchase, deployment, new observer, logging change or activation was performed. Resource/native acceptance remains incomplete. Local stdio, domain vocabulary and AimHarder API contracts are unaffected. Documentation links, diff whitespace and numeric/privacy consistency were checked; no application source changed.
+
+## Authenticated Workers plan and cron review (2026-10-29)
+
+The [authenticated dashboard follow-up](hosted-telemetry-resource-followup.md#authenticated-dashboard-verification-2026-10-29) independently confirms Paid as the same account's current Workers plan, resolving that evidence gap. The Worker-specific past-week Cron events view has CPU-millisecond columns but no rows. An independent fixed watchdog read confirms successful main maintenance at 20:50:05.108 UTC with zero purged records. The [sanitized receipt](hosted-telemetry-dashboard-validation.json) records the exact reviewed module, seventeen bindings/seven secret bindings, unchanged effective protected resources, five-minute cron, disabled exporter and disabled platform logging/traces/issues. No deployment, observer, activation or provider setting was changed; navigation-only form/filter drafts were cancelled/cleared.
+
+Scheduled CPU and the five-sample baseline comparison remain unavailable; #102/#94 remain open. Delivery/scope/privacy ADRs were reviewed and updated for current plan evidence without changing their decisions. Historical plan uncertainty, observed CPU, budget target and activation boundaries are preserved. No application code, local stdio behavior, domain vocabulary or AimHarder API contract changed. Documentation links, whitespace and receipt consistency/privacy were checked; unrelated suites were not rerun.
+
+## Partial bounded scheduled CPU capture (#102, 2026-10-29)
+
+The owner-authorized [bounded scheduled CPU capture](hosted-telemetry-cpu-capture.md) and [sanitized evidence](hosted-telemetry-cpu-evidence.json) establish ordinary Tail Worker CPU/wall getters in integer milliseconds and a five-sample pre-instrumentation baseline. Captured cells are baseline 5/5, reviewed-disabled 5/5, reachable 5/5 and unavailable **2/5**. CPU p50 / maximum (ms): baseline **10 / 10**, disabled **11 / 15**, reachable **17 / 22**, incomplete unavailable **10.5 / 12**. All seventeen captured runtime outcomes are `ok`, each matched to an independent successful no-op main-maintenance receipt within five seconds. The remaining three unavailable samples were not captured. Scheduled subrequest counts remain unavailable; separate object/observer CPU, causal overhead and sustained capacity/cost are not established.
+
+At 23:49:27 UTC the transient capture connection closed without a retained close code or prior drop/malformed indication. The underlying cause is unknown. The controller stopped; cleanup completed at 23:50:06.986 UTC within the original two-hour bound. Independent provider read-back confirms reviewed artifact, exact original variables/resources, disabled export, detached tail and deleted owned observer. Receiver/watchdog exited. No reconnect or new activation extended the run.
+
+Fresh destination search/detail reads verify fifteen allowlisted observations including five correlated main/memory pairs, discovery and one actual MCP context pair; the final view retains all fifteen plus the prior 94 original and 23 compatibility observations. All four discovery digests and five fresh actual MCP context results match the baseline. Final configured-mail smoke checks pass 11/11. Eight observer contract/privacy tests and bounded parent/descendant timeout checks pass; focused review findings were corrected/rechecked. Later final two-axis review and documentation/numeric/privacy checks are recorded in the delivery. No application code, local stdio behavior, domain vocabulary or observed upstream contract changed. Scope/privacy and recovery-authority decisions remain unchanged; delivery ADR records this temporary validation choice. #102/#94 stay open for a five-fresh-sample unavailable repetition, staged for a separate owner-authorized 35-minute window. Sustained activation remains unauthorized.
+
+Final follow-up checks: independent maintenance authority at 23:59:15 UTC confirms a successful post-cleanup main attempt with zero purged records, without supplying a missing CPU sample. Both review axes pass with zero unresolved findings at `fe01fd0` against `f83ac5d`; all 981 relative documentation links, whitespace and numeric/privacy/source-digest checks pass. Unrelated application suites were not rerun because no application code changed.
+
+## Completed unavailable-only CPU comparison (#102, 2026-10-30)
+
+After separate owner authorization, the [35-minute repetition](hosted-telemetry-cpu-capture.md) and [new sanitized receipt](hosted-telemetry-cpu-unavailable-evidence.json) supply five fresh unavailable invocations, all `ok` with matched independent no-op main-maintenance success. CPU p50 / maximum is **10 / 11 ms**; producer wall p50 / maximum is **2101 / 3935 ms**. The selected comparison is 5/5/5/5 (20 rows), while total captured rows are 22 and the interrupted two stay excluded. Separate UTC windows, integer-ms granularity, n=5, zero purge and producer-only CPU remain explicit limits; scheduled subrequests, exact causal overhead, sustained capacity and budget remain unverified.
+
+Fresh LogNorth search/detail views remain fifteen events with allowlist checks passing; original **94** and compatibility **23** observations remain visible. New discovery digest and actual unavailable/final-disabled context match the pre-run reference. Final configured-mail smoke checks pass **11/11**. Independent final reads confirm exact reviewed module/original vars/resources, disabled export, detached producer tail and deleted owned observer at 2026-10-30T06:06:03.682052Z, within the 2,100-second bound; receiver/watchdog exited. No capture loss, invalid packet or runtime failure was observed during measurement. No close-code receipt was retained at teardown; no closure cause is inferred.
+
+Bounded native acceptance is complete. Previous synthetic sporting/failure/grouping evidence remains separate from native read/no-op validation and unperformed notification receipt. Source/artifact/privacy, delivery and recovery decisions remain unchanged; the existing ADRs record this additional bounded authorization/validation. No application code, local stdio behavior, domain terminology or observed AimHarder API contract changed. Sustained activation and sustainable cost/capacity remain separate.
+
+Final delivery checks: both review axes have zero unresolved findings at `3a39763` against `7dbb1a4`; all 997 relative documentation links, diff whitespace and numeric/source-digest/credential-pattern checks pass. No application code changed, so unrelated application suites were not rerun; the identical observer source retains its previously recorded eight contract/privacy checks.
+
+## Sustained isolated-test telemetry activation (2026-10-30)
+
+The owner explicitly authorized leaving telemetry enabled after bounded native validation completed. The [actual activation receipt](hosted-telemetry-sustained-activation.md) records exact reviewed-module/resource reconciliation, only two changed text bindings, a successful before/after authenticated MCP response comparison and three freshly stored allowlisted observations with matching detail read-back. Export is now enabled on the existing isolated test Worker with environment `pilot-test`. No temporary CPU observer, persistent platform logging, automatic disabling or recurring monitoring is added. Application suites were not repeated for this configuration/documentation-only delivery; sustainable monthly cost/capacity, production launch and main-branch integration remain separate.

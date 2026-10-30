@@ -1,3 +1,4 @@
+import { classifyAccountContext } from './telemetry.js';
 import type { Gym } from '../../src/client.js';
 import type { HostedEnvironment } from './auth.js';
 import { createAuth } from './auth.js';
@@ -5,6 +6,15 @@ import { participant } from './admission.js';
 import { accountOperation } from './account-connection.js';
 import { page } from './portal.js';
 
+/** Only the private account object's known envelope is classified. Failure to
+ * observe it must never change the original API response or portal behavior. */
+async function observeAccountResponse(env:HostedEnvironment,response:Response){
+  if(!env.TELEMETRY || response.ok)return;
+  try{
+    const envelope=await response.clone().json() as Record<string,unknown>;
+    env.TELEMETRY.httpOutcome(classifyAccountContext(envelope,response.status));
+  }catch{env.TELEMETRY.httpOutcome({outcome:'unclassified'});}
+}
 function escape(value: string) {
   return value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]!);
 }
@@ -51,6 +61,7 @@ export async function handleAimHarderSettings(request: Request, env: HostedEnvir
       } else value = JSON.parse(text);
     } catch { return Response.json({ status: 'invalid-settings' }, { status: 400 }); }
     const result = await accountOperation(env, session.user.id, { kind: path.endsWith('/settings') ? 'settings' : path.endsWith('/replace') ? 'replace' : path.endsWith('/disconnect') ? 'disconnect' : path.endsWith('/password') ? 'password' : 'connect', input: value }).then(response => new Response(response.body, response));
+    await observeAccountResponse(env,result);
     result.headers.set('cache-control', 'no-store');
     if (path.startsWith('/api/')) return result;
     if (result.ok) return new Response(null, { status: 303, headers: { location: '/aimharder', 'cache-control': 'no-store' } });
@@ -61,6 +72,7 @@ export async function handleAimHarderSettings(request: Request, env: HostedEnvir
       : '<p>Check your credentials and gym settings. Your existing connection is retained when a change fails.</p><a href="/aimharder">Connection settings</a>', result.status);
   }
   const result = await accountOperation(env, session.user.id, { kind: 'status' }).then(response => new Response(response.body, response));
+  await observeAccountResponse(env,result);
   result.headers.set('cache-control', 'no-store');
   if (path === '/api/portal/aimharder') return result;
   const outcome = await result.json() as { status: string; gyms?: Gym[]; selectedGym?: Gym };

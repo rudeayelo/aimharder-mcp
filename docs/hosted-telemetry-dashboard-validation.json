@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-29",
+  "recordedAt": "2026-10-29T20:52:44.330529Z",
+  "dashboard": {
+    "plan": "Paid",
+    "currentPlanControl": "disabled Current plan button in Paid card",
+    "independentlyVerified": true,
+    "sameAccountAsNativeWorker": true,
+    "displayedBasePrice": "USD 5/month plus usage",
+    "invoiceOrAllInCostInspected": false,
+    "effectiveUpgradeTimestampKnown": false,
+    "cronPastEvents": {
+      "scope": "past week",
+      "columns": [
+        "Cron",
+        "Execution time (UTC)",
+        "CPU time (ms)",
+        "Status"
+      ],
+      "returnedRows": 0,
+      "emptyState": "There have been no events in the past week.",
+      "genericNewWorkerDelayNoteShown": true,
+      "missingMetricsCauseEstablished": false
+    },
+    "settings": {
+      "lognorthEnabled": false,
+      "cron": "*/5 * * * *",
+      "logsEnabled": false,
+      "tracesEnabled": false,
+      "issuesEnabled": false
+    },
+    "observabilityQueryView": "Workers Observability is Disabled",
+    "persistentObservabilityEnabled": false,
+    "newObservabilityTermsAccepted": false
+  },
+  "nativeFinalRead": {
+    "readAt": "2026-10-29T20:52:44.330547Z",
+    "moduleSha256": "1e2cc09f33dd0202bbc1746761fb75ef2fe13aa50bd2997a65731aa11875103d",
+    "effectiveProtectedConfigurationUnchanged": true,
+    "enabled": "false",
+    "bindingCount": 17,
+    "secretCount": 7,
+    "maintenanceRows": [
+      {
+        "lastAttemptAt": 1793307004565,
+        "lastSuccessAt": 1793307005108,
+        "status": "ok",
+        "lastPurgedCount": 0
+      }
+    ]
+  },
+  "agentActions": {
+    "deployment": false,
+    "activation": false,
+    "purchaseOrPlanChange": false,
+    "persistentLogOrTraceChange": false,
+    "tailObserver": false,
+    "readerGrant": false,
+    "sportingWrite": false
+  },
+  "acceptance": {
+    "currentPlanVerified": true,
+    "scheduledCpuAvailable": false,
+    "baselineFiveSampleComparisonAvailable": false,
+    "nativeAcceptanceComplete": false
+  }
+}
