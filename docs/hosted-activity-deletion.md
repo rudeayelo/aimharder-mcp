@@ -1,6 +1,6 @@
 # Hosted deletion of own activity
 
-Current confirmation policy (2026-10-30): the [account preference](write-confirmations.md) controls whether separate confirmation is required for every sporting write, including late cancellation and deletion. It defaults to enabled. The flow below uses that default unless recording historical evidence; mandatory-confirmation wording is conditional on the preference. Exact preparation, fresh checks, role policy, single-use execution and no uncertain replay still apply.
+Current confirmation policy (2026-10-30): two independent [account preferences](write-confirmations.md) control confirmation for booking creation and activity publication, both enabled by default. Cancellation, late credit-loss and activity deletion confirmations remain mandatory. Exact preparation, fresh checks, role policy, single-use execution and no uncertain replay still apply.
 
 [Ticket #80](https://github.com/rudeayelo/aimharder-mcp/issues/80) exposes the existing `prepare_activity_deletion` and `execute_activity_deletion` tools through authenticated HTTP MCP. The [role-access decision](adr/2026-10-19-hosted-activity-role-access.md) and [action coordinator](adr/2026-10-19-confirmed-hosted-action-coordination.md) apply. The implementation evidence below is local and synthetic. The later [actual remote Pilot observation](#actual-remote-pilot-deletion-2026-10-28) is separate; neither establishes an activity-action UI journey in web ChatGPT or Hermes.
 

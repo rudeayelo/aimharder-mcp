@@ -2,7 +2,7 @@
 
 Status: accepted for issue #26 on 2026-09-25; reconciliation amended after the standard #27 cycle. The late-credit-loss path remains unverified live.
 
-Confirmation amendment: partially superseded on 2026-10-30 by the [account write-confirmation preference](2026-10-30-account-write-confirmation-preference.md). Separate per-action confirmation is now conditional on that preference, enabled by default. Other decisions and historical receipts below remain unchanged.
+Confirmation amendment: partially superseded on 2026-10-30 by the [account write-confirmation preference](2026-10-30-account-write-confirmation-preference.md). Only booking creation and activity publication have independent confirmation preferences, both enabled by default. Cancellation and deletion confirmations remain mandatory. Other decisions and historical receipts below remain unchanged.
 
 ## Decision
 

@@ -9,7 +9,8 @@ Your MCP client runs the server locally over stdio, using one AimHarder account 
 | `AIMHARDER_USERNAME` | Required account login username or email. |
 | `AIMHARDER_PASSWORD` | Required account password. Whitespace is preserved. |
 | `AIMHARDER_GYM_TIME_ZONES` | Optional JSON object from discovered gym IDs to IANA zones, such as `{"sample-gym":"Atlantic/Canary"}`. Unmapped gyms use an explicitly assumed `Europe/Madrid` zone. Configure the actual zone when the assumption is wrong. |
-| `AIMHARDER_REQUIRE_WRITE_CONFIRMATION` | Optional `true` or `false`; defaults to `true`. One setting for every sporting write. `false` permits execution of explicit requests without another confirmation; exact preparation and safeguards remain. |
+| `AIMHARDER_REQUIRE_BOOKING_CONFIRMATION` | Optional `true`/`false`, default `true`. Controls separate confirmation for booking creation only. |
+| `AIMHARDER_REQUIRE_PUBLICATION_CONFIRMATION` | Optional `true`/`false`, default `true`. Controls separate confirmation for publishing a workout result only. |
 | `AIMHARDER_DEFAULT_GYM` | Optional for one accessible gym; required when the account has several. Use a discovered gym ID, not a URL. |
 
 Supply credentials through the client process environment or a secrets manager; forwarding rules differ by [client](../README.md#desktop-and-cli-clients). Keep values out of shared config, issues and logs. The server holds its session in memory.
@@ -22,7 +23,7 @@ Supply credentials through the client process environment or a secrets manager; 
 
 Date inputs use `YYYY-MM-DD` in the reported gym zone. An assumed zone can make “tomorrow” wrong near midnight. Returned times are local wall times without inferred UTC offsets.
 
-Booking and activity action previews and writes require an explicit mapping for the selected gym in `AIMHARDER_GYM_TIME_ZONES`; the assumed fallback cannot authorize an action reference. Preparation is read-only. When write confirmations are enabled, each execution requires separate account-holder confirmation of its exact preview. The [account-wide preference](write-confirmations.md) controls every sporting-write tool. See the [tool reference](tools.md) for the current activity-write inputs and evidence limits.
+Booking and activity action previews and writes require an explicit mapping for the selected gym in `AIMHARDER_GYM_TIME_ZONES`; the assumed fallback cannot authorize an action reference. Preparation is read-only. When write confirmations are enabled, each execution requires separate account-holder confirmation of its exact preview. The [independent preferences](write-confirmations.md) control creation and publication only; cancellations and deletions always require confirmation. See the [tool reference](tools.md) for the current activity-write inputs and evidence limits.
 
 ## Version-pinned startup
 

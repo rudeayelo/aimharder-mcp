@@ -2,7 +2,7 @@
 
 Status: accepted for issue #24 on 2026-09-25; amended after live evidence for #27 on 2026-09-25. Standard execution is described in [the cancellation execution decision](2026-09-25-booking-cancellation-execution.md).
 
-Confirmation amendment: partially superseded on 2026-10-30 by the [account write-confirmation preference](2026-10-30-account-write-confirmation-preference.md). Separate per-action confirmation is now conditional on that preference, enabled by default. Other decisions and historical receipts below remain unchanged.
+Confirmation amendment: partially superseded on 2026-10-30 by the [account write-confirmation preference](2026-10-30-account-write-confirmation-preference.md). Only booking creation and activity publication have independent confirmation preferences, both enabled by default. Cancellation and deletion confirmations remain mandatory. Other decisions and historical receipts below remain unchanged.
 
 ## Decision
 

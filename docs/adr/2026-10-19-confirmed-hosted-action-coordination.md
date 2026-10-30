@@ -2,7 +2,7 @@
 
 Status: accepted on 2026-10-19 for [issue #77](https://github.com/rudeayelo/aimharder-mcp/issues/77), extended for [#78](https://github.com/rudeayelo/aimharder-mcp/issues/78). Local synthetic implementation; platform schema/code activation and actual ChatGPT/Hermes acceptance remain separate.
 
-Confirmation amendment: partially superseded on 2026-10-30 by the [account write-confirmation preference](2026-10-30-account-write-confirmation-preference.md). Separate per-action confirmation is now conditional on that preference, enabled by default. Other decisions and historical receipts below remain unchanged.
+Confirmation amendment: partially superseded on 2026-10-30 by the [account write-confirmation preference](2026-10-30-account-write-confirmation-preference.md). Only booking creation and activity publication have independent confirmation preferences, both enabled by default. Cancellation and deletion confirmations remain mandatory. Other decisions and historical receipts below remain unchanged.
 
 ## Context
 

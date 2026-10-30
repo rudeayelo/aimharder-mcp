@@ -37,10 +37,11 @@ export async function eraseDeletedAccountMemory(env:HostedEnvironment,subject:st
   if(response.status!==403)throw new Error('Deleted account memory cleanup unavailable');
 }
 const input = z.object({ username: z.string().min(1).max(512), password: z.string().min(1).max(4096),
-  defaultGym: z.string().optional(), gymTimeZones: z.record(z.string(), z.string()).optional(), requireWriteConfirmation: z.boolean().optional() }).strict();
+  defaultGym: z.string().optional(), gymTimeZones: z.record(z.string(), z.string()).optional(), requireBookingConfirmation: z.boolean().optional(), requirePublicationConfirmation: z.boolean().optional() }).strict();
 function configuration(value: z.infer<typeof input>): Configuration {
   return readConfiguration({ AIMHARDER_USERNAME: value.username, AIMHARDER_PASSWORD: value.password,
-    AIMHARDER_REQUIRE_WRITE_CONFIRMATION: value.requireWriteConfirmation === undefined ? undefined : String(value.requireWriteConfirmation),
+    AIMHARDER_REQUIRE_BOOKING_CONFIRMATION: value.requireBookingConfirmation === undefined ? undefined : String(value.requireBookingConfirmation),
+    AIMHARDER_REQUIRE_PUBLICATION_CONFIRMATION: value.requirePublicationConfirmation === undefined ? undefined : String(value.requirePublicationConfirmation),
     AIMHARDER_DEFAULT_GYM: value.defaultGym, AIMHARDER_GYM_TIME_ZONES: JSON.stringify(value.gymTimeZones ?? {}) });
 }
 export class AccountConnection {
@@ -90,13 +91,16 @@ export class AccountConnection {
         const parsed = input.safeParse(operation.input);
         if (!parsed.success) return Response.json({ status: 'invalid-settings' }, { status: 400 });
         const config = configuration(parsed.data);
-        if (row && parsed.data.requireWriteConfirmation === undefined)
-          config.requireWriteConfirmation = (await decryptConnection(this.env, row)).configuration.requireWriteConfirmation !== false;
+        if (row) {
+          const previous = (await decryptConnection(this.env, row)).configuration;
+          config.requireBookingConfirmation = parsed.data.requireBookingConfirmation ?? previous.requireBookingConfirmation ?? true;
+          config.requirePublicationConfirmation = parsed.data.requirePublicationConfirmation ?? previous.requirePublicationConfirmation ?? true;
+        }
         const candidate = new AimHarderClient(config);
         const verified = await candidate.verifyConnection();
         const ids = new Set(verified.gyms.map(gym => gym.id));
         if (Object.keys(config.gymTimeZones).some(id => !ids.has(id)) || config.defaultGym && !ids.has(config.defaultGym)) return Response.json({ status: 'invalid-settings', gyms: verified.gyms }, { status: 400 });
-        if (verified.gyms.length > 1 && !config.defaultGym) return Response.json({ status: 'default-gym-required', gyms: verified.gyms, writeConfirmationRequired: config.requireWriteConfirmation !== false }, { status: 422 });
+        if (verified.gyms.length > 1 && !config.defaultGym) return Response.json({ status: 'default-gym-required', gyms: verified.gyms, writeConfirmationPolicy: { bookingCreation: config.requireBookingConfirmation !== false, activityPublication: config.requirePublicationConfirmation !== false } }, { status: 422 });
         const context = await candidate.getAccountContext();
         const revision = crypto.randomUUID();
         const envelope = await encryptConnection(this.env, subject, revision, { configuration: config, identity: verified.identity });
@@ -136,13 +140,13 @@ export class AccountConnection {
         return Response.json({status:'connected',...context});
       }
       if (operation.kind === 'settings') {
-        const settings = z.object({ defaultGym: z.string().optional(), gymTimeZones: z.record(z.string(), z.string()), requireWriteConfirmation: z.boolean().optional() }).strict().safeParse(operation.input);
+        const settings = z.object({ defaultGym: z.string().optional(), gymTimeZones: z.record(z.string(), z.string()), requireBookingConfirmation: z.boolean().optional(), requirePublicationConfirmation: z.boolean().optional() }).strict().safeParse(operation.input);
         if (!settings.success) return Response.json({ status: 'invalid-settings' }, { status: 400 });
-        const config = configuration({ username: payload.configuration.username, password: payload.configuration.password, ...settings.data, requireWriteConfirmation: settings.data.requireWriteConfirmation ?? payload.configuration.requireWriteConfirmation ?? true });
+        const config = configuration({ username: payload.configuration.username, password: payload.configuration.password, ...settings.data, requireBookingConfirmation: settings.data.requireBookingConfirmation ?? payload.configuration.requireBookingConfirmation ?? true, requirePublicationConfirmation: settings.data.requirePublicationConfirmation ?? payload.configuration.requirePublicationConfirmation ?? true });
         const verified = await this.#client.client.verifyConnection();
         const ids = new Set(verified.gyms.map(gym => gym.id));
         if ((config.defaultGym && !ids.has(config.defaultGym)) || Object.keys(config.gymTimeZones).some(id => !ids.has(id))) return Response.json({ status: 'invalid-settings' }, { status: 400 });
-        if (ids.size > 1 && !config.defaultGym) return Response.json({ status: 'default-gym-required', gyms: verified.gyms, writeConfirmationRequired: config.requireWriteConfirmation !== false }, { status: 422 });
+        if (ids.size > 1 && !config.defaultGym) return Response.json({ status: 'default-gym-required', gyms: verified.gyms, writeConfirmationPolicy: { bookingCreation: config.requireBookingConfirmation !== false, activityPublication: config.requirePublicationConfirmation !== false } }, { status: 422 });
         const candidate = new AimHarderClient(config, payload.identity);
         const context = await candidate.getAccountContext();
         const revision = crypto.randomUUID();
@@ -156,7 +160,8 @@ export class AccountConnection {
       }
       if (['execute-booking-creation', 'execute-booking-cancellation', 'execute-late-booking-cancellation', 'execute-activity-publication', 'execute-activity-deletion'].includes(operation.kind)) {
         const marker = operation.kind === 'execute-late-booking-cancellation' ? 'confirmedCreditLoss' : 'confirmed';
-        if (payload.configuration.requireWriteConfirmation !== false && (operation.input as Record<string, unknown> | undefined)?.[marker] !== true)
+        const required = operation.kind === 'execute-booking-creation' ? payload.configuration.requireBookingConfirmation !== false : operation.kind === 'execute-activity-publication' ? payload.configuration.requirePublicationConfirmation !== false : true;
+        if (required && (operation.input as Record<string, unknown> | undefined)?.[marker] !== true)
           throw new AimHarderError('WRITE_CONFIRMATION_REQUIRED');
       }
       if(operation.kind==='prepare-activity-publication'){
@@ -197,7 +202,7 @@ export class AccountConnection {
           recover:async(facts,originalRevision)=>{
             if(query.gymId!==undefined&&query.gymId!==facts.preview.gym.id)throw new AimHarderError('BOOKING_REFERENCE_INVALID');
             try{if(originalRevision!==row.revision||facts.identity!==payload.identity)throw new AimHarderError('IDENTITY_MISMATCH');return await client.reconcileBookingCancellation(facts);}
-            catch{return {action:'cancel' as const,gym:facts.preview.gym,target:facts.preview.target,credit:facts.preview.credit,writeConfirmationRequired:payload.configuration.requireWriteConfirmation !== false,status:'uncertain' as const,observedState:'unknown' as const,notices:['The original cancellation may have been sent. Original-account read-back is unavailable; inspect it before preparing a new action. No write was retried.']};}
+            catch{return {action:'cancel' as const,gym:facts.preview.gym,target:facts.preview.target,credit:facts.preview.credit,writeConfirmationRequired:true,status:'uncertain' as const,observedState:'unknown' as const,notices:['The original cancellation may have been sent. Original-account read-back is unavailable; inspect it before preparing a new action. No write was retried.']};}
           }});
         if('actionReference' in result&&typeof result.actionReference==='string'&&'expiresAt' in result&&typeof result.expiresAt==='string')this.#actions.remember(result.actionReference,{action:'booking-cancel-late',revision:row.revision,identity:payload.identity,accessGeneration:admission.accessGeneration,expires:Date.parse(result.expiresAt),gymId:result.gym.id});
         return Response.json({status:'queried',result});
@@ -283,7 +288,7 @@ export class AccountConnection {
         const selectedGym = payload.configuration.defaultGym
           ? gyms.find(gym => gym.id === payload.configuration.defaultGym)
           : gyms.length === 1 ? gyms[0] : undefined;
-        return Response.json({ status: selectedGym ? 'connected' : 'selection-required', writeConfirmationRequired: payload.configuration.requireWriteConfirmation !== false, gyms, ...(selectedGym ? { selectedGym } : {}) });
+        return Response.json({ status: selectedGym ? 'connected' : 'selection-required', writeConfirmationPolicy: { bookingCreation: payload.configuration.requireBookingConfirmation !== false, activityPublication: payload.configuration.requirePublicationConfirmation !== false }, gyms, ...(selectedGym ? { selectedGym } : {}) });
       }
       const context: AccountContext = await this.#client.client.getAccountContext(operation.gymId);
       return Response.json({ status: 'connected', ...context });

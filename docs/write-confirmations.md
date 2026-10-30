@@ -1,20 +1,24 @@
-# Write confirmation preference
+# Booking and workout confirmation preferences
 
-One preference controls all sporting writes for the configured account: booking creation, standard cancellation, late cancellation with possible credit loss, activity publication (workout results) and own-activity deletion. It does not change portal login, client OAuth consent, account deletion or other account-management forms.
+Two independent switches apply to the configured account and all its MCP clients. Both default to **on**:
 
-Confirmations are **enabled by default**. In the hosted portal, open AimHarder connection settings, choose **Write confirmations**, then save. **Ask before each write** retains exact preview and separate confirmation. **Do not ask again** lets the agent complete an explicitly requested exact action without a second question. This is shared by all MCP clients connected to that account; another participant keeps their own preference. The JSON settings field is `requireWriteConfirmation`, a boolean. Missing updates preserve the existing value; invalid values fail. A settings save discards existing preparations, so prepare again afterwards. Password updates and account replacement retain the setting; disconnection removes connection settings and a newly connected account defaults to enabled.
+- **Ask for confirmation when making a reservation**: `requireBookingConfirmation` controls booking creation only.
+- **Ask for confirmation when posting a new workout**: `requirePublicationConfirmation` controls publication of an own activity entry with workout results.
 
-For local stdio, set `AIMHARDER_REQUIRE_WRITE_CONFIRMATION=false` in the server process environment and restart to disable confirmations, or use `true`/omit it to require them. Only those literal values are accepted.
+With a switch on, the agent shows the exact prepared action and asks for confirmation before writing. With it off, an explicit request to perform that action permits execution without a second question. A query or preview-only request never authorizes writing. Standard cancellation, late cancellation with possible credit loss, and activity deletion always require their existing separate confirmations; neither switch affects them.
+
+Change the switches in hosted AimHarder connection settings, then save. The settings API accepts the two optional boolean fields independently. Omitted fields preserve their saved values; invalid values fail. The form sends explicit presence markers to distinguish an unchecked switch from an omitted preference. Saving changes connection revision and invalidates outstanding preparations. Password updates and upstream account replacement preserve both preferences unless explicitly changed. Disconnecting removes connection settings; a new connection defaults both to on. The earlier unreleased global preference is no longer used and does not disable either confirmation; the settings API rejects that removed field.
+
+Local stdio supports `AIMHARDER_REQUIRE_BOOKING_CONFIRMATION=true|false` and `AIMHARDER_REQUIRE_PUBLICATION_CONFIRMATION=true|false`. Each defaults independently to true. Restart after changing process configuration.
 
 ## MCP client behavior
 
-`get_account_context` and all four preparation tools return `writeConfirmationRequired`. Fresh late-credit-loss warnings also return it. Always resolve ambiguity and use the exact prepared target; a read or preview-only request never authorizes writing.
+`get_account_context` returns `writeConfirmationPolicy: { bookingCreation: boolean, activityPublication: boolean }`. Every preparation returns its effective `writeConfirmationRequired`; cancellation and deletion preparations always return true. Late-credit-loss warnings also require confirmation.
 
-- When true: show the full exact preview, obtain separate account-holder confirmation and execute with `confirmed: true`. For the late-cancellation tool, show possible credit loss and use `confirmedCreditLoss: true` after its separate confirmation.
-- When false: execute an explicitly requested exact action with its fresh reference without asking again; omit the confirmation marker. Existing true markers remain accepted. Literal false is rejected, rather than treated as authorization.
+When the relevant value is true, show the exact full preview, obtain separate account-holder confirmation and call execution with `confirmed: true`. A late cancellation uses its distinct fresh reference and `confirmedCreditLoss: true` after separate consequence confirmation. A missing marker returns `WRITE_CONFIRMATION_REQUIRED` before reference consumption or dispatch.
 
-For example, creation execution can use `{"actionReference":"<fresh reference>"}` when disabled, or `{"actionReference":"<fresh reference>","confirmed":true}` after confirmation when enabled. Deletion still requires the exact `sourceActivityId`. A missing marker under an enabled policy returns `WRITE_CONFIRMATION_REQUIRED` before reference consumption or write dispatch.
+Only for creation or publication with the relevant switch off, omit `confirmed` when executing the explicitly requested exact action with its fresh reference. Existing true markers remain accepted; literal false is rejected. Deletion still requires its exact `sourceActivityId` and confirmation.
 
-Both modes keep preparation, fresh eligibility and ownership checks, role permissions, two-minute single-use references, at-most-one upstream request per execution and honest fresh read-back. Late cancellation still requires the distinct reference issued by a fresh standard warning and never happens inside the standard request automatically. Unknown outcomes require manual inspection before any new attempt; disabling confirmation does not enable retries, batches, scheduling or inferred achieved results. Client-owned approval dialogs may still appear.
+All paths preserve exact target matching, user-confirmed gym zone, membership/ownership and role/grant checks, two-minute single-use references, at-most-one dispatch and fresh read-back. Unknown results require manual inspection and are never automatically replayed. Disabling confirmation does not infer achieved performance from prescriptions or suggested loads. Clients may independently enforce approval dialogs.
 
-The [decision](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/adr/2026-10-30-account-write-confirmation-preference.md) amends earlier mandatory-confirmation rules. Historical live receipts still describe the policy used at their observation time. This checkout's new behavior is not evidence of a deployed update or actual client acceptance.
+The [decision](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/adr/2026-10-30-account-write-confirmation-preference.md) records the final scope. Release, deployment and actual ChatGPT/Hermes acceptance of this addition remain separate.

@@ -24,7 +24,7 @@ const messages = {
   GYM_TIME_ZONE_REQUIRED: 'A valid IANA zone could not be established for the selected gym. Check AIMHARDER_GYM_TIME_ZONES and restart. No date query was made.',
   INVALID_CLASS_QUERY: 'Supply valid inclusive calendar dates and optional startTime (HH:mm), className, and gymId filters.',
   INVALID_CLASS_RESPONSE: 'AimHarder returned an unsupported, restricted, or incomplete class response. No schedule is returned for this interval.',
-  INVALID_CONFIGURATION: 'Set AIMHARDER_USERNAME and AIMHARDER_PASSWORD to non-empty values, use a gym slug for AIMHARDER_DEFAULT_GYM if supplied, and set AIMHARDER_REQUIRE_WRITE_CONFIRMATION to true or false if supplied.',
+  INVALID_CONFIGURATION: 'Set AIMHARDER_USERNAME and AIMHARDER_PASSWORD to non-empty values, use a gym slug for AIMHARDER_DEFAULT_GYM if supplied, and set AIMHARDER_REQUIRE_BOOKING_CONFIRMATION and AIMHARDER_REQUIRE_PUBLICATION_CONFIRMATION to true or false if supplied.',
   AUTHENTICATION_FAILED: 'Authentication did not complete. Check credentials, additional authentication requirements, or account restrictions, then restart the server.',
   ACCESS_RESTRICTED: 'AimHarder denied access. Check account restrictions before trying again.',
   SESSION_EXPIRED: 'The session expired again after one reauthentication. No further retry was attempted.',

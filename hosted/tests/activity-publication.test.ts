@@ -415,7 +415,7 @@ test('publication draft and non-executable preparation results have explicit tel
 
  test('account preference permits publication without confirmation while role policy and single use remain enforced',async()=>{
   resetPublication();
-  expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'},requireWriteConfirmation:false},a())).status).toBe(200);
+  expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'},requirePublicationConfirmation:false},a())).status).toBe(200);
   try {
    const prepared=await preparePublication();
    expect(prepared.structuredContent).toMatchObject({status:'ready',writeConfirmationRequired:false});
@@ -423,5 +423,5 @@ test('publication draft and non-executable preparation results have explicit tel
    expect((await executePublication(reference,a(),{confirmed:undefined})).structuredContent?.status).toBe('confirmed');
    expect((await executePublication(reference,a(),{confirmed:undefined})).isError).toBe(true);
    expect(publicationWrites).toBe(1);
-  } finally { expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'},requireWriteConfirmation:true},a())).status).toBe(200); }
+  } finally { expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'},requirePublicationConfirmation:true},a())).status).toBe(200); }
  });

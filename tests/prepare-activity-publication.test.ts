@@ -337,7 +337,7 @@ function acceptedReadback(options: { response?: unknown; calendar?: unknown; det
 }
 
 test.each([true, false])('confirmation policy %s preserves publication and own read-back', async requireConfirmation => {
-  const client = await connect({ AIMHARDER_REQUIRE_WRITE_CONFIRMATION: String(requireConfirmation) });
+  const client = await connect({ AIMHARDER_REQUIRE_PUBLICATION_CONFIRMATION: String(requireConfirmation) });
   const prepared = (await prepare(client)).structuredContent as { actionReference: string };
   let form: FormData | undefined;
   acceptedReadback();

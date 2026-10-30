@@ -1,6 +1,6 @@
 # aimharder-mcp
 
-The current checkout adds one [write-confirmation preference](docs/write-confirmations.md) per account for all sporting actions. It defaults to enabled; hosted participants can change it in AimHarder connection settings, while local stdio uses `AIMHARDER_REQUIRE_WRITE_CONFIRMATION`. Release, deployment and actual client acceptance of this addition remain separate.
+The current checkout adds two independent [confirmation preferences](docs/write-confirmations.md) per account: booking creation and workout publication, both enabled by default. Hosted participants use two switches in AimHarder connection settings; local stdio has equivalent environment settings. Cancellation and deletion confirmations remain mandatory. Release, deployment and actual client acceptance remain separate.
 
 Ask about your AimHarder classes, workouts, bookings, activity and personal RMs from an AI client. This local [MCP server](https://modelcontextprotocol.io/) also supports confirmed manual booking actions and publication and deletion of your own activity. This is an independent project, neither affiliated with nor endorsed by AimHarder.
 

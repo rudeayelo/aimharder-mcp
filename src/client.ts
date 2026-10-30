@@ -48,7 +48,7 @@ export interface AccountContext {
   gyms: Gym[];
   selectedGym: Gym;
   notices: string[];
-  writeConfirmationRequired: boolean;
+  writeConfirmationPolicy: { bookingCreation: boolean; activityPublication: boolean };
 }
 interface AccessibleGym { gym: Gym; boxId: number | undefined }
 export interface ClassSchedule {
@@ -97,8 +97,8 @@ export class AimHarderClient {
 
   constructor(private readonly configuration: Configuration, private expectedAccountId?: number) {}
 
-  #requireWriteConfirmation(marker: true | undefined) {
-    if (this.configuration.requireWriteConfirmation !== false && marker !== true)
+  #requireWriteConfirmation(marker: true | undefined, required = true) {
+    if (required && marker !== true)
       throw new AimHarderError('WRITE_CONFIRMATION_REQUIRED');
   }
 
@@ -128,7 +128,7 @@ export class AimHarderClient {
 
   getAccountContext(gymId?: string): Promise<AccountContext> {
     return this.#query(gymId, async (gyms, selected) => ({
-      writeConfirmationRequired: this.configuration.requireWriteConfirmation !== false,
+      writeConfirmationPolicy: { bookingCreation: this.configuration.requireBookingConfirmation !== false, activityPublication: this.configuration.requirePublicationConfirmation !== false },
       account: { authenticated: true }, gyms: gyms.map((entry) => entry.gym), selectedGym: selected.gym,
       notices: gyms.some(({ gym }) => gym.timeZoneStatus === 'assumed')
         ? ['Europe/Madrid is assumed for gyms without an explicit time-zone mapping. Confirm the gym zone for reliable date queries; AimHarder has not supplied an authoritative zone.']
@@ -194,13 +194,13 @@ export class AimHarderClient {
         notices,
       };
       return { status, ...preview, alternatives, ...this.#bookingPreparations.issue(this.#accountId!, boxId, candidate.sourceId, preview) };
-    }).then(result => ({ ...result, writeConfirmationRequired: this.configuration.requireWriteConfirmation !== false }));
+    }).then(result => ({ ...result, writeConfirmationRequired: this.configuration.requireBookingConfirmation !== false }));
   }
 
   executeBookingCreation(input: BookingExecution, coordination?: ActionExecutionCoordination) {
     const parsed = bookingExecutionSchema.safeParse(input);
     if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_BOOKING_EXECUTION_QUERY'));
-    try { this.#requireWriteConfirmation(parsed.data.confirmed); }
+    try { this.#requireWriteConfirmation(parsed.data.confirmed, this.configuration.requireBookingConfirmation !== false); }
     catch (error) { return Promise.reject(error); }
     const query = parsed.data;
     return this.#query(query.gymId, async (_gyms, { gym, boxId }, recover) => {
@@ -333,7 +333,7 @@ export class AimHarderClient {
       };
       return { status, ...preview, alternatives,
         ...this.#bookingPreparations.issueCancellation(this.#accountId!, boxId, candidate.reservationId, preview) };
-    }).then(result => ({ ...result, writeConfirmationRequired: this.configuration.requireWriteConfirmation !== false }));
+    }).then(result => ({ ...result, writeConfirmationRequired: true }));
   }
 
   executeBookingCancellation(input: BookingExecution, coordination?: ActionExecutionCoordination<BookingCancellationDispatch>) {
@@ -402,7 +402,7 @@ export class AimHarderClient {
 
   async #reconcileBookingCancellation(facts: BookingCancellationDispatch,recover:()=>Promise<void>,recovered=false) {
       const {preview,boxId,sourceId,reservationId,late}=facts; const {gym,target}=preview;
-      const base={action:'cancel' as const,gym,target,credit:preview.credit,writeConfirmationRequired:this.configuration.requireWriteConfirmation !== false};
+      const base={action:'cancel' as const,gym,target,credit:preview.credit,writeConfirmationRequired:true};
       const writeIssue=facts.outcome?.writeIssue??true;
       let observedState: 'booked' | 'waitlisted' | 'cancelled' | 'unbooked' | 'unknown' = 'unknown';
       let conflicting = false;
@@ -603,7 +603,7 @@ export class AimHarderClient {
       const preview = deletionPreview(gym as NonNullable<typeof gym> & { timeZone: string }, entry, coverage);
       return { status: 'ready' as const, ...preview,
         ...this.#activityDeletionPreparations.issue(this.#accountId!, gym.id, boxId, preview) };
-    }).then(result => ({ ...result, writeConfirmationRequired: this.configuration.requireWriteConfirmation !== false }));
+    }).then(result => ({ ...result, writeConfirmationRequired: true }));
   }
 
   executeActivityDeletion(input: ActivityDeletionExecution, coordination?: ActionExecutionCoordination<ActivityDeletionDispatch>) {
@@ -844,7 +844,7 @@ export class AimHarderClient {
         return { status: 'draft' as const, ...preview,
           notices: [...preview.notices, 'Choose a supported block result or explicitly confirm an actual kilogram load before preparing a write. No action reference was issued.'] };
       return { status: 'ready' as const, ...preview, ...this.#publicationPreparations.issue(this.#accountId!, boxId, preview, query, formSnapshot) };
-    }).then(result => ({ ...result, writeConfirmationRequired: this.configuration.requireWriteConfirmation !== false }));
+    }).then(result => ({ ...result, writeConfirmationRequired: this.configuration.requirePublicationConfirmation !== false }));
   }
 
   async #readPublicationSource(gym: Gym, boxId: number, sourceId: number) {
@@ -881,7 +881,7 @@ export class AimHarderClient {
   executeActivityPublication(input: z.infer<typeof publicationExecutionSchema>, coordination?: ActionExecutionCoordination<ActivityPublicationDispatch>) {
     const parsed = publicationExecutionSchema.safeParse(input);
     if (!parsed.success) return Promise.reject(new AimHarderError('INVALID_ACTIVITY_PUBLICATION_QUERY'));
-    try { this.#requireWriteConfirmation(parsed.data.confirmed); }
+    try { this.#requireWriteConfirmation(parsed.data.confirmed, this.configuration.requirePublicationConfirmation !== false); }
     catch (error) { return Promise.reject(error); }
     const query = parsed.data;
     return this.#query(query.gymId, async (_gyms, { gym, boxId }) => {

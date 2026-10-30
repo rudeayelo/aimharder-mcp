@@ -1,6 +1,6 @@
 # AimHarder MCP server MVP
 
-Later write-policy amendment (2026-10-30): the [account confirmation preference](write-confirmations.md) makes separate confirmations configurable for all implemented sporting writes, defaulting to enabled. It does not change historical read-only MVP evidence, role access, exact preparations or at-most-one execution.
+Later write-policy amendment (2026-10-30): the [account confirmation preference](write-confirmations.md) makes booking-creation and activity-publication confirmations independently configurable, both enabled by default; cancellation and deletion confirmations remain mandatory. It does not change historical read-only MVP evidence, role access, exact preparations or at-most-one execution.
 
 Scope confirmed 2026-09-21 in [issue #1](https://github.com/rudeayelo/aimharder-mcp/issues/1). All planned query features are implemented. The user accepted first-release functional QA on 2026-09-24 using the evidence in [validation](validation.md). The package is published on npm and the exact registry artifact passed a live MCP check. Recent and period summaries count **activity entries**, as the user clarified.
 

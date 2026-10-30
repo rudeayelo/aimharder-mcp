@@ -49,7 +49,7 @@ afterAll(() => upstream.close());
 
 async function connect(gymId = 'sample-gym', requireConfirmation = true) {
   const server = createServer({ AIMHARDER_USERNAME: 'account@example.invalid', AIMHARDER_PASSWORD: 'synthetic',
-    AIMHARDER_REQUIRE_WRITE_CONFIRMATION: String(requireConfirmation), AIMHARDER_GYM_TIME_ZONES: JSON.stringify({ [gymId]: 'Europe/Madrid' }) });
+    AIMHARDER_REQUIRE_BOOKING_CONFIRMATION: String(requireConfirmation), AIMHARDER_GYM_TIME_ZONES: JSON.stringify({ [gymId]: 'Europe/Madrid' }) });
   const client = new Client({ name: 'cancellation-execution-test', version: '1.0.0' });
   const [a, b] = InMemoryTransport.createLinkedPair();
   connections.push({ client, server });
@@ -233,9 +233,9 @@ test.each([true, false])('confirmation policy %s covers standard and late cancel
   response = () => writes.length === 1 ? HttpResponse.json({ cancelState: 2 })
     : (bookState = null, cancelledId = 900, upcomingState = null, HttpResponse.json({ cancelState: 1 }));
   const client = await connect('sample-gym', requireConfirmation);
-  const warned = await execute(client, await prepare(client), requireConfirmation ? {} : { confirmed: undefined });
+  const warned = await execute(client, await prepare(client), {});
   const reference = (warned.structuredContent as { actionReference: string }).actionReference;
-  const result = await executeLate(client, reference, requireConfirmation ? {} : { confirmedCreditLoss: undefined });
+  const result = await executeLate(client, reference, {});
   expect(result.structuredContent).toMatchObject({ status: 'confirmed', observedState: 'cancelled', credit: { balance: null } });
   expect(writes).toHaveLength(2);
   expect(writes.map(body => new URLSearchParams(body).get('late'))).toEqual(['0', '1']);

@@ -143,7 +143,7 @@ test('both roles preview the exact target and confirm once through real HTTP MCP
 });
 
 test('account write-confirmation preference permits explicit writes without markers and preserves single use',async()=>{
- for(const cookie of [a(),b()])expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'},requireWriteConfirmation:false},cookie)).status).toBe(200);
+ for(const cookie of [a(),b()])expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'},requireBookingConfirmation:false},cookie)).status).toBe(200);
  try {
  booked=new Set();writes=[];synthetic=bookingSource;
  for(const cookie of [a(),b()]){
@@ -157,16 +157,16 @@ test('account write-confirmation preference permits explicit writes without mark
   expect(results.filter(result=>result.isError)).toHaveLength(1);
  }
  expect(writes).toEqual(['amhrdrauth=synthetic-a','amhrdrauth=synthetic-b']);
- } finally { for(const cookie of [a(),b()])expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'},requireWriteConfirmation:true},cookie)).status).toBe(200); }
+ } finally { for(const cookie of [a(),b()])expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'},requireBookingConfirmation:true},cookie)).status).toBe(200); }
 });
 
 test('enabling confirmations invalidates old preparations and omission cannot consume a new reference',async()=>{
  booked=new Set();writes=[];synthetic=bookingSource;
  const settings={defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'}};
- expect((await post('/api/portal/aimharder/settings',{...settings,requireWriteConfirmation:false},a())).status).toBe(200);
+ expect((await post('/api/portal/aimharder/settings',{...settings,requireBookingConfirmation:false},a())).status).toBe(200);
  const old=await call(a(),'prepare_booking_creation',target);
  expect(old.structuredContent).toMatchObject({status:'ready',writeConfirmationRequired:false});
- expect((await post('/api/portal/aimharder/settings',{...settings,requireWriteConfirmation:true},a())).status).toBe(200);
+ expect((await post('/api/portal/aimharder/settings',{...settings,requireBookingConfirmation:true},a())).status).toBe(200);
  expect((await call(a(),'execute_booking_creation',{actionReference:old.structuredContent!.actionReference,confirmed:true})).isError).toBe(true);
  const fresh=await call(a(),'prepare_booking_creation',target);
  expect(fresh.structuredContent).toMatchObject({status:'ready',writeConfirmationRequired:true});

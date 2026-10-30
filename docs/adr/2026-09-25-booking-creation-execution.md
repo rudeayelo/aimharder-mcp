@@ -2,7 +2,7 @@
 
 Status: accepted for issue #23 on 2026-09-25; amended with one live standard creation observed under #27 on 2026-09-25.
 
-Confirmation amendment: partially superseded on 2026-10-30 by the [account write-confirmation preference](2026-10-30-account-write-confirmation-preference.md). Separate per-action confirmation is now conditional on that preference, enabled by default. Other decisions and historical receipts below remain unchanged.
+Confirmation amendment: partially superseded on 2026-10-30 by the [account write-confirmation preference](2026-10-30-account-write-confirmation-preference.md). Only booking creation and activity publication have independent confirmation preferences, both enabled by default. Cancellation and deletion confirmations remain mandatory. Other decisions and historical receipts below remain unchanged.
 
 ## Decision
 

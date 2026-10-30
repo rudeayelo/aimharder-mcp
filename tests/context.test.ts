@@ -298,10 +298,15 @@ test.each([{ gymId: 'https://evil.invalid' }, { gymId: 123 }, { extra: 'unexpect
 });
 
 test.each([undefined, 'true', 'false'])('account context reports write confirmation configuration %s', async value => {
- const client=await connect(value === undefined ? {} : { AIMHARDER_REQUIRE_WRITE_CONFIRMATION: value });
- expect((await query(client)).structuredContent).toMatchObject({writeConfirmationRequired:value !== 'false'});
+ const client=await connect(value === undefined ? {} : { AIMHARDER_REQUIRE_BOOKING_CONFIRMATION: value });
+ expect((await query(client)).structuredContent).toMatchObject({writeConfirmationPolicy:{bookingCreation:value !== 'false',activityPublication:true}});
 });
 test.each(['', '0', 'yes', 'FALSE'])('invalid confirmation configuration %s is rejected before authentication', value => {
- expect(()=>createServer({AIMHARDER_USERNAME:username,AIMHARDER_PASSWORD:password,AIMHARDER_REQUIRE_WRITE_CONFIRMATION:value})).toThrow();
+ expect(()=>createServer({AIMHARDER_USERNAME:username,AIMHARDER_PASSWORD:password,AIMHARDER_REQUIRE_BOOKING_CONFIRMATION:value})).toThrow();
  expect(requests).toHaveLength(0);
+});
+
+test.each(['true','false'])('publication preference %s is independent of booking confirmation', async value => {
+ const client=await connect({AIMHARDER_REQUIRE_PUBLICATION_CONFIRMATION:value});
+ expect((await query(client)).structuredContent).toMatchObject({writeConfirmationPolicy:{bookingCreation:true,activityPublication:value !== 'false'}});
 });
