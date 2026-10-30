@@ -655,5 +655,19 @@
     "Destination view counts do not establish exhaustive history or guaranteed delivery.",
     "No Free suitability, exact causal overhead, sustained load or complete invoice/budget claim.",
     "Native sporting writes and injected maintenance failures were not performed; earlier synthetic evidence remains separate."
-  ]
+  ],
+  "checks": {
+    "finalReview": {
+      "fixedPoint": "7dbb1a4",
+      "reviewedCommit": "3a39763",
+      "standardsUnresolvedFindings": 0,
+      "specUnresolvedFindings": 0
+    },
+    "relativeDocumentationLinksChecked": 997,
+    "numericConsistency": true,
+    "observerSourceDigestMatches": true,
+    "credentialAndIdentifierPatternsClear": true,
+    "applicationCodeChanged": false,
+    "unrelatedApplicationSuitesRerun": false
+  }
 }
