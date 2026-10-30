@@ -1,0 +1,59 @@
+{
+  "source": "Existing hybrid 32k SOG and curved neutral eye rig; transparent WebGL export, no new AI generation",
+  "sourceModelSha256": "28219dffc9d3a50cb4d79f0088bbe5a7a8ef977ed59c51a6b01faf5d508036d7",
+  "poster": {
+    "file": "assets/kettle-neutral.png",
+    "bytes": 202274,
+    "sha256": "acc74a0352660299575df6b57d7c95652de20c4a35604c03fa228ee12d252bdd",
+    "size": [
+      512,
+      512
+    ],
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  "contrast": {
+    "light text / paper": {
+      "foreground": "#14283F",
+      "background": "#FFFFFF",
+      "ratio": 14.95
+    },
+    "light supporting / paper": {
+      "foreground": "#516174",
+      "background": "#FFFFFF",
+      "ratio": 6.34
+    },
+    "light supporting / surface": {
+      "foreground": "#516174",
+      "background": "#F4F7FA",
+      "ratio": 5.9
+    },
+    "light action label": {
+      "foreground": "#FFFFFF",
+      "background": "#1765B0",
+      "ratio": 5.96
+    },
+    "dark text / background": {
+      "foreground": "#EDF3FA",
+      "background": "#0D1521",
+      "ratio": 16.4
+    },
+    "dark supporting / surface": {
+      "foreground": "#ABBACD",
+      "background": "#142033",
+      "ratio": 8.28
+    },
+    "dark action label": {
+      "foreground": "#0D1521",
+      "background": "#2490F4",
+      "ratio": 5.56
+    },
+    "dark bubble text": {
+      "foreground": "#EDF3FA",
+      "background": "#1C3551",
+      "ratio": 11.21
+    }
+  }
+}

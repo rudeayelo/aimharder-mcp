@@ -1,0 +1,214 @@
+{
+  "signin": {
+    "en": "Sign in",
+    "es": "Iniciar sesión"
+  },
+  "how": {
+    "en": "How it works",
+    "es": "Cómo funciona"
+  },
+  "faq": {
+    "en": "FAQ",
+    "es": "Preguntas frecuentes"
+  },
+  "language": {
+    "en": "English",
+    "es": "Español"
+  },
+  "appearance": {
+    "en": "System",
+    "es": "Sistema"
+  },
+  "light": {
+    "en": "Light",
+    "es": "Claro"
+  },
+  "dark": {
+    "en": "Dark",
+    "es": "Oscuro"
+  },
+  "system": {
+    "en": "System",
+    "es": "Sistema"
+  },
+  "title": {
+    "en": "Your AimHarder training.\nIn your AI chat.",
+    "es": "Tu entrenamiento de AimHarder.\nEn tu chat de IA."
+  },
+  "intro": {
+    "en": "Check classes, see your workouts and review your activity using the AimHarder account you already have.",
+    "es": "Consulta clases, descubre tus entrenamientos y revisa tu actividad con la cuenta de AimHarder que ya tienes."
+  },
+  "access": {
+    "en": "Invitation-only pilot",
+    "es": "Piloto por invitación"
+  },
+  "seeHow": {
+    "en": "See how it works",
+    "es": "Ver cómo funciona"
+  },
+  "chat": {
+    "en": "Your AI chat",
+    "es": "Tu chat de IA"
+  },
+  "example": {
+    "en": "Illustrative example",
+    "es": "Ejemplo ilustrativo"
+  },
+  "question": {
+    "en": "What is tomorrow’s workout?",
+    "es": "¿Cuál es el entrenamiento de mañana?"
+  },
+  "replyTitle": {
+    "en": "Tomorrow’s workout",
+    "es": "El entrenamiento de mañana"
+  },
+  "strength": {
+    "en": "STRENGTH",
+    "es": "FUERZA"
+  },
+  "strengthBody": {
+    "en": "Back squat\n5 sets × 5 reps",
+    "es": "Back squat\n5 series × 5 repeticiones"
+  },
+  "conditioning": {
+    "en": "CONDITIONING",
+    "es": "ACONDICIONAMIENTO"
+  },
+  "conditioningBody": {
+    "en": "12-minute AMRAP\n8 burpees · 12 kettlebell swings",
+    "es": "AMRAP de 12 minutos\n8 burpees · 12 kettlebell swings"
+  },
+  "chatNote": {
+    "en": "A simple question. Your own training information.",
+    "es": "Una pregunta sencilla. La información de tu entrenamiento."
+  },
+  "useTitle": {
+    "en": "Start with a useful question.",
+    "es": "Empieza con una buena pregunta."
+  },
+  "useIntro": {
+    "en": "Your classes, workouts and records — one conversation away.",
+    "es": "Tus clases, entrenamientos y marcas, a una conversación de distancia."
+  },
+  "case1": {
+    "en": "Classes & bookings",
+    "es": "Clases y reservas"
+  },
+  "prompt1": {
+    "en": "“What classes can I book tomorrow?”",
+    "es": "«¿A qué clases me puedo apuntar mañana?»"
+  },
+  "case2": {
+    "en": "Workouts & weights",
+    "es": "Entrenamientos y pesos"
+  },
+  "prompt2": {
+    "en": "“What’s the workout, and what weights should I use?”",
+    "es": "«¿Cuál es el entrenamiento y qué pesos me corresponden?»"
+  },
+  "case3": {
+    "en": "Activity & records",
+    "es": "Actividad y marcas"
+  },
+  "prompt3": {
+    "en": "“Show my activity from this week.”",
+    "es": "«Enséñame mi actividad de esta semana.»"
+  },
+  "setupTitle": {
+    "en": "Your account. Connected.",
+    "es": "Tu cuenta. Conectada."
+  },
+  "setupIntro": {
+    "en": "Once you’ve accepted your invitation, there are just three things to do.",
+    "es": "Después de aceptar tu invitación, estos son los tres pasos."
+  },
+  "step1": {
+    "en": "Connect AimHarder",
+    "es": "Conecta AimHarder"
+  },
+  "step1Body": {
+    "en": "Link your existing AimHarder account. Keep training with your gym as usual.",
+    "es": "Vincula tu cuenta de AimHarder. Sigue entrenando con tu gimnasio como siempre."
+  },
+  "step2": {
+    "en": "Connect your AI chat",
+    "es": "Conecta tu chat de IA"
+  },
+  "step2Body": {
+    "en": "Follow the guide for ChatGPT, Hermes or another compatible client.",
+    "es": "Sigue la guía para ChatGPT, Hermes u otro cliente compatible."
+  },
+  "step3": {
+    "en": "Ask your first question",
+    "es": "Haz tu primera pregunta"
+  },
+  "step3Body": {
+    "en": "Try: “What classes can I book tomorrow?”",
+    "es": "Prueba: «¿A qué clases me puedo apuntar mañana?»"
+  },
+  "faqTitle": {
+    "en": "A few things to know.",
+    "es": "Algunas cosas que conviene saber."
+  },
+  "faqIntro": {
+    "en": "A little context before you connect.",
+    "es": "Un poco de contexto antes de conectar."
+  },
+  "q1": {
+    "en": "How do I get access?",
+    "es": "¿Cómo consigo acceso?"
+  },
+  "a1": {
+    "en": "The pilot is invitation-only. Open your invitation email to get started. Already have access? Sign in.",
+    "es": "El piloto funciona por invitación. Abre el correo de invitación para empezar. ¿Ya tienes acceso? Inicia sesión."
+  },
+  "q2": {
+    "en": "Which AI chats can I use?",
+    "es": "¿Qué chats de IA puedo usar?"
+  },
+  "a2": {
+    "en": "Start with the guides for ChatGPT and Hermes. Other clients need to meet the connection requirements in their guide.",
+    "es": "Empieza con las guías para ChatGPT y Hermes. Los demás clientes deben cumplir los requisitos de conexión indicados en su guía."
+  },
+  "q3": {
+    "en": "What happens to my account details?",
+    "es": "¿Qué ocurre con los datos de mi cuenta?"
+  },
+  "a3": {
+    "en": "The service stores your AimHarder credentials encrypted and can recover them to authenticate. Your AI chat does not receive them.",
+    "es": "El servicio guarda tus credenciales de AimHarder cifradas y puede recuperarlas para autenticarte. Tu chat de IA no las recibe."
+  },
+  "q4": {
+    "en": "Can I disconnect later?",
+    "es": "¿Puedo desconectar el acceso después?"
+  },
+  "a4": {
+    "en": "Yes. You can disconnect each AI client independently. Disconnecting AimHarder and deleting your Connect account are separate actions.",
+    "es": "Sí. Puedes desconectar cada cliente de IA por separado. Desconectar AimHarder y eliminar tu cuenta de Connect son acciones distintas."
+  },
+  "q5": {
+    "en": "Is this an official AimHarder service?",
+    "es": "¿Es un servicio oficial de AimHarder?"
+  },
+  "a5": {
+    "en": "No. AimHarder Connect is an independent project, not affiliated with AimHarder.",
+    "es": "No. AimHarder Connect es un proyecto independiente, sin afiliación con AimHarder."
+  },
+  "closing": {
+    "en": "Bring your training into the conversation.",
+    "es": "Lleva tu entrenamiento a la conversación."
+  },
+  "github": {
+    "en": "GitHub",
+    "es": "GitHub"
+  },
+  "privacy": {
+    "en": "Privacy",
+    "es": "Privacidad"
+  },
+  "disclosure": {
+    "en": "An independent project. Not affiliated with AimHarder.",
+    "es": "Un proyecto independiente. Sin afiliación con AimHarder."
+  }
+}

@@ -1,6 +1,6 @@
 # Visual foundations — work in progress
 
-Current stage, 2026-10-30: the owner selected **AimHarder Connect** as the working product name and **Krona One** for its wordmark. `aimharder-mcp` remains the technical npm package. The [first public-home structure](home-study/README.md) proposes the message, conversation example, useful prompts, three setup tasks, short FAQ and sign-in entry action; its structure/copy await review before the visual home experiment. The home is required in English/Spanish with a flag-free language selector and Light/Dark/System appearance; confirmation controls follow PR #121 in settings and are not a public-home emphasis. Motion exploration is paused at the owner's request for this stage. The `.pen` UI foundations remain provisional, and later #95 screens remain out of the current delivery.
+Current stage, 2026-10-30: the owner selected **AimHarder Connect** and **Krona One**, requested English/Spanish, Light/Dark/System and Lucide icons, and authorized the first home design in pen.dev. [design/ahmcp.pen](ahmcp.pen) now contains eight editable home-page representations (desktop/mobile × English/Spanish × Light/Dark), a shared wordmark and a preference/FAQ/focus state board. The [home handoff and previews](home-study/README.md) record source references, copy, contrast checks and remaining acceptance. This is a first visual candidate, not a functional website or a complete #95 delivery. Confirmation configuration stays in later settings work aligned with PR #121; the home does not emphasize it. The original provisional foundations are retained. `aimharder-mcp` remains the technical npm package.
 
 Design source: [ahmcp.pen](ahmcp.pen). Issue [#95](https://github.com/rudeayelo/aimharder-mcp/issues/95), under [#103](https://github.com/rudeayelo/aimharder-mcp/issues/103).
 
@@ -8,7 +8,7 @@ Design source: [ahmcp.pen](ahmcp.pen). Issue [#95](https://github.com/rudeayelo/
 
 The owner narrowed the current delivery on 2026-10-29: define basic visual elements first, then compare two identity trials made with GPT Image, then try one public home page. Define the remaining screens only after that exploration. The complete #95 inventory remains outstanding. No final navigation, identity or screen design is selected by this checkpoint. The subsequent [kettlebell robot identity trials](identity/README.md) are now available for review; neither has been selected.
 
-The editable file currently contains two foundation boards and three shared components: primary action, labeled input and status message. It contains no product screens. Text and UI examples use fictional data. The components illustrate appearance, not working controls.
+At the historical foundation checkpoint, the editable file contained two foundation boards and three shared components: primary action, labeled input and status message. The later home frames are described above. Text and UI examples use fictional data. The components illustrate appearance, not working controls.
 
 ## Provisional reference lock
 
@@ -73,4 +73,4 @@ White on brand blue is **3.30:1**: do not use for normal text. Primary dark text
 - No runtime, API, auth, MCP, provider, support-inbox or deployment behavior changed. No API research update is needed. Reviewed identity/custody, client authorization, invited admission, activity-role, self-service and hosted Madrid ADRs; their decisions are unchanged, so no new ADR is warranted for these reversible visual candidates.
 - No behavioral tests were added: this checkpoint changes design/documentation only. Full implementation verification belongs to subsequent deliveries. Two subsequent GPT Image trials are linked above; the public home-page experiment, mobile layouts, final navigation and the remaining #95 inventory have not been produced.
 
-Next review: settle the proposed public-home structure and produce one visual home experiment before the remaining screens. Earlier foundation and image-comparison observations above retain their historical scope.
+Next review: assess the first public-home designs, copy and proportions before implementation or the remaining screens. Earlier foundation and image-comparison observations above retain their historical scope.

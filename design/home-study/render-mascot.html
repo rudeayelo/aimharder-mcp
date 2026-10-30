@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>AimHarder Connect — transparent mascot export</title>
+<style>body{margin:0;font:14px system-ui;background:#dce3ec}canvas{display:block;width:512px;height:512px}p{margin:12px}</style>
+<script type="importmap">{"imports":{"three":"../identity/idol-motion-prototype/vendor/three.module.js"}}</script>
+<p id="status">Rendering the existing 32k mascot…</p>
+<p><a id="download" download="kettle-neutral.png">Save transparent PNG</a></p>
+<script type="module">
+import * as THREE from 'three';
+import { SogsLoader, SplatMesh } from '../identity/idol-motion-prototype/vendor/visus-2.5.0.js';
+import { SOURCE_BOUNDS } from '../identity/idol-motion-prototype/asset-profiles.js';
+import { createEyes } from '../identity/idol-motion-prototype/hybrid/eye-rig.js';
+const scene=new THREE.Scene();
+const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,preserveDrawingBuffer:true});
+renderer.setSize(512,512);renderer.setPixelRatio(1);renderer.setClearColor(0,0);
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.domElement.setAttribute('aria-label','Transparent neutral mascot render');
+document.body.append(renderer.domElement);
+const camera=new THREE.PerspectiveCamera(26,1,.01,100);
+camera.position.set(3.0,.76,0);camera.lookAt(0,.5,0);
+const loader=new SogsLoader();
+const data=await loader.loadAsync('../identity/idol-motion-prototype/hybrid/kettle-body-32k.sog');
+const box={min:new THREE.Vector3(...SOURCE_BOUNDS.min),max:new THREE.Vector3(...SOURCE_BOUNDS.max)};
+box.center=box.min.clone().add(box.max).multiplyScalar(.5);
+const height=box.max.y-box.min.y;
+const body=new THREE.Group();scene.add(body);
+const mesh=new SplatMesh(data,{autoSort:true});
+mesh.scale.setScalar(1/height);mesh.rotation.x=Math.PI;
+mesh.position.set(-box.center.x/height,box.max.y/height,box.center.z/height);body.add(mesh);
+const eyes=createEyes(body,box);eyes.apply({open:[1,1],width:1,gaze:0,gazeY:0});
+const draw=()=>renderer.render(scene,camera);
+mesh.sorter.addEventListener('updated',()=>{draw();document.querySelector('#status').textContent='Ready — transparent 512 × 512 neutral PNG.';document.querySelector('#download').href=renderer.domElement.toDataURL('image/png');});
+draw();
+</script>
+</html>

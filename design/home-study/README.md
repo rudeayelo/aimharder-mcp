@@ -1,10 +1,28 @@
 # AimHarder Connect — public home structure
 
-Date: 2026-10-30. Status: first information-architecture and content proposal for owner review under #95. The owner selected **AimHarder Connect** as the working product name and **Krona One** for the wordmark. `aimharder-mcp` remains the technical npm package. AIHarder is a retained naming alternative, not the current build target.
+Date: 2026-10-30. Status: first editable public-home design for owner review under #95, following the structure proposal below. The owner selected **AimHarder Connect** as the working product name and **Krona One** for the wordmark. `aimharder-mcp` remains the technical npm package. AIHarder is a retained naming alternative, not the current build target.
 
-The owner additionally requires English/Spanish presentation, a simple text language selector without flags, and Light/Dark/System appearance. Confirmation steps are not a home-page selling point; the later settings design must follow PR #121.
+The owner additionally requires English/Spanish presentation, a simple text language selector without flags, Light/Dark/System appearance and **Lucide icons exclusively**. Confirmation steps are not a home-page selling point; the later settings design must follow PR #121.
 
-This checkpoint proposes the structure of one public home page. It does not draw the remaining screens, adopt final copy/navigation, implement a page, activate support or deploy anything. The existing editable design handoff remains `design/ahmcp.pen` when the visual home experiment is produced.
+This checkpoint delivers one public home-page design in [design/ahmcp.pen](../ahmcp.pen), with desktop/mobile, English/Spanish and light/dark representations. It does not draw other product screens, adopt final copy/navigation, implement the page, activate support or deploy anything. The structure below records the design rationale, with static interaction states and implementation prerequisites.
+
+## Delivered canvas and previews
+
+The editor contains the original foundation boards plus these new home frames. Locale variants use literal localized text for reliable canvas rendering; themed variables carry semantic palette roles. Components reuse the existing primary-action component and a new shared Krona One wordmark. [copy.json](copy.json) supplies both languages and the full FAQ answer inventory.
+
+| Frame | Width | Locale / appearance | Render |
+| --- | --- | --- | --- |
+| `uAXkc` | 1440 | English / Light | [PNG](previews/uAXkc.png) |
+| `p7u8w` | 1440 | English / Dark | [PNG](previews/p7u8w.png) |
+| `uzAUz` | 1440 | Spanish / Light | [PNG](previews/uzAUz.png) |
+| `Qg3nb` | 1440 | Spanish / Dark | [PNG](previews/Qg3nb.png) |
+| `T37OLV` | 390 | English / Light | [PNG](previews/T37OLV.png) |
+| `qJZFz` | 390 | English / Dark | [PNG](previews/qJZFz.png) |
+| `bMKmj` | 390 | Spanish / Light | [PNG](previews/bMKmj.png) |
+| `PuPqO` | 390 | Spanish / Dark | [PNG](previews/PuPqO.png) |
+| `idH0v` | 1440 | Language, appearance, expanded FAQ and keyboard-focus states | [PNG](previews/idH0v.png) |
+
+[Desktop Light through Tailscale](https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/previews/uAXkc.png) · [Desktop Dark through Tailscale](https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/previews/p7u8w.png) · [Spanish mobile Dark through Tailscale](https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/previews/PuPqO.png). The scoped tailnet route proxies a local static server on localhost:8946 rooted at `design/`; the server must remain running. This is artifact delivery, not service deployment.
 
 ## Goal and product boundary
 
@@ -71,7 +89,7 @@ Do not draw a global confirmation-off switch. Cancellation, late credit-loss can
 - System follows operating-system changes while active; a saved Light/Dark choice overrides it. Remember appearance independently of language. These are local presentation preferences, separate from account-wide action-policy switches.
 - Place language and appearance as secondary header utilities. On narrow screens, keep Sign in prominent and make utilities available in a compact navigation area without a full-screen preferences flow. Never require a visitor to configure them before reading or signing in.
 - Dark mode uses semantic surface/text/action/focus tokens, preserving the blue brand and orange-eye roles. Adapt navy HARDER/CONNECT lettering to a readable light neutral rather than leaving navy on a dark background. Contrast and component states need separate checks in both palettes.
-- The current neutral mascot raster has a white background and is not a finished dark-mode asset. Prepare a transparent runtime/static equivalent for the visual experiment; do not use a white image tile, global inversion or blending that changes the eyes/body colors. Asset export and dark-theme visual acceptance remain pending.
+- The earlier neutral master has a white background. This design instead uses [a transparent neutral PNG](assets/kettle-neutral.png), rendered from the existing hybrid 32k Gaussian body and curved eye rig by [render-mascot.html](render-mascot.html). No new AI character/image generation, global inversion or blending is used. This is a static candidate; final asset/appearance acceptance remains with the owner.
 - Avoid a flash of the wrong theme on load. Preserve focus, reading position and the current page when a preference changes; do not reload into an unrelated page.
 
 ### Initial bilingual copy candidates
@@ -118,10 +136,26 @@ Preference-pattern research added on 2026-10-30: a style search plus language/ap
 | English/Spanish, no flags | Owner, 2026-10-30 | Provide a simple language choice across the public home. |
 | Light/Dark/System | Owner, 2026-10-30; bounded preference patterns | Support explicit appearance and system-following without introducing another brand direction. |
 | Confirmation preferences in settings, not the home pitch | Owner + inspected PR #121 | Match the two independent account policies without making a global promise. |
+| Lucide icons only | Explicit owner instruction, 2026-10-30 | Native `icon` nodes with library `lucide`; no alternative pictogram libraries. |
 | No additional screens or new motion tests | Owner's staged review and latest steering | Settle this one page before expanding scope. |
 
 ## Responsive and next-stage criteria
 
 Desktop proposal: a concise message/action column beside the conversation. Mobile: logo/navigation, headline and access action first, then the example and remaining sections in reading order. Keep the same content hierarchy; avoid a carousel required to discover capabilities. A static poster is the baseline for the logo; if existing motion is later integrated, honor reduced motion and render only as needed.
 
-This is a content/structure proposal, not a rendered wireframe. The next deliverable is one desktop/mobile visual home experiment in the selected brand direction, with explicit illustrative data, real font files and existing mascot assets. Validate text, media, focus, contrast, spacing and clipping in both languages and both effective palettes. Verify saved preferences, System tracking, no initial theme flash, keyboard controls and mobile layout, including the translated control labels. Dark logo/poster assets must be checked before accepting that view. Final copy, layout, responsive dimensions, page links and production implementation remain pending. No new architecture/security/distribution ADR is warranted for this proposal; existing access, custody, action and validation decisions remain unchanged.
+The first desktop/mobile visual home experiment is now drawn and exported. Final copy, optical adjustments, functional links, interaction behavior and production implementation remain pending. The mobile layout keeps language/appearance and Sign in visible in a second header row; the menu affordance is reserved for section navigation. Page variants depict **System** as the selected preference with either effective palette; the separate state board shows the three explicit menu choices.
+
+## Verification and handoff checklist — 2026-10-30
+
+- [x] Rendered and visually inspected the desktop light/dark designs and the Spanish mobile header, hero, prompts, setup, FAQ and closing action. All eight pages were exported from pen.dev, not recreated in HTML.
+- [x] All eight home-page subtrees report no layout/clipping problems in the editor's bounds visitor after layout settles. No unresolved `$home-...` content strings remain. Every new icon node uses `lucide`.
+- [x] Locale variants include translated navigation, action labels, demo text and FAQ questions. [copy.json](copy.json) includes all FAQ answers, including those shown collapsed in the page design. Source exercise names and technical/brand identifiers remain unchanged.
+- [x] The transparent poster is RGBA, 512 × 512, with alpha spanning 0–255. Its source-model and output hashes are recorded in [visual-checks.json](visual-checks.json). The renderer uses existing local dependencies; no root package/lockfile changed.
+- [x] Measured key normal-text pairings exceed 4.5:1: Light text 14.95:1, supporting text on surface 5.90:1, Light action label 5.96:1, Dark text 16.40:1, Dark supporting text on surface 8.28:1 and Dark action label 5.56:1. Full samples are in the checks file. This is a color-pair audit, not a blanket accessibility certification.
+- [x] Language/appearance menus, selected System, light/dark keyboard-focus examples and expanded privacy answers were visually inspected in [the state-board export](previews/idH0v.png). Its bounds visitor still reports nested sizing/clipping warnings despite the complete exported render; this auxiliary board does not have a clean structural visitor pass. Recheck the editor's sizing diagnostics before reusing those menu groups in further screens.
+- [x] Existing foundation boards and their components were retained. Name, access policy and the #121 integration boundary agree with the design notes. Existing architecture/security/distribution ADRs remain applicable; no runtime/API or protocol decision changed.
+- [ ] Owner visual/copy acceptance, physical-mobile review and actual font/rendering behavior in the final application.
+- [ ] Implement and test language selection/persistence, System tracking, no initial theme flash, focus/keyboard handling, FAQ expansion and working navigation. Static canvas states do not establish those behaviors.
+- [ ] Implement the selected home only after review; remaining portal/settings/email screens stay outside this first home delivery. Follow PR #121's final merged policy when settings work begins.
+
+Relevant checks for this delivery are canvas rendering, structural/icon/localization audits, artifact provenance/contrast, file/link validation and `git diff --check`. No production TypeScript changed and no MCP runtime test suite was run for this design-only addition.
