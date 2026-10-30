@@ -17,7 +17,7 @@ Ask about your AimHarder classes, workouts, bookings, activity and personal RMs 
      "mcpServers": {
        "aimharder": {
          "command": "npx",
-         "args": ["--yes", "aimharder-mcp@0.5.3"]
+         "args": ["--yes", "aimharder-mcp@0.5.4"]
        }
      }
    }
