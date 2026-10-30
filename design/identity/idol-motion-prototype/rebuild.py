@@ -10,7 +10,8 @@ import tempfile
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
 parser = argparse.ArgumentParser()
-parser.add_argument('--models', action='store_true', help='Also regenerate the SOG models')
+parser.add_argument('--models', action='store_true', help='Also regenerate every SOG model')
+parser.add_argument('--eyes', action='store_true', help='Regenerate only the hybrid body before bundling')
 args = parser.parse_args()
 converter = ['npm', 'exec', '--yes', '--package=@playcanvas/splat-transform@3.10.3', '--', 'splat-transform', '-w', '-g', 'cpu', '--max-workers', '2']
 if args.models:
@@ -21,16 +22,25 @@ if args.models:
             subprocess.run(converter + [str(HERE/'kettle.ply'), '--decimate', str(count), intermediate], check=True)
             subprocess.run(converter + [intermediate, str(HERE/f'optimized/kettle-{label}.sog')], check=True)
 
+if args.models or args.eyes:
+    with tempfile.TemporaryDirectory(prefix='aimharder-eye-body-') as scratch:
+        clean=str(Path(scratch)/'clean.ply')
+        decimated=str(Path(scratch)/'32k.ply')
+        subprocess.run(['python3',str(HERE/'hybrid/prepare-body.py'),clean],check=True)
+        subprocess.run(converter+[clean,'--decimate','32768',decimated],check=True)
+        subprocess.run(converter+[decimated,str(HERE/'hybrid/kettle-body-32k.sog')],check=True)
+
 profiles = {}
 source_bytes = (HERE/'kettle.ply').stat().st_size
 for key, filename, count, title in [
+    ('hybrid', 'hybrid/kettle-body-32k.sog', 32768, '32k + animated eyes'),
     ('original', 'kettle.ply', 262144, 'Original PLY'),
     ('full', 'optimized/kettle-full.sog', 262144, 'SOG · full detail'),
     ('64k', 'optimized/kettle-64k.sog', 65536, 'SOG · 64k'),
     ('32k', 'optimized/kettle-32k.sog', 32768, 'SOG · 32k'),
 ]:
     data = (HERE/filename).read_bytes()
-    profiles[key] = dict(file=filename, count=count, bytes=len(data), title=title)
+    profiles[key] = dict(file=filename, count=count, bytes=len(data), title=title,eyes=key=='hybrid')
 
 bounds = {'min': [-0.4453687369823456,-0.4977874159812927,-0.4721851348876953], 'max': [0.471529483795166,0.5043943524360657,0.4717373847961426]}
 (HERE/'asset-profiles.js').write_text('export const PROFILES = '+json.dumps(profiles,indent=2)+';\n// Canonical framing from the unchanged source PLY, shared by all profiles.\nexport const SOURCE_BOUNDS = '+json.dumps(bounds)+';\n')

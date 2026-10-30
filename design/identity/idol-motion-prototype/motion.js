@@ -4,8 +4,10 @@ import { OrbitControls } from './vendor/OrbitControls.js';
 import { PlyLoader, SogsLoader, SplatMesh } from './vendor/visus-2.5.0.js';
 import { FPS, CLIPS, poseAt } from './motion-poses.js';
 import { PROFILES, SOURCE_BOUNDS } from './asset-profiles.js';
+import { createEyes } from './hybrid/eye-rig.js';
+import { eyePoseAt } from './hybrid/eye-poses.js';
 const parameters = new URLSearchParams(location.search);
-const profileKey = Object.hasOwn(PROFILES,parameters.get('asset')) ? parameters.get('asset') : '64k';
+const profileKey = Object.hasOwn(PROFILES,parameters.get('asset')) ? parameters.get('asset') : 'hybrid';
 const profile = PROFILES[profileKey];
 const quality = document.querySelector('#quality');
 quality.value = profileKey;
@@ -32,7 +34,9 @@ controls.minDistance = 1.5;
 controls.maxDistance = 16;
 const pivot = new THREE.Group();
 scene.add(pivot);
-let mode = 'rock', frame = 0, started = 0, playing = false, ready = false;
+let mode = 'blink', frame = 0, started = 0, playing = false, ready = false;
+let eyeRig=null;
+const clipFPS=()=>CLIPS[mode].fps??FPS;
 const supportPoints = [];
 let renderScheduled=false, dirty=true;
 function requestRender() {
@@ -70,16 +74,17 @@ function drawFrame(f) {
     lowest=Math.min(lowest,supportPoint.y);
   }
   pivot.position.set(0,p.lift-(Number.isFinite(lowest)?lowest:0),p.sway);
+  if(eyeRig)eyeRig.apply(eyePoseAt(mode,f));
   slider.max=CLIPS[mode].frames.length-1;
   slider.value=f;
   label.textContent=`Frame ${f+1} / ${CLIPS[mode].frames.length}`;
-  duration.textContent=`${(CLIPS[mode].frames.length/FPS).toFixed(2)} s · ${FPS} fps`;
+  duration.textContent=`${(CLIPS[mode].frames.length/clipFPS()).toFixed(2)} s · ${clipFPS()} fps`;
   requestRender();
 }
 function setPlaying(value) {
   playing = value;
   pause.textContent = value ? 'Pause' : 'Play';
-  if (value) started = performance.now()-frame*1000/FPS;
+  if (value) started = performance.now()-frame*1000/clipFPS();
   renderer.setAnimationLoop(value ? tick : null);
   requestRender();
 }
@@ -111,7 +116,7 @@ try {
   status.textContent=`Loading ${profile.title} · ${(profile.bytes/1e6).toFixed(2)} MB…`;
   const loader=profile.file.endsWith('.sog') ? new SogsLoader() : new PlyLoader();
   const data = await loader.loadAsync('./'+profile.file);
-  // Normalize around the model's base; no Gaussian geometry/colors are edited.
+  // Runtime normalization only; the hybrid eye backing was prepared offline.
   const box={
     min:new THREE.Vector3(...SOURCE_BOUNDS.min),
     max:new THREE.Vector3(...SOURCE_BOUNDS.max),
@@ -133,11 +138,13 @@ try {
   mesh.rotation.x = Math.PI;
   mesh.position.set(-box.center.x/h, box.max.y/h, box.center.z/h);
   pivot.add(mesh);
+  if(profile.eyes)eyeRig=createEyes(pivot,box);
+  else mode='rock';
   ready=true;
   status.textContent=`${profile.title} · ${data.numSplats.toLocaleString('en')} splats · ${(profile.bytes/1e6).toFixed(2)} MB`;
   if (loader.dispose) loader.dispose();
-  document.querySelectorAll('button').forEach(b=>b.disabled=false);
-  document.querySelector('[data-motion="rock"]').setAttribute('aria-pressed','true');
+  document.querySelectorAll('button').forEach(b=>b.disabled=Boolean(b.dataset.eyeOnly&&!profile.eyes));
+  document.querySelector(`[data-motion="${mode}"]`).setAttribute('aria-pressed','true');
   drawFrame(0);
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setPlaying(true);
 } catch (error) {
@@ -146,7 +153,7 @@ try {
 }
 function tick(now) {
   if (ready && playing) {
-    const next = Math.max(0,Math.floor((now-started)*FPS/1000));
+    const next = Math.max(0,Math.floor((now-started)*clipFPS()/1000));
     if (next>=CLIPS[mode].frames.length) {
       if (document.querySelector('#loop').checked) {started=now;drawFrame(0);}
       else {drawFrame(CLIPS[mode].frames.length-1);setPlaying(false);}

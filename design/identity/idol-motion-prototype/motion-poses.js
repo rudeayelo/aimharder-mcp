@@ -37,7 +37,9 @@ flight(spin,3,11,.26,.06);
 export const CLIPS = {
   rock:{name:'Rock', frames:rock},
   hop:{name:'Little hop', frames:hop},
-  spin:{name:'Tilted spin', frames:spin}
+  spin:{name:'Tilted spin', frames:spin},
+  blink:{name:'Double blink',fps:24,frames:Array.from({length:24},()=>pose())},
+  curious:{name:'Curiosity',frames:[0,-1,-3,-5,-7,-7,-7,-7,-6,-4,-2,0,1,0,0,0,0,0].map((angle,i)=>pose(angle,1,angle*.35))}
 };
 export function poseAt(mode, frame) {
   const frames=CLIPS[mode].frames;

@@ -1,6 +1,6 @@
 # Kettlebell robot identity trials
 
-Latest isolated experiment: the owner liked the revised [IDOL model motion study](idol-motion-prototype/README.md) and requested weight optimization. The [compression comparison](idol-motion-prototype/compression-study.md) now defaults to a 65,536-splat SOG candidate of 801 KB (95.5% smaller than the original model); full-count and 32k alternatives remain available. Original and compressed profiles rendered successfully in Chrome; perceptual acceptance and real mobile performance remain pending. This does not replace the wordmark or existing video set.
+Latest isolated experiment: the owner accepted 32k at the intended logo size and authorized the [hybrid eye study](idol-motion-prototype/hybrid/README.md). The 415 KB derivative body retains the recessed eye sockets and adds two independent orange mesh eyes, with double blink, curiosity and closed-eye jump anticipation. Eye appearance/timing acceptance and real mobile performance remain pending. This does not replace the wordmark or existing video set.
 
 Current brand-design stage: the owner considers the motion set sufficient and has returned to the wordmark. The [real-font composition study](wordmark-study/README.md) compares Krona One, Big Shoulders 600 and Aldrich with the selected circular-face character, preserves the earlier generated lettering reference and reuses existing motion clips only. No final typeface or public home page is selected.
 

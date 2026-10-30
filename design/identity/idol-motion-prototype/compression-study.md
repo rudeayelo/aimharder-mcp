@@ -2,7 +2,7 @@
 
 ## Result — 2026-10-30
 
-The owner accepted the revised motion direction and requested lower weight. The isolated comparison now defaults to the **64k SOG candidate**, retaining the original as a selectable reference. Production format selection and owner perceptual acceptance remain pending.
+The owner accepted the revised motion direction and requested lower weight. This compression-only trial initially defaulted to the **64k SOG candidate**. The owner subsequently accepted 32k at the intended logo size; the current [hybrid eye study](hybrid/README.md) defaults to an edited 32k body and two mesh eyes. The original and compression-only profiles remain selectable. Production delivery and eye appearance acceptance remain pending.
 
 [Open the comparison through Tailscale](https://mini.taild6f227.ts.net:8443/aimharder-brand-95/idol-motion-prototype/?asset=64k). Use **Model** to compare assets and **Logo scale** to inspect readability at roughly 68 CSS pixels tall in the desktop preview. The same pose definitions, camera presets and source bounds apply to every profile.
 
@@ -19,11 +19,11 @@ A gzip estimate for the original PLY was 13,396,475 bytes: considerably larger t
 
 ## Renderer and runtime
 
-The previous module graph at commit `ff717ef` totaled 2,097,151 JavaScript bytes. Bundling/tree shaking/minification now serves one approximately **563 KB** script (exact current value in the manifest), including Three.js, Visus, OrbitControls, pose data and application code. The same dependencies and local license files are retained. No root package dependency or lockfile changed.
+The previous module graph at commit `ff717ef` totaled 2,097,151 JavaScript bytes. The first compression pass produced a **563 KB** script. With the subsequent eye rig, bundling/tree shaking/minification now serves approximately **594 KB** (exact current value in the manifest), including Three.js, Visus, OrbitControls, pose data and application code. The same dependencies and local license files are retained. No root package dependency or lockfile changed.
 
-- 64k model plus script: approximately **1.36 MB** before HTTP compression; HTML and the 35 KB font are additional.
-- 32k model plus script: approximately **982 KB**, with the same exclusions.
-- Bundle gzip estimate: approximately **146 KB**. The current Python static preview does **not** serve gzip, so this is not claimed as actual transferred bytes. HTTP compression is a later hosting improvement.
+- 64k model plus script: approximately **1.39 MB** before HTTP compression; HTML and the 35 KB font are additional.
+- 32k model plus script: approximately **1.01 MB**, with the same exclusions.
+- Bundle gzip estimate: approximately **156 KB**. The current Python static preview does **not** serve gzip, so this is not claimed as actual transferred bytes. HTTP compression is a later hosting improvement.
 - Only the selected model downloads. Source/vendor files are retained for rebuilding and manual comparison but are not automatically fetched by the bundled page.
 - The animation loop stops at the final pose. Camera changes, resize and asynchronous sorter completion request individual renders. Gesture poses remain sampled at 12 fps, while sorting/interaction can request extra draws.
 
@@ -33,7 +33,7 @@ SOG lowers transfer weight; full-count SOG does not reduce Gaussian workload. Th
 
 Chrome successfully rendered the original, full-count, 64k and 32k profiles over the actual Tailscale HTTPS URL. The frontal face, two orange eye capsules, circular inset and handle remain recognizable in all three compressed profiles at the inspected size. The 32k profile was also inspected at logo scale. The 64k profile played the tilted spin from a three-quarter view. The default 64k profile rendered at a simulated 390 × 844 viewport with no horizontal overflow; this is desktop browser emulation, not physical-device acceptance. JavaScript syntax checks, artifact hashes, new local documentation links and Tailscale HTTP 200 checks passed. Lower-count detail is an approximation; small recessed contours can soften, particularly on close inspection. This is a visual review, not proof of perceptual equivalence.
 
-The 64k candidate is the conservative working default for review; 32k is a lighter candidate for a small logo. No new image/model generation or API charge was involved. Source PLY SHA-256 is unchanged. Formal image-error metrics, cold remote-network latency, physical mobile performance, codec profiling and production rollout remain unverified.
+The 64k candidate was the initial conservative default. The owner subsequently selected the 32k direction for the logo. No new image/model generation or API charge was involved. Source PLY SHA-256 is unchanged. Formal image-error metrics, cold remote-network latency, physical mobile performance, codec profiling and production rollout remain unverified.
 
 ## Rebuild
 

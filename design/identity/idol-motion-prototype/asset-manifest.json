@@ -12,5 +12,7 @@
   },
   "edits": "Source PLY unchanged; compressed/decimated derivatives tracked separately; runtime transforms only",
   "optimizedManifest": "optimized/manifest.json",
-  "previewDefault": "64k"
+  "previewDefault": "hybrid",
+  "acceptedBodyProfile": "32k",
+  "hybridProvenance": "hybrid/body-edit.json"
 }
