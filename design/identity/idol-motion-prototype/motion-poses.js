@@ -44,11 +44,29 @@ export function curiosityTrack(values) {
     return values[before]+((values[before+1]??values[before])-values[before])*fraction;
   });
 }
+
+// Screen-relative gaze: up-right, up-left, right, down, then a slower return.
+// Short holds make each target readable. The body follows the eyes two frames later.
+const lookTargets=[
+  [0,0,0], [4,1,1], [7,1,1], [11,-1,1], [14,-1,1],
+  [18,1,0], [21,1,0], [25,0,-1], [28,0,-1], [40,0,0], [42,0,0]
+];
+function lookAtFrame(frame) {
+  const next=lookTargets.findIndex(([f])=>f>=frame);
+  if(next<=0)return {x:0,y:0};
+  const [a,x0,y0]=lookTargets[next-1], [b,x1,y1]=lookTargets[next];
+  const t=(frame-a)/(b-a), ease=t*t*(3-2*t);
+  return {x:x0+(x1-x0)*ease,y:y0+(y1-y0)*ease};
+}
+export const LOOK_AROUND=Array.from({length:43},(_,frame)=>({
+  ...lookAtFrame(frame),pitch:4*lookAtFrame(Math.max(0,frame-2)).y
+}));
 export const CLIPS = {
   rock:{name:'Rock', frames:rock},
   hop:{name:'Little hop', frames:hop},
   spin:{name:'Tilted spin', frames:spin},
   blink:{name:'Double blink',fps:24,frames:Array.from({length:24},()=>pose())},
+  look:{name:'Look around',frames:LOOK_AROUND.map(p=>pose(0,1,0,p.pitch))},
   curious:{name:'Curiosity',frames:curiosityTrack([0,-1,-3,-5,-7,-7,-7,-7,-6,-4,-2,0,1,0,0,0,0,0]).map(angle=>pose(angle,1,angle*.35))}
 };
 export function poseAt(mode, frame) {

@@ -50,7 +50,7 @@ export function createEyes(parent,bounds) {
       eyes.forEach((eye,i)=>{
         const open=pose.open[i],hx=.029*pose.width,hy=Math.max(.0018,.065*open);
         const depth=Math.max(.003,.027*Math.sqrt(open));
-        const cy=.103,cz=eye.center-pose.gaze;
+        const cy=.103-(pose.gazeY??0),cz=eye.center-pose.gaze;
         const verticalBevel=Math.max(.06,open);
         place(eye,0,cy,cz,depth,2);
         for(let ring=0;ring<layers;ring++)for(let j=0;j<N;j++) {
@@ -70,7 +70,8 @@ export function createEyes(parent,bounds) {
             const inner=contour(theta,hx+.011,hy+.011*verticalBevel,.040);
             const outer=contour(theta,.078,.142,.065);
             u=(1-t)*(cz+inner[0])+t*(eye.center+outer[0])-cz;
-            v=(1-t)*inner[1]+t*outer[1];
+            // Keep the outer seam fixed while the complete recess travels in Y/Z.
+            v=(1-t)*inner[1]+t*(.103+outer[1]-cy);
             d=0;tone=1;
           }
           place(eye,1+ring*N+j,cy+v,cz+u,d,tone);

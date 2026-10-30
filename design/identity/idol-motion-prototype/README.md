@@ -2,7 +2,7 @@
 
 ## Question and scope
 
-Can the owner's IDOL reconstruction preserve the kettle's identity while supporting controlled stop-motion emotes? This is a throwaway, isolated study for issue #95 on `codex/95-symbol-motion-prototype`. It does not replace the wordmark study, generated videos, or production UI. The owner liked the first 3D study and requested faster, more natural motion. The owner then preferred V2 and requested weight optimization. The owner accepted 32k for the intended logo size and authorized a hybrid eye-animation trial. The owner rejected the first fixed-socket/flat-insert trial; the current revision deforms complete eye recesses on a curved surface. The owner liked the curved eye appearance; the latest curiosity amplitude/timing refinement awaits review.
+Can the owner's IDOL reconstruction preserve the kettle's identity while supporting controlled stop-motion emotes? This is a throwaway, isolated study for issue #95 on `codex/95-symbol-motion-prototype`. It does not replace the wordmark study, generated videos, or production UI. The owner liked the first 3D study and requested faster, more natural motion. The owner then preferred V2 and requested weight optimization. The owner accepted 32k for the intended logo size and authorized a hybrid eye-animation trial. The owner rejected the first fixed-socket/flat-insert trial; the current revision deforms complete eye recesses on a curved surface. The owner liked the curved eye appearance; the stronger, slower curiosity refinement was also accepted. The new directed look-around experiment awaits review.
 
 Open `index.html` through a static server. From the repository root:
 
@@ -42,7 +42,7 @@ The first and last poses use exactly the same neutral transform. A sampled-cente
 - `node --check motion.js` and `node --check motion-poses.js` passed. A numerical pose audit passed for finite values, non-negative lift, positive scale, volume-preserving scale determinant and identical endpoint poses for all three gestures. Static page, model and local dependency URLs returned HTTP 200 through Tailscale.
 - [Desktop preview](desktop-preview.png) records the rendered object. The [compression study](compression-study.md) records the subsequent SOG conversion, count reduction and browser checks.
 
-This demonstrates a usable candidate for rigid motion. The revised curved-recess trial is implemented and visually checked; owner review of the latest curiosity refinement, video export, production integration, GPU/load-time measurements and physical-mobile acceptance remain pending. No architecture, security, API or distribution decision is made; existing ADRs are unaffected.
+This demonstrates a usable candidate for rigid motion. The revised curved-recess trial is implemented and visually checked; owner review of the new look-around gesture, video export, production integration, GPU/load-time measurements and physical-mobile acceptance remain pending. No architecture, security, API or distribution decision is made; existing ADRs are unaffected.
 
 ## Current delivery optimization
 
@@ -50,4 +50,4 @@ The owner selected the 32k direction. The comparison now defaults to the hybrid 
 
 ## Current eye trial
 
-[Hybrid study](hybrid/README.md): two complete eye surfaces deform the floor, walls and lip together along the fitted face curvature. Double blink uses the previously preferred one-second / 24 fps cadence; body clips stay at 12 fps. Curiosity adds a small gaze offset and a stronger 45% / 125% eye-height contrast. Its initial approach takes one second (3× longer); the hold and return retain their previous timing. The clip now has 26 exposures / 2.17 seconds. Hop/spin anticipation closes the eyes. All clips restore the exact neutral body and eye pose.
+[Hybrid study](hybrid/README.md): two complete eye surfaces deform the floor, walls and lip together along the fitted face curvature. Double blink uses the previously preferred one-second / 24 fps cadence; body clips stay at 12 fps. Curiosity adds a small gaze offset and a stronger 45% / 125% eye-height contrast. Its initial approach takes one second (3× longer); the hold and return retain their previous timing. The clip now has 26 exposures / 2.17 seconds. Look around adds a 43-exposure / 3.58-second sequence: up-right, up-left, right, down, then a slow one-second return to center. A ±4° vertical body tilt follows two frames after the eyes; the moving recess keeps a fixed outer seam. Hop/spin anticipation closes the eyes. All clips restore the exact neutral body and eye pose.
