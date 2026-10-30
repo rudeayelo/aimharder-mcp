@@ -1,0 +1,14 @@
+{
+  "source": "User-provided IDOL export; no new generation",
+  "originalFilename": "idol-seed42-262144-b8531060.ply",
+  "sha256": "48334af699ab95a12296ddd2f6f383ff97253777842a5e50c9f9eb90faebc3ae",
+  "bytes": 17826208,
+  "gaussians": 262144,
+  "format": "binary_little_endian PLY; 17 float32 properties; no faces",
+  "project": "https://speridlabs.com/research/idol",
+  "dependencies": {
+    "@speridlabs/visus": "2.5.0",
+    "three": "0.175.0"
+  },
+  "edits": "Source PLY unchanged; runtime orientation and normalization only"
+}

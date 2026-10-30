@@ -1,5 +1,7 @@
 # Kettlebell robot identity trials
 
+Latest isolated experiment: the [owner-supplied IDOL model motion study](idol-motion-prototype/README.md) renders the actual Gaussian asset with three controlled 12 fps motions. It is a candidate under review and does not replace the wordmark or existing video set.
+
 Current brand-design stage: the owner considers the motion set sufficient and has returned to the wordmark. The [real-font composition study](wordmark-study/README.md) compares Krona One, Big Shoulders 600 and Aldrich with the selected circular-face character, preserves the earlier generated lettering reference and reuses existing motion clips only. No final typeface or public home page is selected.
 
 Latest motion candidate: [side-bounce dance](video/atomic-emotes/trial-08-side-bounce-dance/README.md), generated from the existing pose references. The 24-frame edit retains four low bounce phases and returns to neutral; owner acceptance remains pending.
@@ -83,3 +85,7 @@ Both outputs were visually inspected: correct wordmark order and spelling, integ
 Recommendation for review: choose a flat master silhouette first, then derive its 3D form with identical proportions. Compare navy versus orange eyes at small sizes; orange-on-blue eye contrast and visible blink states still need deliberate refinement. Test favicon-scale legibility, letter spacing, a true one-color mark and reverse usage before final adoption. Do not treat generated raster colors as measured production tokens.
 
 The owner has not selected either trial. Editable logo vectors, an actual 3D mesh/rig, animation, reduced-motion behavior and the public home-page experiment remain future work. Runtime behavior, API contracts, deployment and the existing ADR decisions are unchanged.
+
+## Owner-supplied IDOL reconstruction — 2026-10-30
+
+The owner supplied a 262,144-Gaussian PLY reconstruction of the blue kettle and requested a motion trial. The isolated [IDOL motion prototype](idol-motion-prototype/README.md) provides a 12 fps rock, hop and tilted full spin with exactly matching neutral endpoint transforms. It preserves the original PLY and uses locally vendored rendering dependencies. Chrome rendering and Tailscale access were verified; owner motion acceptance, facial animation, video export and real mobile performance remain pending. This does not replace the current wordmark or generated-video studies and makes no production or ADR decision.
