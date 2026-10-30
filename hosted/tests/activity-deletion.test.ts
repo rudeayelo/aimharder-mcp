@@ -393,3 +393,17 @@ test('missing, ambiguous, unreadable-calendar and unsupported deletion previews 
  }
  expect(writes).toEqual([]);expect(JSON.stringify(telemetryEvents)).not.toContain('HOSTILE_PRIVATE_DETAIL');
 });
+
+ test('account preference does not disable deletion confirmation and cannot duplicate a DELETE',async()=>{
+  removed=false;writes=[];synthetic=deletionSource;
+  expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'},requireBookingConfirmation:false,requirePublicationConfirmation:false},a())).status).toBe(200);
+  try {
+   const prepared=await call(a(),'prepare_activity_deletion',target);
+   expect(prepared.structuredContent).toMatchObject({status:'ready',writeConfirmationRequired:true});
+   const actionReference=prepared.structuredContent!.actionReference;
+   expect((await call(a(),'execute_activity_deletion',{actionReference,sourceActivityId:501})).isError).toBe(true);
+   expect((await call(a(),'execute_activity_deletion',{actionReference,sourceActivityId:501,confirmed:true})).structuredContent?.status).toBe('observed-absent');
+   expect((await call(a(),'execute_activity_deletion',{actionReference,sourceActivityId:501})).isError).toBe(true);
+   expect(writes).toHaveLength(1);
+  } finally { expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'},requireBookingConfirmation:true,requirePublicationConfirmation:true},a())).status).toBe(200); }
+ });

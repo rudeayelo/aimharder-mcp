@@ -2,6 +2,8 @@
 
 Status: accepted on 2026-10-07 for [issue #64](https://github.com/rudeayelo/aimharder-mcp/issues/64).
 
+Confirmation amendment: partially superseded on 2026-10-30 by the [account write-confirmation preference](2026-10-30-account-write-confirmation-preference.md). Only booking creation and activity publication have independent confirmation preferences, both enabled by default. Cancellation and deletion confirmations remain mandatory. Other decisions and historical receipts below remain unchanged.
+
 ## Context
 
 The account holder reports duplicate confirmation when creating a booking and explicitly requests removal of the warning that booking may consume a credit. Creation previews currently include this warning in both notices and a structured `credit` object, and the MCP descriptions require the client to disclose it.

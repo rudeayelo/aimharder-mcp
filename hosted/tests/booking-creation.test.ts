@@ -142,6 +142,41 @@ test('both roles preview the exact target and confirm once through real HTTP MCP
  expect(writes).toEqual(['amhrdrauth=synthetic-a','amhrdrauth=synthetic-b']);
 });
 
+test('account write-confirmation preference permits explicit writes without markers and preserves single use',async()=>{
+ for(const cookie of [a(),b()])expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'},requireBookingConfirmation:false},cookie)).status).toBe(200);
+ try {
+ booked=new Set();writes=[];synthetic=bookingSource;
+ for(const cookie of [a(),b()]){
+  const preparation=await call(cookie,'prepare_booking_creation',target);
+  expect(preparation.isError).not.toBe(true);
+  expect(preparation.structuredContent).toMatchObject({status:'ready',action:'create',target,gym:{id:'shared-gym',timeZoneStatus:'user-confirmed'}});
+  const actionReference=(preparation.structuredContent as {actionReference:string}).actionReference;
+  expect((await call(cookie,'execute_booking_creation',{actionReference,confirmed:false})).isError).toBe(true);
+  const results=await Promise.all([call(cookie,'execute_booking_creation',{actionReference}),call(cookie,'execute_booking_creation',{actionReference})]);
+  expect(results.filter(result=>result.structuredContent?.status==='confirmed')).toHaveLength(1);
+  expect(results.filter(result=>result.isError)).toHaveLength(1);
+ }
+ expect(writes).toEqual(['amhrdrauth=synthetic-a','amhrdrauth=synthetic-b']);
+ } finally { for(const cookie of [a(),b()])expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'},requireBookingConfirmation:true},cookie)).status).toBe(200); }
+});
+
+test('enabling confirmations invalidates old preparations and omission cannot consume a new reference',async()=>{
+ booked=new Set();writes=[];synthetic=bookingSource;
+ const settings={defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'}};
+ expect((await post('/api/portal/aimharder/settings',{...settings,requireBookingConfirmation:false},a())).status).toBe(200);
+ const old=await call(a(),'prepare_booking_creation',target);
+ expect(old.structuredContent).toMatchObject({status:'ready',writeConfirmationRequired:false});
+ expect((await post('/api/portal/aimharder/settings',{...settings,requireBookingConfirmation:true},a())).status).toBe(200);
+ expect((await call(a(),'execute_booking_creation',{actionReference:old.structuredContent!.actionReference,confirmed:true})).isError).toBe(true);
+ const fresh=await call(a(),'prepare_booking_creation',target);
+ expect(fresh.structuredContent).toMatchObject({status:'ready',writeConfirmationRequired:true});
+ const actionReference=fresh.structuredContent!.actionReference;
+ const denied=await call(a(),'execute_booking_creation',{actionReference});
+ expect(denied.isError).toBe(true);expect(JSON.stringify(denied)).toContain('WRITE_CONFIRMATION_REQUIRED');expect(writes).toHaveLength(0);
+ expect((await call(a(),'execute_booking_creation',{actionReference,confirmed:true})).structuredContent?.status).toBe('confirmed');
+ expect(writes).toHaveLength(1);
+});
+
 test('public MCP retains unused permission but releases it when ciphertext-only rewrap reconstructs the client',async()=>{
  booked=new Set();writes=[];synthetic=bookingSource;
  const prepared=await call(a(),'prepare_booking_creation',{...target,gymId:'shared-gym'});

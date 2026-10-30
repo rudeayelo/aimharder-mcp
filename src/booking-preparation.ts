@@ -12,11 +12,11 @@ export type BookingCreationQuery = z.infer<typeof bookingCreationQuerySchema>;
 export const bookingCancellationQuerySchema = bookingCreationQuerySchema;
 export type BookingCancellationQuery = z.infer<typeof bookingCancellationQuerySchema>;
 export const bookingExecutionSchema = z.object({
-  gymId: gymIdSchema.optional(), actionReference: z.string().regex(/^[a-f0-9]{64}$/), confirmed: z.literal(true),
+  gymId: gymIdSchema.optional(), actionReference: z.string().regex(/^[a-f0-9]{64}$/), confirmed: z.literal(true).optional(),
 }).strict();
 export type BookingExecution = z.infer<typeof bookingExecutionSchema>;
 export const lateCancellationExecutionSchema = z.object({
-  gymId: gymIdSchema.optional(), actionReference: z.string().regex(/^[a-f0-9]{64}$/), confirmedCreditLoss: z.literal(true),
+  gymId: gymIdSchema.optional(), actionReference: z.string().regex(/^[a-f0-9]{64}$/), confirmedCreditLoss: z.literal(true).optional(),
 }).strict();
 export type LateCancellationExecution = z.infer<typeof lateCancellationExecutionSchema>;
 

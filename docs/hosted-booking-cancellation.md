@@ -1,5 +1,7 @@
 # Hosted confirmed booking cancellation
 
+Current confirmation policy (2026-10-30): two independent [account preferences](write-confirmations.md) control confirmation for booking creation and activity publication, both enabled by default. Cancellation, late credit-loss and activity deletion confirmations remain mandatory. Exact preparation, fresh checks, role policy, single-use execution and no uncertain replay still apply.
+
 Issue [#78](https://github.com/rudeayelo/aimharder-mcp/issues/78) exposes the existing three cancellation tools through authenticated MCP HTTP. Both `user` and `admin` can cancel their own existing reservations without a feature switch. Reservations need not have been created by this service. The [shared coordination decision](adr/2026-10-19-confirmed-hosted-action-coordination.md) governs account isolation, durable consumption, dispatch and read-only recovery.
 
 ## Actual Hermes standard cancellation (2026-10-21)

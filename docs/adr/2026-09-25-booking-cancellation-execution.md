@@ -2,6 +2,8 @@
 
 Status: accepted for issue #25 on 2026-09-25; amended after one live standard cancellation under #27 on 2026-09-25. The separate late confirmation is described in [the late cancellation decision](2026-09-25-late-cancellation-confirmation.md).
 
+Confirmation amendment: partially superseded on 2026-10-30 by the [account write-confirmation preference](2026-10-30-account-write-confirmation-preference.md). Only booking creation and activity publication have independent confirmation preferences, both enabled by default. Cancellation and deletion confirmations remain mandatory. Other decisions and historical receipts below remain unchanged.
+
 ## Decision
 
 Expose `execute_booking_cancellation` for a fresh, single-use cancellation reference and an explicit account-holder confirmation marker. The MCP client must show the exact preparation preview and obtain consent for that action. Consume the reference before source access. Recheck the authenticated account, accessible gym, confirmed IANA zone, exact schedule row, reservation identifier, booked state, and supported cancellation flags before writing.

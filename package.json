@@ -41,6 +41,7 @@
     "CONTEXT.md",
     "docs/configuration.md",
     "docs/tools.md",
+    "docs/write-confirmations.md",
     "docs/clients/*.md"
   ],
   "repository": {

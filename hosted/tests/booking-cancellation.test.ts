@@ -404,3 +404,30 @@ test('late execution distinguishes refused, uncertain and stale effects without 
   expect(writes).toHaveLength(variant==='stale'?1:2);
  }
 });
+
+test('account write-confirmation preference does not disable cancellation confirmation and preserves single use',async()=>{
+ for(const cookie of [a(),b()])expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'},requireBookingConfirmation:false,requirePublicationConfirmation:false},cookie)).status).toBe(200);
+ try {
+ booked=new Set(['amhrdrauth=synthetic-a']);writes=[];const bodies:string[]=[];
+ synthetic=async request=>{
+  if(new URL(request.url).pathname==='/api/cancelBook'){
+   const body=await (request as Request).text();bodies.push(body);writes.push(request.headers.get('cookie')!);
+   if(new URLSearchParams(body).get('late')==='0')return Response.json({cancelState:2,privateMessage:'private-warning-canary'});
+   booked.clear();return Response.json({cancelState:1});
+  }return bookingSource(request);
+ };
+ const standard=((await call(a(),'prepare_booking_cancellation',target)).structuredContent as {actionReference:string}).actionReference;
+ expect((await call(a(),'execute_late_booking_cancellation',{actionReference:standard,confirmedCreditLoss:false})).isError).toBe(true);
+ const warning=(await call(a(),'execute_booking_cancellation',{actionReference:standard,confirmed:true})).structuredContent as {actionReference:string};
+ expect(warning).toMatchObject({status:'pending-credit-loss',observedState:'booked',credit:{balance:null,entitlementPeriod:null}});
+ expect(warning.actionReference).toMatch(/^[a-f0-9]{64}$/);expect(warning.actionReference).not.toBe(standard);
+ expect(JSON.stringify(warning)).not.toContain('private-warning-canary');
+ expect((await call(a(),'execute_booking_cancellation',{actionReference:standard,confirmed:true})).isError).toBe(true);
+ expect((await call(a(),'execute_late_booking_cancellation',{actionReference:warning.actionReference,confirmedCreditLoss:false})).isError).toBe(true);
+ expect(writes).toHaveLength(1);
+ expect((await call(a(),'execute_late_booking_cancellation',{actionReference:warning.actionReference})).isError).toBe(true);
+ expect((await call(a(),'execute_late_booking_cancellation',{actionReference:warning.actionReference,confirmedCreditLoss:true})).structuredContent).toMatchObject({status:'confirmed',credit:{balance:null,entitlementPeriod:null}});
+ expect(bodies.map(body=>Object.fromEntries(new URLSearchParams(body)))).toEqual([{id:'901',late:'0'},{id:'901',late:'1'}]);
+ expect((await call(a(),'execute_late_booking_cancellation',{actionReference:warning.actionReference})).isError).toBe(true);expect(writes).toHaveLength(2);
+ } finally { for(const cookie of [a(),b()])expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'},requireBookingConfirmation:true,requirePublicationConfirmation:true},cookie)).status).toBe(200); }
+});

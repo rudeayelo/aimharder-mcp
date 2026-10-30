@@ -57,7 +57,8 @@ test('prepares one exact class through read-only MCP calls without a credit warn
   const { tools } = await client.listTools();
   for (const name of ['prepare_booking_creation', 'execute_booking_creation']) {
     const tool = tools.find(tool => tool.name === name)!;
-    expect(tool.description).toContain('one explicit account-holder confirmation');
+    expect(tool.description).toContain('writeConfirmationRequired');
+    expect(tool.description).toContain('do not ask for another confirmation');
     expect(JSON.stringify(tool)).not.toMatch(/credit/i);
   }
   const result = await prepare(client);

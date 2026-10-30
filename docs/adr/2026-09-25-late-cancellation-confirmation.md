@@ -2,6 +2,8 @@
 
 Status: accepted for issue #26 on 2026-09-25; reconciliation amended after the standard #27 cycle. The late-credit-loss path remains unverified live.
 
+Confirmation amendment: partially superseded on 2026-10-30 by the [account write-confirmation preference](2026-10-30-account-write-confirmation-preference.md). Only booking creation and activity publication have independent confirmation preferences, both enabled by default. Cancellation and deletion confirmations remain mandatory. Other decisions and historical receipts below remain unchanged.
+
 ## Decision
 
 When a standard `execute_booking_cancellation` request returns the frontend-observed `cancelState=2`, report `pending-credit-loss` only if a new daily schedule and upcoming-booking read show one same, still booked, cancellable reservation with no conflicting state. Include the exact gym, class, local date and time, current state, possible credit loss, and unknown credit balance. Issue a new two-minute, single-use in-memory reference bound to the account, gym, and reservation. A changed, missing, cancelled, ambiguous, or unreadable reservation produces uncertainty with no late reference.

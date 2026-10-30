@@ -2,6 +2,8 @@
 
 Status: accepted for issue #22 on 2026-09-25; amended after #27 live evidence on 2026-09-25. Fixture-tested execution followed under [issue #23](2026-09-25-booking-creation-execution.md); one standard 9NBC creation was subsequently observed live, while other branches remain pending.
 
+Confirmation amendment: partially superseded on 2026-10-30 by the [account write-confirmation preference](2026-10-30-account-write-confirmation-preference.md). Only booking creation and activity publication have independent confirmation preferences, both enabled by default. Cancellation and deletion confirmations remain mandatory. Other decisions and historical receipts below remain unchanged.
+
 Credit-preview amendment: the credit fields and warning described in the original decision below were superseded on 2026-10-07 by the [single booking confirmation decision](2026-10-07-booking-creation-without-credit-warning.md). Other preparation rules remain in effect.
 
 ## Decision

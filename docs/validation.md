@@ -1,6 +1,14 @@
 # Validation record
 
-This page records what was checked against AimHarder, what was checked only with anonymized fixtures, and what remains unknown. Live checks used one account at one location (9NBC). They do not establish behavior for every gym. The user defined recent and period activity questions in terms of **activity entries**; earlier physical-session grouping blockers were superseded by [the entry semantics decision](adr/2026-09-22-activity-entry-query-semantics.md).
+## Independent booking and workout switches (2026-10-30)
+
+[Issue #120](https://github.com/rudeayelo/aimharder-mcp/issues/120) implements two independent per-account switches for booking creation and activity publication, both enabled by default. The earlier global-policy checkpoint was superseded before release; its cancellation/deletion bypass is removed.
+
+Root typecheck/build and all 493 tests across 18 files pass, including packaged-install MCP verification. Hosted typecheck/build and 106 passing tests across the seven affected real HTTP/workerd/D1 suites verify settings form checked/unchecked combinations, separate account-context policy, omitted-update preservation, invalid input, encrypted restart persistence, account isolation, reference invalidation on policy change, and creation/publication with and without confirmation. Cancellation, late credit loss and deletion continue to require confirmation when both preferences are disabled. Hosted test runs use `--no-file-parallelism --testTimeout=20000` for the existing multi-restart telemetry cases.
+
+The two native checkbox switches use the owner's exact labels, accessible `role="switch"`, on/off color, keyboard focus and the existing Save settings flow. A desktop headless Chrome render was visually checked with one switch on and the other off. This static visual check is separate from the HTTP form-save tests; mobile and actual participant acceptance are not claimed.
+
+Affected Markdown local links and diff checks pass. The [ADR](adr/2026-10-30-account-write-confirmation-preference.md) and earlier amendment notices now reflect the final two-switch scope. Upstream API contracts, credential custody, role access and historical MVP evidence are unchanged. No actual sporting writes, npm publication or hosted deployment occurred. Actual ChatGPT/Hermes use of the new preferences remains separate.
 
 ## Final scoped hosted activity observations (2026-10-28)
 

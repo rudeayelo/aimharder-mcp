@@ -43,9 +43,9 @@ afterEach(async () => {
 });
 afterAll(() => upstream.close());
 
-async function connect() {
+async function connect(requireConfirmation = true) {
   const server = createServer({ AIMHARDER_USERNAME: 'account@example.invalid', AIMHARDER_PASSWORD: 'synthetic',
-    AIMHARDER_GYM_TIME_ZONES: '{"sample-gym":"Europe/Madrid"}' });
+    AIMHARDER_GYM_TIME_ZONES: '{"sample-gym":"Europe/Madrid"}', AIMHARDER_REQUIRE_BOOKING_CONFIRMATION: String(requireConfirmation) });
   const client = new Client({ name: 'booking-execution-test', version: '1.0.0' });
   const [a, b] = InMemoryTransport.createLinkedPair();
   connections.push({ client, server });
@@ -62,10 +62,10 @@ async function execute(client: Client, actionReference: string, extra: Record<st
   return client.callTool({ name: 'execute_booking_creation', arguments: { actionReference, confirmed: true, ...extra } });
 }
 
-test('one confirmed action writes once and confirms from fresh schedule and upcoming reads', async () => {
-  const client = await connect();
+test.each([true, false])('booking confirmation policy %s preserves one write and fresh read-back', async requireConfirmation => {
+  const client = await connect(requireConfirmation);
   const reference = await prepare(client);
-  const result = await execute(client, reference);
+  const result = await execute(client, reference, requireConfirmation ? {} : { confirmed: undefined });
   expect(result.structuredContent).toMatchObject({ status: 'confirmed', observedState: 'booked', target: { className: 'Open Box' } });
   expect(writeCount).toBe(1);
   expect(scheduleReads).toBe(3);
@@ -77,7 +77,15 @@ test('one confirmed action writes once and confirms from fresh schedule and upco
   expect(writeCount).toBe(1);
 });
 
-test('confirmation marker, selectors and changed targets block a write', async () => {
+test('default confirmation policy blocks omission without consuming the reference', async () => {
+  const client = await connect();
+  const reference = await prepare(client);
+  expect((await execute(client, reference, { confirmed: undefined })).isError).toBe(true);
+  expect(writeCount).toBe(0);
+  expect((await execute(client, reference)).structuredContent).toMatchObject({ status: 'confirmed' });
+});
+
+test('an explicit false marker, selectors and changed targets block a write', async () => {
   const client = await connect();
   const reference = await prepare(client);
   expect((await execute(client, reference, { confirmed: false })).isError).toBe(true);

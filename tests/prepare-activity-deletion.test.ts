@@ -31,8 +31,8 @@ beforeEach(() => {
 upstream.events.on('request:start', ({ request }) => requests.push({ method: request.method, path: new URL(request.url).pathname, host: new URL(request.url).host }));
 afterEach(async () => { for (const { client, server } of connections.splice(0)) { await client.close(); await server.close(); } upstream.resetHandlers(); vi.useRealTimers(); });
 afterAll(() => upstream.close());
-async function connect() {
-  const server = createServer({ AIMHARDER_USERNAME: 'account@example.invalid', AIMHARDER_PASSWORD: 'synthetic-password', AIMHARDER_GYM_TIME_ZONES: '{"sample-gym":"Europe/Madrid"}' });
+async function connect(requireConfirmation = true) {
+  const server = createServer({ AIMHARDER_REQUIRE_BOOKING_CONFIRMATION: String(requireConfirmation), AIMHARDER_USERNAME: 'account@example.invalid', AIMHARDER_PASSWORD: 'synthetic-password', AIMHARDER_GYM_TIME_ZONES: '{"sample-gym":"Europe/Madrid"}' });
   const client = new Client({ name: 'deletion-preparation-test', version: '1.0.0' });
   const [a, b] = InMemoryTransport.createLinkedPair(); connections.push({ client, server }); await server.connect(b); await client.connect(a); return client;
 }
@@ -106,8 +106,8 @@ test('deletion reference is bound to its account, gym, membership and entry and 
   expect(store.take(second.actionReference, 42, 'sample-gym', 200, 1001)).toBeNull();
 });
 
-test('confirmed exact reference sends one fixed DELETE and reports only observed absence', async () => {
-  const client = await connect();
+test.each([true, false])('confirmation policy %s preserves exact deletion and read-back', async requireConfirmation => {
+  const client = await connect(requireConfirmation);
   const prepared = (await prepare(client)).structuredContent as { actionReference: string };
   let calendarReads = 0;
   upstream.use(
@@ -117,13 +117,13 @@ test('confirmed exact reference sends one fixed DELETE and reports only observed
       return HttpResponse.json({ unrelatedPrivateField: 'never-return-this' });
     }),
   );
-  const result = await execute(client, prepared.actionReference);
+  const result = await execute(client, prepared.actionReference, {});
   expect(result.structuredContent).toMatchObject({ status: 'observed-absent', responseStatus: 'http-ok', observedState: 'absent',
     readbackCoverage: { status: 'complete', completedDates: [date] },
     notices: expect.arrayContaining([expect.stringContaining('does not prove permanent deletion')]) });
   expect(deletes()).toEqual([{ method: 'DELETE', path: '/api/activity/1001', host: 'sample-gym.aimharder.es' }]);
   expect(JSON.stringify(result)).not.toMatch(/unrelatedPrivateField|never-return-this|userId|boxId|synthetic-cookie|synthetic-password/);
-  expect((await execute(client, prepared.actionReference)).isError).toBe(true);
+  expect((await execute(client, prepared.actionReference, {})).isError).toBe(true);
   expect(deletes()).toHaveLength(1);
 });
 

@@ -1,5 +1,7 @@
 # Manual booking writes: confirmed feature specification
 
+Current confirmation policy (2026-10-30): two independent [account preferences](write-confirmations.md) control confirmation for booking creation and activity publication, both enabled by default. Cancellation, late credit-loss and activity deletion confirmations remain mandatory. Exact preparation, fresh checks, role policy, single-use execution and no uncertain replay still apply.
+
 Status: confirmed by the account holder on 2026-09-24 and published as [implementation issue #21](https://github.com/rudeayelo/aimharder-mcp/issues/21). Creation preview/execution for #22–#23 and cancellation preview/standard execution/late confirmation for #24–#26 are implemented in the checkout with fixture validation; live write validation is pending. This is a later feature phase, not a change to the released read-only MVP. See the [scope and safety decision](adr/2026-09-24-manual-booking-writes.md), [creation preparation decision](adr/2026-09-25-booking-creation-preparation.md), [execution decision](adr/2026-09-25-booking-creation-execution.md), [cancellation preparation decision](adr/2026-09-25-booking-cancellation-preparation.md), [cancellation execution decision](adr/2026-09-25-booking-cancellation-execution.md), [late confirmation decision](adr/2026-09-25-late-cancellation-confirmation.md), [API research](api-research.md#booking-write-frontend-investigation-2026-09-24), and [credit investigation](research/2026-09-24-booking-credits.md).
 
 ## Supported actions

@@ -412,3 +412,16 @@ test('publication draft and non-executable preparation results have explicit tel
  expect((await preparePublication(a(),{variantLabel:'unsupported-variant'})).structuredContent?.status).toBe('unsupported');
  expect(publicationWrites).toBe(0);
 });
+
+ test('account preference permits publication without confirmation while role policy and single use remain enforced',async()=>{
+  resetPublication();
+  expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'},requirePublicationConfirmation:false},a())).status).toBe(200);
+  try {
+   const prepared=await preparePublication();
+   expect(prepared.structuredContent).toMatchObject({status:'ready',writeConfirmationRequired:false});
+   const reference=prepared.structuredContent!.actionReference as string;
+   expect((await executePublication(reference,a(),{confirmed:undefined})).structuredContent?.status).toBe('confirmed');
+   expect((await executePublication(reference,a(),{confirmed:undefined})).isError).toBe(true);
+   expect(publicationWrites).toBe(1);
+  } finally { expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'},requirePublicationConfirmation:true},a())).status).toBe(200); }
+ });

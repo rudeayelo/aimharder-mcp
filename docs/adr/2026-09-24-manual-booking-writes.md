@@ -2,6 +2,8 @@
 
 Status: accepted for feature scope on 2026-09-24; the checkout's creation and cancellation flows are implemented under the [creation preparation decision](2026-09-25-booking-creation-preparation.md), [creation execution decision](2026-09-25-booking-creation-execution.md), [cancellation preparation decision](2026-09-25-booking-cancellation-preparation.md), [standard cancellation decision](2026-09-25-booking-cancellation-execution.md), and [late confirmation decision](2026-09-25-late-cancellation-confirmation.md). One standard creation/cancellation cycle at 9NBC was observed live on 2026-09-25; late and other branches remain unverified upstream.
 
+Confirmation amendment: partially superseded on 2026-10-30 by the [account write-confirmation preference](2026-10-30-account-write-confirmation-preference.md). Only booking creation and activity publication have independent confirmation preferences, both enabled by default. Cancellation and deletion confirmations remain mandatory. Other decisions and historical receipts below remain unchanged.
+
 Credit-disclosure amendment: the booking-creation warning requirement below was superseded on 2026-10-07 by the [single booking confirmation decision](2026-10-07-booking-creation-without-credit-warning.md). Cancellation credit-loss warnings and all other decisions remain in effect.
 
 ## Decision
