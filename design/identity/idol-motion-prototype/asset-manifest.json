@@ -10,5 +10,7 @@
     "@speridlabs/visus": "2.5.0",
     "three": "0.175.0"
   },
-  "edits": "Source PLY unchanged; runtime orientation and normalization only"
+  "edits": "Source PLY unchanged; compressed/decimated derivatives tracked separately; runtime transforms only",
+  "optimizedManifest": "optimized/manifest.json",
+  "previewDefault": "64k"
 }

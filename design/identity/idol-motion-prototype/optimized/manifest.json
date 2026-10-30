@@ -1,0 +1,55 @@
+{
+  "tools": {
+    "splat-transform": "3.10.3",
+    "esbuild": "0.25.12"
+  },
+  "baseline": {
+    "commit": "ff717ef",
+    "javascriptBytes": 2097151,
+    "sourceGzipEstimateBytes": 13396475
+  },
+  "sourceSha256": "48334af699ab95a12296ddd2f6f383ff97253777842a5e50c9f9eb90faebc3ae",
+  "javascript": {
+    "bundleBytes": 563285,
+    "gzipEstimateBytes": 145993,
+    "gzipActuallyServed": false
+  },
+  "profiles": {
+    "original": {
+      "file": "kettle.ply",
+      "count": 262144,
+      "bytes": 17826208,
+      "title": "Original PLY",
+      "sha256": "48334af699ab95a12296ddd2f6f383ff97253777842a5e50c9f9eb90faebc3ae",
+      "modelReductionPercent": 0.0,
+      "bundlePlusModelBytes": 18389493
+    },
+    "full": {
+      "file": "optimized/kettle-full.sog",
+      "count": 262144,
+      "bytes": 2992064,
+      "title": "SOG \u00b7 full detail",
+      "sha256": "592ab9045876ddc6e537c9ca58b02c2332acacb10a1cad5c31c727dc454a5ff6",
+      "modelReductionPercent": 83.22,
+      "bundlePlusModelBytes": 3555349
+    },
+    "64k": {
+      "file": "optimized/kettle-64k.sog",
+      "count": 65536,
+      "bytes": 800656,
+      "title": "SOG \u00b7 64k",
+      "sha256": "a38ab20d6eaa7cfc394fae04a47a9629b5bdeeceda2014e000da5f0361df7963",
+      "modelReductionPercent": 95.51,
+      "bundlePlusModelBytes": 1363941
+    },
+    "32k": {
+      "file": "optimized/kettle-32k.sog",
+      "count": 32768,
+      "bytes": 418296,
+      "title": "SOG \u00b7 32k",
+      "sha256": "fac022eff952b56a3f708309c349ce6815e80a5c3cc49b56f9b34034e81d5ffe",
+      "modelReductionPercent": 97.65,
+      "bundlePlusModelBytes": 981581
+    }
+  }
+}
