@@ -39,21 +39,9 @@
     "en": "Check classes, see your workouts and review your activity using the AimHarder account you already have.",
     "es": "Consulta clases, descubre tus entrenamientos y revisa tu actividad con la cuenta de AimHarder que ya tienes."
   },
-  "access": {
-    "en": "Invitation-only pilot",
-    "es": "Piloto por invitación"
-  },
   "seeHow": {
     "en": "See how it works",
     "es": "Ver cómo funciona"
-  },
-  "chat": {
-    "en": "Your AI chat",
-    "es": "Tu chat de IA"
-  },
-  "example": {
-    "en": "Illustrative example",
-    "es": "Ejemplo ilustrativo"
   },
   "question": {
     "en": "What is tomorrow’s workout?",
@@ -78,10 +66,6 @@
   "conditioningBody": {
     "en": "12-minute AMRAP\n8 burpees · 12 kettlebell swings",
     "es": "AMRAP de 12 minutos\n8 burpees · 12 kettlebell swings"
-  },
-  "chatNote": {
-    "en": "A simple question. Your own training information.",
-    "es": "Una pregunta sencilla. La información de tu entrenamiento."
   },
   "useTitle": {
     "en": "Start with a useful question.",
@@ -120,8 +104,8 @@
     "es": "Tu cuenta. Conectada."
   },
   "setupIntro": {
-    "en": "Once you’ve accepted your invitation, there are just three things to do.",
-    "es": "Después de aceptar tu invitación, estos son los tres pasos."
+    "en": "Three steps, then you’re ready to ask.",
+    "es": "Tres pasos y ya puedes empezar a preguntar."
   },
   "step1": {
     "en": "Connect AimHarder",
@@ -136,8 +120,8 @@
     "es": "Conecta tu chat de IA"
   },
   "step2Body": {
-    "en": "Follow the guide for ChatGPT, Hermes or another compatible client.",
-    "es": "Sigue la guía para ChatGPT, Hermes u otro cliente compatible."
+    "en": "Choose your app and follow its connection guide.",
+    "es": "Elige tu app y sigue su guía de conexión."
   },
   "step3": {
     "en": "Ask your first question",
@@ -210,5 +194,21 @@
   "disclosure": {
     "en": "An independent project. Not affiliated with AimHarder.",
     "es": "Un proyecto independiente. Sin afiliación con AimHarder."
+  },
+  "ecosystem": {
+    "en": "Bring AimHarder to the AI app you use.",
+    "es": "Lleva AimHarder a la app de IA que ya usas."
+  },
+  "email": {
+    "en": "Your AimHarder email",
+    "es": "Tu correo de AimHarder"
+  },
+  "miniQuestion": {
+    "en": "What classes are on tomorrow?",
+    "es": "¿Qué clases hay mañana?"
+  },
+  "miniAnswer": {
+    "en": "Tomorrow’s CrossFit classes",
+    "es": "Clases de CrossFit de mañana"
   }
 }

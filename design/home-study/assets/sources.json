@@ -1,0 +1,148 @@
+[
+  {
+    "file": "apps/aimharder-source.svg",
+    "source": "https://d18yt7bvmey3y7.cloudfront.net/logo-aimharder.svg",
+    "sha256": "41cbff553a0353d4a9d1ac6af0cc002714efc8a7bf2143aac509a5f117cf18ca"
+  },
+  {
+    "file": "apps/hermes.svg",
+    "source": "https://web-assets.nousresearch.com/marketing/73edac8eae57c8914e23605b9f0a7015d9d3fd26/assets/hermes-landing/teams/hermes-wing.svg",
+    "sha256": "6ee276e9bff5a166c41bc8e80c6717c525cb9b9e81a1111348559452a711e8cd"
+  },
+  {
+    "file": "apps/openclaw.svg",
+    "source": "https://openclaw.ai/brand/openclaw-mascot.svg",
+    "sha256": "87d87ee7bb4e6fb868bf5ac1a873fb3669dc5c14cdf71ec8ded97f1869a12ce3"
+  },
+  {
+    "file": "apps/pi.svg",
+    "source": "https://pi.dev/logo-auto.svg",
+    "sha256": "abd66e7868b2d24f0f0895f9237ee8a6dcb22337583b0dc54aeb595acecb4d6b"
+  },
+  {
+    "file": "apps/chatgpt.svg",
+    "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/master/packages/static-svg/icons/openai.svg",
+    "sha256": "a595df6b423920c67a7f8f73c063e4bfb72d415948097b6cac063a2366bb5186"
+  },
+  {
+    "file": "apps/claude.svg",
+    "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/master/packages/static-svg/icons/claude.svg",
+    "sha256": "365a70a7eb3956d9b9a96086058ebe04e1dbd8e291a756ad964e8a283fbd6d38"
+  },
+  {
+    "file": "fonts/KronaOne-Regular.ttf",
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/kronaone/KronaOne-Regular.ttf",
+    "sha256": "273463916f96a4707e697e3013d955cde8154b4e6d635a55132e7a12f276534c"
+  },
+  {
+    "file": "fonts/Geist.ttf",
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/geist/Geist%5Bwght%5D.ttf",
+    "sha256": "73894e0448cae90a92b6c2f8732b7bb9acb7b94c418bff559dad4a18e1de9659"
+  },
+  {
+    "file": "fonts/KronaOne-OFL.txt",
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/kronaone/OFL.txt",
+    "sha256": "6c181f5a0045e8f414e1c232c35972ab83ea084ac44825f517ba001628d97b21"
+  },
+  {
+    "file": "fonts/Geist-OFL.txt",
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/geist/OFL.txt",
+    "sha256": "1781d2806a07d91c4edf4740b88449fab7d0eadad53f7c351b94cd4d4eb8c00f"
+  },
+  {
+    "file": "apps/lobe-icons-LICENSE",
+    "source": "https://raw.githubusercontent.com/lobehub/lobe-icons/master/LICENSE",
+    "sha256": "add9d7531d1b21646317a8958e38fc727506fa39d24bdecb44154d943c82753a"
+  },
+  {
+    "file": "lucide/plus.svg",
+    "source": "https://unpkg.com/lucide-static@0.468.0/icons/plus.svg",
+    "sha256": "b29207ee8f5cc0e829c0bab2e5b223fc88687599c6bd40b94ba35f52327615d6"
+  },
+  {
+    "file": "lucide/arrow-up.svg",
+    "source": "https://unpkg.com/lucide-static@0.468.0/icons/arrow-up.svg",
+    "sha256": "df0ff279d41bba93ae6797ef519ba442b895cd5d546fb36f22b7a656c3b05fd1"
+  },
+  {
+    "file": "lucide/arrow-right.svg",
+    "source": "https://unpkg.com/lucide-static@0.468.0/icons/arrow-right.svg",
+    "sha256": "12b97a4d2821da556ce7df95f89df46deb94aa711d46b36a848be0de0ac2a7f0"
+  },
+  {
+    "file": "lucide/menu.svg",
+    "source": "https://unpkg.com/lucide-static@0.468.0/icons/menu.svg",
+    "sha256": "a8da12c1e9b80d9f70001e957ab7e8464d9ad676975702f07d86da8fb47ecdf3"
+  },
+  {
+    "file": "lucide/chevron-down.svg",
+    "source": "https://unpkg.com/lucide-static@0.468.0/icons/chevron-down.svg",
+    "sha256": "04458777b8a99214cd167dc9a8c8a1e35dcc9373b7577f74d5b5da6418ffcf67"
+  },
+  {
+    "file": "lucide/check.svg",
+    "source": "https://unpkg.com/lucide-static@0.468.0/icons/check.svg",
+    "sha256": "538432eec072ceeccf5a7aacf347a2ad2bff9937d203dbd0b4f4245d7accd93c"
+  },
+  {
+    "file": "lucide/calendar-days.svg",
+    "source": "https://unpkg.com/lucide-static@0.468.0/icons/calendar-days.svg",
+    "sha256": "b91ebeecee30b2b6f9258f4fdf25c5fc91adbd265bf071139774dea2f9e51ac7"
+  },
+  {
+    "file": "lucide/dumbbell.svg",
+    "source": "https://unpkg.com/lucide-static@0.468.0/icons/dumbbell.svg",
+    "sha256": "65f3d4eb53bd90c8e3e1aec3d6a0136b94f239b9d4662b207f23efaafd532d29"
+  },
+  {
+    "file": "lucide/activity.svg",
+    "source": "https://unpkg.com/lucide-static@0.468.0/icons/activity.svg",
+    "sha256": "df8e413c714521cc3d424bd7af3c1644d63409f7e0a7dec75ff0fa48aa6daedb"
+  },
+  {
+    "file": "lucide/pause.svg",
+    "source": "https://unpkg.com/lucide-static@0.468.0/icons/pause.svg",
+    "sha256": "7babb01e85dae42b66c9b1e399cd1c50380d3d9a586ff025685bcc45e726fea9"
+  },
+  {
+    "file": "lucide/play.svg",
+    "source": "https://unpkg.com/lucide-static@0.468.0/icons/play.svg",
+    "sha256": "f0cab5b458fdf5e5d5d1a8aeb3d368ccab337cc578b1f8081807b8e39f68f1a1"
+  },
+  {
+    "file": "lucide/x.svg",
+    "source": "https://unpkg.com/lucide-static@0.468.0/icons/x.svg",
+    "sha256": "0f38855d9d5775c10960ae53e46b745f77914b43f78c43bf8abc39f4d5e06de1"
+  },
+  {
+    "file": "lucide/monitor.svg",
+    "source": "https://unpkg.com/lucide-static@0.468.0/icons/monitor.svg",
+    "sha256": "3ef31ab3ab45c174485e0c1dfc3bd3b54ae51cb74df8230a0e136d78ca580efd"
+  },
+  {
+    "file": "lucide/message-circle.svg",
+    "source": "https://unpkg.com/lucide-static@0.468.0/icons/message-circle.svg",
+    "sha256": "f62830d9fbbbf697e53555398d31a342ddec8dd008d707f21cd90bb19befcc87"
+  },
+  {
+    "file": "lucide/LICENSE",
+    "source": "https://unpkg.com/lucide-static@0.468.0/LICENSE",
+    "sha256": "1e7290b35280a048667bbf0ebabac1c7fd52a75300e8b2946ac165715997f2bc"
+  },
+  {
+    "file": "apps/aimharder.svg",
+    "derivedFrom": "apps/aimharder-source.svg",
+    "change": "SVG viewport only: 8 100 428 96. Original artwork untouched.",
+    "sha256": "0c2936d039c0d4e8e8f6a72d9133408a9ecdadd96d16dbfe2bfef0c0f21f4161"
+  },
+  {
+    "file": "lucide/sun.svg",
+    "source": "https://unpkg.com/lucide-static@0.468.0/icons/sun.svg",
+    "sha256": "f067e7494a29d825168ef4285d1eb66ef3cd57c33778fd67528247e377a5ff89"
+  },
+  {
+    "file": "lucide/moon.svg",
+    "source": "https://unpkg.com/lucide-static@0.468.0/icons/moon.svg",
+    "sha256": "5e5c866dd82fbea5c03e00c778fa283c6efc8c37db3b7937824fe0b8ad5382f7"
+  }
+]

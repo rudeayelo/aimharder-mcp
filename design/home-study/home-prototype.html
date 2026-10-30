@@ -1,0 +1,67 @@
+<!doctype html>
+<!-- Throwaway review prototype for #95: one owner-directed home revision, not a production entry point. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AimHarder Connect — Home prototype</title>
+  <script>const mode=new URLSearchParams(location.search).get('theme');document.documentElement.dataset.theme=mode==='dark'||(mode!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';</script>
+  <link rel="stylesheet" href="home-prototype.css">
+  <script type="module" src="home-prototype.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#" class="wordmark" aria-label="AimHarder Connect"><span><b>AIM</b>HARDER</span><img src="assets/kettle-neutral.png" alt="" width="35" height="40"><span>CONNECT</span></a>
+      <button class="icon-button mobile-menu" aria-label="Open navigation" aria-expanded="false" aria-controls="navigation"><i class="icon" data-icon="menu"></i></button>
+      <nav id="navigation" aria-label="Main navigation">
+        <a href="#how" data-copy="how"></a><a href="#faq" data-copy="faq"></a>
+      </nav>
+      <div class="preferences">
+        <label><span class="sr-only" id="language-label">Language</span><select id="language" aria-labelledby="language-label"><option value="en">English</option><option value="es">Español</option></select></label>
+        <button class="icon-button" id="appearance" aria-label="Appearance: System. Switch to Light" title="Appearance: System. Switch to Light"><i class="icon" data-icon="monitor"></i></button>
+        <button class="primary sign-in" data-copy="signin" data-signin></button>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section class="container hero">
+      <div class="hero-copy">
+        <h1 data-copy="title"></h1><p class="intro" data-copy="intro"></p>
+        <div class="hero-actions"><button class="primary" data-copy="signin" data-signin></button><a href="#how" class="text-link"><span data-copy="seeHow"></span><i class="icon" data-icon="arrow-right"></i></a></div>
+      </div>
+      <div class="hero-chat">
+        <p class="sr-only" id="demo-description"></p>
+        <div class="conversation" aria-describedby="demo-description">
+          <div class="question" id="demo-question"></div>
+          <div class="reply" id="demo-reply"></div>
+        </div>
+        <div class="composer" aria-hidden="true"><i class="icon" data-icon="plus"></i><input class="typed" id="demo-input" type="text" readonly tabindex="-1"><span class="send"><i class="icon" data-icon="arrow-up"></i></span></div>
+        <div class="demo-controls"><div class="example-switcher" id="examples"></div><button class="icon-button" id="pause"><i class="icon" data-icon="pause"></i></button></div>
+      </div>
+    </section>
+    <section class="ecosystem"><div class="container"><p data-copy="ecosystem"></p><div class="app-strip" id="app-strip"></div></div></section>
+    <section class="use-section"><div class="container">
+      <h2 data-copy="useTitle"></h2><p class="section-intro" data-copy="useIntro"></p>
+      <div class="use-cases">
+        <button data-example="1"><span class="use-label"><i class="icon" data-icon="calendar-days"></i><span data-copy="case1"></span></span><span class="use-prompt" data-copy="prompt1"></span><i class="icon" data-icon="arrow-right"></i></button>
+        <button data-example="0"><span class="use-label"><i class="icon" data-icon="dumbbell"></i><span data-copy="case2"></span></span><span class="use-prompt" data-copy="prompt2"></span><i class="icon" data-icon="arrow-right"></i></button>
+        <button data-example="3"><span class="use-label"><i class="icon" data-icon="activity"></i><span data-copy="case3"></span></span><span class="use-prompt" data-copy="prompt3"></span><i class="icon" data-icon="arrow-right"></i></button>
+      </div>
+    </div></section>
+    <section id="how" class="container setup">
+      <h2 data-copy="setupTitle"></h2><p class="section-intro" data-copy="setupIntro"></p>
+      <div class="steps">
+        <article><div class="step-art account-art" aria-hidden="true"><img class="aimharder-original" src="assets/apps/aimharder.svg" alt=""><div class="pseudo-input" data-copy="email"></div><div class="pseudo-input password">••••••••••</div><div class="connected-mark"><i class="icon" data-icon="check"></i></div></div><span class="step-number">01</span><h3 data-copy="step1"></h3><p data-copy="step1Body"></p></article>
+        <article><div class="step-art app-art" id="step-apps" aria-hidden="true"></div><span class="step-number">02</span><h3 data-copy="step2"></h3><p data-copy="step2Body"></p></article>
+        <article><div class="step-art answer-art" aria-hidden="true"><div class="mini-question" data-copy="miniQuestion"></div><div class="mini-answer"><i class="icon" data-icon="calendar-days"></i><div><strong data-copy="miniAnswer"></strong><span>07:00 · 18:00 · 19:00</span></div></div></div><span class="step-number">03</span><h3 data-copy="step3"></h3><p data-copy="step3Body"></p></article>
+      </div>
+    </section>
+    <section id="faq" class="faq-section"><div class="container faq-layout"><div><h2 data-copy="faqTitle"></h2><p class="section-intro" data-copy="faqIntro"></p></div><div class="faqs" id="faqs"></div></div></section>
+    <section class="container closing"><h2 data-copy="closing"></h2><button class="primary" data-copy="signin" data-signin></button></section>
+  </main>
+  <footer><div class="container footer-inner"><p data-copy="disclosure"></p><div><a href="https://github.com/rudeayelo/aimharder-mcp">GitHub</a><button class="link-button" id="privacy" data-copy="privacy"></button></div></div></footer>
+  <dialog id="prototype-notice"><form method="dialog"><h2 id="notice-title"></h2><p id="notice-body"></p><button class="primary" id="notice-close"></button></form></dialog>
+  <div class="review-note" id="review-note"></div>
+</body>
+</html>

@@ -4,11 +4,30 @@ Date: 2026-10-30. Status: first editable public-home design for owner review und
 
 The owner additionally requires English/Spanish presentation, a simple text language selector without flags, Light/Dark/System appearance and **Lucide icons exclusively**. Confirmation steps are not a home-page selling point; the later settings design must follow PR #121.
 
-This checkpoint delivers one public home-page design in [design/ahmcp.pen](../ahmcp.pen), with desktop/mobile, English/Spanish and light/dark representations. It does not draw other product screens, adopt final copy/navigation, implement the page, activate support or deploy anything. The structure below records the design rationale, with static interaction states and implementation prerequisites.
+The previous checkpoint delivered one public home-page design in [design/ahmcp.pen](../ahmcp.pen), with desktop/mobile, English/Spanish and light/dark representations. It did not draw other product screens, adopt final copy/navigation, implement a production page, activate support or deploy anything. The structure below records the design rationale and later corrections, with explicit artifact boundaries.
 
-## Delivered canvas and previews
+## Latest owner-directed revision
 
-The editor contains the original foundation boards plus these new home frames. Locale variants use literal localized text for reliable canvas rendering; themed variables carry semantic palette roles. Components reuse the existing primary-action component and a new shared Krona One wordmark. [copy.json](copy.json) supplies both languages and the full FAQ answer inventory.
+The current review artifact is a [functional home prototype](home-prototype.html), also [available through Tailscale](https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/home-prototype.html?lang=es&theme=system). This is one directed revision of the selected home, not a new set of competing visual directions or additional product screens. The question is whether the simpler animated conversation and illustrated setup make the page clearer and livelier.
+
+Changes requested by the owner:
+
+- One shared 1200px content container: header/logo and rightmost action align with the rest of the page at desktop widths. Narrow layouts use the same shared gutters.
+- Wordmark enlarged 25%: desktop Krona One 14 → 17.5px, mobile 12 → 15px; kettle and spacing scale accordingly.
+- Invitation-only copy appears only in the access FAQ. The hero, setup introduction and closing action no longer repeat it.
+- Simpler conversation without its old heading, example badge or context slogan. A read-only text composer has Lucide plus and send-arrow affordances. Four local fictional examples type, send, then show a response: workout, classes, next booking and recorded activity. Pause and direct example selection are available; reduced motion starts with a complete static answer. The home is not a real AI chat.
+- A separate strip identifies ChatGPT, Claude, Hermes, OpenClaw and Pi. Setup illustrations show AimHarder with pseudo fields, AI-app selection, and a first useful class-list answer. No new mascot animation or dynamic background was added.
+- Latest preference correction: appearance is a single icon button cycling **System → Light → Dark → System**, using Lucide monitor/sun/moon. Its localized accessible label and tooltip state the current and next modes. Language remains a simple text selector without flags.
+
+**Canvas sync is pending:** two `execute` attempts did not receive a response; the subsequent pen.dev state read reported no editor open despite successful `open_editor` calls. The `.pen` file and its original PNG exports remain the previous checkpoint. The revision was therefore made reviewable in an isolated static web prototype, not silently written into the `.pen` JSON. Do not describe the older canvas/exports as containing these corrections.
+
+Run locally with `python3 -m http.server 8946 --bind 127.0.0.1 --directory design`, then open `/home-study/home-prototype.html`. The existing scoped `/aimharder-home-95` Tailscale route exposes only this design server. No production application, authentication, account data or backend connection is involved. Sign-in/privacy controls show explicit prototype notices. Locale/theme choices live in the URL for review; production preference persistence remains pending.
+
+[Current desktop capture](previews/home-revision-desktop-es-light.png) · [Current mobile Dark capture](previews/home-revision-mobile-es-dark.png) · [Overview](previews/home-revision-overview.png) · [Browser checks](revision-checks.json) · [Asset sources and MCP claim boundary](assets/README.md).
+
+## Previous canvas checkpoint and previews
+
+The previous saved canvas contains the original foundation boards plus these home frames. Locale variants use literal localized text for reliable canvas rendering; themed variables carry semantic palette roles. Components reuse the existing primary-action component and a new shared Krona One wordmark. [copy.json](copy.json) supplies both languages and the full FAQ answer inventory.
 
 | Frame | Width | Locale / appearance | Render |
 | --- | --- | --- | --- |
@@ -34,16 +53,17 @@ Accepted requirements and implementation limits are in [Product experience desig
 
 | Block | Visitor question | Proposed content and behavior |
 | --- | --- | --- |
-| 1. Header | Where am I, and how do I enter? | AimHarder [kettle] CONNECT wordmark; How it works and FAQ anchors; a simple English / Español language selector; an appearance selector with Light / Dark / System; Sign in. Utility controls remain subordinate to the access action. Keep GitHub in the footer. |
-| 2. Hero + conversation | What does it do for me? | Proposed headline: **Your AimHarder training, in your AI chat.** Supporting line: **Check classes, see your workouts and review your activity using the AimHarder account you already have.** One labeled illustrative conversation shows the benefit. Sign in is primary; See how it works scrolls to setup. Small access note: **Invitation-only pilot.** |
-| 3. Useful things to ask | Does this cover my actual needs? | Three concise prompt-led examples: classes/bookings; workouts and prescribed weights; personal activity and records. Prefer three clear rows or a simple prompt selector, not a large feature-card catalogue. Booking and activity actions may be illustrated without highlighting confirmation mechanics. Align any action example with the effective policy in PR #121. |
-| 4. Three setup steps | What will I need to do? | **Connect AimHarder → Connect your AI chat → Ask your first question.** Portal access/invitation precedes these tasks. Start with the accepted prompt: **What classes can I book tomorrow?** Client-specific instructions belong after sign-in, not all at once on the public home page. |
-| 5. Short FAQ | Can I use it, and do I trust it? | Invitation-only access; client requirements; how account access/data are handled; independent disconnect controls; independent-project status. Confirmation preferences belong in connection settings, not in the home-page pitch. Short expandable answers with contextual next actions. |
-| 6. Closing action + footer | What next? | Repeat Sign in with the access note. Project GitHub, privacy information and independent-project disclosure. Contact support uses the accepted target only after its inbox is activated and tested. No unrelated sitemap or second acquisition funnel. |
+| 1. Header | Where am I, and how do I enter? | AimHarder [kettle] CONNECT wordmark; How it works and FAQ anchors; a simple English / Español language selector; a single Lucide monitor/sun/moon button cycling System / Light / Dark; Sign in. Utility controls remain subordinate to the access action. Keep GitHub in the footer. |
+| 2. Hero + conversation | What does it do for me? | Proposed headline: **Your AimHarder training, in your AI chat.** Supporting line: **Check classes, see your workouts and review your activity using the AimHarder account you already have.** A simplified animated conversation shows four fictional examples with a composer, pause control and example selection. Sign in is primary; See how it works scrolls to setup. Access policy appears only in the FAQ. |
+| 3. MCP app strip | Where can I use it? | Product symbols and names for ChatGPT, Claude, Hermes, OpenClaw and Pi; ecosystem relevance, not a verified-partner claim. |
+| 4. Useful things to ask | Does this cover my actual needs? | Three concise prompt-led examples: classes/bookings; workouts and prescribed weights; personal activity and records. Prefer three clear rows or a simple prompt selector, not a large feature-card catalogue. Booking and activity actions may be illustrated without highlighting confirmation mechanics. Align any action example with the effective policy in PR #121. |
+| 5. Three setup steps | What will I need to do? | **Connect AimHarder → Connect your AI chat → Ask your first question.** Portal access/invitation precedes these tasks. Start with the accepted prompt: **What classes can I book tomorrow?** Client-specific instructions belong after sign-in, not all at once on the public home page. |
+| 6. Short FAQ | Can I use it, and do I trust it? | Invitation-only access; client requirements; how account access/data are handled; independent disconnect controls; independent-project status. Confirmation preferences belong in connection settings, not in the home-page pitch. Short expandable answers with contextual next actions. |
+| 7. Closing action + footer | What next? | Repeat Sign in without repeating the access policy. Project GitHub, privacy information and independent-project disclosure. Contact support uses the accepted target only after its inbox is activated and tested. No unrelated sitemap or second acquisition funnel. |
 
 ### Illustrative conversation and prompts
 
-The hero demonstrates one complete, concise read request rather than a montage of tools. Suggested request: **What is tomorrow's workout?** A fictional response can describe one explicitly fictional workout; it must be labeled **Illustrative example** beside the conversation. Do not use real participant data, exact current class availability or a simulated live chat input. The home page explains the connection, while conversations take place in the participant's AI client.
+The current hero cycles four authored, fictional read-only conversations from [demo-examples.json](demo-examples.json). It starts typing in the composer, moves the sent question above, then reveals the answer underneath. A fixed conversation region prevents the rest of the page jumping between examples. The compact composer is presentational and read-only; questions are asked in the participant's AI app. The old visible example labels were removed at the owner's request. The review footer and screen-reader description identify the synthetic demo; no real availability, bookings or participant records are fetched.
 
 Supporting prompt candidates:
 
@@ -101,11 +121,9 @@ Do not draw a global confirmation-off switch. Cancellation, late credit-loss can
 | How it works | Cómo funciona |
 | See how it works | Ver cómo funciona |
 | FAQ | Preguntas frecuentes |
-| Invitation-only pilot. | Piloto por invitación. |
 | Connect AimHarder | Conecta AimHarder |
 | Connect your AI chat | Conecta tu chat de IA |
 | Ask your first question | Haz tu primera pregunta |
-| Illustrative example | Ejemplo ilustrativo |
 
 These are draft UI translations for the first home experiment, not a new language rule for upstream content or finalized copy.
 
@@ -118,7 +136,7 @@ Primary visual foundation: the existing [white/blue foundations](../README.md) a
 | Reference | Bounded contribution | Excluded |
 | --- | --- | --- |
 | [shadcn/ui](https://ui.shadcn.com), `c14c0a94-1037-449e-bf5b-4cb972656ac7` | White canvas, readable hierarchy, quiet separators and subordinate navigation; remains the structural foundation. | Its black action color, component grid and full navigation catalogue. |
-| [Reclaim](https://reclaim.ai), `9bdb7d7f-7c20-4672-bf61-ef781750915e` | Benefit copy beside a contained product demonstration; adapt this as a labeled conversation example. | Violet/green palette, calendar UI, statistics, testimonials and implied product evidence. |
+| [Reclaim](https://reclaim.ai), `9bdb7d7f-7c20-4672-bf61-ef781750915e` | Benefit copy beside a contained product demonstration; adapt this as a simplified conversation demonstration, per the owner revision. | Violet/green palette, calendar UI, statistics, testimonials and implied product evidence. |
 | [Foodnoms](https://foodnoms.com), `4c7e1e62-5c2d-4874-9640-ccbf7d88b5e8` | Explain a consumer utility through concrete product use. | Phone mockups implying a native app, its green/orange palette, charts and nutrition content. |
 | [Earlier bounded screen research](../../docs/research/2026-10-28-product-experience-references.md) | Metaview's task orientation, Cal/Mamitsu's scoped client choice and Family's short FAQs. | Those products' branding, onboarding details and unverified compatibility promises. |
 
@@ -129,7 +147,7 @@ Preference-pattern research added on 2026-10-30: a style search plus language/ap
 | Decision | Source | Reason |
 | --- | --- | --- |
 | Working name AimHarder Connect, technical package unchanged | Owner, 2026-10-30 | Separate consumer value from implementation terminology. |
-| Sign in primary; invitation-only note nearby | Accepted public-page brief / #95 | Match the actual admission policy without creating a second entry funnel. |
+| Sign in primary; invitation-only policy in FAQ only | Owner revision, 2026-10-30 / #95 | Explain admission once without creating a second entry funnel. |
 | Conversation first, capabilities as prompts | Accepted example-question requirement + bounded demonstration references | Explain value to a nontechnical participant without a tool list. |
 | Three setup tasks | Accepted self-service requirement | Explain the intended journey without promising all pending engineering is complete. |
 | FAQ + independent disclosure | Accepted help, privacy and independence requirements | Address real access/trust questions concisely. |
@@ -143,9 +161,9 @@ Preference-pattern research added on 2026-10-30: a style search plus language/ap
 
 Desktop proposal: a concise message/action column beside the conversation. Mobile: logo/navigation, headline and access action first, then the example and remaining sections in reading order. Keep the same content hierarchy; avoid a carousel required to discover capabilities. A static poster is the baseline for the logo; if existing motion is later integrated, honor reduced motion and render only as needed.
 
-The first desktop/mobile visual home experiment is now drawn and exported. Final copy, optical adjustments, functional links, interaction behavior and production implementation remain pending. The mobile layout keeps language/appearance and Sign in visible in a second header row; the menu affordance is reserved for section navigation. Page variants depict **System** as the selected preference with either effective palette; the separate state board shows the three explicit menu choices.
+The first desktop/mobile visual home experiment was drawn and exported before the owner revision above. Final copy, optical adjustments, functional links, interaction behavior and production implementation remain pending. The mobile layout keeps language/appearance and Sign in visible in a second header row; the menu affordance is reserved for section navigation. Page variants depict **System** as the selected preference with either effective palette; the separate state board shows the three explicit menu choices.
 
-## Verification and handoff checklist — 2026-10-30
+## Previous canvas verification — 2026-10-30
 
 - [x] Rendered and visually inspected the desktop light/dark designs and the Spanish mobile header, hero, prompts, setup, FAQ and closing action. All eight pages were exported from pen.dev, not recreated in HTML.
 - [x] All eight home-page subtrees report no layout/clipping problems in the editor's bounds visitor after layout settles. No unresolved `$home-...` content strings remain. Every new icon node uses `lucide`.
@@ -159,3 +177,11 @@ The first desktop/mobile visual home experiment is now drawn and exported. Final
 - [ ] Implement the selected home only after review; remaining portal/settings/email screens stay outside this first home delivery. Follow PR #121's final merged policy when settings work begins.
 
 Relevant checks for this delivery are canvas rendering, structural/icon/localization audits, artifact provenance/contrast, file/link validation and `git diff --check`. No production TypeScript changed and no MCP runtime test suite was run for this design-only addition.
+
+## Revision verification and remaining work
+
+The isolated prototype was inspected in Chrome at 320, 390 and 1440px in both languages and effective palettes. Recorded checks found matching header/body edges, no horizontal page overflow, five app labels and no invitation mention outside FAQ. The four examples, automatic progression, pause/resume, theme cycle, locale change, mobile menu, FAQ disclosure and prototype notices were checked in the browser. Current screenshots are browser captures, not pen exports. Reduced-motion handling and System change tracking were inspected in code; OS-preference changes and assistive-technology behavior were not exercised. Syntax, local references, source hashes and whitespace were checked. Production MCP tests are unrelated to these static design assets.
+
+Remaining: synchronize this revision into pen.dev when its editor responds; owner review; real mobile/perceptual and accessibility acceptance; production frontend implementation and preference persistence; per-client Connect validation. Earlier static-canvas acceptance does not establish these runtime behaviors. No architecture, security, API, distribution or validation policy changed, so existing ADRs remain applicable and no new ADR is needed.
+
+Independent review of the revision found **0 actionable Standards findings** and **0 actionable Spec findings**. Both reviews preserve the pending `.pen` synchronization as an outstanding delivery limitation, rather than treating the HTML prototype as canvas completion.

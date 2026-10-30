@@ -1,0 +1,18 @@
+[
+  {
+    "en": {"name":"Workout", "question":"What is tomorrow’s workout?", "title":"Tomorrow’s workout", "paragraphs":["<strong>Strength</strong><br>Back squat · 5 sets × 5 reps", "<strong>Conditioning</strong><br>12-minute AMRAP<br>8 burpees · 12 kettlebell swings"]},
+    "es": {"name":"Entrenamiento", "question":"¿Cuál es el entrenamiento de mañana?", "title":"El entrenamiento de mañana", "paragraphs":["<strong>Fuerza</strong><br>Back squat · 5 series × 5 repeticiones", "<strong>Acondicionamiento</strong><br>AMRAP de 12 minutos<br>8 burpees · 12 kettlebell swings"]}
+  },
+  {
+    "en": {"name":"Classes", "question":"What classes are on tomorrow evening?", "title":"Tomorrow evening", "rows":[["18:00","CrossFit"],["19:00","CrossFit"],["20:00","Open Box"]]},
+    "es": {"name":"Clases", "question":"¿Qué clases hay mañana por la tarde?", "title":"Mañana por la tarde", "rows":[["18:00","CrossFit"],["19:00","CrossFit"],["20:00","Open Box"]]}
+  },
+  {
+    "en": {"name":"Bookings", "question":"When is my next booking?", "title":"Your next booking", "paragraphs":["<strong>Tomorrow · 19:00</strong><br>CrossFit", "Your reservation is confirmed."]},
+    "es": {"name":"Reservas", "question":"¿Cuándo es mi próxima reserva?", "title":"Tu próxima reserva", "paragraphs":["<strong>Mañana · 19:00</strong><br>CrossFit", "Tu reserva está confirmada."]}
+  },
+  {
+    "en": {"name":"Activity", "question":"Show my activity from this week.", "title":"This week’s activity", "rows":[["Monday","Back squat"],["Wednesday","Metcon"],["Friday","Deadlift"]], "note":"3 recorded entries in this example."},
+    "es": {"name":"Actividad", "question":"Enséñame mi actividad de esta semana.", "title":"Tu actividad de esta semana", "rows":[["Lunes","Back squat"],["Miércoles","Metcon"],["Viernes","Deadlift"]], "note":"3 registros de actividad en este ejemplo."}
+  }
+]

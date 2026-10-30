@@ -2,6 +2,8 @@
 
 Current stage, 2026-10-30: the owner selected **AimHarder Connect** and **Krona One**, requested English/Spanish, Light/Dark/System and Lucide icons, and authorized the first home design in pen.dev. [design/ahmcp.pen](ahmcp.pen) now contains eight editable home-page representations (desktop/mobile × English/Spanish × Light/Dark), a shared wordmark and a preference/FAQ/focus state board. The [home handoff and previews](home-study/README.md) record source references, copy, contrast checks and remaining acceptance. This is a first visual candidate, not a functional website or a complete #95 delivery. Confirmation configuration stays in later settings work aligned with PR #121; the home does not emphasize it. The original provisional foundations are retained. `aimharder-mcp` remains the technical npm package.
 
+Latest revision: the owner requested aligned header/body containers, a 25% larger logo, invitation-only wording in FAQ only, four animated hero conversations, an MCP-app logo strip and graphical setup steps. The [home prototype and handoff](home-study/README.md#latest-owner-directed-revision) make this reviewable in English/Spanish and light/dark/system modes, with a cycling Lucide theme button. The pen.dev editor did not respond, so `.pen` synchronization remains pending; existing canvas frames/exports still show the preceding checkpoint. The functional prototype is isolated from production and uses fictional data.
+
 Design source: [ahmcp.pen](ahmcp.pen). Issue [#95](https://github.com/rudeayelo/aimharder-mcp/issues/95), under [#103](https://github.com/rudeayelo/aimharder-mcp/issues/103).
 
 ## Review sequence — historical foundation checkpoint
