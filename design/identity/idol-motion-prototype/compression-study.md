@@ -2,7 +2,7 @@
 
 ## Result — 2026-10-30
 
-The owner accepted the revised motion direction and requested lower weight. This compression-only trial initially defaulted to the **64k SOG candidate**. The owner subsequently accepted 32k at the intended logo size; the current [hybrid eye study](hybrid/README.md) defaults to an edited 32k body and complete curved recess geometry. The original and compression-only profiles remain selectable. The owner accepted the curved eye appearance and curiosity refinement; the new look-around experiment and production delivery remain pending.
+The owner accepted the revised motion direction and requested lower weight. This compression-only trial initially defaulted to the **64k SOG candidate**. The owner subsequently accepted 32k at the intended logo size; the current [hybrid eye study](hybrid/README.md) defaults to an edited 32k body and complete curved recess geometry. The original and compression-only profiles remain selectable. The owner accepted the curved eye appearance and curiosity refinement; the look-around/body-flex experiments and production delivery remain pending.
 
 [Open the comparison through Tailscale](https://mini.taild6f227.ts.net:8443/aimharder-brand-95/idol-motion-prototype/?asset=64k). Use **Model** to compare assets and **Logo scale** to inspect readability at roughly 68 CSS pixels tall in the desktop preview. The same pose definitions, camera presets and source bounds apply to every profile.
 
@@ -19,7 +19,7 @@ A gzip estimate for the original PLY was 13,396,475 bytes: considerably larger t
 
 ## Renderer and runtime
 
-The previous module graph at commit `ff717ef` totaled 2,097,151 JavaScript bytes. The first compression pass produced a **563 KB** script. The first eye-insert trial used **594 KB**. The current curved-recess revision serves approximately **568 KB** (exact current value in the manifest), including Three.js, Visus, OrbitControls, pose data and application code. The same dependencies and local license files are retained. No root package dependency or lockfile changed.
+The previous module graph at commit `ff717ef` totaled 2,097,151 JavaScript bytes. The first compression pass produced a **563 KB** script. The first eye-insert trial used **594 KB**. The current curved-recess revision serves approximately **569 KB** (exact current value in the manifest), including Three.js, Visus, OrbitControls, pose data and application code. The same dependencies and local license files are retained. No root package dependency or lockfile changed.
 
 - 64k model plus script: approximately **1.37 MB** before HTTP compression; HTML and the 35 KB font are additional.
 - 32k model plus script: approximately **985 KB**, with the same exclusions.

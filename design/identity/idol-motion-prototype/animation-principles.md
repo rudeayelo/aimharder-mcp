@@ -6,11 +6,11 @@ These are artistic choices for this specific prototype, not a claim that every p
 
 | Principle | Application to this kettle |
 | --- | --- |
-| Squash and stretch | Restrained preparation/impact compression and takeoff stretch. The two transverse scales compensate the height scale, preserving transform volume. The PLY remains unchanged. |
+| Squash and stretch | Restrained preparation/impact compression and takeoff stretch. The two transverse scales compensate the height scale, preserving transform volume. Body flex extends the same 86–114% height change with a planted-base shear; the shared affine transform preserves volume and carries both carved eyes. The PLY remains unchanged. |
 | Anticipation | Two preparation poses lead into lift or rotation, with a small counter-turn before the spin. |
 | Staging | One gesture per clip, a fixed default camera and ample white space keep the handle and face readable. Drag is an inspection control. |
 | Straight ahead / pose to pose | Explicit exposed poses define the gesture; no universal smoothing curve erases its accents. |
-| Follow through / overlap | Angular overshoot and decaying settle continue after landing. Height and rotation settle on different beats. The curved-recess rig now closes the floor/walls/lip during anticipation and varies the complete carved contour during curiosity. Look-around body pitch follows the eye targets by two frames. Independent handle lag remains deferred. |
+| Follow through / overlap | Angular overshoot and decaying settle continue after landing. Height and rotation settle on different beats. The curved-recess rig now closes the floor/walls/lip during anticipation and varies the complete carved contour during curiosity. Look-around body pitch follows the eye targets by two frames. Body flex adds a forward/backward shear with diminishing rebounds, without rotating the entire object. Independent handle lag remains deferred. |
 | Slow in / slow out | Unequal pose spacing contrasts preparation, fast impulse, slower apex and sharper impact. |
 | Arcs | Parabolic vertical lift plus a small lateral excursion replaces eased, floating vertical segments. |
 | Secondary action | Small supporting yaw enriches the rock/hop. The hybrid curiosity gesture moves and reshapes the complete curved eye recess, including its cavity walls. |

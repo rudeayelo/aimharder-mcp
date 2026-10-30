@@ -2,7 +2,7 @@
 
 ## Question and scope
 
-Can the owner's IDOL reconstruction preserve the kettle's identity while supporting controlled stop-motion emotes? This is a throwaway, isolated study for issue #95 on `codex/95-symbol-motion-prototype`. It does not replace the wordmark study, generated videos, or production UI. The owner liked the first 3D study and requested faster, more natural motion. The owner then preferred V2 and requested weight optimization. The owner accepted 32k for the intended logo size and authorized a hybrid eye-animation trial. The owner rejected the first fixed-socket/flat-insert trial; the current revision deforms complete eye recesses on a curved surface. The owner liked the curved eye appearance; the stronger, slower curiosity refinement was also accepted. The new directed look-around experiment awaits review.
+Can the owner's IDOL reconstruction preserve the kettle's identity while supporting controlled stop-motion emotes? This is a throwaway, isolated study for issue #95 on `codex/95-symbol-motion-prototype`. It does not replace the wordmark study, generated videos, or production UI. The owner liked the first 3D study and requested faster, more natural motion. The owner then preferred V2 and requested weight optimization. The owner accepted 32k for the intended logo size and authorized a hybrid eye-animation trial. The owner rejected the first fixed-socket/flat-insert trial; the current revision deforms complete eye recesses on a curved surface. The owner liked the curved eye appearance; the stronger, slower curiosity refinement was also accepted. The directed look-around and planted-base body-flex experiments await review.
 
 Open `index.html` through a static server. From the repository root:
 
@@ -34,15 +34,26 @@ The current V2 timing keeps 12 fps and shortens the original two-second gestures
 
 The first and last poses use exactly the same neutral transform. A sampled-center support correction approximates contact around the rounded base; it is not a physical collision solver. There is no new AI generation, independent handle animation or dynamic relighting. The current [hybrid eye study](hybrid/README.md) adds independent eye controls. The renderer may refresh more often than 12 fps while the motion pose changes only at 12 fps. The frame slider freezes the selected pose. Front/quarter/back/side buttons and drag/zoom support visual inspection. Repetition is opt-in; automatic initial playback respects reduced-motion preference.
 
+## Planted-base body deformation
+
+[Open Body flex through Tailscale](https://mini.taild6f227.ts.net:8443/aimharder-brand-95/idol-motion-prototype/?asset=hybrid&view=quarter&motion=flex). The `motion` and `view` query parameters select the initial clip and inspection camera; reduced-motion preference still suppresses automatic playback.
+
+**Body flex** adds 26 exposures / 2.17 seconds at 12 fps: compress forward, stretch backward, then settle with diminishing rebounds. Height ranges from 86% to 114%; transverse scale compensates by `1 / sqrt(height)`. A shear of up to ±0.24 moves upper points farther along the front/back axis while leaving the floor plane flat. The clip has no rigid rotation or lift. The combined affine transform has unit determinant; this is transform-volume preservation, not a soft-body simulation.
+
+A shared child group deforms the Gaussian body and complete eye patches together. The existing Visus covariance projection already incorporates the full model-view linear transform, so splat ellipsoids follow the shear rather than just moving their centers. [affine-sort.js](affine-sort.js) adapts the pinned renderer's rigid-transform depth-direction shortcut to use the transposed linear transform; every changed object matrix requests a fresh sort. Vendored sources, the original PLY and all SOG files remain unchanged. The same sampled-center support correction keeps the base near the ground.
+
+This is a whole-body affine flex, not a separately jointed handle or nonlinear bend. Localized handle lag, material physics, dynamic relighting and Gaussian-footprint collision remain outside this study. [Compressed pose](body-flex-squash.png) and [stretched pose](body-flex-stretch.png) record the trial. Owner motion acceptance remains pending.
+
 ## Verification — 2026-10-30
 
 - Actual PLY loaded/rendered in Chrome using the Tailscale HTTPS URL. Front, three-quarter and rear views were visually inspected; the face and handle remain recognizable. Source orientation was corrected after the first render.
 - V1 rock, hop and tilted-spin controls were exercised and returned to frame 24. V2 shortens them to 14/16/18 poses; Chrome playback and hop apex/landing scrubbing were checked. Endpoints are explicitly equal in the pose data.
 - At a simulated 390 × 844 viewport, the model rendered and the page had no horizontal overflow. This is desktop browser emulation, not real-device performance acceptance.
 - `node --check motion.js` and `node --check motion-poses.js` passed. A numerical pose audit passed for finite values, non-negative lift, positive scale, volume-preserving scale determinant and identical endpoint poses for all three gestures. Static page, model and local dependency URLs returned HTTP 200 through Tailscale.
+- The body-flex audit confirmed finite poses, no lift/rigid rotation, 86–114% height, a fixed floor plane, unit transform determinant, expected handle displacement, matching endpoint body/eye poses and correct affine depth ordering across all seven clips. Chrome inspected compression/stretch from side and three-quarter views and playback returned to frame 26 / 26 without console errors.
 - [Desktop preview](desktop-preview.png) records the rendered object. The [compression study](compression-study.md) records the subsequent SOG conversion, count reduction and browser checks.
 
-This demonstrates a usable candidate for rigid motion. The revised curved-recess trial is implemented and visually checked; owner review of the new look-around gesture, video export, production integration, GPU/load-time measurements and physical-mobile acceptance remain pending. No architecture, security, API or distribution decision is made; existing ADRs are unaffected.
+This demonstrates candidates for rigid motion and a planted-base affine flex. The revised curved-recess trial is implemented and visually checked; owner review of the look-around and body-flex gestures, video export, production integration, GPU/load-time measurements and physical-mobile acceptance remain pending. No architecture, security, API or distribution decision is made; existing ADRs are unaffected.
 
 ## Current delivery optimization
 

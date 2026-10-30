@@ -2,7 +2,7 @@
 
 ## Brief and current status
 
-The owner accepted the 32k body for the intended logo size. The first hybrid trial animated orange inserts inside stationary sockets; the owner rejected that behavior and also identified that the inserts were flat instead of following the pseudo-spherical face. This revision replaces that construction with complete deformable recesses on a fitted curved surface. The owner liked the curved-recess revision and accepted the stronger, slower curiosity expression. The latest requested experiment adds a directed look-around gesture; its appearance and timing await owner review.
+The owner accepted the 32k body for the intended logo size. The first hybrid trial animated orange inserts inside stationary sockets; the owner rejected that behavior and also identified that the inserts were flat instead of following the pseudo-spherical face. This revision replaces that construction with complete deformable recesses on a fitted curved surface. The owner liked the curved-recess revision and accepted the stronger, slower curiosity expression. The later look-around and planted-base body-flex experiments await owner review.
 
 [Open the curved-eye prototype through Tailscale](https://mini.taild6f227.ts.net:8443/aimharder-brand-95/idol-motion-prototype/?asset=hybrid&view=detail). Choose **Double blink**, then **Three-quarter** or **Eye detail**. The slider freezes intermediate poses; **Curiosity** moves the entire recess along the face. The original fixed-eye profiles remain available for comparison.
 
@@ -21,13 +21,14 @@ The rig has 3,074 vertices in two meshes. Positions, normals and vertex colors u
 - **Double blink:** one second at 24 fps, retaining the earlier preferred cadence. Each blink has one halfway exposure, two closed exposures and one halfway exposure; four open exposures separate the blinks. Closed indices are 4/5 and 12/13 (zero-based).
 - **Curiosity:** 26 exposures / 2.17 seconds at 12 fps. The approach to the initial lean now takes 12 frame intervals / one second, exactly three times its previous four intervals. The hold, return and final settle retain their previous exposure spacing. At peak, one eye has 45% neutral height and the other 125%; gaze and the complete carved recess follow the curved face. Body and eyes use the same retimed approach.
 - **Look around:** 43 exposures / 3.58 seconds at 12 fps. From the viewer's perspective: up-right → up-left → right → down → center. Each outward move takes four frame intervals with a three-interval hold. The final return takes twelve intervals / one second, followed by two settling exposures. The body follows vertical gaze by two frames with up to ±4° pitch. Horizontal/vertical gaze offsets are bounded to 0.024 / 0.028 source units; the entire curved recess moves while its outer face seam remains stationary.
+- **Body flex:** 26 exposures / 2.17 seconds at 12 fps. A shared affine transform compresses/stretches the body to 86–114% height and moves the handle forward/backward via shear while the floor plane stays flat. Both complete eye patches inherit exactly the same transform as the Gaussian body; no eye-only offset compensates for the deformation. Details and captures are in the [body-deformation notes](../README.md#planted-base-body-deformation).
 - **Hop / spin:** body timing stays at 12 fps. Complete eye cavities close in anticipation and reopen on takeoff.
 
 The first and last body/eye poses are exactly equal. There is no cursor tracking, mouth, brows, limbs or production integration.
 
 ## Weight and rebuild
 
-Current body: **414,243 bytes**. Current renderer/rig script: approximately **568 KB**; exact bytes and hashes are in the [delivery manifest](../optimized/manifest.json). Body plus script is approximately **982 KB**, excluding HTML and the shared 35 KB font. The simpler procedural geometry removes the earlier extrusion dependency. Gzip remains an estimate, not the preview's actual transport.
+Current body: **414,243 bytes**. Current renderer/rig script: approximately **569 KB**; exact bytes and hashes are in the [delivery manifest](../optimized/manifest.json). Body plus script is approximately **983 KB**, excluding HTML and the shared 35 KB font. The simpler procedural geometry removes the earlier extrusion dependency. Gzip remains an estimate, not the preview's actual transport.
 
 ```sh
 # Regenerate the curved-face fit, cleaned body, bundle and manifest.
@@ -47,4 +48,4 @@ python3 design/identity/idol-motion-prototype/rebuild.py
 - Look-around audit passed: requested waypoint order, three-times-longer final return, two-frame body lag, exact neutral reset, finite positions/normals/colors for every emote, fixed outer seams and floor centers on the curved surface. Chrome playback reached frame 43 / 43; upper and lower gaze poses were inspected in the eye-detail view. [Upper gaze capture](look-up-detail.png) / [lower gaze capture](look-down-detail.png) record this experiment.
 - [Open three-quarter capture](open-quarter.png), [closed three-quarter capture](closed-quarter.png) and [open close-up](curved-open-detail.png) / [closed close-up](curved-closed-detail.png) record the revision.
 
-Physical mobile performance, exact texture continuity, extreme-angle occlusion and owner acceptance of the new look-around gesture remain pending. This is an isolated prototype; MCP behavior, authentication, distribution and existing architecture ADRs are unaffected.
+Physical mobile performance, exact texture continuity, extreme-angle occlusion and owner acceptance of the look-around and body-flex gestures remain pending. This is an isolated prototype; MCP behavior, authentication, distribution and existing architecture ADRs are unaffected.

@@ -6,6 +6,7 @@ import { FPS, CLIPS, poseAt } from './motion-poses.js';
 import { PROFILES, SOURCE_BOUNDS } from './asset-profiles.js';
 import { createEyes } from './hybrid/eye-rig.js';
 import { eyePoseAt } from './hybrid/eye-poses.js';
+import { installAffineSort } from './affine-sort.js';
 const parameters = new URLSearchParams(location.search);
 const profileKey = Object.hasOwn(PROFILES,parameters.get('asset')) ? parameters.get('asset') : 'hybrid';
 const profile = PROFILES[profileKey];
@@ -34,7 +35,12 @@ controls.minDistance = 1.5;
 controls.maxDistance = 16;
 const pivot = new THREE.Group();
 scene.add(pivot);
-let mode = 'blink', frame = 0, started = 0, playing = false, ready = false;
+// The shared shear deforms Gaussian positions/covariances and both eye surfaces.
+const body = new THREE.Group();
+body.matrixAutoUpdate=false;
+pivot.add(body);
+let mode = Object.hasOwn(CLIPS,parameters.get('motion'))?parameters.get('motion'):'blink';
+let frame = 0, started = 0, playing = false, ready = false;
 let eyeRig=null;
 const clipFPS=()=>CLIPS[mode].fps??FPS;
 const supportPoints = [];
@@ -65,9 +71,11 @@ function drawFrame(f) {
   scale.set(width,p.height,width); // Unit determinant: preserve volume.
   pivot.quaternion.copy(rotation);
   pivot.scale.copy(scale);
+  body.matrix.set(1,p.bend,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1);
+  body.matrixWorldNeedsUpdate=true;
   // Approximate the rounded base using sampled Gaussian centers. Avoid rotating
   // through the floor; this is an artistic contact correction, not rigid physics.
-  supportMatrix.compose(zero,rotation,scale);
+  supportMatrix.compose(zero,rotation,scale).multiply(body.matrix);
   let lowest=Infinity;
   for (const point of supportPoints) {
     supportPoint.copy(point).applyMatrix4(supportMatrix);
@@ -96,7 +104,7 @@ function view(name) {
   controls.update();
   document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view === name)));
 }
-view(parameters.get('view')==='detail'?'detail':'front');
+view(['front','quarter','back','side','logo','detail'].includes(parameters.get('view'))?parameters.get('view'):'front');
 new ResizeObserver(()=>{
   const {width,height} = stage.getBoundingClientRect();
   renderer.setSize(width,height);
@@ -133,13 +141,14 @@ try {
       (box.center.z-data.centers[i*3+2])/h));
   }
   const mesh = new SplatMesh(data, { autoSort:true });
+  installAffineSort(mesh);
   mesh.sorter.addEventListener('updated',requestRender);
   mesh.scale.setScalar(1/h);
   // IDOL export is Y-down. Keep +X facing the camera and flip Y/Z.
   mesh.rotation.x = Math.PI;
   mesh.position.set(-box.center.x/h, box.max.y/h, box.center.z/h);
-  pivot.add(mesh);
-  if(profile.eyes)eyeRig=createEyes(pivot,box);
+  body.add(mesh);
+  if(profile.eyes)eyeRig=createEyes(body,box);
   else mode='rock';
   ready=true;
   status.textContent=`${profile.title} · ${data.numSplats.toLocaleString('en')} splats · ${(profile.bytes/1e6).toFixed(2)} MB`;

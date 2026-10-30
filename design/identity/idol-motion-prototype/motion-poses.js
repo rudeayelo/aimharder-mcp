@@ -1,6 +1,6 @@
 // Hand-posed stop-motion exposures. Timing is in frames, not display refreshes.
 export const FPS = 12;
-const neutral = () => ({ lift:0, sway:0, roll:0, yaw:0, pitch:0, height:1 });
+const neutral = () => ({ lift:0, sway:0, roll:0, yaw:0, pitch:0, height:1, bend:0 });
 const pose = (roll=0, height=1, yaw=0, pitch=0) => ({...neutral(), roll, height, yaw, pitch});
 
 // Unequal spacing gives a quick impulse and a slower, diminishing recovery.
@@ -61,12 +61,23 @@ function lookAtFrame(frame) {
 export const LOOK_AROUND=Array.from({length:43},(_,frame)=>({
   ...lookAtFrame(frame),pitch:4*lookAtFrame(Math.max(0,frame-2)).y
 }));
+
+// A planted-base affine flex, rather than rotating the entire rigid object.
+// +X is forward: upper points travel farther while the floor plane stays flat.
+const flex=[
+  [0,1], [.015,.99], [.04,.97], [.08,.94], [.14,.90], [.22,.86],
+  [.24,.86], [.24,.87], [.18,.91], [.08,.98], [-.05,1.06], [-.18,1.12],
+  [-.24,1.14], [-.24,1.14], [-.20,1.11], [-.12,1.06], [-.02,1],
+  [.07,.96], [.10,.95], [.08,.97], [.03,.99], [-.03,1.02],
+  [-.04,1.02], [-.02,1.01], [0,1], [0,1]
+].map(([bend,height])=>({...pose(0,height),bend}));
 export const CLIPS = {
   rock:{name:'Rock', frames:rock},
   hop:{name:'Little hop', frames:hop},
   spin:{name:'Tilted spin', frames:spin},
   blink:{name:'Double blink',fps:24,frames:Array.from({length:24},()=>pose())},
   look:{name:'Look around',frames:LOOK_AROUND.map(p=>pose(0,1,0,p.pitch))},
+  flex:{name:'Body flex',frames:flex},
   curious:{name:'Curiosity',frames:curiosityTrack([0,-1,-3,-5,-7,-7,-7,-7,-6,-4,-2,0,1,0,0,0,0,0]).map(angle=>pose(angle,1,angle*.35))}
 };
 export function poseAt(mode, frame) {
