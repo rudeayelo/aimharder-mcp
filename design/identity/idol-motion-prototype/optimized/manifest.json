@@ -10,20 +10,20 @@
   },
   "sourceSha256": "48334af699ab95a12296ddd2f6f383ff97253777842a5e50c9f9eb90faebc3ae",
   "javascript": {
-    "bundleBytes": 593882,
-    "gzipEstimateBytes": 155893,
+    "bundleBytes": 567111,
+    "gzipEstimateBytes": 147868,
     "gzipActuallyServed": false
   },
   "profiles": {
     "hybrid": {
       "file": "hybrid/kettle-body-32k.sog",
       "count": 32768,
-      "bytes": 415108,
-      "title": "32k + animated eyes",
+      "bytes": 414243,
+      "title": "32k + curved eye recesses",
       "eyes": true,
-      "sha256": "6a912d3d06754c9727a266abed12c5030dfcacdc6d858a01f03d4c7435850375",
-      "modelReductionPercent": 97.67,
-      "bundlePlusModelBytes": 1008990
+      "sha256": "28219dffc9d3a50cb4d79f0088bbe5a7a8ef977ed59c51a6b01faf5d508036d7",
+      "modelReductionPercent": 97.68,
+      "bundlePlusModelBytes": 981354
     },
     "original": {
       "file": "kettle.ply",
@@ -33,7 +33,7 @@
       "eyes": false,
       "sha256": "48334af699ab95a12296ddd2f6f383ff97253777842a5e50c9f9eb90faebc3ae",
       "modelReductionPercent": 0.0,
-      "bundlePlusModelBytes": 18420090
+      "bundlePlusModelBytes": 18393319
     },
     "full": {
       "file": "optimized/kettle-full.sog",
@@ -43,7 +43,7 @@
       "eyes": false,
       "sha256": "592ab9045876ddc6e537c9ca58b02c2332acacb10a1cad5c31c727dc454a5ff6",
       "modelReductionPercent": 83.22,
-      "bundlePlusModelBytes": 3585946
+      "bundlePlusModelBytes": 3559175
     },
     "64k": {
       "file": "optimized/kettle-64k.sog",
@@ -53,7 +53,7 @@
       "eyes": false,
       "sha256": "a38ab20d6eaa7cfc394fae04a47a9629b5bdeeceda2014e000da5f0361df7963",
       "modelReductionPercent": 95.51,
-      "bundlePlusModelBytes": 1394538
+      "bundlePlusModelBytes": 1367767
     },
     "32k": {
       "file": "optimized/kettle-32k.sog",
@@ -63,7 +63,7 @@
       "eyes": false,
       "sha256": "fac022eff952b56a3f708309c349ce6815e80a5c3cc49b56f9b34034e81d5ffe",
       "modelReductionPercent": 97.65,
-      "bundlePlusModelBytes": 1012178
+      "bundlePlusModelBytes": 985407
     }
   }
 }

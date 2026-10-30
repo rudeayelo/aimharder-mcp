@@ -10,10 +10,10 @@ These are artistic choices for this specific prototype, not a claim that every p
 | Anticipation | Two preparation poses lead into lift or rotation, with a small counter-turn before the spin. |
 | Staging | One gesture per clip, a fixed default camera and ample white space keep the handle and face readable. Drag is an inspection control. |
 | Straight ahead / pose to pose | Explicit exposed poses define the gesture; no universal smoothing curve erases its accents. |
-| Follow through / overlap | Angular overshoot and decaying settle continue after landing. Height and rotation settle on different beats. The hybrid eye rig now closes during anticipation and varies gaze/height during curiosity. Independent handle lag remains deferred. |
+| Follow through / overlap | Angular overshoot and decaying settle continue after landing. Height and rotation settle on different beats. The curved-recess rig now closes the floor/walls/lip during anticipation and varies the complete carved contour during curiosity. Independent handle lag remains deferred. |
 | Slow in / slow out | Unequal pose spacing contrasts preparation, fast impulse, slower apex and sharper impact. |
 | Arcs | Parabolic vertical lift plus a small lateral excursion replaces eased, floating vertical segments. |
-| Secondary action | Small supporting yaw enriches the rock/hop. The hybrid curiosity gesture now adds a small gaze offset and eye-height asymmetry. |
+| Secondary action | Small supporting yaw enriches the rock/hop. The hybrid curiosity gesture moves and reshapes the complete curved eye recess, including its cavity walls. |
 | Timing | Rock 14, hop 16 and spin 18 exposures at 12 fps replace 24-exposure clips. The eye-only double blink uses the separately owner-preferred 24 fps / one-second cadence. |
 | Exaggeration | The spin keeps its 30-degree lean; restrained body compression clarifies impact. |
 | Solid drawing / weight | The original 3D shape supplies volume; approximate sampled-base support keeps a tilted pose near its contact plane. This is artistic support, not physics. |

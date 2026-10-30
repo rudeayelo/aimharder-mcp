@@ -2,7 +2,7 @@
 
 ## Question and scope
 
-Can the owner's IDOL reconstruction preserve the kettle's identity while supporting controlled stop-motion emotes? This is a throwaway, isolated study for issue #95 on `codex/95-symbol-motion-prototype`. It does not replace the wordmark study, generated videos, or production UI. The owner liked the first 3D study and requested faster, more natural motion. The owner then preferred V2 and requested weight optimization. The owner accepted 32k for the intended logo size and authorized a hybrid eye-animation trial. Eye appearance and timing acceptance remain pending.
+Can the owner's IDOL reconstruction preserve the kettle's identity while supporting controlled stop-motion emotes? This is a throwaway, isolated study for issue #95 on `codex/95-symbol-motion-prototype`. It does not replace the wordmark study, generated videos, or production UI. The owner liked the first 3D study and requested faster, more natural motion. The owner then preferred V2 and requested weight optimization. The owner accepted 32k for the intended logo size and authorized a hybrid eye-animation trial. The owner rejected the first fixed-socket/flat-insert trial; the current revision deforms complete eye recesses on a curved surface. Eye appearance and timing acceptance remain pending.
 
 Open `index.html` through a static server. From the repository root:
 
@@ -42,12 +42,12 @@ The first and last poses use exactly the same neutral transform. A sampled-cente
 - `node --check motion.js` and `node --check motion-poses.js` passed. A numerical pose audit passed for finite values, non-negative lift, positive scale, volume-preserving scale determinant and identical endpoint poses for all three gestures. Static page, model and local dependency URLs returned HTTP 200 through Tailscale.
 - [Desktop preview](desktop-preview.png) records the rendered object. The [compression study](compression-study.md) records the subsequent SOG conversion, count reduction and browser checks.
 
-This demonstrates a usable candidate for rigid motion. The hybrid eye trial is implemented and visually checked; owner eye acceptance, video export, production integration, GPU/load-time measurements and physical-mobile acceptance remain pending. No architecture, security, API or distribution decision is made; existing ADRs are unaffected.
+This demonstrates a usable candidate for rigid motion. The revised curved-recess trial is implemented and visually checked; owner eye acceptance, video export, production integration, GPU/load-time measurements and physical-mobile acceptance remain pending. No architecture, security, API or distribution decision is made; existing ADRs are unaffected.
 
 ## Current delivery optimization
 
-The owner selected the 32k direction. The comparison now defaults to the hybrid 32k body plus two mesh eyes (415,108-byte body); original PLY, full-count SOG, 64k and unedited 32k remain selectable. Only the selected model is requested; the original PLY is not a background dependency. The page loads the minified renderer bundle and renders on demand after an emote ends. See [compression results and regeneration](compression-study.md).
+The owner selected the 32k direction. The comparison now defaults to the hybrid 32k body plus complete curved recesses (414,243-byte body); original PLY, full-count SOG, 64k and unedited 32k remain selectable. Only the selected model is requested; the original PLY is not a background dependency. The page loads the minified renderer bundle and renders on demand after an emote ends. See [compression results and regeneration](compression-study.md).
 
 ## Current eye trial
 
-[Hybrid study](hybrid/README.md): two independent beveled orange capsules retain the existing socket rims. Double blink uses the previously preferred one-second / 24 fps cadence; body clips stay at 12 fps. Curiosity adds a small gaze offset and 12% eye-height asymmetry. Hop/spin anticipation closes the eyes. All clips restore the exact neutral body and eye pose.
+[Hybrid study](hybrid/README.md): two complete eye surfaces deform the floor, walls and lip together along the fitted face curvature. Double blink uses the previously preferred one-second / 24 fps cadence; body clips stay at 12 fps. Curiosity adds a small gaze offset and 12% eye-height asymmetry. Hop/spin anticipation closes the eyes. All clips restore the exact neutral body and eye pose.

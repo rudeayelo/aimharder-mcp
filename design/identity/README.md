@@ -1,6 +1,6 @@
 # Kettlebell robot identity trials
 
-Latest isolated experiment: the owner accepted 32k at the intended logo size and authorized the [hybrid eye study](idol-motion-prototype/hybrid/README.md). The 415 KB derivative body retains the recessed eye sockets and adds two independent orange mesh eyes, with double blink, curiosity and closed-eye jump anticipation. Eye appearance/timing acceptance and real mobile performance remain pending. This does not replace the wordmark or existing video set.
+Latest isolated experiment: the owner rejected stationary socket rims and flat eye inserts. The revised [curved eye-recess study](idol-motion-prototype/hybrid/README.md) deforms the orange floor, cavity walls and lip together on a surface fitted to the kettle, with different local orientations for the two eyes. The body remains 32k / 414 KB. Front/quarter open-and-closed inspection passed; owner appearance acceptance remains pending. This does not replace the wordmark or existing video set.
 
 Current brand-design stage: the owner considers the motion set sufficient and has returned to the wordmark. The [real-font composition study](wordmark-study/README.md) compares Krona One, Big Shoulders 600 and Aldrich with the selected circular-face character, preserves the earlier generated lettering reference and reuses existing motion clips only. No final typeface or public home page is selected.
 

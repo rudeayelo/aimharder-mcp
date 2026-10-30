@@ -33,7 +33,7 @@ if args.models or args.eyes:
 profiles = {}
 source_bytes = (HERE/'kettle.ply').stat().st_size
 for key, filename, count, title in [
-    ('hybrid', 'hybrid/kettle-body-32k.sog', 32768, '32k + animated eyes'),
+    ('hybrid', 'hybrid/kettle-body-32k.sog', 32768, '32k + curved eye recesses'),
     ('original', 'kettle.ply', 262144, 'Original PLY'),
     ('full', 'optimized/kettle-full.sog', 262144, 'SOG · full detail'),
     ('64k', 'optimized/kettle-64k.sog', 65536, 'SOG · 64k'),

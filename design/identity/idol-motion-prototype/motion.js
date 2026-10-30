@@ -89,13 +89,14 @@ function setPlaying(value) {
   requestRender();
 }
 function view(name) {
-  const positions = { front:[3.6, .72, 0], quarter:[3.18,.85,1.8], back:[-3.6,.72,0], side:[0,.72,3.6], logo:[13.5,1.25,0] };
+  stage.dataset.view=name;
+  const positions = { front:[3.6, .72, 0], quarter:[3.18,.85,1.8], back:[-3.6,.72,0], side:[0,.72,3.6], logo:[13.5,1.25,0], detail:[1.75,.61,1.0] };
   camera.position.set(...positions[name]);
-  controls.target.set(0,.52,0);
+  controls.target.set(0,name==='detail'?.4:.52,0);
   controls.update();
   document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view === name)));
 }
-view('front');
+view(parameters.get('view')==='detail'?'detail':'front');
 new ResizeObserver(()=>{
   const {width,height} = stage.getBoundingClientRect();
   renderer.setSize(width,height);

@@ -2,8 +2,8 @@ export const PROFILES = {
   "hybrid": {
     "file": "hybrid/kettle-body-32k.sog",
     "count": 32768,
-    "bytes": 415108,
-    "title": "32k + animated eyes",
+    "bytes": 414243,
+    "title": "32k + curved eye recesses",
     "eyes": true
   },
   "original": {
