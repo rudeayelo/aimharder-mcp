@@ -1,4 +1,7 @@
+import { curiosityTrack } from '../motion-poses.js';
+
 const neutral=()=>({open:[1,1],width:1,gaze:0});
+const curiosityStrength=curiosityTrack([0,.1,.35,.7,1,1,1,1,1,.85,.65,.4,.2,.05,0,0,0,0]);
 export function eyePoseAt(mode,frame) {
   const pose=neutral();
   if(mode==='blink') {
@@ -8,8 +11,8 @@ export function eyePoseAt(mode,frame) {
     const half=[3,6,11,14].includes(frame);
     pose.open=[closed?.025:half?.5:1,closed?.025:half?.5:1];
   } else if(mode==='curious') {
-    const strength=[0,.1,.35,.7,1,1,1,1,1,.85,.65,.4,.2,.05,0,0,0,0][frame]??0;
-    pose.open=[1-.12*strength,1+.12*strength];
+    const strength=curiosityStrength[frame]??0;
+    pose.open=[1-.55*strength,1+.25*strength];
     pose.width=1+.035*strength;
     pose.gaze=-.011*strength;
   } else if(mode==='hop'||mode==='spin') {

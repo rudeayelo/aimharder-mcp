@@ -1,6 +1,6 @@
 # Kettlebell robot identity trials
 
-Latest isolated experiment: the owner rejected stationary socket rims and flat eye inserts. The revised [curved eye-recess study](idol-motion-prototype/hybrid/README.md) deforms the orange floor, cavity walls and lip together on a surface fitted to the kettle, with different local orientations for the two eyes. The body remains 32k / 414 KB. Front/quarter open-and-closed inspection passed; owner appearance acceptance remains pending. This does not replace the wordmark or existing video set.
+Latest isolated experiment: the owner rejected stationary socket rims and flat eye inserts. The revised [curved eye-recess study](idol-motion-prototype/hybrid/README.md) deforms the orange floor, cavity walls and lip together on a surface fitted to the kettle, with different local orientations for the two eyes. The body remains 32k / 414 KB. The owner liked the curved-eye appearance. Curiosity now uses a stronger 45% / 125% eye-height contrast and a 3× slower initial lean, retaining the original hold/return timing; this refinement awaits owner review. This does not replace the wordmark or existing video set.
 
 Current brand-design stage: the owner considers the motion set sufficient and has returned to the wordmark. The [real-font composition study](wordmark-study/README.md) compares Krona One, Big Shoulders 600 and Aldrich with the selected circular-face character, preserves the earlier generated lettering reference and reuses existing motion clips only. No final typeface or public home page is selected.
 

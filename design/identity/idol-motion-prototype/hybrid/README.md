@@ -2,7 +2,7 @@
 
 ## Brief and current status
 
-The owner accepted the 32k body for the intended logo size. The first hybrid trial animated orange inserts inside stationary sockets; the owner rejected that behavior and also identified that the inserts were flat instead of following the pseudo-spherical face. This revision replaces that construction with complete deformable recesses on a fitted curved surface. Owner perceptual acceptance remains pending.
+The owner accepted the 32k body for the intended logo size. The first hybrid trial animated orange inserts inside stationary sockets; the owner rejected that behavior and also identified that the inserts were flat instead of following the pseudo-spherical face. This revision replaces that construction with complete deformable recesses on a fitted curved surface. The owner liked the curved-recess revision and requested a stronger, slower curiosity expression; this latest timing/amplitude revision awaits owner review.
 
 [Open the curved-eye prototype through Tailscale](https://mini.taild6f227.ts.net:8443/aimharder-brand-95/idol-motion-prototype/?asset=hybrid&view=detail). Choose **Double blink**, then **Three-quarter** or **Eye detail**. The slider freezes intermediate poses; **Curiosity** moves the entire recess along the face. The original fixed-eye profiles remain available for comparison.
 
@@ -19,7 +19,7 @@ The rig has 3,074 vertices in two meshes. Positions, normals and vertex colors u
 ## Expressions and timing
 
 - **Double blink:** one second at 24 fps, retaining the earlier preferred cadence. Each blink has one halfway exposure, two closed exposures and one halfway exposure; four open exposures separate the blinks. Closed indices are 4/5 and 12/13 (zero-based).
-- **Curiosity:** 1.5 seconds at 12 fps. Gaze and asymmetric eye height deform the whole carved recess while it follows the curved face.
+- **Curiosity:** 26 exposures / 2.17 seconds at 12 fps. The approach to the initial lean now takes 12 frame intervals / one second, exactly three times its previous four intervals. The hold, return and final settle retain their previous exposure spacing. At peak, one eye has 45% neutral height and the other 125%; gaze and the complete carved recess follow the curved face. Body and eyes use the same retimed approach.
 - **Hop / spin:** body timing stays at 12 fps. Complete eye cavities close in anticipation and reopen on takeoff.
 
 The first and last body/eye poses are exactly equal. There is no cursor tracking, mouth, brows, limbs or production integration.
@@ -42,6 +42,7 @@ python3 design/identity/idol-motion-prototype/rebuild.py
 - Numerical geometry audit passed: finite vertices, cavity-wall motion, lip-height collapse from approximately 0.152 to 0.0049 normalized units, and exact restoration of all vertex positions at neutral.
 - The same audit confirmed opposite lateral components of the two eye surface normals, non-zero vertical tilt, and non-planar vertical curvature. Local raw-source normals at the eye centers are approximately `(0.945, -0.286, +0.160)` and `(0.946, -0.285, -0.157)`.
 - JavaScript syntax, the complete `rebuild.py --eyes` pipeline, source checksum, artifact hashes, Tailscale delivery and local documentation links were checked.
+- Curiosity timing audit passed: initial approach is exactly 3× longer, every hold/return body exposure and expression-strength sample is preserved after the eight-frame offset, and neutral endpoints match. All rig positions, normals and colors remain finite across every emote, including the stronger asymmetric pose; neutral geometry restores exactly. [Curiosity detail capture](curiosity-detail.png) records the peak expression.
 - [Open three-quarter capture](open-quarter.png), [closed three-quarter capture](closed-quarter.png) and [open close-up](curved-open-detail.png) / [closed close-up](curved-closed-detail.png) record the revision.
 
-Physical mobile performance, exact texture continuity, extreme-angle occlusion and owner appearance/timing acceptance remain pending. This is an isolated prototype; MCP behavior, authentication, distribution and existing architecture ADRs are unaffected.
+Physical mobile performance, exact texture continuity, extreme-angle occlusion and owner acceptance of the revised curiosity expression/timing remain pending. This is an isolated prototype; MCP behavior, authentication, distribution and existing architecture ADRs are unaffected.

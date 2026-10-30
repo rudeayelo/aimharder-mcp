@@ -14,8 +14,8 @@ These are artistic choices for this specific prototype, not a claim that every p
 | Slow in / slow out | Unequal pose spacing contrasts preparation, fast impulse, slower apex and sharper impact. |
 | Arcs | Parabolic vertical lift plus a small lateral excursion replaces eased, floating vertical segments. |
 | Secondary action | Small supporting yaw enriches the rock/hop. The hybrid curiosity gesture moves and reshapes the complete curved eye recess, including its cavity walls. |
-| Timing | Rock 14, hop 16 and spin 18 exposures at 12 fps replace 24-exposure clips. The eye-only double blink uses the separately owner-preferred 24 fps / one-second cadence. |
-| Exaggeration | The spin keeps its 30-degree lean; restrained body compression clarifies impact. |
+| Timing | Rock 14, hop 16 and spin 18 exposures at 12 fps replace 24-exposure clips. The eye-only double blink uses the separately owner-preferred 24 fps / one-second cadence. Curiosity has 26 exposures: its initial lean takes three times longer (one second), while hold/return spacing stays unchanged. |
+| Exaggeration | The spin keeps its 30-degree lean; restrained body compression clarifies impact. Curiosity contrasts 45% and 125% eye heights, deforming the entire curved recess. |
 | Solid drawing / weight | The original 3D shape supplies volume; approximate sampled-base support keeps a tilted pose near its contact plane. This is artistic support, not physics. |
 | Appeal | Preserve the simple orange eyes, circular face and recognizable silhouette. Final cuteness and naturalness remain owner judgments. |
 

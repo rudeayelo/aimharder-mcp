@@ -34,12 +34,22 @@ function flight(track, takeoff, landing, height, sideways) {
 }
 flight(hop,3,9,.24,.045);
 flight(spin,3,11,.26,.06);
+
+// Stretch only the four-frame approach to twelve frames. Hold and return keep
+// their original exposure spacing; body and eyes share this timing.
+export function curiosityTrack(values) {
+  return Array.from({length:values.length+8},(_,frame)=>{
+    const sourceFrame=frame<=12?frame/3:frame-8;
+    const before=Math.floor(sourceFrame), fraction=sourceFrame-before;
+    return values[before]+((values[before+1]??values[before])-values[before])*fraction;
+  });
+}
 export const CLIPS = {
   rock:{name:'Rock', frames:rock},
   hop:{name:'Little hop', frames:hop},
   spin:{name:'Tilted spin', frames:spin},
   blink:{name:'Double blink',fps:24,frames:Array.from({length:24},()=>pose())},
-  curious:{name:'Curiosity',frames:[0,-1,-3,-5,-7,-7,-7,-7,-6,-4,-2,0,1,0,0,0,0,0].map((angle,i)=>pose(angle,1,angle*.35))}
+  curious:{name:'Curiosity',frames:curiosityTrack([0,-1,-3,-5,-7,-7,-7,-7,-6,-4,-2,0,1,0,0,0,0,0]).map(angle=>pose(angle,1,angle*.35))}
 };
 export function poseAt(mode, frame) {
   const frames=CLIPS[mode].frames;
