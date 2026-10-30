@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from './vendor/OrbitControls.js';
 import { PlyLoader, SplatMesh } from './vendor/visus-2.5.0.js';
+import { FPS, CLIPS, poseAt } from './motion-poses.js';
 
 const stage = document.querySelector('#stage');
 const status = document.querySelector('#status');
@@ -22,36 +23,43 @@ controls.maxDistance = 6;
 const pivot = new THREE.Group();
 scene.add(pivot);
 let mode = 'rock', frame = 0, started = 0, playing = false, ready = false;
-const neutral = { y: 0, roll: 0, pitch: 0, yaw: 0 };
-const tracks = {
-  rock: [[0,0,0],[3,0,-10],[7,0,14],[11,0,-9],[15,0,5],[19,0,-2],[22,0,0],[23,0,0]],
-  hop: [[0,0,0],[3,-.035,-6],[5,.05,7],[9,.30,12],[12,.23,5],[15,0,-11],[18,.015,7],[21,0,-3],[22,0,0],[23,0,0]],
-  spin: [[0,0,0,0],[3,-.025,-9,0],[5,.10,-15,30],[9,.30,-30,145],[12,.26,-22,245],[15,.08,-9,340],[16,0,10,360],[19,.01,-7,360],[22,0,0,360],[23,0,0,360]]
-};
-function poseAt(f) {
-  if (f === 0 || f === 23) return neutral;
-  const track = tracks[mode];
-  let i = 1;
-  while (track[i][0] < f) i++;
-  const a = track[i-1], b = track[i];
-  let t = (f-a[0])/(b[0]-a[0]);
-  t = t*t*(3-2*t);
-  const mix = k => (a[k] || 0) + ((b[k] || 0)-(a[k] || 0))*t;
-  return {y: mix(1), roll: mix(2)*Math.PI/180, yaw: mix(3)*Math.PI/180, pitch: 0};
-}
+let supportPoints = [];
+const supportMatrix = new THREE.Matrix4();
+const supportPoint = new THREE.Vector3();
+const rotation = new THREE.Quaternion();
+const euler = new THREE.Euler(0,0,0,'YXZ');
+const scale = new THREE.Vector3();
+const zero = new THREE.Vector3();
+const duration = document.querySelector('#duration');
 function drawFrame(f) {
   frame = f;
-  const p = poseAt(f);
-  // The asset faces +X: rotate about X for a visible lateral rock.
-  pivot.position.y = p.y;
-  pivot.rotation.set(p.roll, p.yaw, p.pitch);
-  slider.value = f;
-  label.textContent = `Frame ${f+1} / 24`;
+  const p = poseAt(mode,f);
+  const radians = Math.PI/180;
+  // Yaw is around world-up; lateral tilt follows the character through its spin.
+  euler.set(p.roll*radians,p.yaw*radians,p.pitch*radians,'YXZ');
+  rotation.setFromEuler(euler);
+  const width = 1/Math.sqrt(p.height);
+  scale.set(width,p.height,width); // Unit determinant: preserve volume.
+  pivot.quaternion.copy(rotation);
+  pivot.scale.copy(scale);
+  // Approximate the rounded base using sampled Gaussian centers. Avoid rotating
+  // through the floor; this is an artistic contact correction, not rigid physics.
+  supportMatrix.compose(zero,rotation,scale);
+  let lowest=Infinity;
+  for (const point of supportPoints) {
+    supportPoint.copy(point).applyMatrix4(supportMatrix);
+    lowest=Math.min(lowest,supportPoint.y);
+  }
+  pivot.position.set(0,p.lift-(Number.isFinite(lowest)?lowest:0),p.sway);
+  slider.max=CLIPS[mode].frames.length-1;
+  slider.value=f;
+  label.textContent=`Frame ${f+1} / ${CLIPS[mode].frames.length}`;
+  duration.textContent=`${(CLIPS[mode].frames.length/FPS).toFixed(2)} s · ${FPS} fps`;
 }
 function setPlaying(value) {
   playing = value;
   pause.textContent = value ? 'Pause' : 'Play';
-  if (value) started = performance.now()-frame*1000/12;
+  if (value) started = performance.now()-frame*1000/FPS;
 }
 function view(name) {
   const positions = { front:[3.6, .72, 0], quarter:[3.18,.85,1.8], back:[-3.6,.72,0], side:[0,.72,3.6] };
@@ -74,14 +82,22 @@ document.querySelectorAll('[data-motion]').forEach(b=>b.onclick=()=>{
   drawFrame(0);
   setPlaying(true);
 });
-pause.onclick=()=>{if(frame===23)drawFrame(0);setPlaying(!playing);};
+pause.onclick=()=>{if(frame===CLIPS[mode].frames.length-1)drawFrame(0);setPlaying(!playing);};
 slider.oninput=()=>{setPlaying(false);drawFrame(Number(slider.value));};
 try {
   const data = await new PlyLoader().loadAsync('./kettle.ply');
-  const mesh = new SplatMesh(data, { autoSort:true });
   // Normalize around the model's base; no Gaussian geometry/colors are edited.
   const box=data.boundingBox;
   const h=box.max.y-box.min.y;
+  // Copy the support samples before the renderer may transfer its data buffers.
+  const step=Math.max(1,Math.floor(data.numSplats/2048));
+  for (let i=0;i<data.numSplats;i+=step) {
+    supportPoints.push(new THREE.Vector3(
+      (data.centers[i*3]-box.center.x)/h,
+      (box.max.y-data.centers[i*3+1])/h,
+      (box.center.z-data.centers[i*3+2])/h));
+  }
+  const mesh = new SplatMesh(data, { autoSort:true });
   mesh.scale.setScalar(1/h);
   // IDOL export is Y-down. Keep +X facing the camera and flip Y/Z.
   mesh.rotation.x = Math.PI;
@@ -99,10 +115,10 @@ try {
 }
 renderer.setAnimationLoop(now=>{
   if (ready && playing) {
-    const next = Math.floor((now-started)*12/1000);
-    if (next>23) {
+    const next = Math.floor((now-started)*FPS/1000);
+    if (next>=CLIPS[mode].frames.length) {
       if (document.querySelector('#loop').checked) {started=now;drawFrame(0);}
-      else {drawFrame(23);setPlaying(false);}
+      else {drawFrame(CLIPS[mode].frames.length-1);setPlaying(false);}
     } else if (next!==frame) drawFrame(next);
   }
   controls.update();

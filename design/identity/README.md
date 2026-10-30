@@ -1,6 +1,6 @@
 # Kettlebell robot identity trials
 
-Latest isolated experiment: the [owner-supplied IDOL model motion study](idol-motion-prototype/README.md) renders the actual Gaussian asset with three controlled 12 fps motions. It is a candidate under review and does not replace the wordmark or existing video set.
+Latest isolated experiment: the [owner-supplied IDOL model motion study](idol-motion-prototype/README.md) renders the actual Gaussian asset. The owner liked V1; V2 applies [animation-principle notes](idol-motion-prototype/animation-principles.md), shorter 1.17/1.33/1.50-second gestures at 12 fps, parabolic lift and subtle volume-preserving squash/stretch. Revised cadence acceptance is pending. It does not replace the wordmark or existing video set.
 
 Current brand-design stage: the owner considers the motion set sufficient and has returned to the wordmark. The [real-font composition study](wordmark-study/README.md) compares Krona One, Big Shoulders 600 and Aldrich with the selected circular-face character, preserves the earlier generated lettering reference and reuses existing motion clips only. No final typeface or public home page is selected.
 

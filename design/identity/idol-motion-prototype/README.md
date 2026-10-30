@@ -2,7 +2,7 @@
 
 ## Question and scope
 
-Can the owner's IDOL reconstruction preserve the kettle's identity while supporting controlled stop-motion emotes? This is a throwaway, isolated study for issue #95 on `codex/95-symbol-motion-prototype`. It does not replace the wordmark study, generated videos, or production UI. Owner acceptance is pending.
+Can the owner's IDOL reconstruction preserve the kettle's identity while supporting controlled stop-motion emotes? This is a throwaway, isolated study for issue #95 on `codex/95-symbol-motion-prototype`. It does not replace the wordmark study, generated videos, or production UI. The owner liked the first 3D study and requested faster, more natural motion. Acceptance of the revised timing is pending.
 
 Open `index.html` through a static server. From the repository root:
 
@@ -22,20 +22,24 @@ Then open `/idol-motion-prototype/` on that server. The existing tailnet-only pr
 
 ## Motion and inspection
 
-Three selectable two-second motions each hold 24 poses at 12 fps:
+The current V2 timing keeps 12 fps and shortens the original two-second gestures:
 
-- **Rock:** alternating lateral tilts with diminishing amplitude.
-- **Little hop:** small anticipation, lift, landing and settling rock.
-- **Tilted spin:** hop, full rotation around the vertical axis, up to 30 degrees of lateral tilt and landing wobble.
+| Gesture | Poses | Duration | Shorter than V1 |
+| --- | --- | --- | --- |
+| Rock | 14 | 1.17 s | 42% |
+| Little hop | 16 | 1.33 s | 33% |
+| Tilted spin | 18 | 1.50 s | 25% |
 
-The first and last poses use exactly the same neutral transform. These are whole-object transforms; there is no new AI generation, eye animation, squashing, dynamic relighting or physical collision simulation. The renderer may refresh more often than 12 fps while the motion pose changes only at 12 fps. The frame slider freezes the selected pose. Front/quarter/back/side buttons and drag/zoom support visual inspection. Repetition is opt-in; automatic initial playback respects reduced-motion preference.
+[Motion notes](animation-principles.md) map the twelve animation principles to this character. Hand-posed unequal spacing replaces uniform smoothstep interpolation. Hop/spin use parabolic lift and a small lateral arc, anticipation, volume-preserving squash/stretch, angular overshoot and asymmetric settling. The spin's peak tilt remains 30 degrees.
+
+The first and last poses use exactly the same neutral transform. A sampled-center support correction approximates contact around the rounded base; it is not a physical collision solver. There is no new AI generation, independent eye/handle animation or dynamic relighting. The renderer may refresh more often than 12 fps while the motion pose changes only at 12 fps. The frame slider freezes the selected pose. Front/quarter/back/side buttons and drag/zoom support visual inspection. Repetition is opt-in; automatic initial playback respects reduced-motion preference.
 
 ## Verification — 2026-10-30
 
 - Actual PLY loaded/rendered in Chrome using the Tailscale HTTPS URL. Front, three-quarter and rear views were visually inspected; the face and handle remain recognizable. Source orientation was corrected after the first render.
-- Rock, hop and tilted-spin playback controls were exercised; playback progressed and returned to frame 24 in the neutral pose. Scrubbing showed the lateral tilt. Endpoints are explicitly equal in code.
+- V1 rock, hop and tilted-spin controls were exercised and returned to frame 24. V2 shortens them to 14/16/18 poses; Chrome playback and hop apex/landing scrubbing were checked. Endpoints are explicitly equal in the pose data.
 - At a simulated 390 × 844 viewport, the model rendered and the page had no horizontal overflow. This is desktop browser emulation, not real-device performance acceptance.
-- `node --check motion.js` passed. Static page, model and local dependency URLs returned HTTP 200 through Tailscale.
+- `node --check motion.js` and `node --check motion-poses.js` passed. A numerical pose audit passed for finite values, non-negative lift, positive scale, volume-preserving scale determinant and identical endpoint poses for all three gestures. Static page, model and local dependency URLs returned HTTP 200 through Tailscale.
 - [Desktop preview](desktop-preview.png) records the rendered object.
 
 This demonstrates a usable candidate for rigid motion. Eye deformation, export to video, compression, production integration, GPU/load-time measurements and physical-mobile acceptance remain unverified. No architecture, security, API or distribution decision is made; existing ADRs are unaffected.
