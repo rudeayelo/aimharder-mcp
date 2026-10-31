@@ -144,5 +144,95 @@
     "file": "lucide/moon.svg",
     "source": "https://unpkg.com/lucide-static@0.468.0/icons/moon.svg",
     "sha256": "5e5c866dd82fbea5c03e00c778fa283c6efc8c37db3b7937824fe0b8ad5382f7"
+  },
+  {
+    "file": "apps/chatgpt-light.svg",
+    "derivedFrom": "apps/chatgpt.svg",
+    "change": "Monochrome SVG fill for light palette; original path geometry preserved.",
+    "sha256": "25ea848d737d6fc5a62755e3cd0ffeea3ac2156181ce22c04fc37a2bf0afb412"
+  },
+  {
+    "file": "apps/chatgpt-dark.svg",
+    "derivedFrom": "apps/chatgpt.svg",
+    "change": "Monochrome SVG fill for dark palette; original path geometry preserved.",
+    "sha256": "30b1794b6b28cebad5e4fce4ce7cc5718371a28b8f1a16dd7325f534eb686ec5"
+  },
+  {
+    "file": "apps/claude-light.svg",
+    "derivedFrom": "apps/claude.svg",
+    "change": "Monochrome SVG fill for light palette; original path geometry preserved.",
+    "sha256": "81822b6cbc73ef060fbd0a38a9813f0c4817eb9fc707d0b34842aca58ba78f6c"
+  },
+  {
+    "file": "apps/claude-dark.svg",
+    "derivedFrom": "apps/claude.svg",
+    "change": "Monochrome SVG fill for dark palette; original path geometry preserved.",
+    "sha256": "2c4cb52f99044c645d87daf63bf6e2a46f7ff75d3b1b6e0fad3158c7303e1f12"
+  },
+  {
+    "file": "apps/hermes-light.svg",
+    "derivedFrom": "apps/hermes.svg",
+    "change": "Monochrome SVG fill for light palette; original path geometry preserved.",
+    "sha256": "101132077e1cbaf6186e15534f1056df7d82318643ec1d3c54af2413e73eadf0"
+  },
+  {
+    "file": "apps/hermes-dark.svg",
+    "derivedFrom": "apps/hermes.svg",
+    "change": "Monochrome SVG fill for dark palette; original path geometry preserved.",
+    "sha256": "f8466782ca87caad1d5874b287d10d4e9425e2463f64236cc3d707ff0d25f8c8"
+  },
+  {
+    "file": "apps/aimharder.png",
+    "derivedFrom": "apps/aimharder.svg",
+    "change": "Faithful rasterization for pen.dev image fills using @resvg/resvg-js 2.6.2. No path geometry or image content edits.",
+    "sha256": "c6f1d3d21d3fcfd3ec118636bb081ec28d11be4cab98f784369fe070d65ecc90"
+  },
+  {
+    "file": "apps/chatgpt-dark.png",
+    "derivedFrom": "apps/chatgpt-dark.svg",
+    "change": "Faithful rasterization for pen.dev image fills using @resvg/resvg-js 2.6.2. No path geometry or image content edits.",
+    "sha256": "73ba4d5406f6b769fa6d339c65efd668f90bbf85a685849b587ed8f64b93e5dd"
+  },
+  {
+    "file": "apps/chatgpt-light.png",
+    "derivedFrom": "apps/chatgpt-light.svg",
+    "change": "Faithful rasterization for pen.dev image fills using @resvg/resvg-js 2.6.2. No path geometry or image content edits.",
+    "sha256": "85002fd37731af814a7be36988a775eaa50256a99b10fbcf8fd71494517ae7e3"
+  },
+  {
+    "file": "apps/claude-dark.png",
+    "derivedFrom": "apps/claude-dark.svg",
+    "change": "Faithful rasterization for pen.dev image fills using @resvg/resvg-js 2.6.2. No path geometry or image content edits.",
+    "sha256": "3a0a92d0688f432dff99787fe265cc46a95da6c1e873b6d21b2aa28d8212b98c"
+  },
+  {
+    "file": "apps/claude-light.png",
+    "derivedFrom": "apps/claude-light.svg",
+    "change": "Faithful rasterization for pen.dev image fills using @resvg/resvg-js 2.6.2. No path geometry or image content edits.",
+    "sha256": "acf556d07985b33668181bee085f57c2a25aedcb49209eec9bb1bb6229f52ae7"
+  },
+  {
+    "file": "apps/hermes-dark.png",
+    "derivedFrom": "apps/hermes-dark.svg",
+    "change": "Faithful rasterization for pen.dev image fills using @resvg/resvg-js 2.6.2. No path geometry or image content edits.",
+    "sha256": "944bb5cb9aa75dbd4833f03d49db8e423a5af4126d9bcd745c0a05ac078349a5"
+  },
+  {
+    "file": "apps/hermes-light.png",
+    "derivedFrom": "apps/hermes-light.svg",
+    "change": "Faithful rasterization for pen.dev image fills using @resvg/resvg-js 2.6.2. No path geometry or image content edits.",
+    "sha256": "28e2634f684623141c9b25d4b6772573f80d11d5722970d2000352732d7b2b76"
+  },
+  {
+    "file": "apps/openclaw.png",
+    "derivedFrom": "apps/openclaw.svg",
+    "change": "Faithful rasterization for pen.dev image fills using @resvg/resvg-js 2.6.2. No path geometry or image content edits.",
+    "sha256": "04e744ee9e482e62beac9556de78e8375554a1b753fbbe14ebacf9790acc5f4d"
+  },
+  {
+    "file": "apps/pi.png",
+    "derivedFrom": "apps/pi.svg",
+    "change": "Faithful rasterization for pen.dev image fills using @resvg/resvg-js 2.6.2. No path geometry or image content edits.",
+    "sha256": "6f209adb429ca04504b43c7e0c92d8b6f657c4647f5847a19a171cb4e414b300"
   }
 ]

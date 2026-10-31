@@ -1,14 +1,14 @@
 # AimHarder Connect — public home structure
 
-Date: 2026-10-30. Status: first editable public-home design for owner review under #95, following the structure proposal below. The owner selected **AimHarder Connect** as the working product name and **Krona One** for the wordmark. `aimharder-mcp` remains the technical npm package. AIHarder is a retained naming alternative, not the current build target.
+Updated: 2026-10-31. Status: revised editable public-home design for owner review under #95, following the structure proposal below. The owner selected **AimHarder Connect** as the working product name and **Krona One** for the wordmark. `aimharder-mcp` remains the technical npm package. AIHarder is a retained naming alternative, not the current build target.
 
 The owner additionally requires English/Spanish presentation, a simple text language selector without flags, Light/Dark/System appearance and **Lucide icons exclusively**. Confirmation steps are not a home-page selling point; the later settings design must follow PR #121.
 
-The previous checkpoint delivered one public home-page design in [design/ahmcp.pen](../ahmcp.pen), with desktop/mobile, English/Spanish and light/dark representations. It did not draw other product screens, adopt final copy/navigation, implement a production page, activate support or deploy anything. The structure below records the design rationale and later corrections, with explicit artifact boundaries.
+This checkpoint contains one public home-page design in [design/ahmcp.pen](../ahmcp.pen), with desktop/mobile, English/Spanish and light/dark representations. It does not draw other product screens, adopt final copy/navigation, implement a production page, activate support or deploy anything. The structure below records the design rationale and later corrections, with explicit artifact boundaries.
 
 ## Latest owner-directed revision
 
-The current review artifact is a [functional home prototype](home-prototype.html), also [available through Tailscale](https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/home-prototype.html?lang=es&theme=system). This is one directed revision of the selected home, not a new set of competing visual directions or additional product screens. The question is whether the simpler animated conversation and illustrated setup make the page clearer and livelier.
+The current design source is [ahmcp.pen](../ahmcp.pen). A [functional home prototype](home-prototype.html) demonstrates the animation timing and is also [available through Tailscale](https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/home-prototype.html?lang=es&theme=system). This is one directed revision of the selected home, not a new set of competing visual directions or additional product screens. The question is whether the simpler animated conversation and illustrated setup make the page clearer and livelier.
 
 Changes requested by the owner:
 
@@ -19,15 +19,15 @@ Changes requested by the owner:
 - A separate strip identifies ChatGPT, Claude, Hermes, OpenClaw and Pi. Setup illustrations show AimHarder with pseudo fields, AI-app selection, and a first useful class-list answer. No new mascot animation or dynamic background was added.
 - Latest preference correction: appearance is a single icon button cycling **System → Light → Dark → System**, using Lucide monitor/sun/moon. Its localized accessible label and tooltip state the current and next modes. Language remains a simple text selector without flags.
 
-**Canvas sync is pending:** two `execute` attempts did not receive a response; the subsequent pen.dev state read reported no editor open despite successful `open_editor` calls. The `.pen` file and its original PNG exports remain the previous checkpoint. The revision was therefore made reviewable in an isolated static web prototype, not silently written into the `.pen` JSON. Do not describe the older canvas/exports as containing these corrections.
+**Canvas sync completed on 2026-10-31:** the editor responded on retry. All eight existing home frames now contain the correction, including enlarged shared wordmark, aligned header, simplified composer/conversation, graphical setup steps, app strip and cycling-theme icon. The existing preference board now shows monitor/sun/moon cycle states instead of appearance menus. New board `OWSCj` contains typing/sent/answer states, timing notes and all four English/Spanish examples. The source was edited through the pen.dev API and saved by the editor; the `.pen` JSON was not changed with a filesystem script. Earlier editor failures remain historical context, not a current blocker. The canvas depicts editable states; actual playback remains in the separate prototype.
 
 Run locally with `python3 -m http.server 8946 --bind 127.0.0.1 --directory design`, then open `/home-study/home-prototype.html`. The existing scoped `/aimharder-home-95` Tailscale route exposes only this design server. No production application, authentication, account data or backend connection is involved. Sign-in/privacy controls show explicit prototype notices. Locale/theme choices live in the URL for review; production preference persistence remains pending.
 
 [Current desktop capture](previews/home-revision-desktop-es-light.png) · [Current mobile Dark capture](previews/home-revision-mobile-es-dark.png) · [Overview](previews/home-revision-overview.png) · [Browser checks](revision-checks.json) · [Asset sources and MCP claim boundary](assets/README.md).
 
-## Previous canvas checkpoint and previews
+## Current canvas and previews
 
-The previous saved canvas contains the original foundation boards plus these home frames. Locale variants use literal localized text for reliable canvas rendering; themed variables carry semantic palette roles. Components reuse the existing primary-action component and a new shared Krona One wordmark. [copy.json](copy.json) supplies both languages and the full FAQ answer inventory.
+The saved canvas contains the original foundation boards plus these updated home frames and state boards. Locale variants use literal localized text for reliable canvas rendering; themed variables carry semantic palette roles. Components reuse the existing primary-action component and a new shared Krona One wordmark. [copy.json](copy.json) supplies both languages and the full FAQ answer inventory.
 
 | Frame | Width | Locale / appearance | Render |
 | --- | --- | --- | --- |
@@ -39,7 +39,8 @@ The previous saved canvas contains the original foundation boards plus these hom
 | `qJZFz` | 390 | English / Dark | [PNG](previews/qJZFz.png) |
 | `bMKmj` | 390 | Spanish / Light | [PNG](previews/bMKmj.png) |
 | `PuPqO` | 390 | Spanish / Dark | [PNG](previews/PuPqO.png) |
-| `idH0v` | 1440 | Language, appearance, expanded FAQ and keyboard-focus states | [PNG](previews/idH0v.png) |
+| `idH0v` | 1440 | Language, cycling appearance icons, expanded FAQ and keyboard-focus states | [PNG](previews/idH0v.png) |
+| `OWSCj` | 1440 | Conversation motion states and four bilingual examples | [PNG](previews/OWSCj.png) |
 
 [Desktop Light through Tailscale](https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/previews/uAXkc.png) · [Desktop Dark through Tailscale](https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/previews/p7u8w.png) · [Spanish mobile Dark through Tailscale](https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/previews/PuPqO.png). The scoped tailnet route proxies a local static server on localhost:8946 rooted at `design/`; the server must remain running. This is artifact delivery, not service deployment.
 
@@ -161,9 +162,11 @@ Preference-pattern research added on 2026-10-30: a style search plus language/ap
 
 Desktop proposal: a concise message/action column beside the conversation. Mobile: logo/navigation, headline and access action first, then the example and remaining sections in reading order. Keep the same content hierarchy; avoid a carousel required to discover capabilities. A static poster is the baseline for the logo; if existing motion is later integrated, honor reduced motion and render only as needed.
 
-The first desktop/mobile visual home experiment was drawn and exported before the owner revision above. Final copy, optical adjustments, functional links, interaction behavior and production implementation remain pending. The mobile layout keeps language/appearance and Sign in visible in a second header row; the menu affordance is reserved for section navigation. Page variants depict **System** as the selected preference with either effective palette; the separate state board shows the three explicit menu choices.
+The first desktop/mobile visual home experiment was drawn and exported before the owner revision above. Final copy, optical adjustments, functional links, interaction behavior and production implementation remain pending. The mobile layout keeps language/appearance and Sign in visible in a second header row; the menu affordance is reserved for section navigation. Page variants depict **System** as the selected preference with either effective palette; the separate state board shows the three explicit icon-button states and click order.
 
-## Previous canvas verification — 2026-10-30
+## Historical first-canvas verification — 2026-10-30
+
+The auxiliary sizing warnings recorded below were resolved by the 2026-10-31 update; see the current checks at the end.
 
 - [x] Rendered and visually inspected the desktop light/dark designs and the Spanish mobile header, hero, prompts, setup, FAQ and closing action. All eight pages were exported from pen.dev, not recreated in HTML.
 - [x] All eight home-page subtrees report no layout/clipping problems in the editor's bounds visitor after layout settles. No unresolved `$home-...` content strings remain. Every new icon node uses `lucide`.
@@ -180,8 +183,16 @@ Relevant checks for this delivery are canvas rendering, structural/icon/localiza
 
 ## Revision verification and remaining work
 
-The isolated prototype was inspected in Chrome at 320, 390 and 1440px in both languages and effective palettes. Recorded checks found matching header/body edges, no horizontal page overflow, five app labels and no invitation mention outside FAQ. The four examples, automatic progression, pause/resume, theme cycle, locale change, mobile menu, FAQ disclosure and prototype notices were checked in the browser. Current screenshots are browser captures, not pen exports. Reduced-motion handling and System change tracking were inspected in code; OS-preference changes and assistive-technology behavior were not exercised. Syntax, local references, source hashes and whitespace were checked. Production MCP tests are unrelated to these static design assets.
+The isolated prototype was inspected in Chrome at 320, 390 and 1440px in both languages and effective palettes. Recorded checks found matching header/body edges, no horizontal page overflow, five app labels and no invitation mention outside FAQ. The four examples, automatic progression, pause/resume, theme cycle, locale change, mobile menu, FAQ disclosure and prototype notices were checked in the browser. Files named `home-revision-...png` are browser captures. Node-ID-named PNGs are now regenerated from the updated pen.dev source. Reduced-motion handling and System change tracking were inspected in code; OS-preference changes and assistive-technology behavior were not exercised. Syntax, local references, source hashes and whitespace were checked. Production MCP tests are unrelated to these static design assets.
 
-Remaining: synchronize this revision into pen.dev when its editor responds; owner review; real mobile/perceptual and accessibility acceptance; production frontend implementation and preference persistence; per-client Connect validation. Earlier static-canvas acceptance does not establish these runtime behaviors. No architecture, security, API, distribution or validation policy changed, so existing ADRs remain applicable and no new ADR is needed.
+Remaining: owner review; real mobile/perceptual and accessibility acceptance; production frontend implementation and preference persistence; per-client Connect validation. Earlier static-canvas acceptance does not establish these runtime behaviors. No architecture, security, API, distribution or validation policy changed, so existing ADRs remain applicable and no new ADR is needed.
 
-Independent review of the revision found **0 actionable Standards findings** and **0 actionable Spec findings**. Both reviews preserve the pending `.pen` synchronization as an outstanding delivery limitation, rather than treating the HTML prototype as canvas completion.
+Independent review of the earlier HTML revision found **0 actionable Standards findings** and **0 actionable Spec findings**. That review correctly recorded the then-pending `.pen` synchronization; the retry has now completed it.
+
+## Canvas synchronization checks — 2026-10-31
+
+- The eight home pages and both state boards report **zero current layout/clipping problems** in live pen.dev bounds inspection. [pen-sync-checks.json](pen-sync-checks.json) records the actual per-frame results, dimensions, icon family, absence of unresolved text variables and absence of invitation copy outside FAQ.
+- The wordmark font sizes are 17.5px desktop and 15px mobile, 25% above their previous 14px and 12px values. Desktop header/body gutters are 120px; mobile gutters are 20px. The existing page IDs and component references are retained; Spanish desktop frames moved down to prevent overlap after the new sections increased height.
+- Full-resolution pen exports of the header, hero and setup, plus Spanish mobile Dark and the motion-state board, were visually inspected. Node-ID previews were regenerated for all eight pages and both state boards. Static design review does not establish production or assistive-technology acceptance.
+- SVG image fills did not render reliably in the editor. Faithful PNG derivatives were rasterized from the existing vector sources with `@resvg/resvg-js` 2.6.2, without redrawing geometry or generating new brand artwork. Monochrome light/dark vector derivatives retain original path geometry; original Pi colors remain. The conversion dependency lives only in a temporary tool directory; project dependencies/lockfiles are unchanged. All 44 asset hashes and image file references were verified.
+- The original foundation boards and original primary-action/input/status components match the prior commit exactly. No frontend runtime, API, security, distribution or validation-policy behavior changed; no ADR amendment is required.

@@ -24,3 +24,7 @@ Primary sources inspected for the proposed ecosystem strip:
 - [Pi MCP guide](https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/docs/mcp.md): the retrieved current guide documents stdio/Streamable HTTP and OAuth support. Historical statements that Pi never supports MCP are not the current contract.
 
 This establishes ecosystem relevance, not end-to-end acceptance with Connect. Keep the existing ChatGPT/Hermes guide paths, check current client requirements before shipping, and validate each advertised connection separately. Do not call these partners, customers or universally supported plans/devices. No account authentication or real-client integration test was performed for this design revision.
+
+## pen.dev render derivatives — 2026-10-31
+
+The editor did not reliably render SVG image fills. Monochrome light/dark SVG derivatives of ChatGPT, Claude and Hermes preserve the source path geometry and replace fill colors only. Nine PNG derivatives are faithfully rasterized from these vectors and the original AimHarder/OpenClaw/Pi artwork using `@resvg/resvg-js` 2.6.2; the canvas uses these PNG files. No brand artwork was manually reconstructed or AI-generated. Source/derived relationships and hashes are recorded in `sources.json`; the web prototype retains its existing SVG assets. The conversion package was installed only in a temporary tool directory, without modifying project dependencies or lockfiles.

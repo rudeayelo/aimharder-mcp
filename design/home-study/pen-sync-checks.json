@@ -1,0 +1,198 @@
+{
+  "date": "2026-10-31",
+  "kind": "Live pen.dev document checks after synchronization",
+  "pages": [
+    {
+      "id": "uAXkc",
+      "name": "02 Public home / Desktop / English / Light",
+      "placeholder": false,
+      "bounds": {
+        "x": 1360,
+        "y": 1000,
+        "width": 1440,
+        "height": 2810
+      },
+      "layoutProblems": [],
+      "nonLucideIcons": [],
+      "unresolvedContent": [],
+      "invitationOutsideFaq": [],
+      "logoFontSizes": [
+        17.5,
+        17.5,
+        17.5
+      ]
+    },
+    {
+      "id": "p7u8w",
+      "name": "03 Public home / Desktop / English / Dark",
+      "placeholder": false,
+      "bounds": {
+        "x": 2960,
+        "y": 1000,
+        "width": 1440,
+        "height": 2810
+      },
+      "layoutProblems": [],
+      "nonLucideIcons": [],
+      "unresolvedContent": [],
+      "invitationOutsideFaq": [],
+      "logoFontSizes": [
+        17.5,
+        17.5,
+        17.5
+      ]
+    },
+    {
+      "id": "uzAUz",
+      "name": "04 Public home / Desktop / Español / Light",
+      "placeholder": false,
+      "bounds": {
+        "x": 1360,
+        "y": 4200,
+        "width": 1440,
+        "height": 2810
+      },
+      "layoutProblems": [],
+      "nonLucideIcons": [],
+      "unresolvedContent": [],
+      "invitationOutsideFaq": [],
+      "logoFontSizes": [
+        17.5,
+        17.5,
+        17.5
+      ]
+    },
+    {
+      "id": "Qg3nb",
+      "name": "05 Public home / Desktop / Español / Dark",
+      "placeholder": false,
+      "bounds": {
+        "x": 2960,
+        "y": 4200,
+        "width": 1440,
+        "height": 2810
+      },
+      "layoutProblems": [],
+      "nonLucideIcons": [],
+      "unresolvedContent": [],
+      "invitationOutsideFaq": [],
+      "logoFontSizes": [
+        17.5,
+        17.5,
+        17.5
+      ]
+    },
+    {
+      "id": "T37OLV",
+      "name": "06 Public home / Mobile / English / Light",
+      "placeholder": false,
+      "bounds": {
+        "x": 4560,
+        "y": 1000,
+        "width": 390,
+        "height": 4185
+      },
+      "layoutProblems": [],
+      "nonLucideIcons": [],
+      "unresolvedContent": [],
+      "invitationOutsideFaq": [],
+      "logoFontSizes": [
+        15,
+        15,
+        15
+      ]
+    },
+    {
+      "id": "qJZFz",
+      "name": "07 Public home / Mobile / English / Dark",
+      "placeholder": false,
+      "bounds": {
+        "x": 5070,
+        "y": 1000,
+        "width": 390,
+        "height": 4185
+      },
+      "layoutProblems": [],
+      "nonLucideIcons": [],
+      "unresolvedContent": [],
+      "invitationOutsideFaq": [],
+      "logoFontSizes": [
+        15,
+        15,
+        15
+      ]
+    },
+    {
+      "id": "bMKmj",
+      "name": "08 Public home / Mobile / Español / Light",
+      "placeholder": false,
+      "bounds": {
+        "x": 5580,
+        "y": 1000,
+        "width": 390,
+        "height": 4239
+      },
+      "layoutProblems": [],
+      "nonLucideIcons": [],
+      "unresolvedContent": [],
+      "invitationOutsideFaq": [],
+      "logoFontSizes": [
+        15,
+        15,
+        15
+      ]
+    },
+    {
+      "id": "PuPqO",
+      "name": "09 Public home / Mobile / Español / Dark",
+      "placeholder": false,
+      "bounds": {
+        "x": 6090,
+        "y": 1000,
+        "width": 390,
+        "height": 4239
+      },
+      "layoutProblems": [],
+      "nonLucideIcons": [],
+      "unresolvedContent": [],
+      "invitationOutsideFaq": [],
+      "logoFontSizes": [
+        15,
+        15,
+        15
+      ]
+    },
+    {
+      "id": "idH0v",
+      "name": "10 Home / Language, appearance, FAQ and focus states",
+      "placeholder": false,
+      "bounds": {
+        "x": 4560,
+        "y": 40,
+        "width": 1440,
+        "height": 706
+      },
+      "layoutProblems": [],
+      "nonLucideIcons": [],
+      "unresolvedContent": [],
+      "invitationOutsideFaq": [],
+      "logoFontSizes": []
+    },
+    {
+      "id": "OWSCj",
+      "name": "11 Home / Conversation motion and four example states",
+      "placeholder": false,
+      "bounds": {
+        "x": 6600,
+        "y": 40,
+        "width": 1440,
+        "height": 1868
+      },
+      "layoutProblems": [],
+      "nonLucideIcons": [],
+      "unresolvedContent": [],
+      "invitationOutsideFaq": [],
+      "logoFontSizes": []
+    }
+  ]
+}
