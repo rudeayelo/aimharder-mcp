@@ -1,6 +1,6 @@
 {
   "date": "2026-10-31",
-  "kind": "Graphic still synchronized to two pen frames; browser captures and pen exports are distinct",
+  "kind": "Previous attentive-pose still checkpoint; latest HTML-only motion/refinement recorded in hero-motion-checks.json",
   "headline": "Focus more on training, less on tapping.",
   "timedAnimation": false,
   "inputAndPaginatorRemoved": true,
@@ -35,9 +35,9 @@
     }
   ],
   "pending": [
-    "Animated thinking and answering gestures after composition review"
+    "Sync the larger translucent reply and stronger shadow to the two English desktop pen frames; editor did not answer"
   ],
-  "penSynchronized": true,
+  "penSynchronized": false,
   "penFrameIds": [
     "uAXkc",
     "p7u8w"
@@ -58,5 +58,6 @@
     "replyPseudoElementContent": "none",
     "thinkingPseudoElementContent": "none"
   },
-  "penBoundsNote": "The character and contact shadow intentionally extend into the inter-column gap; the image clips transparent margins. The bounds visitor flags these intended graphics overlaps, not a clean pass."
+  "penBoundsNote": "The character and contact shadow intentionally extend into the inter-column gap; the image clips transparent margins. The bounds visitor flags these intended graphics overlaps, not a clean pass.",
+  "latestMotionChecks": "hero-motion-checks.json"
 }

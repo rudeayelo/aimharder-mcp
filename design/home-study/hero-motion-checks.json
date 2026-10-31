@@ -1,0 +1,63 @@
+{
+  "date": "2026-10-31",
+  "kind": "Throwaway desktop English motion and surface refinement; HTML only",
+  "timedAnimation": true,
+  "penSynchronized": false,
+  "penReason": "Editor did not answer three execute attempts; pre-existing pen edit preserved",
+  "browserObservations": {
+    "viewports": [
+      1440,
+      1200
+    ],
+    "thinkingAt3_75": {
+      "scaleY": 0.8502,
+      "lift": 0
+    },
+    "hopAt4_08": {
+      "scaleY": 1.025,
+      "lift": 0.065
+    },
+    "settledAt4_9": {
+      "scaleY": 1,
+      "lift": 0
+    },
+    "playbackTimeAdvanced": true,
+    "pauseObserved": true,
+    "replyCornerRadius": "24px 24px 24px 6px",
+    "replyBackdropFilter": "blur(12px)",
+    "staticFallbackAt1200": {
+      "canvasCount": 0,
+      "replyWidth": 300,
+      "scrollWidth": 1200,
+      "viewport": 1200
+    },
+    "consoleWarningsAndErrorsObserved": 0
+  },
+  "sourcesVerified": 55,
+  "screenshots": [
+    {
+      "file": "previews/hero-motion-answer-light.png",
+      "sha256": "bc0d13f75459f5e49d3dea5f16f714af84f3f4f60dfb1911e916e55aafe73413"
+    },
+    {
+      "file": "previews/hero-motion-thinking-light.png",
+      "sha256": "1adb6f15b1c35f0389e6d8830c823a041f52aacfceb9a20ccc5be35b0acc3792"
+    },
+    {
+      "file": "previews/hero-motion-long-dark.png",
+      "sha256": "d5f5afc7ac09e9708ec16b395e0049ccaa176f96e6ae4334b0f1d48e64299505"
+    }
+  ],
+  "pending": [
+    "Pen synchronization",
+    "Owner motion approval",
+    "Real-device/performance and accessibility acceptance",
+    "Actual OS reduced-motion setting change (equivalent motion=off branch inspected)"
+  ],
+  "architectureAndApiChange": false,
+  "review": {
+    "standards": "No documented standards breaches; duplicate animation-frame lifecycle issue fixed and verified by reviewer",
+    "spec": "Requested gestures/surface changes implemented; same animation-frame lifecycle issue fixed",
+    "postFixBrowserPauseResume": "Paused time 6.366, resumed time 6.650; no observed warnings/errors"
+  }
+}
