@@ -234,5 +234,59 @@
     "derivedFrom": "apps/pi.svg",
     "change": "Faithful rasterization for pen.dev image fills using @resvg/resvg-js 2.6.2. No path geometry or image content edits.",
     "sha256": "6f209adb429ca04504b43c7e0c92d8b6f657c4647f5847a19a171cb4e414b300"
+  },
+  {
+    "file": "apps/hermes-avatar.png",
+    "source": "https://web-assets.nousresearch.com/marketing/73edac8eae57c8914e23605b9f0a7015d9d3fd26/assets/hermes-agent/icon.png",
+    "retrieved": "2026-10-31",
+    "sha256": "5fbced606189c9bfc2925a16f8903333041cabbf1f8699fe9fe9b3e24504048f"
+  },
+  {
+    "file": "apps/pi-mono-light.svg",
+    "derivedFrom": "apps/pi.svg",
+    "change": "Monochrome SVG fill only for compact hero row; original geometry preserved.",
+    "sha256": "7270b8bd0ec462ccb25400d0350bddd4352d7a064db0722d1f5be3ec87ad4415"
+  },
+  {
+    "file": "apps/pi-mono-dark.svg",
+    "derivedFrom": "apps/pi.svg",
+    "change": "Monochrome SVG fill only for compact hero row; original geometry preserved.",
+    "sha256": "8e2d9af74c0b7ad3d562b6ef92a52bc727a022fc54730c54eb5f8849c5457193"
+  },
+  {
+    "file": "apps/openclaw-mono-light.svg",
+    "derivedFrom": "apps/openclaw.svg",
+    "change": "Monochrome SVG fill only for compact hero row; original geometry preserved.",
+    "sha256": "4fed30d37875fdca487b4dacae354c2fbe86ab462a64f2220b2acf08a8d95ed2"
+  },
+  {
+    "file": "apps/openclaw-mono-dark.svg",
+    "derivedFrom": "apps/openclaw.svg",
+    "change": "Monochrome SVG fill only for compact hero row; original geometry preserved.",
+    "sha256": "479adadc05f5749a72406acca9232d2f4610e902209fa51cb65453540e64dc65"
+  },
+  {
+    "file": "apps/pi-mono-light.png",
+    "derivedFrom": "apps/pi-mono-light.svg",
+    "change": "Faithful rasterization with @resvg/resvg-js 2.6.2 for pen image fill.",
+    "sha256": "518bbf5636fe0ddeeb6b745c02cf4d303997c459fbc928ff728e621c981c0c9e"
+  },
+  {
+    "file": "apps/pi-mono-dark.png",
+    "derivedFrom": "apps/pi-mono-dark.svg",
+    "change": "Faithful rasterization with @resvg/resvg-js 2.6.2 for pen image fill.",
+    "sha256": "d948062233aad35e9d2707b3382fef21acab6ff2deea3aa5b56b45bcf093e32f"
+  },
+  {
+    "file": "apps/openclaw-mono-light.png",
+    "derivedFrom": "apps/openclaw-mono-light.svg",
+    "change": "Faithful rasterization with @resvg/resvg-js 2.6.2 for pen image fill.",
+    "sha256": "483a5b0bd9106a29b0fa86672acb59f6c53efbdef3ff993a9a3c6cb43b23be0d"
+  },
+  {
+    "file": "apps/openclaw-mono-dark.png",
+    "derivedFrom": "apps/openclaw-mono-dark.svg",
+    "change": "Faithful rasterization with @resvg/resvg-js 2.6.2 for pen image fill.",
+    "sha256": "cfca9a371fb55f834db770c7825e86a8251571d05a8820da32171cb4660caa36"
   }
 ]

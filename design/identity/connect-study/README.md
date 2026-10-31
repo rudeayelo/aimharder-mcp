@@ -1,5 +1,7 @@
 # Connect naming and wordmark study
 
+Historical comparison. On 2026-10-31 the owner selected **AIHarder** as the working consumer name, using the existing standalone composition with the kettle on the left. The [current home refinement](../../home-study/desktop-refinement.md) applies it only to English desktop Light/Dark while the design is refined. This original naming board is retained as evidence.
+
 Prepared 2026-10-30 for #95. The owner selected **Krona One** and ended further motion experiments for this stage. This is a static naming/composition comparison before the public home-page study.
 
 [Open through Tailscale](https://mini.taild6f227.ts.net:8443/aimharder-brand-95/connect-study/). Reuses the existing `design/identity` server on localhost:8945 and its scoped Tailscale route. No new hosting or deployment is introduced.

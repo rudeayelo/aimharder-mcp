@@ -1,0 +1,80 @@
+{
+  "date": "2026-10-31",
+  "activeHomeFrames": [
+    "uAXkc",
+    "p7u8w"
+  ],
+  "buttonComparison": "kUGfy",
+  "preservedPriorRootIds": [
+    "NXGWi",
+    "UEEFt",
+    "mEDaF",
+    "PjJf8",
+    "Bjaja",
+    "itt5n",
+    "uzAUz",
+    "Qg3nb",
+    "T37OLV",
+    "qJZFz",
+    "bMKmj",
+    "PuPqO",
+    "idH0v",
+    "OWSCj"
+  ],
+  "protectedRootsUnchanged": true,
+  "exactOwnerIntroPresent": true,
+  "threeHeaderGroupsPresent": true,
+  "buttonLabelContrast": [
+    {
+      "name": "Sign in / A light Default",
+      "minimumEndpointContrast": 4.93
+    },
+    {
+      "name": "Sign in / A light Hover",
+      "minimumEndpointContrast": 4.68
+    },
+    {
+      "name": "Sign in / A light Pressed",
+      "minimumEndpointContrast": 7.0
+    },
+    {
+      "name": "Sign in / A dark Default",
+      "minimumEndpointContrast": 5.56
+    },
+    {
+      "name": "Sign in / A dark Hover",
+      "minimumEndpointContrast": 6.3
+    },
+    {
+      "name": "Sign in / A dark Pressed",
+      "minimumEndpointContrast": 4.78
+    },
+    {
+      "name": "Sign in / B light Default",
+      "minimumEndpointContrast": 5.96
+    },
+    {
+      "name": "Sign in / B light Hover",
+      "minimumEndpointContrast": 5.24
+    },
+    {
+      "name": "Sign in / B light Pressed",
+      "minimumEndpointContrast": 7.08
+    },
+    {
+      "name": "Sign in / B dark Default",
+      "minimumEndpointContrast": 5.56
+    },
+    {
+      "name": "Sign in / B dark Hover",
+      "minimumEndpointContrast": 6.3
+    },
+    {
+      "name": "Sign in / B dark Pressed",
+      "minimumEndpointContrast": 4.78
+    }
+  ],
+  "assetsAndLocalLinks": "passed",
+  "editorBoundsStatus": "Clipping warnings remain in new header references and specimen board despite complete visually inspected renders; no clean visitor pass claimed.",
+  "runtimeChanges": false
+}

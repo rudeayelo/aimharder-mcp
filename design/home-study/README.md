@@ -1,4 +1,6 @@
-# AimHarder Connect — public home structure
+# AIHarder — public home study
+
+**Active refinement:** the working name is now **AIHarder**. Only the English desktop Light/Dark frames are being refined; Spanish/mobile variants and the HTML prototype remain at the previous checkpoint until agreement. The [desktop revision and two button options](desktop-refinement.md) are the current review target. This later scope supersedes the earlier all-variant iteration below.
 
 Updated: 2026-10-31. Status: revised editable public-home design for owner review under #95, following the structure proposal below. The owner selected **AimHarder Connect** as the working product name and **Krona One** for the wordmark. `aimharder-mcp` remains the technical npm package. AIHarder is a retained naming alternative, not the current build target.
 
@@ -7,6 +9,8 @@ The owner additionally requires English/Spanish presentation, a simple text lang
 This checkpoint contains one public home-page design in [design/ahmcp.pen](../ahmcp.pen), with desktop/mobile, English/Spanish and light/dark representations. It does not draw other product screens, adopt final copy/navigation, implement a production page, activate support or deploy anything. The structure below records the design rationale and later corrections, with explicit artifact boundaries.
 
 ## Latest owner-directed revision
+
+The following records the earlier eight-page synchronization. The narrower AIHarder desktop revision above is current for `uAXkc` and `p7u8w`; do not treat the other six variants or HTML prototype as updated to that refinement.
 
 The current design source is [ahmcp.pen](../ahmcp.pen). A [functional home prototype](home-prototype.html) demonstrates the animation timing and is also [available through Tailscale](https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/home-prototype.html?lang=es&theme=system). This is one directed revision of the selected home, not a new set of competing visual directions or additional product screens. The question is whether the simpler animated conversation and illustrated setup make the page clearer and livelier.
 

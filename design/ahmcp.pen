@@ -749,7 +749,7 @@
       "id": "uAXkc",
       "x": 1360,
       "y": 1000,
-      "name": "02 Public home / Desktop / English / Light",
+      "name": "AIHarder / Desktop / English / Light",
       "theme": {
         "appearance": "light",
         "language": "en"
@@ -778,16 +778,19 @@
           "alignItems": "center",
           "children": [
             {
-              "id": "ngog0",
+              "id": "tUp34",
               "type": "ref",
-              "ref": "itt5n",
-              "name": "Brand / Connect"
+              "ref": "GqxcO",
+              "name": "Brand / AIHarder",
+              "width": "fill_container"
             },
             {
               "type": "frame",
-              "id": "mXWYt",
-              "name": "Header navigation and preferences",
-              "gap": 24,
+              "id": "bsaOL",
+              "name": "Primary section navigation",
+              "width": "fill_container",
+              "gap": 32,
+              "justifyContent": "center",
               "alignItems": "center",
               "children": [
                 {
@@ -811,7 +814,18 @@
                   "fontFamily": "Geist",
                   "fontSize": 14,
                   "fontWeight": "500"
-                },
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "mXWYt",
+              "name": "Preferences and sign-in",
+              "width": "fill_container",
+              "gap": 20,
+              "justifyContent": "end",
+              "alignItems": "center",
+              "children": [
                 {
                   "type": "frame",
                   "id": "mqYEI",
@@ -882,7 +896,49 @@
                   "name": "Sign in / header",
                   "width": 142,
                   "height": 48,
-                  "fill": "$home-action",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#2174B9",
+                        "position": 0
+                      },
+                      {
+                        "color": "#1765B0",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "stroke": "#12528F",
+                  "strokeWidth": 1,
+                  "cornerRadius": 8,
+                  "effect": [
+                    {
+                      "type": "shadow",
+                      "shadowType": "inner",
+                      "color": "#FFFFFF30",
+                      "offset": {
+                        "x": 0,
+                        "y": 1
+                      }
+                    },
+                    {
+                      "type": "shadow",
+                      "shadowType": "outer",
+                      "color": "#14283F29",
+                      "offset": {
+                        "x": 0,
+                        "y": 2
+                      },
+                      "blur": 4
+                    }
+                  ],
                   "descendants": {
                     "ugUJO": {
                       "content": "Sign in",
@@ -940,7 +996,7 @@
                   "fill": "$home-muted",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Check classes, see your workouts and review your activity using the AimHarder account you already have.",
+                  "content": "Book classes, see your workouts and review the activity in your AimHarder account.",
                   "lineHeight": 1.45,
                   "fontFamily": "Geist",
                   "fontSize": 18,
@@ -960,7 +1016,49 @@
                       "name": "Sign in / hero",
                       "width": 152,
                       "height": 48,
-                      "fill": "$home-action",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 180,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#2174B9",
+                            "position": 0
+                          },
+                          {
+                            "color": "#1765B0",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "stroke": "#12528F",
+                      "strokeWidth": 1,
+                      "cornerRadius": 8,
+                      "effect": [
+                        {
+                          "type": "shadow",
+                          "shadowType": "inner",
+                          "color": "#FFFFFF30",
+                          "offset": {
+                            "x": 0,
+                            "y": 1
+                          }
+                        },
+                        {
+                          "type": "shadow",
+                          "shadowType": "outer",
+                          "color": "#14283F29",
+                          "offset": {
+                            "x": 0,
+                            "y": 2
+                          },
+                          "blur": 4
+                        }
+                      ],
                       "descendants": {
                         "ugUJO": {
                           "content": "Sign in",
@@ -998,6 +1096,221 @@
                           "icon": "arrow-right",
                           "library": "lucide",
                           "fill": "$home-ink"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "b6cHY",
+                  "name": "Works with / integrated hero logos",
+                  "width": "fill_container",
+                  "fill": "$home-bg",
+                  "layout": "vertical",
+                  "padding": [
+                    8,
+                    0,
+                    0,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "x62OS4",
+                      "name": "App strip content",
+                      "width": "fill_container",
+                      "stroke": "$home-line",
+                      "layout": "vertical",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "NMzw6",
+                          "name": "App strip introduction",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Works with",
+                          "lineHeight": 1.45,
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "mypaR",
+                          "name": "MCP app row 1",
+                          "width": "fill_container",
+                          "gap": 18,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "v2Yqh",
+                              "name": "ChatGPT / ecosystem app",
+                              "gap": 7,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "rectangle",
+                                  "id": "A8LPMA",
+                                  "name": "chatgpt / original brand symbol",
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "home-study/assets/apps/chatgpt-light.png",
+                                    "mode": "contain"
+                                  },
+                                  "width": 24,
+                                  "height": 24
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "q1q6D",
+                                  "name": "ChatGPT product name",
+                                  "fill": "$home-ink",
+                                  "content": "ChatGPT",
+                                  "lineHeight": 1.45,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "P3BWwM",
+                              "name": "Claude / ecosystem app",
+                              "gap": 7,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "rectangle",
+                                  "id": "pXdyg",
+                                  "name": "claude / original brand symbol",
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "home-study/assets/apps/claude-light.png",
+                                    "mode": "contain"
+                                  },
+                                  "width": 24,
+                                  "height": 24
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "ApPBD",
+                                  "name": "Claude product name",
+                                  "fill": "$home-ink",
+                                  "content": "Claude",
+                                  "lineHeight": 1.45,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "Q9ZawP",
+                              "name": "Hermes / ecosystem app",
+                              "gap": 7,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "rectangle",
+                                  "id": "oWZ2K",
+                                  "name": "hermes / original brand symbol",
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "home-study/assets/apps/hermes-avatar.png",
+                                    "mode": "contain"
+                                  },
+                                  "width": 24,
+                                  "height": 24
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "Uva4V",
+                                  "name": "Hermes product name",
+                                  "fill": "$home-ink",
+                                  "content": "Hermes",
+                                  "lineHeight": 1.45,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "IVcpG",
+                              "name": "OpenClaw / ecosystem app",
+                              "gap": 7,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "rectangle",
+                                  "id": "XpdgH",
+                                  "name": "openclaw / original brand symbol",
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "home-study/assets/apps/openclaw-mono-light.png",
+                                    "mode": "contain"
+                                  },
+                                  "width": 24,
+                                  "height": 24
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "BiUYc",
+                                  "name": "OpenClaw product name",
+                                  "fill": "$home-ink",
+                                  "content": "OpenClaw",
+                                  "lineHeight": 1.45,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "EvirN",
+                              "name": "Pi / ecosystem app",
+                              "gap": 7,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "rectangle",
+                                  "id": "E3IKa",
+                                  "name": "pi / original brand symbol",
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "home-study/assets/apps/pi-mono-light.png",
+                                    "mode": "contain"
+                                  },
+                                  "width": 24,
+                                  "height": 24
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "P2IbR",
+                                  "name": "Pi product name",
+                                  "fill": "$home-ink",
+                                  "content": "Pi",
+                                  "lineHeight": 1.45,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
                         }
                       ]
                     }
@@ -1341,232 +1654,6 @@
                           "icon": "pause",
                           "library": "lucide",
                           "fill": "$home-muted"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "frame",
-          "id": "b6cHY",
-          "name": "MCP ecosystem app strip",
-          "width": "fill_container",
-          "fill": "$home-bg",
-          "layout": "vertical",
-          "padding": [
-            28,
-            120,
-            48,
-            120
-          ],
-          "children": [
-            {
-              "type": "frame",
-              "id": "x62OS4",
-              "name": "App strip content",
-              "width": "fill_container",
-              "stroke": "$home-line",
-              "strokeWidth": {
-                "top": 1
-              },
-              "layout": "vertical",
-              "gap": 26,
-              "padding": [
-                28,
-                0,
-                0,
-                0
-              ],
-              "children": [
-                {
-                  "type": "text",
-                  "id": "NMzw6",
-                  "name": "App strip introduction",
-                  "fill": "$home-muted",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Bring AimHarder to the AI app you use.",
-                  "lineHeight": 1.45,
-                  "textAlign": "center",
-                  "fontFamily": "Geist",
-                  "fontSize": 14,
-                  "fontWeight": "normal"
-                },
-                {
-                  "type": "frame",
-                  "id": "mypaR",
-                  "name": "MCP app row 1",
-                  "width": "fill_container",
-                  "gap": 56,
-                  "justifyContent": "center",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "v2Yqh",
-                      "name": "ChatGPT / ecosystem app",
-                      "gap": 12,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "id": "A8LPMA",
-                          "name": "chatgpt / original brand symbol",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "home-study/assets/apps/chatgpt-light.png",
-                            "mode": "contain"
-                          },
-                          "width": 30,
-                          "height": 30
-                        },
-                        {
-                          "type": "text",
-                          "id": "q1q6D",
-                          "name": "ChatGPT product name",
-                          "fill": "$home-ink",
-                          "content": "ChatGPT",
-                          "lineHeight": 1.45,
-                          "fontFamily": "Geist",
-                          "fontSize": 22,
-                          "fontWeight": "500"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "P3BWwM",
-                      "name": "Claude / ecosystem app",
-                      "gap": 12,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "id": "pXdyg",
-                          "name": "claude / original brand symbol",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "home-study/assets/apps/claude-light.png",
-                            "mode": "contain"
-                          },
-                          "width": 30,
-                          "height": 30
-                        },
-                        {
-                          "type": "text",
-                          "id": "ApPBD",
-                          "name": "Claude product name",
-                          "fill": "$home-ink",
-                          "content": "Claude",
-                          "lineHeight": 1.45,
-                          "fontFamily": "Geist",
-                          "fontSize": 22,
-                          "fontWeight": "500"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "Q9ZawP",
-                      "name": "Hermes / ecosystem app",
-                      "gap": 12,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "id": "oWZ2K",
-                          "name": "hermes / original brand symbol",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "home-study/assets/apps/hermes-light.png",
-                            "mode": "contain"
-                          },
-                          "width": 30,
-                          "height": 30
-                        },
-                        {
-                          "type": "text",
-                          "id": "Uva4V",
-                          "name": "Hermes product name",
-                          "fill": "$home-ink",
-                          "content": "Hermes",
-                          "lineHeight": 1.45,
-                          "fontFamily": "Geist",
-                          "fontSize": 22,
-                          "fontWeight": "500"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "IVcpG",
-                      "name": "OpenClaw / ecosystem app",
-                      "gap": 12,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "id": "XpdgH",
-                          "name": "openclaw / original brand symbol",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "home-study/assets/apps/openclaw.png",
-                            "mode": "contain"
-                          },
-                          "width": 30,
-                          "height": 30
-                        },
-                        {
-                          "type": "text",
-                          "id": "BiUYc",
-                          "name": "OpenClaw product name",
-                          "fill": "$home-ink",
-                          "content": "OpenClaw",
-                          "lineHeight": 1.45,
-                          "fontFamily": "Geist",
-                          "fontSize": 22,
-                          "fontWeight": "500"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "EvirN",
-                      "name": "Pi / ecosystem app",
-                      "gap": 12,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "id": "E3IKa",
-                          "name": "pi / original brand symbol",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "home-study/assets/apps/pi.png",
-                            "mode": "contain"
-                          },
-                          "width": 30,
-                          "height": 30
-                        },
-                        {
-                          "type": "text",
-                          "id": "P2IbR",
-                          "name": "Pi product name",
-                          "fill": "$home-ink",
-                          "content": "Pi",
-                          "lineHeight": 1.45,
-                          "fontFamily": "Geist",
-                          "fontSize": 22,
-                          "fontWeight": "500"
                         }
                       ]
                     }
@@ -2208,7 +2295,7 @@
                                   "fill": {
                                     "type": "image",
                                     "enabled": true,
-                                    "url": "home-study/assets/apps/hermes-light.png",
+                                    "url": "home-study/assets/apps/hermes-avatar.png",
                                     "mode": "contain"
                                   },
                                   "width": 30,
@@ -2905,7 +2992,49 @@
               "name": "Sign in / closing",
               "width": 152,
               "height": 48,
-              "fill": "$home-action",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 180,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#2174B9",
+                    "position": 0
+                  },
+                  {
+                    "color": "#1765B0",
+                    "position": 1
+                  }
+                ]
+              },
+              "stroke": "#12528F",
+              "strokeWidth": 1,
+              "cornerRadius": 8,
+              "effect": [
+                {
+                  "type": "shadow",
+                  "shadowType": "inner",
+                  "color": "#FFFFFF30",
+                  "offset": {
+                    "x": 0,
+                    "y": 1
+                  }
+                },
+                {
+                  "type": "shadow",
+                  "shadowType": "outer",
+                  "color": "#14283F29",
+                  "offset": {
+                    "x": 0,
+                    "y": 2
+                  },
+                  "blur": 4
+                }
+              ],
               "descendants": {
                 "ugUJO": {
                   "content": "Sign in",
@@ -3067,7 +3196,7 @@
       "id": "p7u8w",
       "x": 2960,
       "y": 1000,
-      "name": "03 Public home / Desktop / English / Dark",
+      "name": "AIHarder / Desktop / English / Dark",
       "theme": {
         "appearance": "dark",
         "language": "en"
@@ -3096,16 +3225,19 @@
           "alignItems": "center",
           "children": [
             {
-              "id": "Hkh8W",
+              "id": "KVTXF",
               "type": "ref",
-              "ref": "itt5n",
-              "name": "Brand / Connect"
+              "ref": "GqxcO",
+              "name": "Brand / AIHarder",
+              "width": "fill_container"
             },
             {
               "type": "frame",
-              "id": "oRy16",
-              "name": "Header navigation and preferences",
-              "gap": 24,
+              "id": "a1yFYm",
+              "name": "Primary section navigation",
+              "width": "fill_container",
+              "gap": 32,
+              "justifyContent": "center",
               "alignItems": "center",
               "children": [
                 {
@@ -3129,7 +3261,18 @@
                   "fontFamily": "Geist",
                   "fontSize": 14,
                   "fontWeight": "500"
-                },
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "oRy16",
+              "name": "Preferences and sign-in",
+              "width": "fill_container",
+              "gap": 20,
+              "justifyContent": "end",
+              "alignItems": "center",
+              "children": [
                 {
                   "type": "frame",
                   "id": "fhbiS",
@@ -3200,7 +3343,49 @@
                   "name": "Sign in / header",
                   "width": 142,
                   "height": 48,
-                  "fill": "$home-action",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#47A3F6",
+                        "position": 0
+                      },
+                      {
+                        "color": "#2490F4",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "stroke": "#61A9EB",
+                  "strokeWidth": 1,
+                  "cornerRadius": 8,
+                  "effect": [
+                    {
+                      "type": "shadow",
+                      "shadowType": "inner",
+                      "color": "#FFFFFF30",
+                      "offset": {
+                        "x": 0,
+                        "y": 1
+                      }
+                    },
+                    {
+                      "type": "shadow",
+                      "shadowType": "outer",
+                      "color": "#0000003D",
+                      "offset": {
+                        "x": 0,
+                        "y": 2
+                      },
+                      "blur": 4
+                    }
+                  ],
                   "descendants": {
                     "ugUJO": {
                       "content": "Sign in",
@@ -3258,7 +3443,7 @@
                   "fill": "$home-muted",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Check classes, see your workouts and review your activity using the AimHarder account you already have.",
+                  "content": "Book classes, see your workouts and review the activity in your AimHarder account.",
                   "lineHeight": 1.45,
                   "fontFamily": "Geist",
                   "fontSize": 18,
@@ -3278,7 +3463,49 @@
                       "name": "Sign in / hero",
                       "width": 152,
                       "height": 48,
-                      "fill": "$home-action",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 180,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#47A3F6",
+                            "position": 0
+                          },
+                          {
+                            "color": "#2490F4",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "stroke": "#61A9EB",
+                      "strokeWidth": 1,
+                      "cornerRadius": 8,
+                      "effect": [
+                        {
+                          "type": "shadow",
+                          "shadowType": "inner",
+                          "color": "#FFFFFF30",
+                          "offset": {
+                            "x": 0,
+                            "y": 1
+                          }
+                        },
+                        {
+                          "type": "shadow",
+                          "shadowType": "outer",
+                          "color": "#0000003D",
+                          "offset": {
+                            "x": 0,
+                            "y": 2
+                          },
+                          "blur": 4
+                        }
+                      ],
                       "descendants": {
                         "ugUJO": {
                           "content": "Sign in",
@@ -3316,6 +3543,221 @@
                           "icon": "arrow-right",
                           "library": "lucide",
                           "fill": "$home-ink"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "hQWnS",
+                  "name": "Works with / integrated hero logos",
+                  "width": "fill_container",
+                  "fill": "$home-bg",
+                  "layout": "vertical",
+                  "padding": [
+                    8,
+                    0,
+                    0,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "a0Gdbl",
+                      "name": "App strip content",
+                      "width": "fill_container",
+                      "stroke": "$home-line",
+                      "layout": "vertical",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "IBqMK",
+                          "name": "App strip introduction",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Works with",
+                          "lineHeight": 1.45,
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "NfYlZ",
+                          "name": "MCP app row 1",
+                          "width": "fill_container",
+                          "gap": 18,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "VTAeP",
+                              "name": "ChatGPT / ecosystem app",
+                              "gap": 7,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "rectangle",
+                                  "id": "HbmJi",
+                                  "name": "chatgpt / original brand symbol",
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "home-study/assets/apps/chatgpt-dark.png",
+                                    "mode": "contain"
+                                  },
+                                  "width": 24,
+                                  "height": 24
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "yXHZ9",
+                                  "name": "ChatGPT product name",
+                                  "fill": "$home-ink",
+                                  "content": "ChatGPT",
+                                  "lineHeight": 1.45,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "EB6dx",
+                              "name": "Claude / ecosystem app",
+                              "gap": 7,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "rectangle",
+                                  "id": "K4RygV",
+                                  "name": "claude / original brand symbol",
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "home-study/assets/apps/claude-dark.png",
+                                    "mode": "contain"
+                                  },
+                                  "width": 24,
+                                  "height": 24
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "sob3v",
+                                  "name": "Claude product name",
+                                  "fill": "$home-ink",
+                                  "content": "Claude",
+                                  "lineHeight": 1.45,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "B08Oa",
+                              "name": "Hermes / ecosystem app",
+                              "gap": 7,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "rectangle",
+                                  "id": "cyiUX",
+                                  "name": "hermes / original brand symbol",
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "home-study/assets/apps/hermes-avatar.png",
+                                    "mode": "contain"
+                                  },
+                                  "width": 24,
+                                  "height": 24
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "yjwVv",
+                                  "name": "Hermes product name",
+                                  "fill": "$home-ink",
+                                  "content": "Hermes",
+                                  "lineHeight": 1.45,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "DCbyN",
+                              "name": "OpenClaw / ecosystem app",
+                              "gap": 7,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "rectangle",
+                                  "id": "W8b2y1",
+                                  "name": "openclaw / original brand symbol",
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "home-study/assets/apps/openclaw-mono-dark.png",
+                                    "mode": "contain"
+                                  },
+                                  "width": 24,
+                                  "height": 24
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "Z7Bhi",
+                                  "name": "OpenClaw product name",
+                                  "fill": "$home-ink",
+                                  "content": "OpenClaw",
+                                  "lineHeight": 1.45,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "DaM0R",
+                              "name": "Pi / ecosystem app",
+                              "gap": 7,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "rectangle",
+                                  "id": "ngpCb",
+                                  "name": "pi / original brand symbol",
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "home-study/assets/apps/pi-mono-dark.png",
+                                    "mode": "contain"
+                                  },
+                                  "width": 24,
+                                  "height": 24
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "Y2v7N8",
+                                  "name": "Pi product name",
+                                  "fill": "$home-ink",
+                                  "content": "Pi",
+                                  "lineHeight": 1.45,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
                         }
                       ]
                     }
@@ -3659,232 +4101,6 @@
                           "icon": "pause",
                           "library": "lucide",
                           "fill": "$home-muted"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "frame",
-          "id": "hQWnS",
-          "name": "MCP ecosystem app strip",
-          "width": "fill_container",
-          "fill": "$home-bg",
-          "layout": "vertical",
-          "padding": [
-            28,
-            120,
-            48,
-            120
-          ],
-          "children": [
-            {
-              "type": "frame",
-              "id": "a0Gdbl",
-              "name": "App strip content",
-              "width": "fill_container",
-              "stroke": "$home-line",
-              "strokeWidth": {
-                "top": 1
-              },
-              "layout": "vertical",
-              "gap": 26,
-              "padding": [
-                28,
-                0,
-                0,
-                0
-              ],
-              "children": [
-                {
-                  "type": "text",
-                  "id": "IBqMK",
-                  "name": "App strip introduction",
-                  "fill": "$home-muted",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Bring AimHarder to the AI app you use.",
-                  "lineHeight": 1.45,
-                  "textAlign": "center",
-                  "fontFamily": "Geist",
-                  "fontSize": 14,
-                  "fontWeight": "normal"
-                },
-                {
-                  "type": "frame",
-                  "id": "NfYlZ",
-                  "name": "MCP app row 1",
-                  "width": "fill_container",
-                  "gap": 56,
-                  "justifyContent": "center",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "VTAeP",
-                      "name": "ChatGPT / ecosystem app",
-                      "gap": 12,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "id": "HbmJi",
-                          "name": "chatgpt / original brand symbol",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "home-study/assets/apps/chatgpt-dark.png",
-                            "mode": "contain"
-                          },
-                          "width": 30,
-                          "height": 30
-                        },
-                        {
-                          "type": "text",
-                          "id": "yXHZ9",
-                          "name": "ChatGPT product name",
-                          "fill": "$home-ink",
-                          "content": "ChatGPT",
-                          "lineHeight": 1.45,
-                          "fontFamily": "Geist",
-                          "fontSize": 22,
-                          "fontWeight": "500"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "EB6dx",
-                      "name": "Claude / ecosystem app",
-                      "gap": 12,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "id": "K4RygV",
-                          "name": "claude / original brand symbol",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "home-study/assets/apps/claude-dark.png",
-                            "mode": "contain"
-                          },
-                          "width": 30,
-                          "height": 30
-                        },
-                        {
-                          "type": "text",
-                          "id": "sob3v",
-                          "name": "Claude product name",
-                          "fill": "$home-ink",
-                          "content": "Claude",
-                          "lineHeight": 1.45,
-                          "fontFamily": "Geist",
-                          "fontSize": 22,
-                          "fontWeight": "500"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "B08Oa",
-                      "name": "Hermes / ecosystem app",
-                      "gap": 12,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "id": "cyiUX",
-                          "name": "hermes / original brand symbol",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "home-study/assets/apps/hermes-dark.png",
-                            "mode": "contain"
-                          },
-                          "width": 30,
-                          "height": 30
-                        },
-                        {
-                          "type": "text",
-                          "id": "yjwVv",
-                          "name": "Hermes product name",
-                          "fill": "$home-ink",
-                          "content": "Hermes",
-                          "lineHeight": 1.45,
-                          "fontFamily": "Geist",
-                          "fontSize": 22,
-                          "fontWeight": "500"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "DCbyN",
-                      "name": "OpenClaw / ecosystem app",
-                      "gap": 12,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "id": "W8b2y1",
-                          "name": "openclaw / original brand symbol",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "home-study/assets/apps/openclaw.png",
-                            "mode": "contain"
-                          },
-                          "width": 30,
-                          "height": 30
-                        },
-                        {
-                          "type": "text",
-                          "id": "Z7Bhi",
-                          "name": "OpenClaw product name",
-                          "fill": "$home-ink",
-                          "content": "OpenClaw",
-                          "lineHeight": 1.45,
-                          "fontFamily": "Geist",
-                          "fontSize": 22,
-                          "fontWeight": "500"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "DaM0R",
-                      "name": "Pi / ecosystem app",
-                      "gap": 12,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "id": "ngpCb",
-                          "name": "pi / original brand symbol",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "home-study/assets/apps/pi.png",
-                            "mode": "contain"
-                          },
-                          "width": 30,
-                          "height": 30
-                        },
-                        {
-                          "type": "text",
-                          "id": "Y2v7N8",
-                          "name": "Pi product name",
-                          "fill": "$home-ink",
-                          "content": "Pi",
-                          "lineHeight": 1.45,
-                          "fontFamily": "Geist",
-                          "fontSize": 22,
-                          "fontWeight": "500"
                         }
                       ]
                     }
@@ -4526,7 +4742,7 @@
                                   "fill": {
                                     "type": "image",
                                     "enabled": true,
-                                    "url": "home-study/assets/apps/hermes-dark.png",
+                                    "url": "home-study/assets/apps/hermes-avatar.png",
                                     "mode": "contain"
                                   },
                                   "width": 30,
@@ -5223,7 +5439,49 @@
               "name": "Sign in / closing",
               "width": 152,
               "height": 48,
-              "fill": "$home-action",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 180,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#47A3F6",
+                    "position": 0
+                  },
+                  {
+                    "color": "#2490F4",
+                    "position": 1
+                  }
+                ]
+              },
+              "stroke": "#61A9EB",
+              "strokeWidth": 1,
+              "cornerRadius": 8,
+              "effect": [
+                {
+                  "type": "shadow",
+                  "shadowType": "inner",
+                  "color": "#FFFFFF30",
+                  "offset": {
+                    "x": 0,
+                    "y": 1
+                  }
+                },
+                {
+                  "type": "shadow",
+                  "shadowType": "outer",
+                  "color": "#0000003D",
+                  "offset": {
+                    "x": 0,
+                    "y": 2
+                  },
+                  "blur": 4
+                }
+              ],
               "descendants": {
                 "ugUJO": {
                   "content": "Sign in",
@@ -21498,6 +21756,1339 @@
           "textGrowth": "fixed-width",
           "width": "fill_container",
           "content": "Reduced motion: start with a complete static answer. Pause freezes playback; selecting another example remains available. Pause while offscreen or the tab is hidden. No account connection, live availability or actual participant data is used.",
+          "lineHeight": 1.45,
+          "fontFamily": "Geist",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "GqxcO",
+      "x": 1732.5,
+      "y": 864,
+      "name": "Component / AIHarder wordmark / desktop study",
+      "reusable": true,
+      "height": 50,
+      "gap": 8,
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "OMijO",
+          "name": "AIHarder kettle / left",
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "home-study/assets/kettle-neutral.png",
+            "mode": "contain"
+          },
+          "width": 35,
+          "height": 40
+        },
+        {
+          "type": "frame",
+          "id": "h3xPTR",
+          "name": "AIHarder lettering",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "q4b4CU",
+              "name": "AI blue",
+              "fill": "$home-blue",
+              "content": "AI",
+              "lineHeight": 1.45,
+              "fontFamily": "Krona One",
+              "fontSize": 17.5,
+              "fontWeight": "normal",
+              "letterSpacing": -0.4375
+            },
+            {
+              "type": "text",
+              "id": "NE7qo",
+              "name": "HARDER lettering",
+              "fill": "$home-ink",
+              "content": "HARDER",
+              "lineHeight": 1.45,
+              "fontFamily": "Krona One",
+              "fontSize": 17.5,
+              "fontWeight": "normal",
+              "letterSpacing": -0.4375
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "kUGfy",
+      "x": 8160,
+      "y": 40,
+      "name": "12 AIHarder / Two button depth options",
+      "theme": {
+        "appearance": "light",
+        "language": "en"
+      },
+      "clip": true,
+      "width": 1440,
+      "fill": "$home-bg",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": 32,
+      "children": [
+        {
+          "type": "text",
+          "id": "KlRmg",
+          "name": "Button study title",
+          "fill": "$home-ink",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Two ways to give the buttons depth",
+          "lineHeight": 1.45,
+          "fontFamily": "Geist",
+          "fontSize": 26,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "UIoxU",
+          "name": "Button study boundary",
+          "fill": "$home-muted",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "A is shown provisionally in the two English desktop homes. B is an alternative; neither has been selected. Existing Spanish/mobile screens and shared controls stay unchanged.",
+          "lineHeight": 1.45,
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "BRmjo",
+          "name": "Option A / Light and Dark",
+          "width": "fill_container",
+          "gap": 24,
+          "children": [
+            {
+              "type": "frame",
+              "id": "N7JhTO",
+              "name": "Option A / light",
+              "theme": {
+                "appearance": "light",
+                "language": "en"
+              },
+              "width": "fill_container",
+              "fill": "$home-bg",
+              "cornerRadius": 12,
+              "stroke": "$home-line",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 20,
+              "padding": 28,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "AeOxn",
+                  "name": "Option A / light title",
+                  "fill": "$home-ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "A / Soft bevel · Light",
+                  "lineHeight": 1.45,
+                  "fontFamily": "Geist",
+                  "fontSize": 21,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "YaSZL",
+                  "name": "Option A / light description",
+                  "fill": "$home-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Gentle blue gradient, fine border, inner highlight and a short soft shadow.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "bhFS0",
+                  "name": "Option A / light states",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "padding": [
+                    8,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "HEX0F",
+                      "name": "A light Default",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 14,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "id": "XPVvo",
+                          "type": "ref",
+                          "ref": "UEEFt",
+                          "name": "Sign in / A light Default",
+                          "width": 142,
+                          "height": 48,
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "linear",
+                            "enabled": true,
+                            "rotation": 180,
+                            "size": {
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#2174B9",
+                                "position": 0
+                              },
+                              {
+                                "color": "#1765B0",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "stroke": "#12528F",
+                          "strokeWidth": 1,
+                          "cornerRadius": 8,
+                          "effect": [
+                            {
+                              "type": "shadow",
+                              "shadowType": "inner",
+                              "color": "#FFFFFF30",
+                              "offset": {
+                                "x": 0,
+                                "y": 1
+                              }
+                            },
+                            {
+                              "type": "shadow",
+                              "shadowType": "outer",
+                              "color": "#14283F29",
+                              "offset": {
+                                "x": 0,
+                                "y": 2
+                              },
+                              "blur": 4
+                            }
+                          ],
+                          "descendants": {
+                            "ugUJO": {
+                              "content": "Sign in",
+                              "fontSize": 16,
+                              "textAlign": "center",
+                              "fill": "#FFFFFF"
+                            }
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "id": "QP28x",
+                          "name": "Default caption",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Default",
+                          "lineHeight": 1.45,
+                          "textAlign": "center",
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "WiU5F",
+                      "name": "A light Hover",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 14,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "id": "jJ1yi",
+                          "type": "ref",
+                          "ref": "UEEFt",
+                          "name": "Sign in / A light Hover",
+                          "width": 142,
+                          "height": 48,
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "linear",
+                            "enabled": true,
+                            "rotation": 180,
+                            "size": {
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#2278BD",
+                                "position": 0
+                              },
+                              {
+                                "color": "#1D6FB7",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "stroke": "#12528F",
+                          "strokeWidth": 1,
+                          "cornerRadius": 8,
+                          "effect": [
+                            {
+                              "type": "shadow",
+                              "shadowType": "inner",
+                              "color": "#FFFFFF30",
+                              "offset": {
+                                "x": 0,
+                                "y": 1
+                              }
+                            },
+                            {
+                              "type": "shadow",
+                              "shadowType": "outer",
+                              "color": "#14283F29",
+                              "offset": {
+                                "x": 0,
+                                "y": 2
+                              },
+                              "blur": 4
+                            }
+                          ],
+                          "descendants": {
+                            "ugUJO": {
+                              "content": "Sign in",
+                              "fontSize": 16,
+                              "textAlign": "center",
+                              "fill": "#FFFFFF"
+                            }
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "id": "O39MIM",
+                          "name": "Hover caption",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Hover",
+                          "lineHeight": 1.45,
+                          "textAlign": "center",
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "eaWjQ",
+                      "name": "A light Pressed",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 14,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "id": "gQVea",
+                          "type": "ref",
+                          "ref": "UEEFt",
+                          "name": "Sign in / A light Pressed",
+                          "width": 142,
+                          "height": 48,
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "linear",
+                            "enabled": true,
+                            "rotation": 180,
+                            "size": {
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#155B9B",
+                                "position": 0
+                              },
+                              {
+                                "color": "#145A9B",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "stroke": "#12528F",
+                          "strokeWidth": 1,
+                          "cornerRadius": 8,
+                          "effect": [
+                            {
+                              "type": "shadow",
+                              "shadowType": "inner",
+                              "color": "#FFFFFF30",
+                              "offset": {
+                                "x": 0,
+                                "y": 1
+                              }
+                            },
+                            {
+                              "type": "shadow",
+                              "shadowType": "outer",
+                              "color": "#14283F29",
+                              "offset": {
+                                "x": 0,
+                                "y": 1
+                              },
+                              "blur": 2
+                            }
+                          ],
+                          "descendants": {
+                            "ugUJO": {
+                              "content": "Sign in",
+                              "fontSize": 16,
+                              "textAlign": "center",
+                              "fill": "#FFFFFF"
+                            }
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "id": "pFh31",
+                          "name": "Pressed caption",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Pressed",
+                          "lineHeight": 1.45,
+                          "textAlign": "center",
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "kDMMS",
+              "name": "Option A / dark",
+              "theme": {
+                "appearance": "dark",
+                "language": "en"
+              },
+              "width": "fill_container",
+              "fill": "$home-bg",
+              "cornerRadius": 12,
+              "stroke": "$home-line",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 20,
+              "padding": 28,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "CY559",
+                  "name": "Option A / dark title",
+                  "fill": "$home-ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "A / Soft bevel · Dark",
+                  "lineHeight": 1.45,
+                  "fontFamily": "Geist",
+                  "fontSize": 21,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "O4G4VT",
+                  "name": "Option A / dark description",
+                  "fill": "$home-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Gentle blue gradient, fine border, inner highlight and a short soft shadow.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "vkwNm",
+                  "name": "Option A / dark states",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "padding": [
+                    8,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "pBuAb",
+                      "name": "A dark Default",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 14,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "id": "GM5h9",
+                          "type": "ref",
+                          "ref": "UEEFt",
+                          "name": "Sign in / A dark Default",
+                          "width": 142,
+                          "height": 48,
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "linear",
+                            "enabled": true,
+                            "rotation": 180,
+                            "size": {
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#47A3F6",
+                                "position": 0
+                              },
+                              {
+                                "color": "#2490F4",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "stroke": "#61A9EB",
+                          "strokeWidth": 1,
+                          "cornerRadius": 8,
+                          "effect": [
+                            {
+                              "type": "shadow",
+                              "shadowType": "inner",
+                              "color": "#FFFFFF30",
+                              "offset": {
+                                "x": 0,
+                                "y": 1
+                              }
+                            },
+                            {
+                              "type": "shadow",
+                              "shadowType": "outer",
+                              "color": "#0000003D",
+                              "offset": {
+                                "x": 0,
+                                "y": 2
+                              },
+                              "blur": 4
+                            }
+                          ],
+                          "descendants": {
+                            "ugUJO": {
+                              "content": "Sign in",
+                              "fontSize": 16,
+                              "textAlign": "center",
+                              "fill": "#0D1521"
+                            }
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "id": "i5AMo",
+                          "name": "Default caption",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Default",
+                          "lineHeight": 1.45,
+                          "textAlign": "center",
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "kNwxP",
+                      "name": "A dark Hover",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 14,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "id": "RDGaH",
+                          "type": "ref",
+                          "ref": "UEEFt",
+                          "name": "Sign in / A dark Hover",
+                          "width": 142,
+                          "height": 48,
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "linear",
+                            "enabled": true,
+                            "rotation": 180,
+                            "size": {
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#55A9F8",
+                                "position": 0
+                              },
+                              {
+                                "color": "#369BFA",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "stroke": "#61A9EB",
+                          "strokeWidth": 1,
+                          "cornerRadius": 8,
+                          "effect": [
+                            {
+                              "type": "shadow",
+                              "shadowType": "inner",
+                              "color": "#FFFFFF30",
+                              "offset": {
+                                "x": 0,
+                                "y": 1
+                              }
+                            },
+                            {
+                              "type": "shadow",
+                              "shadowType": "outer",
+                              "color": "#0000003D",
+                              "offset": {
+                                "x": 0,
+                                "y": 2
+                              },
+                              "blur": 4
+                            }
+                          ],
+                          "descendants": {
+                            "ugUJO": {
+                              "content": "Sign in",
+                              "fontSize": 16,
+                              "textAlign": "center",
+                              "fill": "#0D1521"
+                            }
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "id": "FK1xM",
+                          "name": "Hover caption",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Hover",
+                          "lineHeight": 1.45,
+                          "textAlign": "center",
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "P754O",
+                      "name": "A dark Pressed",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 14,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "id": "oycPU",
+                          "type": "ref",
+                          "ref": "UEEFt",
+                          "name": "Sign in / A dark Pressed",
+                          "width": 142,
+                          "height": 48,
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "linear",
+                            "enabled": true,
+                            "rotation": 180,
+                            "size": {
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#1884E6",
+                                "position": 0
+                              },
+                              {
+                                "color": "#1884E6",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "stroke": "#61A9EB",
+                          "strokeWidth": 1,
+                          "cornerRadius": 8,
+                          "effect": [
+                            {
+                              "type": "shadow",
+                              "shadowType": "inner",
+                              "color": "#FFFFFF30",
+                              "offset": {
+                                "x": 0,
+                                "y": 1
+                              }
+                            },
+                            {
+                              "type": "shadow",
+                              "shadowType": "outer",
+                              "color": "#0000003D",
+                              "offset": {
+                                "x": 0,
+                                "y": 1
+                              },
+                              "blur": 2
+                            }
+                          ],
+                          "descendants": {
+                            "ugUJO": {
+                              "content": "Sign in",
+                              "fontSize": 16,
+                              "textAlign": "center",
+                              "fill": "#0D1521"
+                            }
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "id": "RkmcO",
+                          "name": "Pressed caption",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Pressed",
+                          "lineHeight": 1.45,
+                          "textAlign": "center",
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "mZfgs",
+          "name": "Option B / Light and Dark",
+          "width": "fill_container",
+          "gap": 24,
+          "children": [
+            {
+              "type": "frame",
+              "id": "deAEP",
+              "name": "Option B / light",
+              "theme": {
+                "appearance": "light",
+                "language": "en"
+              },
+              "width": "fill_container",
+              "fill": "$home-bg",
+              "cornerRadius": 12,
+              "stroke": "$home-line",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 20,
+              "padding": 28,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "IquVQ",
+                  "name": "Option B / light title",
+                  "fill": "$home-ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "B / Raised edge · Light",
+                  "lineHeight": 1.45,
+                  "fontFamily": "Geist",
+                  "fontSize": 21,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "NzGg6",
+                  "name": "Option B / light description",
+                  "fill": "$home-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Solid blue, fine border and a small lower edge. The edge compresses when pressed.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "ErxkL",
+                  "name": "Option B / light states",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "padding": [
+                    8,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "F0ZzPa",
+                      "name": "B light Default",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 14,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "id": "L8z4WX",
+                          "type": "ref",
+                          "ref": "UEEFt",
+                          "name": "Sign in / B light Default",
+                          "width": 142,
+                          "height": 48,
+                          "fill": "#1765B0",
+                          "stroke": "#12528F",
+                          "strokeWidth": 1,
+                          "cornerRadius": 8,
+                          "effect": [
+                            {
+                              "type": "shadow",
+                              "shadowType": "inner",
+                              "color": "#FFFFFF24",
+                              "offset": {
+                                "x": 0,
+                                "y": 1
+                              }
+                            },
+                            {
+                              "type": "shadow",
+                              "shadowType": "outer",
+                              "color": "#104C83",
+                              "offset": {
+                                "x": 0,
+                                "y": 3
+                              }
+                            },
+                            {
+                              "type": "shadow",
+                              "shadowType": "outer",
+                              "color": "#14283F1F",
+                              "offset": {
+                                "x": 0,
+                                "y": 5
+                              },
+                              "blur": 7
+                            }
+                          ],
+                          "descendants": {
+                            "ugUJO": {
+                              "content": "Sign in",
+                              "fontSize": 16,
+                              "textAlign": "center",
+                              "fill": "#FFFFFF"
+                            }
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "id": "vSpyo",
+                          "name": "Default caption",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Default",
+                          "lineHeight": 1.45,
+                          "textAlign": "center",
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Jnb3h",
+                      "name": "B light Hover",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 14,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "id": "NGWeI",
+                          "type": "ref",
+                          "ref": "UEEFt",
+                          "name": "Sign in / B light Hover",
+                          "width": 142,
+                          "height": 48,
+                          "fill": "#1D6FB7",
+                          "stroke": "#12528F",
+                          "strokeWidth": 1,
+                          "cornerRadius": 8,
+                          "effect": [
+                            {
+                              "type": "shadow",
+                              "shadowType": "inner",
+                              "color": "#FFFFFF24",
+                              "offset": {
+                                "x": 0,
+                                "y": 1
+                              }
+                            },
+                            {
+                              "type": "shadow",
+                              "shadowType": "outer",
+                              "color": "#104C83",
+                              "offset": {
+                                "x": 0,
+                                "y": 3
+                              }
+                            },
+                            {
+                              "type": "shadow",
+                              "shadowType": "outer",
+                              "color": "#14283F1F",
+                              "offset": {
+                                "x": 0,
+                                "y": 5
+                              },
+                              "blur": 7
+                            }
+                          ],
+                          "descendants": {
+                            "ugUJO": {
+                              "content": "Sign in",
+                              "fontSize": 16,
+                              "textAlign": "center",
+                              "fill": "#FFFFFF"
+                            }
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "id": "fPqEh",
+                          "name": "Hover caption",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Hover",
+                          "lineHeight": 1.45,
+                          "textAlign": "center",
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "fTTuv",
+                      "name": "B light Pressed",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 14,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "id": "zvhmx",
+                          "type": "ref",
+                          "ref": "UEEFt",
+                          "name": "Sign in / B light Pressed",
+                          "width": 142,
+                          "height": 48,
+                          "fill": "#145A9B",
+                          "stroke": "#12528F",
+                          "strokeWidth": 1,
+                          "cornerRadius": 8,
+                          "effect": [
+                            {
+                              "type": "shadow",
+                              "shadowType": "inner",
+                              "color": "#FFFFFF24",
+                              "offset": {
+                                "x": 0,
+                                "y": 1
+                              }
+                            },
+                            {
+                              "type": "shadow",
+                              "shadowType": "outer",
+                              "color": "#104C83",
+                              "offset": {
+                                "x": 0,
+                                "y": 1
+                              }
+                            },
+                            {
+                              "type": "shadow",
+                              "shadowType": "outer",
+                              "color": "#14283F1F",
+                              "offset": {
+                                "x": 0,
+                                "y": 2
+                              },
+                              "blur": 2
+                            }
+                          ],
+                          "descendants": {
+                            "ugUJO": {
+                              "content": "Sign in",
+                              "fontSize": 16,
+                              "textAlign": "center",
+                              "fill": "#FFFFFF"
+                            }
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "id": "OWq88",
+                          "name": "Pressed caption",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Pressed",
+                          "lineHeight": 1.45,
+                          "textAlign": "center",
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "h3HAvl",
+              "name": "Option B / dark",
+              "theme": {
+                "appearance": "dark",
+                "language": "en"
+              },
+              "width": "fill_container",
+              "fill": "$home-bg",
+              "cornerRadius": 12,
+              "stroke": "$home-line",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 20,
+              "padding": 28,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Pyc0O",
+                  "name": "Option B / dark title",
+                  "fill": "$home-ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "B / Raised edge · Dark",
+                  "lineHeight": 1.45,
+                  "fontFamily": "Geist",
+                  "fontSize": 21,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "axqPo",
+                  "name": "Option B / dark description",
+                  "fill": "$home-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Solid blue, fine border and a small lower edge. The edge compresses when pressed.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "jskvP",
+                  "name": "Option B / dark states",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "padding": [
+                    8,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "fIJR6",
+                      "name": "B dark Default",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 14,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "id": "YqhPX",
+                          "type": "ref",
+                          "ref": "UEEFt",
+                          "name": "Sign in / B dark Default",
+                          "width": 142,
+                          "height": 48,
+                          "fill": "#2490F4",
+                          "stroke": "#61A9EB",
+                          "strokeWidth": 1,
+                          "cornerRadius": 8,
+                          "effect": [
+                            {
+                              "type": "shadow",
+                              "shadowType": "inner",
+                              "color": "#FFFFFF24",
+                              "offset": {
+                                "x": 0,
+                                "y": 1
+                              }
+                            },
+                            {
+                              "type": "shadow",
+                              "shadowType": "outer",
+                              "color": "#1266AC",
+                              "offset": {
+                                "x": 0,
+                                "y": 3
+                              }
+                            },
+                            {
+                              "type": "shadow",
+                              "shadowType": "outer",
+                              "color": "#00000033",
+                              "offset": {
+                                "x": 0,
+                                "y": 5
+                              },
+                              "blur": 7
+                            }
+                          ],
+                          "descendants": {
+                            "ugUJO": {
+                              "content": "Sign in",
+                              "fontSize": 16,
+                              "textAlign": "center",
+                              "fill": "#0D1521"
+                            }
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "id": "brsVz",
+                          "name": "Default caption",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Default",
+                          "lineHeight": 1.45,
+                          "textAlign": "center",
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "YwdQg",
+                      "name": "B dark Hover",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 14,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "id": "CCu0A",
+                          "type": "ref",
+                          "ref": "UEEFt",
+                          "name": "Sign in / B dark Hover",
+                          "width": 142,
+                          "height": 48,
+                          "fill": "#369BFA",
+                          "stroke": "#61A9EB",
+                          "strokeWidth": 1,
+                          "cornerRadius": 8,
+                          "effect": [
+                            {
+                              "type": "shadow",
+                              "shadowType": "inner",
+                              "color": "#FFFFFF24",
+                              "offset": {
+                                "x": 0,
+                                "y": 1
+                              }
+                            },
+                            {
+                              "type": "shadow",
+                              "shadowType": "outer",
+                              "color": "#1266AC",
+                              "offset": {
+                                "x": 0,
+                                "y": 3
+                              }
+                            },
+                            {
+                              "type": "shadow",
+                              "shadowType": "outer",
+                              "color": "#00000033",
+                              "offset": {
+                                "x": 0,
+                                "y": 5
+                              },
+                              "blur": 7
+                            }
+                          ],
+                          "descendants": {
+                            "ugUJO": {
+                              "content": "Sign in",
+                              "fontSize": 16,
+                              "textAlign": "center",
+                              "fill": "#0D1521"
+                            }
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "id": "k2MJok",
+                          "name": "Hover caption",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Hover",
+                          "lineHeight": 1.45,
+                          "textAlign": "center",
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "WEqrc",
+                      "name": "B dark Pressed",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 14,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "id": "cnyot",
+                          "type": "ref",
+                          "ref": "UEEFt",
+                          "name": "Sign in / B dark Pressed",
+                          "width": 142,
+                          "height": 48,
+                          "fill": "#1884E6",
+                          "stroke": "#61A9EB",
+                          "strokeWidth": 1,
+                          "cornerRadius": 8,
+                          "effect": [
+                            {
+                              "type": "shadow",
+                              "shadowType": "inner",
+                              "color": "#FFFFFF24",
+                              "offset": {
+                                "x": 0,
+                                "y": 1
+                              }
+                            },
+                            {
+                              "type": "shadow",
+                              "shadowType": "outer",
+                              "color": "#1266AC",
+                              "offset": {
+                                "x": 0,
+                                "y": 1
+                              }
+                            },
+                            {
+                              "type": "shadow",
+                              "shadowType": "outer",
+                              "color": "#00000033",
+                              "offset": {
+                                "x": 0,
+                                "y": 2
+                              },
+                              "blur": 2
+                            }
+                          ],
+                          "descendants": {
+                            "ugUJO": {
+                              "content": "Sign in",
+                              "fontSize": 16,
+                              "textAlign": "center",
+                              "fill": "#0D1521"
+                            }
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "id": "B01U2",
+                          "name": "Pressed caption",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Pressed",
+                          "lineHeight": 1.45,
+                          "textAlign": "center",
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "N5Kb9",
+          "name": "Button reference note",
+          "fill": "$home-muted",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "References: Linear’s inset highlights and controlled borders; Shuttle’s restrained blue action and shallow elevation. Gradient and raised-edge treatments are AIHarder proposals, not copied reference buttons.",
+          "lineHeight": 1.45,
+          "fontFamily": "Geist",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "d4FB7",
+          "name": "Button choice note",
+          "fill": "$home-muted",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Keep the existing 48px target and 8px corners. No large glow or glossy plastic finish. Default, hover and pressed are static specimens, not implemented interactions.",
           "lineHeight": 1.45,
           "fontFamily": "Geist",
           "fontSize": 14,

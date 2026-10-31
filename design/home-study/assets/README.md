@@ -28,3 +28,8 @@ This establishes ecosystem relevance, not end-to-end acceptance with Connect. Ke
 ## pen.dev render derivatives — 2026-10-31
 
 The editor did not reliably render SVG image fills. Monochrome light/dark SVG derivatives of ChatGPT, Claude and Hermes preserve the source path geometry and replace fill colors only. Nine PNG derivatives are faithfully rasterized from these vectors and the original AimHarder/OpenClaw/Pi artwork using `@resvg/resvg-js` 2.6.2; the canvas uses these PNG files. No brand artwork was manually reconstructed or AI-generated. Source/derived relationships and hashes are recorded in `sources.json`; the web prototype retains its existing SVG assets. The conversion package was installed only in a temporary tool directory, without modifying project dependencies or lockfiles.
+
+
+## Desktop-only refinement assets — 2026-10-31
+
+The two active AIHarder desktop views use the unedited original Hermes portrait (`hermes-avatar.png`) from the official site instead of its wing. OpenClaw/Pi monochrome SVG/PNG derivatives preserve their original paths for the compact hero row. Existing assets used by the six frozen variants were not overwritten. URLs, transformations and hashes are in `sources.json`.
