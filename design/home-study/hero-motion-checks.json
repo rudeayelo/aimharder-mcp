@@ -1,63 +1,91 @@
 {
   "date": "2026-10-31",
-  "kind": "Throwaway desktop English motion and surface refinement; HTML only",
+  "kind": "Faster desktop English typing/motion trial; latest native pen alignment pending",
   "timedAnimation": true,
   "penSynchronized": false,
-  "penReason": "Editor did not answer three execute attempts; pre-existing pen edit preserved",
+  "penReason": "Previous bubble/shadow changes persisted before this revision. Latest native y=84 attempt did not answer; inspected file still y=170. Existing pen/export edits preserved.",
+  "timingSeconds": {
+    "question": 0.9,
+    "reactionDuration": 0.18,
+    "thinkingStart": 1.12,
+    "answerStart": 2.195,
+    "thinkingDuration": 1.075,
+    "previousThinkingDuration": 2.15,
+    "cycle": 8.5,
+    "typingCharactersPerSecond": 105,
+    "shortTypingDuration": 0.7,
+    "longTypingDuration": 2.0095238095238095
+  },
   "browserObservations": {
     "viewports": [
       1440,
       1200
     ],
-    "thinkingAt3_75": {
-      "scaleY": 0.8502,
-      "lift": 0
+    "questionAt1_08": {
+      "phase": "question",
+      "attention": 1
     },
-    "hopAt4_08": {
-      "scaleY": 1.025,
-      "lift": 0.065
+    "thinkingAt2_15": {
+      "scaleY": 0.8508,
+      "lift": 0,
+      "gap": 16,
+      "rightEdgeOffset": 0
     },
-    "settledAt4_9": {
-      "scaleY": 1,
-      "lift": 0
+    "longReplyAt2_7": {
+      "typed": 53,
+      "characters": 211,
+      "gap": 16,
+      "rightEdgeOffset": 0,
+      "height": 286.25
     },
-    "playbackTimeAdvanced": true,
-    "pauseObserved": true,
-    "replyCornerRadius": "24px 24px 24px 6px",
-    "replyBackdropFilter": "blur(12px)",
-    "staticFallbackAt1200": {
+    "longReplyAt5": {
+      "typed": 211,
+      "height": 286.25
+    },
+    "danceAt3_5": {
+      "typed": 137,
+      "lift": 0.0165
+    },
+    "pauseDuringTyping": {
+      "time": 3.602,
+      "typed": 147,
+      "paused": true,
+      "laterReadUnchanged": true
+    },
+    "motionOffAt1200": {
       "canvasCount": 0,
-      "replyWidth": 300,
-      "scrollWidth": 1200,
-      "viewport": 1200
+      "typed": 211,
+      "characters": 211,
+      "scrollWidth": 1200
     },
     "consoleWarningsAndErrorsObserved": 0
   },
-  "sourcesVerified": 55,
   "screenshots": [
     {
       "file": "previews/hero-motion-answer-light.png",
-      "sha256": "bc0d13f75459f5e49d3dea5f16f714af84f3f4f60dfb1911e916e55aafe73413"
+      "sha256": "a25dc6403a695f34f840ac7f98949c40064af6a07df987a199b14ecf14426a37"
     },
     {
       "file": "previews/hero-motion-thinking-light.png",
-      "sha256": "1adb6f15b1c35f0389e6d8830c823a041f52aacfceb9a20ccc5be35b0acc3792"
+      "sha256": "526015ad2e3dee5df5e7011eee1e8118b83f43a6418cbb0cda201011d677ede1"
     },
     {
       "file": "previews/hero-motion-long-dark.png",
-      "sha256": "d5f5afc7ac09e9708ec16b395e0049ccaa176f96e6ae4334b0f1d48e64299505"
+      "sha256": "014d667e1941826e8e96be9a691f0ff63335a6164f08cd741d710e63c668c80b"
+    },
+    {
+      "file": "previews/hero-motion-typing-light.png",
+      "sha256": "8f7e894e3a24fdf04a95fe4b02f8e93ff52868d76bba1715083b53f32316d183"
     }
   ],
   "pending": [
-    "Pen synchronization",
+    "Latest native pen alignment",
     "Owner motion approval",
-    "Real-device/performance and accessibility acceptance",
-    "Actual OS reduced-motion setting change (equivalent motion=off branch inspected)"
+    "Actual OS preference-change and real-device/performance acceptance"
   ],
   "architectureAndApiChange": false,
   "review": {
-    "standards": "No documented standards breaches; duplicate animation-frame lifecycle issue fixed and verified by reviewer",
-    "spec": "Requested gestures/surface changes implemented; same animation-frame lifecycle issue fixed",
-    "postFixBrowserPauseResume": "Paused time 6.366, resumed time 6.650; no observed warnings/errors"
+    "standards": "0 actionable findings",
+    "spec": "0 actionable findings"
   }
 }

@@ -38,9 +38,9 @@ The English Light/Dark pen heroes now use this composition and the agreed headli
 
 No real account query, new API behavior, production animation or architecture/security change is involved. Existing ADRs remain applicable. Pose and expression approval remains with the owner.
 
-## Thinking compression, reply bounce and translucent bubble — 2026-10-31
+## Previous timing: thinking compression and reply bounce — 2026-10-31
 
-The owner asked for slow compression while thinking, a small hop with rebound timed to the answer, a larger reply with a tighter lower-left corner, translucency/blur over the character and a stronger ground shadow, especially in Light. This is one directed refinement, not additional layout variants.
+The timings in this section describe the previous trial, superseded by the faster sequence below. The owner asked for slow compression while thinking, a small hop with rebound timed to the answer, a larger reply with a tighter lower-left corner, translucency/blur over the character and a stronger ground shadow, especially in Light. This is one directed refinement, not additional layout variants.
 
 | Decision | Source | Applied behavior |
 | --- | --- | --- |
@@ -58,3 +58,20 @@ Browser checks covered 1440px Light, 1440px Dark with the longer reply, and a 12
 **Pen sync remains pending for this refinement.** The editor opened but did not answer three execute calls. The pre-existing local pen change (4px background blur on the Light reply) was preserved; no direct pen-file edits were made. The six frozen variants, production app and API/security/distribution decisions are unchanged. Existing ADRs remain applicable; no new ADR is required for this visual prototype.
 
 Review found and fixed a duplicate animation-frame scheduling risk on tab visibility return or rapid Pause/Play. One tracked pending frame is now cancelled on hide/pause and scheduled idempotently on resume. Browser pause/resume was rechecked after the fix with no observed console warnings/errors. Standards and Spec review cover this directed prototype, not production readiness.
+
+## Faster reaction, compact message stack and typed replies — 2026-10-31
+
+The owner liked the direction and asked for a faster reaction when the question arrives, half the thinking time, the reply directly below the question, right-aligned thinking dots, rapid typewriter text and an emote during writing. These instructions refine the same desktop English Light/Dark hero; they do not request new screen variants.
+
+- The question arrives at 0.9s. The body/gaze reacts over 180ms with a fast ease-out, slight overshoot and settle, instead of the former 600ms turn. The thinking state starts at 1.12s.
+- Thinking/compression lasts **1.075s**, exactly half the former 2.15s. The response starts at 2.195s, with the existing anticipation, stretch, airborne arc, compressed landing and smaller follow-through rebound shifted to match.
+- Both reply states sit **16px below the measured bottom of the question**, with identical right alignment. A ResizeObserver accommodates wrapping. The static composition uses the same 84px default top position. The 344px translucent surface and asymmetric lower-left corner are retained.
+- Text reveals at approximately **105 characters/second** (minimum 0.7s, maximum 2.2s). The short answer takes 0.7s; the 211-character long example takes about 2.01s. Hidden text retains its footprint so the bubble does not resize or rewrap as characters appear. A single complete accessible answer replaces per-character announcements.
+- The initial hop accompanies the short answer. While a longer answer continues typing, the kettle extends the gesture into small side-to-side bounces with a restrained roll/yaw, volume-preserving squash, moving contact shadow and an eased settle. Body, handle and complete eye relief remain on the same rig.
+- Typing uses the same elapsed clock as the character. Pause freezes both; Replay resets both. The single-frame scheduler remains intact. Reduced motion and 3D fallback show the complete answer immediately.
+
+Browser inspection verified the 180ms reaction, 16px gaps/zero right-edge offset for both thinking and reply states, partial/full text, stable 286.25px long-reply height, the dance during writing, pause/resume, and the complete no-canvas fallback at 1200px. Light/Dark captures at 1440px are in [checks](hero-motion-checks.json), including [partial typing](previews/hero-motion-typing-light.png). No console warnings/errors were observed. Actual OS preference changes, real-device performance and owner acceptance remain separate.
+
+The native pen and its exports were already modified at the start of this revision: the previous larger translucent reply and stronger shadow had eventually persisted, despite the earlier tool timeout. They were preserved. The new attempt to move the native reply to y=84 also timed out; the latest file inspection still shows y=170 in both active homes. The current compact stack and all timing/typewriter/emote changes are therefore verified in HTML; latest pen alignment remains pending. No direct pen-file edits were made. No API, production configuration, dependencies or architecture/security/distribution decisions changed; no ADR update is required.
+
+The final Standards and Spec reviews found no actionable issues. A later browser read confirmed paused time/text remained at 3.602s and 147 characters. JavaScript syntax, capture hashes and documentation links were checked; no production runtime test suite was run for this isolated visual prototype.

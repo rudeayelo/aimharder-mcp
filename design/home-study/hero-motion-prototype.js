@@ -14,6 +14,7 @@ const pause = document.querySelector('#pause');
 const replay = document.querySelector('#replay');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const frozen = params.get('motion') === 'off' || reduced.matches;
+const timing = {question: .9, thinking: 1.12, answer: 2.195, cycle: 8.5};
 const inspection = Number(params.get('at'));
 const inspectAt = params.has('at') && Number.isFinite(inspection) ? Math.max(0, Math.min(8.49, inspection)) : null;
 stage.dataset.inspection = String(inspectAt !== null || frozen);
@@ -50,9 +51,60 @@ if (params.get('reply') === 'long') {
   copy.textContent = 'You also have a booking on Thursday at 18:00. Both classes are CrossFit. Ask me about the published workout whenever you want to check what is coming up.';
   document.querySelector('.answer').append(copy);
 }
+// Retain the complete text footprint so typing never resizes the bubble.
+const answer = document.querySelector('.answer');
+const fullAnswer = Array.from(answer.querySelectorAll('p, strong'), node => node.textContent.trim().replace(/[.!?]$/, '')).join('. ');
+const textWalker = document.createTreeWalker(answer, NodeFilter.SHOW_TEXT);
+const textNodes = [];
+while (textWalker.nextNode()) {
+  if (textWalker.currentNode.textContent.trim()) textNodes.push(textWalker.currentNode);
+}
+let totalCharacters = 0;
+const runs = textNodes.map(node => {
+  const text = Array.from(node.textContent);
+  const wrapper = document.createElement('span');
+  const visible = document.createElement('span');
+  visible.className = 'reply-visible';
+  const remainder = document.createElement('span');
+  remainder.className = 'reply-unrevealed';
+  wrapper.append(visible, remainder);
+  node.replaceWith(wrapper);
+  const start = totalCharacters;
+  totalCharacters += text.length;
+  return {text, start, visible, remainder};
+});
+// Expose one complete answer instead of announcing each character to assistive technology.
+answer.setAttribute('role', 'img');
+answer.setAttribute('aria-label', 'Fictional answer: ' + fullAnswer);
+const typingDuration = Math.max(.7, Math.min(2.2, totalCharacters / 105));
+let lastCount = -1;
+function typeAnswer(time, complete = false) {
+  const count = complete ? totalCharacters : Math.floor(Math.max(0, Math.min(1, (time-timing.answer)/typingDuration))*totalCharacters);
+  if (count === lastCount) return;
+  lastCount = count;
+  for (const run of runs) {
+    const n = Math.max(0, Math.min(run.text.length, count-run.start));
+    run.visible.textContent = run.text.slice(0, n).join('');
+    run.remainder.textContent = run.text.slice(n).join('');
+    run.visible.classList.toggle('typing-caret', n > 0 && n < run.text.length);
+  }
+  stage.dataset.typed = String(count);
+  stage.dataset.characters = String(totalCharacters);
+  stage.dataset.typing = String(count < totalCharacters);
+  const confirmed = runs.find(run => run.visible.closest('.confirmed'));
+  answer.querySelector('.confirmed .icon').style.visibility = confirmed && count <= confirmed.start ? 'hidden' : 'visible';
+}
+const question = document.querySelector('.question');
+function placeReply() {
+  // The question can wrap; keep both reply states exactly 16px below its real bottom.
+  if (question.offsetHeight) stage.style.setProperty('--reply-top', (question.offsetTop+question.offsetHeight+16)+'px');
+}
+new ResizeObserver(placeReply).observe(question);
+typeAnswer(0, frozen);
 function phase(name) {
   root.dataset.state = name;
   stage.dataset.phase = name;
+  placeReply();
 }
 function controls() {
   pause.textContent = playing ? 'Pause' : 'Play';
@@ -87,6 +139,7 @@ if (frozen) {
   start().catch(() => {
     stage.dataset.inspection = 'true';
     phase('answer');
+    typeAnswer(0, true);
     status.textContent = 'Static fallback · 3D unavailable';
     pause.disabled = replay.disabled = true;
   });
@@ -144,13 +197,14 @@ async function start() {
     }
   });
   const smooth = n => {n = Math.max(0, Math.min(1, n)); return n * n * (3 - 2 * n);};
-  // Scale-Y, lift, roll: slow compression; release; flight; landing; smaller rebound; settle.
+  // Anticipation compresses in half the previous thinking time; quick release follows.
+  const a = timing.answer;
   const keys = [
-    [0, 1, 0, 0], [1.65, 1, 0, 0], [3.8, .85, 0, -.012],
-    [3.91, 1.055, .014, .005], [4.08, 1.025, .065, .015],
-    [4.29, 1, .008, .004], [4.34, .92, 0, -.014],
-    [4.46, 1.025, .022, .009], [4.59, .975, 0, -.004],
-    [4.82, 1, 0, 0], [8.5, 1, 0, 0],
+    [0, 1, 0, 0], [timing.thinking, 1, 0, 0], [a, .85, 0, -.012],
+    [a+.11, 1.055, .014, .005], [a+.28, 1.025, .065, .015],
+    [a+.49, 1, .008, .004], [a+.54, .92, 0, -.014],
+    [a+.66, 1.025, .022, .009], [a+.79, .975, 0, -.004],
+    [a+1.02, 1, 0, 0], [timing.cycle, 1, 0, 0],
   ];
   function sample(t) {
     for (let i = 1; i < keys.length; i++) {
@@ -162,26 +216,41 @@ async function start() {
     return [1, 0, 0];
   }
   drawFrame = now => {
-    if (playing && previous !== null) elapsed = (elapsed + Math.min(.05, (now-previous)/1000)) % 8.5;
+    if (playing && previous !== null) elapsed = (elapsed + Math.min(.05, (now-previous)/1000)) % timing.cycle;
     previous = now;
     const t = elapsed;
-    const name = t < .9 ? 'waiting' : t < 1.65 ? 'question' : t < 3.8 ? 'thinking' : 'answer';
+    const name = t < timing.question ? 'waiting' : t < timing.thinking ? 'question' : t < timing.answer ? 'thinking' : 'answer';
     if (stage.dataset.phase !== name) phase(name);
-    const [sy, lift, roll] = sample(t);
+    typeAnswer(t);
+    let [sy, lift, roll] = sample(t);
+    // Longer answers extend the hop into a small side-to-side dance, then ease to rest.
+    const danceStart = timing.answer+.8;
+    const danceLength = typingDuration-.65;
+    const danceProgress = Math.max(0, Math.min(1, (t-danceStart)/danceLength));
+    const envelope = typingDuration > 1 ? Math.sin(Math.PI*danceProgress) : 0;
+    const beat = Math.sin((t-danceStart)*Math.PI*5);
+    const sway = .025*beat*envelope;
+    roll += .045*beat*envelope;
+    lift += .018*Math.abs(beat)*envelope;
+    sy -= .025*(1-Math.abs(beat))*envelope;
     planted.scale.set(1 / Math.sqrt(sy), sy, 1 / Math.sqrt(sy));
     planted.position.y = .018 + lift;
-    const attention = smooth((t-.9)/.6);
-    body.rotation.set(0, .16 + .22*attention, .11*attention + roll);
-    const thinking = smooth((t-1.65)/.55) * (1-smooth((t-3.8)/.2));
+    planted.position.z = sway;
+    // Fast ease-out reaction on question arrival, with a small overshoot and settle.
+    const reaction = Math.max(0, Math.min(1, (t-timing.question)/.18));
+    const attention = 1-Math.pow(1-reaction,3)+.10*Math.sin(Math.PI*reaction);
+    body.rotation.set(0, .16 + .22*attention + sway, .11*attention + roll);
+    const thinking = smooth((t-timing.thinking)/.22) * (1-smooth((t-timing.answer)/.14));
     // A brief blink and gentle squint move all recessed layers with the curved face.
-    const blink = t > 2.45 && t < 2.63 ? Math.sin((t-2.45)/.18*Math.PI) : 0;
+    const blink = t > 1.58 && t < 1.76 ? Math.sin((t-1.58)/.18*Math.PI) : 0;
     eyes.apply({open: [1-.10*thinking-.80*blink, 1-.18*thinking-.72*blink], width: 1-.025*thinking, gaze: -.018*attention, gazeY: .014*attention+.008*thinking});
-    shadow.style.transform = `scale(${1 + (1-sy)*.35-lift*1.5})`;
+    shadow.style.transform = `translateX(${-sway*390}px) scale(${1 + (1-sy)*.35-lift*1.5})`;
     shadow.style.opacity = String(1-lift*6);
     // Visible, read-only inspection evidence; no private renderer state needed by QA.
     stage.dataset.scaleY = sy.toFixed(4);
     stage.dataset.lift = lift.toFixed(4);
     stage.dataset.time = t.toFixed(3);
+    stage.dataset.attention = attention.toFixed(4);
     status.textContent = name === 'answer' ? 'Answering' : name[0].toUpperCase()+name.slice(1);
     renderer.render(scene, camera);
     if (playing && !document.hidden) requestFrame();
