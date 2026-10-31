@@ -955,11 +955,12 @@
           "type": "frame",
           "id": "o4sdvx",
           "name": "Hero / value and illustrative conversation",
+          "context": "Graphic hero: waiting → user question → thinking → answer. Static answer composition; no text composer or paginator.",
           "width": "fill_container",
           "fill": "$home-bg",
           "gap": 72,
           "padding": [
-            88,
+            72,
             120,
             64,
             120
@@ -978,11 +979,11 @@
                   "type": "text",
                   "id": "r6XEh",
                   "name": "Headline",
-                  "context": "Proposed headline for owner review. Alternatives: Less tapping. More training. / From your gym to your AI chat.",
+                  "context": "Owner-selected wording: focus on training, reduce surrounding administration.",
                   "fill": "$home-ink",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Your training.\nJust ask.",
+                  "content": "Focus more\non training,\nless on tapping.",
                   "lineHeight": 1.12,
                   "fontFamily": "Geist",
                   "fontSize": 56,
@@ -1321,340 +1322,178 @@
             },
             {
               "type": "frame",
-              "id": "UNM4O",
-              "name": "Hero conversation / answer state",
-              "context": "Four fictional conversations: type in composer, send question, reveal response. See separate motion-state board and functional home prototype.",
+              "id": "y0ooM",
+              "name": "Graphic hero / attentive kettle and tail-free reply",
               "width": "fill_container",
-              "fill": "#00000000",
-              "cornerRadius": 16,
-              "stroke": "$home-line",
-              "layout": "vertical",
-              "gap": 8,
+              "height": 500,
+              "layout": "none",
               "children": [
                 {
                   "type": "frame",
-                  "id": "wdl6F",
-                  "name": "Conversation messages",
-                  "width": "fill_container",
-                  "height": 340,
-                  "layout": "vertical",
-                  "gap": 20,
-                  "padding": [
-                    12,
-                    8,
+                  "id": "XbyNv",
+                  "x": -12,
+                  "y": 476,
+                  "name": "Kettle ground contact",
+                  "width": 204,
+                  "height": 14,
+                  "fill": "#14283F0D",
+                  "cornerRadius": 7,
+                  "effect": {
+                    "type": "blur",
+                    "radius": 5
+                  },
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "pdqh3",
+                  "x": -80,
+                  "y": 96,
+                  "name": "Kettle / looking toward user message",
+                  "context": "768px transparent render from the actual 32k body and curved eye rig. Image crop removes transparent margins only.",
+                  "clip": true,
+                  "width": 360,
+                  "height": 390,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "v3J87",
+                      "x": -75.5,
+                      "y": -67.59,
+                      "name": "Attentive kettle / original 3D geometry",
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "home-study/assets/kettle-hero-attention.png",
+                        "mode": "contain"
+                      },
+                      "width": 519.1,
+                      "height": 519.1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Ub8P7",
+                  "x": 296,
+                  "y": 8,
+                  "name": "User question / upper right",
+                  "width": 300,
+                  "fill": "$home-bubble",
+                  "cornerRadius": [
                     24,
-                    8
+                    24,
+                    6,
+                    24
                   ],
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "fsU7R",
-                      "name": "Sent question alignment",
-                      "width": "fill_container",
-                      "justifyContent": "end",
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "teFfS",
-                          "name": "Example user question",
-                          "fill": "$home-bubble",
-                          "cornerRadius": [
-                            20,
-                            20,
-                            4,
-                            20
-                          ],
-                          "layout": "vertical",
-                          "padding": [
-                            14,
-                            20
-                          ],
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "ix7Md",
-                              "name": "Workout question",
-                              "fill": "$home-ink",
-                              "content": "What is tomorrow’s workout?",
-                              "lineHeight": 1.45,
-                              "fontFamily": "Geist",
-                              "fontSize": 16,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "ERhKR",
-                      "name": "Illustrative workout response",
-                      "width": "fill_container",
-                      "layout": "vertical",
-                      "gap": 14,
-                      "padding": [
-                        0,
-                        4
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "U1inVQ",
-                          "name": "Workout response title",
-                          "fill": "$home-ink",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Tomorrow’s workout",
-                          "lineHeight": 1.45,
-                          "fontFamily": "Geist",
-                          "fontSize": 18,
-                          "fontWeight": "600"
-                        },
-                        {
-                          "type": "frame",
-                          "id": "x620q",
-                          "name": "strength example block",
-                          "width": "fill_container",
-                          "layout": "vertical",
-                          "gap": 6,
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "nt5pX",
-                              "name": "strength label",
-                              "fill": "$home-ink",
-                              "textGrowth": "fixed-width",
-                              "width": "fill_container",
-                              "content": "Strength",
-                              "lineHeight": 1.45,
-                              "fontFamily": "Geist",
-                              "fontSize": 16,
-                              "fontWeight": "600"
-                            },
-                            {
-                              "type": "text",
-                              "id": "t0Nnl",
-                              "name": "strength details",
-                              "fill": "$home-ink",
-                              "textGrowth": "fixed-width",
-                              "width": "fill_container",
-                              "content": "Back squat\n5 sets × 5 reps",
-                              "lineHeight": 1.45,
-                              "fontFamily": "Geist",
-                              "fontSize": 16,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "G2lPJ",
-                          "name": "conditioning example block",
-                          "width": "fill_container",
-                          "layout": "vertical",
-                          "gap": 6,
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "R0SOI",
-                              "name": "conditioning label",
-                              "fill": "$home-ink",
-                              "textGrowth": "fixed-width",
-                              "width": "fill_container",
-                              "content": "Conditioning",
-                              "lineHeight": 1.45,
-                              "fontFamily": "Geist",
-                              "fontSize": 16,
-                              "fontWeight": "600"
-                            },
-                            {
-                              "type": "text",
-                              "id": "vCUjq",
-                              "name": "conditioning details",
-                              "fill": "$home-ink",
-                              "textGrowth": "fixed-width",
-                              "width": "fill_container",
-                              "content": "12-minute AMRAP\n8 burpees · 12 kettlebell swings",
-                              "lineHeight": 1.45,
-                              "fontFamily": "Geist",
-                              "fontSize": 16,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "pbSln",
-                  "name": "Demo text composer / idle",
-                  "width": "fill_container",
-                  "height": 64,
-                  "fill": "$home-bg",
-                  "cornerRadius": 24,
-                  "stroke": "$home-control",
-                  "strokeWidth": 1,
-                  "gap": 14,
+                  "layout": "vertical",
                   "padding": [
-                    12,
-                    14,
-                    12,
-                    18
+                    18,
+                    22
                   ],
-                  "alignItems": "center",
                   "children": [
                     {
-                      "type": "icon",
-                      "id": "iO7ib",
-                      "name": "Add attachment affordance",
-                      "width": 22,
-                      "height": 22,
-                      "icon": "plus",
-                      "library": "lucide",
-                      "fill": "$home-muted"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "xRpNm",
-                      "name": "Read-only demo input / idle",
+                      "type": "text",
+                      "id": "uTm9D",
+                      "name": "Question / next booking",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "height": 24
-                    },
-                    {
-                      "type": "frame",
-                      "id": "ZSMwN",
-                      "name": "Send affordance",
-                      "width": 36,
-                      "height": 36,
-                      "fill": "$home-action",
-                      "cornerRadius": 18,
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "icon",
-                          "id": "nLySZ",
-                          "name": "Send example question",
-                          "width": 20,
-                          "height": 20,
-                          "icon": "arrow-up",
-                          "library": "lucide",
-                          "fill": "$home-on-action"
-                        }
-                      ]
+                      "content": "When is my next booking?",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
                 {
                   "type": "frame",
-                  "id": "L4tbp",
-                  "name": "Example selection and playback",
-                  "width": "fill_container",
-                  "height": 40,
-                  "gap": 2,
-                  "justifyContent": "center",
-                  "alignItems": "center",
+                  "id": "P4z0My",
+                  "x": 314,
+                  "y": 183,
+                  "name": "Kettle reply / no speech tail",
+                  "context": "Reply ownership will be conveyed by synchronized character motion and bubble appearance, not a pointer.",
+                  "width": 282,
+                  "fill": "$home-surface",
+                  "cornerRadius": 24,
+                  "stroke": "$home-line",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 10,
+                  "padding": 24,
                   "children": [
                     {
-                      "type": "frame",
-                      "id": "m5YZX",
-                      "name": "Example 1 / select",
-                      "width": 32,
-                      "height": 32,
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "cornerRadius": 4,
-                          "id": "dqhyN",
-                          "name": "Example 1 / selected",
-                          "fill": "$home-action",
-                          "width": 18,
-                          "height": 5
-                        }
-                      ]
+                      "type": "text",
+                      "id": "a7xI1",
+                      "name": "Reply caption",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Your next class",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "iC3kS",
+                      "name": "Reply / booked time",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Tomorrow at 19:00.",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 21,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.35
+                    },
+                    {
+                      "type": "text",
+                      "id": "L9czef",
+                      "name": "Reply / class type",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "CrossFit",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
                     },
                     {
                       "type": "frame",
-                      "id": "BHXzx",
-                      "name": "Example 2 / select",
-                      "width": 32,
-                      "height": 32,
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "cornerRadius": 4,
-                          "id": "WEiHJ",
-                          "name": "Example 2 / idle",
-                          "fill": "$home-control",
-                          "width": 5,
-                          "height": 5
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "wXdk3",
-                      "name": "Example 3 / select",
-                      "width": 32,
-                      "height": 32,
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "cornerRadius": 4,
-                          "id": "btSry",
-                          "name": "Example 3 / idle",
-                          "fill": "$home-control",
-                          "width": 5,
-                          "height": 5
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "I0VQB",
-                      "name": "Example 4 / select",
-                      "width": 32,
-                      "height": 32,
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "cornerRadius": 4,
-                          "id": "n1cJr",
-                          "name": "Example 4 / idle",
-                          "fill": "$home-control",
-                          "width": 5,
-                          "height": 5
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "pQA6q",
-                      "name": "Pause examples",
-                      "width": 32,
-                      "height": 32,
-                      "justifyContent": "center",
+                      "id": "hyUyR",
+                      "name": "Reply / booking state",
+                      "width": "fill_container",
+                      "gap": 6,
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "icon",
-                          "id": "WeBie",
-                          "name": "Pause animated examples",
+                          "id": "JXp7v",
+                          "name": "Booking confirmed icon",
                           "width": 14,
                           "height": 14,
-                          "icon": "pause",
+                          "icon": "check",
                           "library": "lucide",
                           "fill": "$home-muted"
+                        },
+                        {
+                          "type": "text",
+                          "id": "K64l7",
+                          "name": "Reply / confirmation",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Booking confirmed",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
                         }
                       ]
                     }
@@ -3404,11 +3243,12 @@
           "type": "frame",
           "id": "QJRsJ",
           "name": "Hero / value and illustrative conversation",
+          "context": "Graphic hero: waiting → user question → thinking → answer. Static answer composition; no text composer or paginator.",
           "width": "fill_container",
           "fill": "$home-bg",
           "gap": 72,
           "padding": [
-            88,
+            72,
             120,
             64,
             120
@@ -3427,11 +3267,11 @@
                   "type": "text",
                   "id": "Cxbjq",
                   "name": "Headline",
-                  "context": "Proposed headline for owner review. Alternatives: Less tapping. More training. / From your gym to your AI chat.",
+                  "context": "Owner-selected wording: focus on training, reduce surrounding administration.",
                   "fill": "$home-ink",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Your training.\nJust ask.",
+                  "content": "Focus more\non training,\nless on tapping.",
                   "lineHeight": 1.12,
                   "fontFamily": "Geist",
                   "fontSize": 56,
@@ -3770,340 +3610,178 @@
             },
             {
               "type": "frame",
-              "id": "dnokx",
-              "name": "Hero conversation / answer state",
-              "context": "Four fictional conversations: type in composer, send question, reveal response. See separate motion-state board and functional home prototype.",
+              "id": "k0XVN",
+              "name": "Graphic hero / attentive kettle and tail-free reply",
               "width": "fill_container",
-              "fill": "#00000000",
-              "cornerRadius": 16,
-              "stroke": "$home-line",
-              "layout": "vertical",
-              "gap": 8,
+              "height": 500,
+              "layout": "none",
               "children": [
                 {
                   "type": "frame",
-                  "id": "Kq3Fo",
-                  "name": "Conversation messages",
-                  "width": "fill_container",
-                  "height": 340,
-                  "layout": "vertical",
-                  "gap": 20,
-                  "padding": [
-                    12,
-                    8,
+                  "id": "kqtkA",
+                  "x": -12,
+                  "y": 476,
+                  "name": "Kettle ground contact",
+                  "width": 204,
+                  "height": 14,
+                  "fill": "#14283F0D",
+                  "cornerRadius": 7,
+                  "effect": {
+                    "type": "blur",
+                    "radius": 5
+                  },
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "Gy1bU",
+                  "x": -80,
+                  "y": 96,
+                  "name": "Kettle / looking toward user message",
+                  "context": "768px transparent render from the actual 32k body and curved eye rig. Image crop removes transparent margins only.",
+                  "clip": true,
+                  "width": 360,
+                  "height": 390,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "yKiaQ",
+                      "x": -75.5,
+                      "y": -67.59,
+                      "name": "Attentive kettle / original 3D geometry",
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "home-study/assets/kettle-hero-attention.png",
+                        "mode": "contain"
+                      },
+                      "width": 519.1,
+                      "height": 519.1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "TMPNN",
+                  "x": 296,
+                  "y": 8,
+                  "name": "User question / upper right",
+                  "width": 300,
+                  "fill": "$home-bubble",
+                  "cornerRadius": [
                     24,
-                    8
+                    24,
+                    6,
+                    24
                   ],
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "rKGJS",
-                      "name": "Sent question alignment",
-                      "width": "fill_container",
-                      "justifyContent": "end",
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "qTTky",
-                          "name": "Example user question",
-                          "fill": "$home-bubble",
-                          "cornerRadius": [
-                            20,
-                            20,
-                            4,
-                            20
-                          ],
-                          "layout": "vertical",
-                          "padding": [
-                            14,
-                            20
-                          ],
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "JYxUB",
-                              "name": "Workout question",
-                              "fill": "$home-ink",
-                              "content": "What is tomorrow’s workout?",
-                              "lineHeight": 1.45,
-                              "fontFamily": "Geist",
-                              "fontSize": 16,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "HUNll",
-                      "name": "Illustrative workout response",
-                      "width": "fill_container",
-                      "layout": "vertical",
-                      "gap": 14,
-                      "padding": [
-                        0,
-                        4
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "rIF0B",
-                          "name": "Workout response title",
-                          "fill": "$home-ink",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Tomorrow’s workout",
-                          "lineHeight": 1.45,
-                          "fontFamily": "Geist",
-                          "fontSize": 18,
-                          "fontWeight": "600"
-                        },
-                        {
-                          "type": "frame",
-                          "id": "v476uI",
-                          "name": "strength example block",
-                          "width": "fill_container",
-                          "layout": "vertical",
-                          "gap": 6,
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "bLGao",
-                              "name": "strength label",
-                              "fill": "$home-ink",
-                              "textGrowth": "fixed-width",
-                              "width": "fill_container",
-                              "content": "Strength",
-                              "lineHeight": 1.45,
-                              "fontFamily": "Geist",
-                              "fontSize": 16,
-                              "fontWeight": "600"
-                            },
-                            {
-                              "type": "text",
-                              "id": "wRpGj",
-                              "name": "strength details",
-                              "fill": "$home-ink",
-                              "textGrowth": "fixed-width",
-                              "width": "fill_container",
-                              "content": "Back squat\n5 sets × 5 reps",
-                              "lineHeight": 1.45,
-                              "fontFamily": "Geist",
-                              "fontSize": 16,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "Igvys",
-                          "name": "conditioning example block",
-                          "width": "fill_container",
-                          "layout": "vertical",
-                          "gap": 6,
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "AS7X2",
-                              "name": "conditioning label",
-                              "fill": "$home-ink",
-                              "textGrowth": "fixed-width",
-                              "width": "fill_container",
-                              "content": "Conditioning",
-                              "lineHeight": 1.45,
-                              "fontFamily": "Geist",
-                              "fontSize": 16,
-                              "fontWeight": "600"
-                            },
-                            {
-                              "type": "text",
-                              "id": "FBcJC",
-                              "name": "conditioning details",
-                              "fill": "$home-ink",
-                              "textGrowth": "fixed-width",
-                              "width": "fill_container",
-                              "content": "12-minute AMRAP\n8 burpees · 12 kettlebell swings",
-                              "lineHeight": 1.45,
-                              "fontFamily": "Geist",
-                              "fontSize": 16,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "jzWrh",
-                  "name": "Demo text composer / idle",
-                  "width": "fill_container",
-                  "height": 64,
-                  "fill": "$home-bg",
-                  "cornerRadius": 24,
-                  "stroke": "$home-control",
-                  "strokeWidth": 1,
-                  "gap": 14,
+                  "layout": "vertical",
                   "padding": [
-                    12,
-                    14,
-                    12,
-                    18
+                    18,
+                    22
                   ],
-                  "alignItems": "center",
                   "children": [
                     {
-                      "type": "icon",
-                      "id": "vaoLM",
-                      "name": "Add attachment affordance",
-                      "width": 22,
-                      "height": 22,
-                      "icon": "plus",
-                      "library": "lucide",
-                      "fill": "$home-muted"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "Y6IK3f",
-                      "name": "Read-only demo input / idle",
+                      "type": "text",
+                      "id": "a7SoK",
+                      "name": "Question / next booking",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "height": 24
-                    },
-                    {
-                      "type": "frame",
-                      "id": "yncsG",
-                      "name": "Send affordance",
-                      "width": 36,
-                      "height": 36,
-                      "fill": "$home-action",
-                      "cornerRadius": 18,
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "icon",
-                          "id": "nNGAn",
-                          "name": "Send example question",
-                          "width": 20,
-                          "height": 20,
-                          "icon": "arrow-up",
-                          "library": "lucide",
-                          "fill": "$home-on-action"
-                        }
-                      ]
+                      "content": "When is my next booking?",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
                 {
                   "type": "frame",
-                  "id": "z9ZfeX",
-                  "name": "Example selection and playback",
-                  "width": "fill_container",
-                  "height": 40,
-                  "gap": 2,
-                  "justifyContent": "center",
-                  "alignItems": "center",
+                  "id": "u7njPQ",
+                  "x": 314,
+                  "y": 183,
+                  "name": "Kettle reply / no speech tail",
+                  "context": "Reply ownership will be conveyed by synchronized character motion and bubble appearance, not a pointer.",
+                  "width": 282,
+                  "fill": "$home-surface",
+                  "cornerRadius": 24,
+                  "stroke": "$home-line",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 10,
+                  "padding": 24,
                   "children": [
                     {
-                      "type": "frame",
-                      "id": "RSnrB",
-                      "name": "Example 1 / select",
-                      "width": 32,
-                      "height": 32,
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "cornerRadius": 4,
-                          "id": "G0f5A",
-                          "name": "Example 1 / selected",
-                          "fill": "$home-action",
-                          "width": 18,
-                          "height": 5
-                        }
-                      ]
+                      "type": "text",
+                      "id": "FtmrO",
+                      "name": "Reply caption",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Your next class",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ep4JP",
+                      "name": "Reply / booked time",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Tomorrow at 19:00.",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 21,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.35
+                    },
+                    {
+                      "type": "text",
+                      "id": "dFjjh",
+                      "name": "Reply / class type",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "CrossFit",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
                     },
                     {
                       "type": "frame",
-                      "id": "TxxrQ",
-                      "name": "Example 2 / select",
-                      "width": 32,
-                      "height": 32,
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "cornerRadius": 4,
-                          "id": "Xnsam",
-                          "name": "Example 2 / idle",
-                          "fill": "$home-control",
-                          "width": 5,
-                          "height": 5
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "TQp1A",
-                      "name": "Example 3 / select",
-                      "width": 32,
-                      "height": 32,
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "cornerRadius": 4,
-                          "id": "QIdt5",
-                          "name": "Example 3 / idle",
-                          "fill": "$home-control",
-                          "width": 5,
-                          "height": 5
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "uOmAm",
-                      "name": "Example 4 / select",
-                      "width": 32,
-                      "height": 32,
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "cornerRadius": 4,
-                          "id": "tB252",
-                          "name": "Example 4 / idle",
-                          "fill": "$home-control",
-                          "width": 5,
-                          "height": 5
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "Z56fni",
-                      "name": "Pause examples",
-                      "width": 32,
-                      "height": 32,
-                      "justifyContent": "center",
+                      "id": "K7nIqi",
+                      "name": "Reply / booking state",
+                      "width": "fill_container",
+                      "gap": 6,
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "icon",
-                          "id": "F4zkER",
-                          "name": "Pause animated examples",
+                          "id": "bUP5a",
+                          "name": "Booking confirmed icon",
                           "width": 14,
                           "height": 14,
-                          "icon": "pause",
+                          "icon": "check",
                           "library": "lucide",
                           "fill": "$home-muted"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Mhi61",
+                          "name": "Reply / confirmation",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Booking confirmed",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
                         }
                       ]
                     }
@@ -20049,7 +19727,7 @@
       "id": "OWSCj",
       "x": 6600,
       "y": 40,
-      "name": "11 Home / Conversation motion and four example states",
+      "name": "11 Historical composer sequence / superseded",
       "theme": {
         "appearance": "light",
         "language": "en"
@@ -20068,7 +19746,7 @@
           "fill": "$home-ink",
           "textGrowth": "fixed-width",
           "width": "fill_container",
-          "content": "Hero conversation / motion handoff",
+          "content": "Historical composer sequence / superseded",
           "lineHeight": 1.45,
           "fontFamily": "Geist",
           "fontSize": 26,
@@ -20081,7 +19759,7 @@
           "fill": "$home-muted",
           "textGrowth": "fixed-width",
           "width": "fill_container",
-          "content": "Four fictional conversations. Type in the composer → send the question above → reveal the answer below. These are editable design states; the linked web prototype demonstrates the actual timing.",
+          "content": "This earlier text-composer study is retained as history. The active graphic hero uses the kettle, an incoming question, thinking and a tail-free reply; see graphic-hero-study.md. Do not implement the old composer/paginator flow from this board.",
           "lineHeight": 1.45,
           "fontFamily": "Geist",
           "fontSize": 15,

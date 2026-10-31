@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>AIHarder — hero pose export</title>
+<style>body{margin:0;background:#e2e8ef;font:14px system-ui}canvas{display:block;width:640px;height:640px}p{margin:12px}</style>
+<script type="importmap">{"imports":{"three":"../identity/idol-motion-prototype/vendor/three.module.js"}}</script>
+<p id="status">Rendering the existing 32k body and curved eye rig…</p>
+<p><a id="download">Save transparent pose</a></p>
+<script type="module">
+import * as THREE from 'three';
+import {SogsLoader,SplatMesh} from '../identity/idol-motion-prototype/vendor/visus-2.5.0.js';
+import {SOURCE_BOUNDS} from '../identity/idol-motion-prototype/asset-profiles.js';
+import {createEyes} from '../identity/idol-motion-prototype/hybrid/eye-rig.js';
+const name=new URLSearchParams(location.search).get('pose')==='thinking'?'thinking':'attention';
+const poses={attention:{yaw:.38,lean:.11,open:[1,1],width:1,gaze:-.018,gazeY:.014},thinking:{yaw:.30,lean:.14,open:[.92,.78],width:.98,gaze:-.010,gazeY:.022}};
+const pose=poses[name];
+const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,preserveDrawingBuffer:true});
+renderer.setSize(768,768);renderer.setPixelRatio(1);renderer.setClearColor(0,0);renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.domElement.setAttribute('aria-label','Existing 3D kettle looking toward the upper-right message');document.body.append(renderer.domElement);
+const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(26,1,.01,100);
+camera.position.set(3,.76,0);camera.lookAt(0,.5,0);
+const data=await new SogsLoader().loadAsync('../identity/idol-motion-prototype/hybrid/kettle-body-32k.sog');
+const bounds={min:new THREE.Vector3(...SOURCE_BOUNDS.min),max:new THREE.Vector3(...SOURCE_BOUNDS.max)};
+bounds.center=bounds.min.clone().add(bounds.max).multiplyScalar(.5);
+const height=bounds.max.y-bounds.min.y;
+const body=new THREE.Group();scene.add(body);
+const mesh=new SplatMesh(data,{autoSort:true});mesh.scale.setScalar(1/height);mesh.rotation.x=Math.PI;
+mesh.position.set(-bounds.center.x/height,bounds.max.y/height,bounds.center.z/height);body.add(mesh);
+const eyes=createEyes(body,bounds);eyes.apply(pose);
+body.rotation.set(0,pose.yaw,pose.lean);body.position.y=.018;
+function draw(){renderer.render(scene,camera);}
+mesh.sorter.addEventListener('updated',()=>{draw();const link=document.querySelector('#download');link.download='kettle-hero-'+name+'.png';link.href=renderer.domElement.toDataURL('image/png');document.querySelector('#status').textContent='Ready — '+name+' pose, 768 × 768 RGBA.';});
+draw();
+</script></html>

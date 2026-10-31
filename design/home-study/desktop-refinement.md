@@ -56,3 +56,6 @@ The [verification record](desktop-refinement-checks.json) lists protected roots 
 - Works with symbols and product labels use 65% opacity as a group, making the row subordinate to the primary action. Its label remains unchanged.
 - Recorded A / Soft bevel as the selected button finish; no new button styling was introduced.
 - Refreshed only the two active English desktop exports, their header/hero details and the selection note on the existing button board. Verified the rest of the saved canvas against the pre-edit snapshot. The header and hero exports were visually inspected; the existing bounds-visitor limitation remains documented above. API, scope, security and ADRs are unaffected.
+
+
+The subsequent [graphic hero refinement](graphic-hero-study.md) supersedes the text-composer hero in the two active English desktop frames: the agreed headline, a message-facing kettle and tail-free response are now drawn in pen. Other device/locale frames remain frozen; the earlier headline and composer notes above are historical.

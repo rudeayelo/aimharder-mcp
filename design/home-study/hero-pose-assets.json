@@ -1,0 +1,88 @@
+{
+  "renderer": "render-hero-pose.html",
+  "sourceModel": "../identity/idol-motion-prototype/hybrid/kettle-body-32k.sog",
+  "eyeRig": "../identity/idol-motion-prototype/hybrid/eye-rig.js",
+  "poses": {
+    "neutral": {
+      "file": "assets/kettle-neutral.png",
+      "size": [
+        512,
+        512
+      ],
+      "bounds": [
+        80,
+        68,
+        433,
+        473
+      ],
+      "sha256": "acc74a0352660299575df6b57d7c95652de20c4a35604c03fa228ee12d252bdd"
+    },
+    "attention": {
+      "file": "assets/kettle-hero-attention.png",
+      "size": [
+        768,
+        768
+      ],
+      "bounds": [
+        114,
+        100,
+        642,
+        677
+      ],
+      "sha256": "902a35f74947cd47e5055bc4dda0d08840b77d1665342dbde004ec6250b909b9"
+    },
+    "thinking": {
+      "file": "assets/kettle-hero-thinking.png",
+      "size": [
+        768,
+        768
+      ],
+      "bounds": [
+        115,
+        103,
+        641,
+        671
+      ],
+      "sha256": "de39fdd996c601602f34b1effcb16e5705a8678c5821be6b1636a3440c1c17c4"
+    }
+  },
+  "poseParameters": {
+    "attention": {
+      "yaw": 0.38,
+      "lean": 0.11,
+      "open": [
+        1,
+        1
+      ],
+      "width": 1,
+      "gaze": -0.018,
+      "gazeY": 0.014
+    },
+    "thinking": {
+      "yaw": 0.3,
+      "lean": 0.14,
+      "open": [
+        0.92,
+        0.78
+      ],
+      "width": 0.98,
+      "gaze": -0.01,
+      "gazeY": 0.022
+    }
+  },
+  "camera": {
+    "fov": 26,
+    "position": [
+      3,
+      0.76,
+      0
+    ],
+    "target": [
+      0,
+      0.5,
+      0
+    ]
+  },
+  "modelSha256": "28219dffc9d3a50cb4d79f0088bbe5a7a8ef977ed59c51a6b01faf5d508036d7",
+  "rigSha256": "dcad43bc6e1de70a950d8c4a8ad32c8cb72685e8cac69e2e2ecffe8a92b99981"
+}

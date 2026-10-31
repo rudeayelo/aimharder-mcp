@@ -288,5 +288,17 @@
     "derivedFrom": "apps/openclaw-mono-dark.svg",
     "change": "Faithful rasterization with @resvg/resvg-js 2.6.2 for pen image fill.",
     "sha256": "cfca9a371fb55f834db770c7825e86a8251571d05a8820da32171cb4660caa36"
+  },
+  {
+    "file": "kettle-hero-attention.png",
+    "derivedFrom": "../render-hero-pose.html?pose=attention",
+    "change": "Transparent 768px render of the unchanged 32k body and curved eye rig. Pose changes body rotation and complete recessed-eye geometry; no raster retouch or AI image generation.",
+    "sha256": "902a35f74947cd47e5055bc4dda0d08840b77d1665342dbde004ec6250b909b9"
+  },
+  {
+    "file": "kettle-hero-thinking.png",
+    "derivedFrom": "../render-hero-pose.html?pose=thinking",
+    "change": "Transparent 768px render of the unchanged 32k body and curved eye rig. Pose changes body rotation and complete recessed-eye geometry; no raster retouch or AI image generation.",
+    "sha256": "de39fdd996c601602f34b1effcb16e5705a8678c5821be6b1636a3440c1c17c4"
   }
 ]

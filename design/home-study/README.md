@@ -1,6 +1,6 @@
 # AIHarder — public home study
 
-Additional graphic experiment: the [kettle-led hero study](graphic-hero-study.md) uses the agreed “Focus more on training, less on tapping” headline and separate question/thinking/answer stills. Its browser captures are a new static proposal; pen synchronization is pending because the tool host is unavailable. The existing pen and older HTML prototype are preserved.
+Additional graphic experiment: the [kettle-led hero study](graphic-hero-study.md) uses the agreed “Focus more on training, less on tapping” headline and separate question/thinking/answer stills. The graphic proposal now includes an attentive three-quarter kettle pose and tail-free bubbles. The two active English desktop pen frames are synchronized; the six other home variants and older HTML prototype remain at their previous checkpoint.
 
 **Active refinement:** the working name is now **AIHarder**. Only the English desktop Light/Dark frames are being refined; Spanish/mobile variants and the HTML prototype remain at the previous checkpoint until agreement. The [desktop refinement](desktop-refinement.md) is the current review target. Button A is selected; the latest candidate uses a 25% larger logo, a bold headline and attenuated Works with logos. This later scope supersedes the earlier all-variant iteration below.
 
@@ -138,7 +138,7 @@ These are draft UI translations for the first home experiment, not a new languag
 
 Research refreshed on 2026-10-30 using the Refero design skill: three style searches (approachable conversation-led AI products, restrained white product marketing, and fitness product demonstration) and three full style records. These are archived design descriptions, not evidence of current product compatibility or a live service.
 
-Primary visual foundation: the existing [white/blue foundations](../README.md) and [selected wordmark](../identity/connect-study/README.md). Keep the established blue prefix, navy lettering and white surfaces in Light mode, with readable semantic counterparts in Dark mode and orange eyes in both. Krona One is for the logo; product/body text stays with the provisional readable UI family. The mascot has the previously agreed limited role near the logo and occasional incidental placement. Do not add new emotes, a giant mascot hero, lifestyle imagery or a sporting dashboard.
+Primary visual foundation: the existing [white/blue foundations](../README.md) and [selected wordmark](../identity/connect-study/README.md). Keep the established blue prefix, navy lettering and white surfaces in Light mode, with readable semantic counterparts in Dark mode and orange eyes in both. Krona One is for the logo; product/body text stays with the provisional readable UI family. The earlier checkpoint limited the mascot to the logo and incidental placement. The owner’s later graphic-hero experiment explicitly permits a larger character here; this does not add a general mascot role to other screens, lifestyle imagery or a sporting dashboard.
 
 | Reference | Bounded contribution | Excluded |
 | --- | --- | --- |

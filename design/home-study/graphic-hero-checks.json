@@ -1,7 +1,6 @@
 {
   "date": "2026-10-31",
-  "kind": "Static graphic hero; browser captures, not pen exports",
-  "penUnchanged": true,
+  "kind": "Graphic still synchronized to two pen frames; browser captures and pen exports are distinct",
   "headline": "Focus more on training, less on tapping.",
   "timedAnimation": false,
   "inputAndPaginatorRemoved": true,
@@ -16,7 +15,7 @@
         1440,
         820
       ],
-      "sha256": "47510682db5db2070642ec9620f9274b34bd09174ba4f32f3b4b117852e91715"
+      "sha256": "5d44d374c037816738e122655e8f7934102617975bbf2914c9293552a86be482"
     },
     {
       "file": "previews/hero-graphic-answer-light.png",
@@ -24,7 +23,7 @@
         1440,
         820
       ],
-      "sha256": "79ec864a473f40ff3fd9a672f7feef04024237a4669c6a927d94a8f3c2129aa4"
+      "sha256": "804222f7e138e9c7e984b7aa7571e9599029432ae91187bb06b661b902750b2d"
     },
     {
       "file": "previews/hero-graphic-thinking-light.png",
@@ -32,11 +31,32 @@
         1440,
         820
       ],
-      "sha256": "6263b6f21c6c42df38fa4f791f48355b56ade93ab58cba12930c41b80183124c"
+      "sha256": "43c22f63dfacff207666c1cb335ac1753facca009b03a6378d5a349d17eeb9c9"
     }
   ],
   "pending": [
-    "Pen synchronization",
-    "Timed mockup after composition review"
-  ]
+    "Animated thinking and answering gestures after composition review"
+  ],
+  "penSynchronized": true,
+  "penFrameIds": [
+    "uAXkc",
+    "p7u8w"
+  ],
+  "gaze": "Upper right, toward user message; body and complete curved eye recesses",
+  "replySpeechTail": false,
+  "thinkingSpeechTail": false,
+  "poseImages": [
+    "assets/kettle-hero-attention.png",
+    "assets/kettle-hero-thinking.png"
+  ],
+  "browserChecks": {
+    "viewport": 1200,
+    "scrollWidth": 1200,
+    "imageNaturalWidth": 768,
+    "failedImages": 0,
+    "inputs": 0,
+    "replyPseudoElementContent": "none",
+    "thinkingPseudoElementContent": "none"
+  },
+  "penBoundsNote": "The character and contact shadow intentionally extend into the inter-column gap; the image clips transparent margins. The bounds visitor flags these intended graphics overlaps, not a clean pass."
 }

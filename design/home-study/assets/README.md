@@ -33,3 +33,8 @@ The editor did not reliably render SVG image fills. Monochrome light/dark SVG de
 ## Desktop-only refinement assets — 2026-10-31
 
 The two active AIHarder desktop views use the unedited original Hermes portrait (`hermes-avatar.png`) from the official site instead of its wing. OpenClaw/Pi monochrome SVG/PNG derivatives preserve their original paths for the compact hero row. Existing assets used by the six frozen variants were not overwritten. URLs, transformations and hashes are in `sources.json`.
+
+
+## Graphic hero poses — 2026-10-31
+
+`kettle-hero-attention.png` and `kettle-hero-thinking.png` are 768px RGBA renders from the unchanged 32k body and complete curved eye rig. The [pose renderer](../render-hero-pose.html) and [pose manifest](../hero-pose-assets.json) record reproducible body/gaze parameters, alpha bounds and source hashes. No user reference image was copied into the repository, no raster retouch was performed and no new AI artwork was generated.
