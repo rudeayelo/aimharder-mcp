@@ -1,5 +1,7 @@
 # AIHarder — public home study
 
+Additional graphic experiment: the [kettle-led hero study](graphic-hero-study.md) uses the agreed “Focus more on training, less on tapping” headline and separate question/thinking/answer stills. Its browser captures are a new static proposal; pen synchronization is pending because the tool host is unavailable. The existing pen and older HTML prototype are preserved.
+
 **Active refinement:** the working name is now **AIHarder**. Only the English desktop Light/Dark frames are being refined; Spanish/mobile variants and the HTML prototype remain at the previous checkpoint until agreement. The [desktop refinement](desktop-refinement.md) is the current review target. Button A is selected; the latest candidate uses a 25% larger logo, a bold headline and attenuated Works with logos. This later scope supersedes the earlier all-variant iteration below.
 
 Updated: 2026-10-31. Status: revised editable public-home design for owner review under #95, following the structure proposal below. The owner selected **AimHarder Connect** as the working product name and **Krona One** for the wordmark. `aimharder-mcp` remains the technical npm package. AIHarder is a retained naming alternative, not the current build target.

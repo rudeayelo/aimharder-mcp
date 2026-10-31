@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-31",
+  "kind": "Static graphic hero; browser captures, not pen exports",
+  "penUnchanged": true,
+  "headline": "Focus more on training, less on tapping.",
+  "timedAnimation": false,
+  "inputAndPaginatorRemoved": true,
+  "browserViewportChecks": [
+    1440,
+    1200
+  ],
+  "screenshots": [
+    {
+      "file": "previews/hero-graphic-answer-dark.png",
+      "size": [
+        1440,
+        820
+      ],
+      "sha256": "47510682db5db2070642ec9620f9274b34bd09174ba4f32f3b4b117852e91715"
+    },
+    {
+      "file": "previews/hero-graphic-answer-light.png",
+      "size": [
+        1440,
+        820
+      ],
+      "sha256": "79ec864a473f40ff3fd9a672f7feef04024237a4669c6a927d94a8f3c2129aa4"
+    },
+    {
+      "file": "previews/hero-graphic-thinking-light.png",
+      "size": [
+        1440,
+        820
+      ],
+      "sha256": "6263b6f21c6c42df38fa4f791f48355b56ade93ab58cba12930c41b80183124c"
+    }
+  ],
+  "pending": [
+    "Pen synchronization",
+    "Timed mockup after composition review"
+  ]
+}
