@@ -12,7 +12,7 @@ New component `GqxcO` serves only the two active wordmark instances. No global c
 
 ## Home changes
 
-- Three equal header groups: left-aligned brand, centered How it works / FAQ, right-aligned language/theme and Sign in. Existing 120px content gutters remain.
+- Three header groups: left-aligned brand, centered How it works / FAQ, right-aligned language/theme and Sign in. Existing 120px content gutters remain.
 - Exact owner-supplied introduction: **Book classes, see your workouts and review the activity in your AimHarder account.**
 - The separate app strip moved into the hero copy, below the actions. It now reads **Works with**, with compact monochrome symbols and names. There is no separate band or divider.
 - Hermes uses the original black-and-white portrait from the [official Hermes website](https://hermes-agent.nousresearch.com/), downloaded from its [icon asset](https://web-assets.nousresearch.com/marketing/73edac8eae57c8914e23605b9f0a7015d9d3fd26/assets/hermes-agent/icon.png). The earlier wing was also a site asset, but is superseded in these two views at the owner's request. The portrait also replaces Hermes in their setup-step illustration.
@@ -33,10 +33,10 @@ These are archived reference descriptions, not a claim that the current websites
 
 | Proposal | Treatment | Review status |
 | --- | --- | --- |
-| **A / Soft bevel** | Gentle vertical blue gradient, 1px border, inner top highlight and a 2px / 4px soft shadow. | Recommended candidate; provisionally shown on both active homes for context. Owner selection pending. |
-| **B / Raised edge** | Solid blue, 1px border, inner highlight, small 3px lower edge and a short ambient shadow. Pressed reduces the edge to 1px. | Alternative shown in the specimen board. Owner selection pending. |
+| **A / Soft bevel** | Gentle vertical blue gradient, 1px border, inner top highlight and a 2px / 4px soft shadow. | Selected by the owner on 2026-10-31; retained on both active homes. |
+| **B / Raised edge** | Solid blue, 1px border, inner highlight, small 3px lower edge and a short ambient shadow. Pressed reduces the edge to 1px. | Not selected; retained in the specimen board as a historical comparison. |
 
-The gradient and lower edge are project proposals responding to the owner's brief. Both preserve 48px targets and 8px corners. Light uses white labels; Dark uses navy labels. Normal, hover and pressed are static specimens. Neither option has been adopted across other screens or implemented as production behavior.
+The gradient and lower edge are project proposals responding to the owner's brief. Both preserve 48px targets and 8px corners. Light uses white labels; Dark uses navy labels. Normal, hover and pressed are static specimens. Option A is selected for the active desktop design. Other locale/device frames still await propagation; production interaction behavior is not implemented.
 
 ## Verification and delivery
 
@@ -48,3 +48,11 @@ The gradient and lower edge are project proposals responding to the owner's brie
 No scope, authentication, security, distribution or validation-policy decision changed; existing ADRs remain applicable. Name/composition refinement and candidate button styling do not require an architectural ADR. Remaining work is owner selection, editor-diagnostic follow-up and propagation to the other variants only after agreement.
 
 The [verification record](desktop-refinement-checks.json) lists protected roots and the 12 button-label contrast checks.
+
+## Latest polish — 2026-10-31
+
+- Enlarged the AIHarder wordmark by a further 25%: Krona One 17.5 → 21.875px, kettle 35 × 40 → 43.75 × 50px, gap 8 → 10px. The header is now 120px high to accommodate it. Pre-existing local Light-header width adjustments were preserved.
+- The headline is provisionally **Your training. / Just ask.**, Geist 700 (bold), retaining 56px size. It is a copy candidate, not a final owner selection. Alternatives for review: **Less tapping. / More training.** and **From your gym / to your AI chat.** No extra home variants were created for these copy options.
+- Works with symbols and product labels use 65% opacity as a group, making the row subordinate to the primary action. Its label remains unchanged.
+- Recorded A / Soft bevel as the selected button finish; no new button styling was introduced.
+- Refreshed only the two active English desktop exports, their header/hero details and the selection note on the existing button board. Verified the rest of the saved canvas against the pre-edit snapshot. The header and hero exports were visually inspected; the existing bounds-visitor limitation remains documented above. API, scope, security and ADRs are unaffected.

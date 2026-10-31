@@ -76,5 +76,21 @@
   ],
   "assetsAndLocalLinks": "passed",
   "editorBoundsStatus": "Clipping warnings remain in new header references and specimen board despite complete visually inspected renders; no clean visitor pass claimed.",
-  "runtimeChanges": false
+  "runtimeChanges": false,
+  "baselineCommit": "74ff8ca",
+  "latestPolish": {
+    "additionalLogoScale": 1.25,
+    "wordmarkFontSize": 21.875,
+    "kettleSize": [
+      43.75,
+      50
+    ],
+    "headline": "Your training.\nJust ask.",
+    "headlineWeight": "700",
+    "headlineStatus": "Candidate for owner review",
+    "worksWithRowOpacity": 0.65,
+    "selectedButtonFinish": "A / Soft bevel",
+    "preExistingLightHeaderWidthsRetained": true,
+    "onlyActiveDesktopHomesAndTheirOwnComponentAndSpecimenNoteModified": true
+  }
 }

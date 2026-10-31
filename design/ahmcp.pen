@@ -764,7 +764,7 @@
           "id": "Py7nJ",
           "name": "Header",
           "width": "fill_container",
-          "height": 104,
+          "height": 120,
           "fill": "$home-bg",
           "stroke": "$home-line",
           "strokeWidth": {
@@ -782,7 +782,7 @@
               "type": "ref",
               "ref": "GqxcO",
               "name": "Brand / AIHarder",
-              "width": "fill_container"
+              "width": "fit_content"
             },
             {
               "type": "frame",
@@ -821,7 +821,6 @@
               "type": "frame",
               "id": "mXWYt",
               "name": "Preferences and sign-in",
-              "width": "fill_container",
               "gap": 20,
               "justifyContent": "end",
               "alignItems": "center",
@@ -979,14 +978,15 @@
                   "type": "text",
                   "id": "r6XEh",
                   "name": "Headline",
+                  "context": "Proposed headline for owner review. Alternatives: Less tapping. More training. / From your gym to your AI chat.",
                   "fill": "$home-ink",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Your AimHarder training.\nIn your AI chat.",
+                  "content": "Your training.\nJust ask.",
                   "lineHeight": 1.12,
                   "fontFamily": "Geist",
                   "fontSize": 56,
-                  "fontWeight": "600",
+                  "fontWeight": "700",
                   "letterSpacing": -1.5
                 },
                 {
@@ -1141,6 +1141,7 @@
                           "type": "frame",
                           "id": "mypaR",
                           "name": "MCP app row 1",
+                          "opacity": 0.65,
                           "width": "fill_container",
                           "gap": 18,
                           "alignItems": "center",
@@ -3211,7 +3212,7 @@
           "id": "Y5q0PC",
           "name": "Header",
           "width": "fill_container",
-          "height": 104,
+          "height": 120,
           "fill": "$home-bg",
           "stroke": "$home-line",
           "strokeWidth": {
@@ -3426,14 +3427,15 @@
                   "type": "text",
                   "id": "Cxbjq",
                   "name": "Headline",
+                  "context": "Proposed headline for owner review. Alternatives: Less tapping. More training. / From your gym to your AI chat.",
                   "fill": "$home-ink",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Your AimHarder training.\nIn your AI chat.",
+                  "content": "Your training.\nJust ask.",
                   "lineHeight": 1.12,
                   "fontFamily": "Geist",
                   "fontSize": 56,
-                  "fontWeight": "600",
+                  "fontWeight": "700",
                   "letterSpacing": -1.5
                 },
                 {
@@ -3588,6 +3590,7 @@
                           "type": "frame",
                           "id": "NfYlZ",
                           "name": "MCP app row 1",
+                          "opacity": 0.65,
                           "width": "fill_container",
                           "gap": 18,
                           "alignItems": "center",
@@ -21770,8 +21773,8 @@
       "y": 864,
       "name": "Component / AIHarder wordmark / desktop study",
       "reusable": true,
-      "height": 50,
-      "gap": 8,
+      "height": 62.5,
+      "gap": 10,
       "alignItems": "center",
       "children": [
         {
@@ -21784,8 +21787,8 @@
             "url": "home-study/assets/kettle-neutral.png",
             "mode": "contain"
           },
-          "width": 35,
-          "height": 40
+          "width": 43.75,
+          "height": 50
         },
         {
           "type": "frame",
@@ -21801,9 +21804,9 @@
               "content": "AI",
               "lineHeight": 1.45,
               "fontFamily": "Krona One",
-              "fontSize": 17.5,
+              "fontSize": 21.875,
               "fontWeight": "normal",
-              "letterSpacing": -0.4375
+              "letterSpacing": -0.546875
             },
             {
               "type": "text",
@@ -21813,9 +21816,9 @@
               "content": "HARDER",
               "lineHeight": 1.45,
               "fontFamily": "Krona One",
-              "fontSize": 17.5,
+              "fontSize": 21.875,
               "fontWeight": "normal",
-              "letterSpacing": -0.4375
+              "letterSpacing": -0.546875
             }
           ]
         }
@@ -21845,7 +21848,7 @@
           "fill": "$home-ink",
           "textGrowth": "fixed-width",
           "width": "fill_container",
-          "content": "Two ways to give the buttons depth",
+          "content": "Button finish / A selected",
           "lineHeight": 1.45,
           "fontFamily": "Geist",
           "fontSize": 26,
@@ -21858,7 +21861,7 @@
           "fill": "$home-muted",
           "textGrowth": "fixed-width",
           "width": "fill_container",
-          "content": "A is shown provisionally in the two English desktop homes. B is an alternative; neither has been selected. Existing Spanish/mobile screens and shared controls stay unchanged.",
+          "content": "The owner selected A / Soft bevel. It is used in both active English desktop homes. B remains here as a historical comparison; other locale/device variants await propagation.",
           "lineHeight": 1.45,
           "fontFamily": "Geist",
           "fontSize": 15,

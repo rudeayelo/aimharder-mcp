@@ -1,6 +1,6 @@
 # AIHarder — public home study
 
-**Active refinement:** the working name is now **AIHarder**. Only the English desktop Light/Dark frames are being refined; Spanish/mobile variants and the HTML prototype remain at the previous checkpoint until agreement. The [desktop revision and two button options](desktop-refinement.md) are the current review target. This later scope supersedes the earlier all-variant iteration below.
+**Active refinement:** the working name is now **AIHarder**. Only the English desktop Light/Dark frames are being refined; Spanish/mobile variants and the HTML prototype remain at the previous checkpoint until agreement. The [desktop refinement](desktop-refinement.md) is the current review target. Button A is selected; the latest candidate uses a 25% larger logo, a bold headline and attenuated Works with logos. This later scope supersedes the earlier all-variant iteration below.
 
 Updated: 2026-10-31. Status: revised editable public-home design for owner review under #95, following the structure proposal below. The owner selected **AimHarder Connect** as the working product name and **Krona One** for the wordmark. `aimharder-mcp` remains the technical npm package. AIHarder is a retained naming alternative, not the current build target.
 
