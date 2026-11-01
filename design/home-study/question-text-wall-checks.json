@@ -523,5 +523,12 @@
     "Owner visual approval",
     "Actual OS/device acceptance and production integration",
     "Wider variant propagation"
-  ]
+  ],
+  "review": {
+    "fixedPoint": "aa48aed",
+    "reviewedCommit": "09c3802",
+    "standardsFindings": 0,
+    "specFindings": 0,
+    "report": "question-ticker-review.md#text-wall-refinement"
+  }
 }
