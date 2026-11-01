@@ -1585,7 +1585,6 @@
           "name": "Questions / large text wall and topic pills",
           "context": "Large unboxed question typography, 32px/500. Four alternating ticker rows; one question and matching topic emphasized every 3 seconds in HTML. Static native snapshot.",
           "width": "fill_container",
-          "height": 586,
           "fill": "$home-bg",
           "stroke": "$home-line",
           "strokeWidth": {
@@ -1635,11 +1634,9 @@
                       "type": "frame",
                       "id": "Y8kvAM",
                       "name": "Classes & bookings / featured",
-                      "height": 44,
-                      "fill": "#E3EFFC",
+                      "fill": "#1765B0",
                       "cornerRadius": 100,
-                      "stroke": "#B5CFF0",
-                      "strokeWidth": 1,
+                      "stroke": "#00000000",
                       "gap": 8,
                       "padding": [
                         10,
@@ -1651,21 +1648,22 @@
                           "type": "icon",
                           "id": "emsGe",
                           "name": "Classes & bookings icon",
-                          "width": 18,
-                          "height": 18,
+                          "width": 16,
+                          "height": 16,
                           "icon": "calendar-days",
                           "library": "lucide",
-                          "fill": "#1765B0"
+                          "fill": "#FFFFFF"
                         },
                         {
                           "type": "text",
                           "id": "BGYRl",
                           "name": "Classes & bookings label",
-                          "fill": "#1765B0",
-                          "content": "Classes & bookings",
+                          "fill": "#FFFFFF",
+                          "content": "CLASSES & BOOKINGS",
+                          "lineHeight": 1.5,
                           "fontFamily": "Geist",
-                          "fontSize": 14,
-                          "fontWeight": "500"
+                          "fontSize": 11,
+                          "fontWeight": "600"
                         }
                       ]
                     },
@@ -1673,11 +1671,9 @@
                       "type": "frame",
                       "id": "fesw2",
                       "name": "Workouts & weights / inactive",
-                      "height": 44,
                       "fill": "#F4F7FA",
                       "cornerRadius": 100,
-                      "stroke": "#DCE4EE",
-                      "strokeWidth": 1,
+                      "stroke": "#00000000",
                       "gap": 8,
                       "padding": [
                         10,
@@ -1689,8 +1685,8 @@
                           "type": "icon",
                           "id": "sscHu",
                           "name": "Workouts & weights icon",
-                          "width": 18,
-                          "height": 18,
+                          "width": 16,
+                          "height": 16,
                           "icon": "dumbbell",
                           "library": "lucide",
                           "fill": "#7D8B9B"
@@ -1700,10 +1696,11 @@
                           "id": "uNDsf",
                           "name": "Workouts & weights label",
                           "fill": "#7D8B9B",
-                          "content": "Workouts & weights",
+                          "content": "WORKOUTS & WEIGHTS",
+                          "lineHeight": 1.5,
                           "fontFamily": "Geist",
-                          "fontSize": 14,
-                          "fontWeight": "500"
+                          "fontSize": 11,
+                          "fontWeight": "600"
                         }
                       ]
                     },
@@ -1711,11 +1708,9 @@
                       "type": "frame",
                       "id": "f9YJzm",
                       "name": "Activity & records / inactive",
-                      "height": 44,
                       "fill": "#F4F7FA",
                       "cornerRadius": 100,
-                      "stroke": "#DCE4EE",
-                      "strokeWidth": 1,
+                      "stroke": "#00000000",
                       "gap": 8,
                       "padding": [
                         10,
@@ -1727,8 +1722,8 @@
                           "type": "icon",
                           "id": "P5hcZW",
                           "name": "Activity & records icon",
-                          "width": 18,
-                          "height": 18,
+                          "width": 16,
+                          "height": 16,
                           "icon": "activity",
                           "library": "lucide",
                           "fill": "#7D8B9B"
@@ -1738,10 +1733,11 @@
                           "id": "NWTDz",
                           "name": "Activity & records label",
                           "fill": "#7D8B9B",
-                          "content": "Activity & records",
+                          "content": "ACTIVITY & RECORDS",
+                          "lineHeight": 1.5,
                           "fontFamily": "Geist",
-                          "fontSize": 14,
-                          "fontWeight": "500"
+                          "fontSize": 11,
+                          "fontWeight": "600"
                         }
                       ]
                     }
@@ -4234,7 +4230,6 @@
           "name": "Questions / large text wall and topic pills",
           "context": "Large unboxed question typography, 32px/500. Four alternating ticker rows; one question and matching topic emphasized every 3 seconds in HTML. Static native snapshot.",
           "width": "fill_container",
-          "height": 586,
           "fill": "$home-bg",
           "stroke": "$home-line",
           "strokeWidth": {
@@ -4284,11 +4279,9 @@
                       "type": "frame",
                       "id": "SfQ9u",
                       "name": "Classes & bookings / featured",
-                      "height": 44,
-                      "fill": "#16385B",
+                      "fill": "#47A3F6",
                       "cornerRadius": 100,
-                      "stroke": "#34628D",
-                      "strokeWidth": 1,
+                      "stroke": "#00000000",
                       "gap": 8,
                       "padding": [
                         10,
@@ -4300,21 +4293,22 @@
                           "type": "icon",
                           "id": "pGMIv",
                           "name": "Classes & bookings icon",
-                          "width": 18,
-                          "height": 18,
+                          "width": 16,
+                          "height": 16,
                           "icon": "calendar-days",
                           "library": "lucide",
-                          "fill": "#9ED0FF"
+                          "fill": "#FFFFFF"
                         },
                         {
                           "type": "text",
                           "id": "zs5AE",
                           "name": "Classes & bookings label",
-                          "fill": "#9ED0FF",
-                          "content": "Classes & bookings",
+                          "fill": "#FFFFFF",
+                          "content": "CLASSES & BOOKINGS",
+                          "lineHeight": 1.5,
                           "fontFamily": "Geist",
-                          "fontSize": 14,
-                          "fontWeight": "500"
+                          "fontSize": 11,
+                          "fontWeight": "600"
                         }
                       ]
                     },
@@ -4322,11 +4316,9 @@
                       "type": "frame",
                       "id": "J9OTZI",
                       "name": "Workouts & weights / inactive",
-                      "height": 44,
                       "fill": "#142033",
                       "cornerRadius": 100,
-                      "stroke": "#2C4058",
-                      "strokeWidth": 1,
+                      "stroke": "#00000000",
                       "gap": 8,
                       "padding": [
                         10,
@@ -4338,8 +4330,8 @@
                           "type": "icon",
                           "id": "q8HLvJ",
                           "name": "Workouts & weights icon",
-                          "width": 18,
-                          "height": 18,
+                          "width": 16,
+                          "height": 16,
                           "icon": "dumbbell",
                           "library": "lucide",
                           "fill": "#8B9FB5"
@@ -4349,10 +4341,11 @@
                           "id": "TXzYT",
                           "name": "Workouts & weights label",
                           "fill": "#8B9FB5",
-                          "content": "Workouts & weights",
+                          "content": "WORKOUTS & WEIGHTS",
+                          "lineHeight": 1.5,
                           "fontFamily": "Geist",
-                          "fontSize": 14,
-                          "fontWeight": "500"
+                          "fontSize": 11,
+                          "fontWeight": "600"
                         }
                       ]
                     },
@@ -4360,11 +4353,9 @@
                       "type": "frame",
                       "id": "b6JD21",
                       "name": "Activity & records / inactive",
-                      "height": 44,
                       "fill": "#142033",
                       "cornerRadius": 100,
-                      "stroke": "#2C4058",
-                      "strokeWidth": 1,
+                      "stroke": "#00000000",
                       "gap": 8,
                       "padding": [
                         10,
@@ -4376,8 +4367,8 @@
                           "type": "icon",
                           "id": "zrDTF",
                           "name": "Activity & records icon",
-                          "width": 18,
-                          "height": 18,
+                          "width": 16,
+                          "height": 16,
                           "icon": "activity",
                           "library": "lucide",
                           "fill": "#8B9FB5"
@@ -4387,10 +4378,11 @@
                           "id": "KSCK6",
                           "name": "Activity & records label",
                           "fill": "#8B9FB5",
-                          "content": "Activity & records",
+                          "content": "ACTIVITY & RECORDS",
+                          "lineHeight": 1.5,
                           "fontFamily": "Geist",
-                          "fontSize": 14,
-                          "fontWeight": "500"
+                          "fontSize": 11,
+                          "fontWeight": "600"
                         }
                       ]
                     }

@@ -1,6 +1,6 @@
 # AIHarder — public home study
 
-**Latest refinement — 2026-11-01:** the [question ticker study](question-ticker-study.md) now uses a wall of 32px unboxed questions, retaining topic pills, alternating row directions, fading edges and three-second question/topic emphasis. The two English desktop Pen homes and HTML are updated; six other home variants remain frozen. Earlier question-pill captures are historical. [Current checks](question-text-wall-checks.json).
+**Latest refinement — 2026-11-01:** [Compact topic pills](question-ticker-study.md#compact-topic-pills--2026-11-01) use 11px/600 uppercase labels, 16px icons, no border/minimum height and the active question's blue with white text/icons. The 32px question wall and alternating directions are retained. Updated English desktop Light/Dark Pen and HTML only; six other home variants remain frozen. [Current topic checks](topic-pill-checks.json).
 
 Current checkpoint (2026-11-01): the latest hero is saved in [ahmcp.pen](../ahmcp.pen), in the English desktop Light/Dark frames only. See [Pen synchronization](pen-sync.md) for the native editor handoff, exports and verification. The Grainient background is a static capture; foreground copy, buttons and bubbles remain editable. Character animation and typed replies remain in the [HTML motion prototype](hero-motion-prototype.html).
 

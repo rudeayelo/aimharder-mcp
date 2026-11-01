@@ -530,5 +530,9 @@
     "standardsFindings": 0,
     "specFindings": 0,
     "report": "question-ticker-review.md#text-wall-refinement"
+  },
+  "supersededFields": {
+    "record": "topic-pill-checks.json",
+    "scope": "Topic styling, section natural height and current source/export hashes; text wall behavior remains current."
   }
 }

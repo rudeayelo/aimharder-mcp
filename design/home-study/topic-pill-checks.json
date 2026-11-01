@@ -1,0 +1,400 @@
+{
+  "date": "2026-11-01",
+  "scope": "English desktop Light/Dark topic pill styling; base component across viewport widths",
+  "native": {
+    "before": {
+      "NXGWi": 333120929,
+      "UEEFt": 4237331551,
+      "mEDaF": 3691509500,
+      "PjJf8": 1650117863,
+      "Bjaja": 4238398241,
+      "itt5n": 604049046,
+      "uzAUz": 2233030325,
+      "Qg3nb": 1753876597,
+      "T37OLV": 686938949,
+      "qJZFz": 419846746,
+      "bMKmj": 3229289495,
+      "PuPqO": 566233180,
+      "idH0v": 2137281768,
+      "OWSCj": 2026614655,
+      "kUGfy": 958832331
+    },
+    "after": {
+      "NXGWi": 333120929,
+      "UEEFt": 4237331551,
+      "mEDaF": 3691509500,
+      "PjJf8": 1650117863,
+      "Bjaja": 4238398241,
+      "itt5n": 604049046,
+      "uzAUz": 2233030325,
+      "Qg3nb": 1753876597,
+      "T37OLV": 686938949,
+      "qJZFz": 419846746,
+      "bMKmj": 3229289495,
+      "PuPqO": 566233180,
+      "idH0v": 2137281768,
+      "OWSCj": 2026614655,
+      "kUGfy": 958832331
+    },
+    "changed": [],
+    "topics": [
+      {
+        "type": "frame",
+        "id": "V3K3t",
+        "name": "Topic pills / Classes featured",
+        "gap": 12,
+        "justifyContent": "center",
+        "alignItems": "center",
+        "children": [
+          {
+            "type": "frame",
+            "id": "Y8kvAM",
+            "name": "Classes & bookings / featured",
+            "fill": "#1765B0",
+            "cornerRadius": 100,
+            "stroke": "#00000000",
+            "gap": 8,
+            "padding": [
+              10,
+              18
+            ],
+            "alignItems": "center",
+            "children": [
+              {
+                "type": "icon",
+                "id": "emsGe",
+                "name": "Classes & bookings icon",
+                "width": 16,
+                "height": 16,
+                "icon": "calendar-days",
+                "library": "lucide",
+                "fill": "#FFFFFF"
+              },
+              {
+                "type": "text",
+                "id": "BGYRl",
+                "name": "Classes & bookings label",
+                "fill": "#FFFFFF",
+                "content": "CLASSES & BOOKINGS",
+                "lineHeight": 1.5,
+                "fontFamily": "Geist",
+                "fontSize": 11,
+                "fontWeight": "600"
+              }
+            ]
+          },
+          {
+            "type": "frame",
+            "id": "fesw2",
+            "name": "Workouts & weights / inactive",
+            "fill": "#F4F7FA",
+            "cornerRadius": 100,
+            "stroke": "#00000000",
+            "gap": 8,
+            "padding": [
+              10,
+              18
+            ],
+            "alignItems": "center",
+            "children": [
+              {
+                "type": "icon",
+                "id": "sscHu",
+                "name": "Workouts & weights icon",
+                "width": 16,
+                "height": 16,
+                "icon": "dumbbell",
+                "library": "lucide",
+                "fill": "#7D8B9B"
+              },
+              {
+                "type": "text",
+                "id": "uNDsf",
+                "name": "Workouts & weights label",
+                "fill": "#7D8B9B",
+                "content": "WORKOUTS & WEIGHTS",
+                "lineHeight": 1.5,
+                "fontFamily": "Geist",
+                "fontSize": 11,
+                "fontWeight": "600"
+              }
+            ]
+          },
+          {
+            "type": "frame",
+            "id": "f9YJzm",
+            "name": "Activity & records / inactive",
+            "fill": "#F4F7FA",
+            "cornerRadius": 100,
+            "stroke": "#00000000",
+            "gap": 8,
+            "padding": [
+              10,
+              18
+            ],
+            "alignItems": "center",
+            "children": [
+              {
+                "type": "icon",
+                "id": "P5hcZW",
+                "name": "Activity & records icon",
+                "width": 16,
+                "height": 16,
+                "icon": "activity",
+                "library": "lucide",
+                "fill": "#7D8B9B"
+              },
+              {
+                "type": "text",
+                "id": "NWTDz",
+                "name": "Activity & records label",
+                "fill": "#7D8B9B",
+                "content": "ACTIVITY & RECORDS",
+                "lineHeight": 1.5,
+                "fontFamily": "Geist",
+                "fontSize": 11,
+                "fontWeight": "600"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "frame",
+        "id": "dnPEZ",
+        "name": "Topic pills / Classes featured",
+        "gap": 12,
+        "justifyContent": "center",
+        "alignItems": "center",
+        "children": [
+          {
+            "type": "frame",
+            "id": "SfQ9u",
+            "name": "Classes & bookings / featured",
+            "fill": "#47A3F6",
+            "cornerRadius": 100,
+            "stroke": "#00000000",
+            "gap": 8,
+            "padding": [
+              10,
+              18
+            ],
+            "alignItems": "center",
+            "children": [
+              {
+                "type": "icon",
+                "id": "pGMIv",
+                "name": "Classes & bookings icon",
+                "width": 16,
+                "height": 16,
+                "icon": "calendar-days",
+                "library": "lucide",
+                "fill": "#FFFFFF"
+              },
+              {
+                "type": "text",
+                "id": "zs5AE",
+                "name": "Classes & bookings label",
+                "fill": "#FFFFFF",
+                "content": "CLASSES & BOOKINGS",
+                "lineHeight": 1.5,
+                "fontFamily": "Geist",
+                "fontSize": 11,
+                "fontWeight": "600"
+              }
+            ]
+          },
+          {
+            "type": "frame",
+            "id": "J9OTZI",
+            "name": "Workouts & weights / inactive",
+            "fill": "#142033",
+            "cornerRadius": 100,
+            "stroke": "#00000000",
+            "gap": 8,
+            "padding": [
+              10,
+              18
+            ],
+            "alignItems": "center",
+            "children": [
+              {
+                "type": "icon",
+                "id": "q8HLvJ",
+                "name": "Workouts & weights icon",
+                "width": 16,
+                "height": 16,
+                "icon": "dumbbell",
+                "library": "lucide",
+                "fill": "#8B9FB5"
+              },
+              {
+                "type": "text",
+                "id": "TXzYT",
+                "name": "Workouts & weights label",
+                "fill": "#8B9FB5",
+                "content": "WORKOUTS & WEIGHTS",
+                "lineHeight": 1.5,
+                "fontFamily": "Geist",
+                "fontSize": 11,
+                "fontWeight": "600"
+              }
+            ]
+          },
+          {
+            "type": "frame",
+            "id": "b6JD21",
+            "name": "Activity & records / inactive",
+            "fill": "#142033",
+            "cornerRadius": 100,
+            "stroke": "#00000000",
+            "gap": 8,
+            "padding": [
+              10,
+              18
+            ],
+            "alignItems": "center",
+            "children": [
+              {
+                "type": "icon",
+                "id": "zrDTF",
+                "name": "Activity & records icon",
+                "width": 16,
+                "height": 16,
+                "icon": "activity",
+                "library": "lucide",
+                "fill": "#8B9FB5"
+              },
+              {
+                "type": "text",
+                "id": "KSCK6",
+                "name": "Activity & records label",
+                "fill": "#8B9FB5",
+                "content": "ACTIVITY & RECORDS",
+                "lineHeight": 1.5,
+                "fontFamily": "Geist",
+                "fontSize": 11,
+                "fontWeight": "600"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "sectionHeightMode": [
+      {
+        "id": "ES3Gf"
+      },
+      {
+        "id": "lKHEL"
+      }
+    ]
+  },
+  "savedInDesktopApp": true,
+  "editedIndicatorAbsent": true,
+  "browser": [
+    {
+      "background": "rgb(23, 101, 176)",
+      "border": "0px",
+      "borderColor": "rgba(0, 0, 0, 0)",
+      "color": "rgb(255, 255, 255)",
+      "font": "11px",
+      "height": "36.5px",
+      "iconColor": "rgb(255, 255, 255)",
+      "iconSize": [
+        "16px",
+        "16px"
+      ],
+      "minHeight": "auto",
+      "overflow": false,
+      "questionColor": "rgb(23, 101, 176)",
+      "theme": "light",
+      "transform": "uppercase",
+      "viewport": [
+        1044,
+        827
+      ],
+      "weight": "600"
+    },
+    {
+      "background": "rgb(71, 163, 246)",
+      "border": "0px",
+      "borderColor": "rgba(0, 0, 0, 0)",
+      "color": "rgb(255, 255, 255)",
+      "font": "11px",
+      "height": "36.5px",
+      "iconColor": "rgb(255, 255, 255)",
+      "iconSize": [
+        "16px",
+        "16px"
+      ],
+      "minHeight": "auto",
+      "overflow": false,
+      "questionColor": "rgb(71, 163, 246)",
+      "theme": "dark",
+      "transform": "uppercase",
+      "viewport": [
+        1044,
+        827
+      ],
+      "weight": "600"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "question-ticker.css",
+      "sha256": "e18b8876dab396497bc12fc7a22ea39a35f213405249263b61ce7e8b2b991abf"
+    },
+    {
+      "file": "hero-motion-prototype.html",
+      "sha256": "c7dbb43a52865a0c2566ee1be0391c218e286a0c5c5dee6a37491fcd206f3e4e"
+    },
+    {
+      "file": "previews/uAXkc.png",
+      "sha256": "25aeb6bd4b08a96745df655b226908177bf3dd6a1eba48c459076d2ded1dffdc",
+      "format": "PNG",
+      "width": 1440,
+      "height": 2601
+    },
+    {
+      "file": "previews/p7u8w.png",
+      "sha256": "6c27083a0615d689b945f7be2d7c86ce7e510441ae8562695169922a8629c0b2",
+      "format": "PNG",
+      "width": 1440,
+      "height": 2601
+    },
+    {
+      "file": "previews/ES3Gf.png",
+      "sha256": "ce26e2ca8c1e94c1318dfae5918c8f4437b1eea738dd1d2d2bf8ea14c65dd8a8",
+      "format": "PNG",
+      "width": 1440,
+      "height": 580
+    },
+    {
+      "file": "previews/lKHEL.png",
+      "sha256": "c71819239e868c34f392b7e3d1f2d493f305c0de48c87333822de94ee1d4c7f7",
+      "format": "PNG",
+      "width": 1440,
+      "height": 580
+    },
+    {
+      "file": "previews/topics-compact-light.jpg",
+      "sha256": "13a6525a0ecb86ed821574f821c96d57409d52468091db12cc46aebd4f612747",
+      "format": "JPEG",
+      "width": 1044,
+      "height": 1319
+    },
+    {
+      "file": "previews/topics-compact-dark.jpg",
+      "sha256": "5ef55ba86da0cc6ebcbda72f8ea90de41fa429ecaa180707d9fed4a04147d1fc",
+      "format": "JPEG",
+      "width": 1044,
+      "height": 1319
+    }
+  ],
+  "brokenLocalLinks": [],
+  "viewportResetAfterCheck": true,
+  "pending": [
+    "Owner visual approval"
+  ]
+}
