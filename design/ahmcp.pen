@@ -1626,7 +1626,7 @@
                   "type": "frame",
                   "id": "V3K3t",
                   "name": "Topic pills / Classes featured",
-                  "gap": 12,
+                  "gap": 4,
                   "justifyContent": "center",
                   "alignItems": "center",
                   "children": [
@@ -1635,7 +1635,12 @@
                       "id": "Y8kvAM",
                       "name": "Classes & bookings / featured",
                       "fill": "#1765B0",
-                      "cornerRadius": 100,
+                      "cornerRadius": [
+                        100,
+                        4,
+                        4,
+                        100
+                      ],
                       "stroke": "#00000000",
                       "gap": 8,
                       "padding": [
@@ -1672,7 +1677,7 @@
                       "id": "fesw2",
                       "name": "Workouts & weights / inactive",
                       "fill": "#F4F7FA",
-                      "cornerRadius": 100,
+                      "cornerRadius": 4,
                       "stroke": "#00000000",
                       "gap": 8,
                       "padding": [
@@ -1709,7 +1714,12 @@
                       "id": "f9YJzm",
                       "name": "Activity & records / inactive",
                       "fill": "#F4F7FA",
-                      "cornerRadius": 100,
+                      "cornerRadius": [
+                        4,
+                        100,
+                        100,
+                        4
+                      ],
                       "stroke": "#00000000",
                       "gap": 8,
                       "padding": [
@@ -4271,7 +4281,7 @@
                   "type": "frame",
                   "id": "dnPEZ",
                   "name": "Topic pills / Classes featured",
-                  "gap": 12,
+                  "gap": 4,
                   "justifyContent": "center",
                   "alignItems": "center",
                   "children": [
@@ -4280,7 +4290,12 @@
                       "id": "SfQ9u",
                       "name": "Classes & bookings / featured",
                       "fill": "#47A3F6",
-                      "cornerRadius": 100,
+                      "cornerRadius": [
+                        100,
+                        4,
+                        4,
+                        100
+                      ],
                       "stroke": "#00000000",
                       "gap": 8,
                       "padding": [
@@ -4317,7 +4332,7 @@
                       "id": "J9OTZI",
                       "name": "Workouts & weights / inactive",
                       "fill": "#142033",
-                      "cornerRadius": 100,
+                      "cornerRadius": 4,
                       "stroke": "#00000000",
                       "gap": 8,
                       "padding": [
@@ -4354,7 +4369,12 @@
                       "id": "b6JD21",
                       "name": "Activity & records / inactive",
                       "fill": "#142033",
-                      "cornerRadius": 100,
+                      "cornerRadius": [
+                        4,
+                        100,
+                        100,
+                        4
+                      ],
                       "stroke": "#00000000",
                       "gap": 8,
                       "padding": [
