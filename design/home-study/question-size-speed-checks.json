@@ -198,5 +198,12 @@
   "pending": [
     "Owner visual approval",
     "Actual device/performance acceptance and wider variant propagation"
-  ]
+  ],
+  "review": {
+    "fixedPoint": "a19a899",
+    "reviewedCommit": "a752e2d",
+    "standardsFindings": 0,
+    "specFindings": 0,
+    "report": "question-ticker-review.md#question-size-and-speed"
+  }
 }

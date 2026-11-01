@@ -67,3 +67,17 @@ No actionable findings. Bounded outer radii fit the desktop/narrow heights and p
 No actionable findings. The fix addresses the rendered symptom: 18px exterior radii fit the 36.5px desktop height, preserving 4px interior corners. Current native Light/Dark exports and raster probes confirm the visible correction. The middle pill and 4px spacing remain unchanged.
 
 Corner-fix findings: Standards **0**, Spec **0**. Owner visual approval remains pending.
+
+## Question size and speed
+
+Separate reviewers checked `a19a899...a752e2d` on 2026-11-01.
+
+### Standards
+
+No actionable findings. Base size and four durations change consistently, preserving emphasis timing and lifecycle. Documentation accounts for reduced travel distance and distinguishes computed CSS speed from device performance.
+
+### Spec
+
+No actionable findings. Questions use 26px through the shared base rule, with modestly faster movement. Alternating directions, the three-second question/topic rotation and frozen variants remain unchanged.
+
+Size/speed findings: Standards **0**, Spec **0**.
