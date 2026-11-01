@@ -34,17 +34,16 @@ for (const [index, row] of rows.entries()) {
   viewport.className = 'question-ticker';
   const track = document.createElement('div');
   track.className = 'question-track';
-  track.style.setProperty('--duration', `${[106, 124, 116, 130][index]}s`);
+  track.style.setProperty('--duration', `${[176, 208, 192, 216][index]}s`);
   for (let copy = 0; copy < 2; copy++) {
     const group = document.createElement('ul');
     group.className = 'question-group';
     if (copy) group.setAttribute('aria-hidden', 'true');
     for (const question of row) {
       const item = document.createElement('li');
-      item.className = 'question-chip';
+      item.className = 'question-text';
       item.dataset.question = question.id;
       item.dataset.topic = question.topic;
-      item.style.setProperty('--chip-width', `${question.width}px`);
       item.textContent = question.text;
       group.append(item);
     }
@@ -61,21 +60,21 @@ let previousQuestion;
 function highlight() {
   const bounds = tickers.getBoundingClientRect();
   const topic = topics[step % topics.length].id;
-  const candidates = [...tickers.querySelectorAll('.question-chip')].filter(item => {
+  const fade = Math.min(96, bounds.width * .08);
+  const candidates = [...tickers.querySelectorAll('.question-text')].map(item => {
     const rect = item.getBoundingClientRect();
-    return item.dataset.topic === topic && item.dataset.question !== previousQuestion &&
-      rect.left >= bounds.left + 96 && rect.right <= bounds.right - 96;
-  });
-  candidates.sort((a, b) => {
-    const score = item => {
-      const rect = item.getBoundingClientRect();
-      const row = [...tickers.children].indexOf(item.closest('.question-ticker'));
-      return Math.abs((rect.left + rect.right - bounds.left - bounds.right) / 2) +
-        (row === step % rows.length ? 0 : 200);
-    };
-    return score(a) - score(b);
-  });
-  const chosen = candidates[0];
+    const center = (rect.left + rect.right) / 2;
+    const visible = Math.max(0, Math.min(rect.right, bounds.right - fade) -
+      Math.max(rect.left, bounds.left + fade)) / rect.width;
+    const row = [...tickers.children].indexOf(item.closest('.question-ticker'));
+    return {item, center, visible, score: (1 - visible) * 800 +
+      Math.abs(center - (bounds.left + bounds.right) / 2) +
+      (row === step % rows.length ? 0 : 200)};
+  }).filter(({item, center, visible}) => item.dataset.topic === topic &&
+    item.dataset.question !== previousQuestion && visible >= .6 &&
+    center >= bounds.left + fade && center <= bounds.right - fade);
+  candidates.sort((a, b) => a.score - b.score);
+  const chosen = candidates[0]?.item;
   if (!chosen) return;
   section.querySelectorAll('.is-featured').forEach(item => item.classList.remove('is-featured'));
   chosen.classList.add('is-featured');
@@ -105,4 +104,5 @@ document.querySelector('#replay')?.addEventListener('click', () => {
 document.addEventListener('visibilitychange', syncTimer);
 window.addEventListener('pagehide', () => clearInterval(timer));
 window.addEventListener('pageshow', syncTimer);
+await document.fonts.ready;
 requestAnimationFrame(() => { highlight(); syncTimer(); });

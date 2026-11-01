@@ -419,5 +419,9 @@
     "report": "question-ticker-review.md",
     "standardsFindings": 0,
     "specFindings": 0
+  },
+  "supersededFields": {
+    "record": "question-text-wall-checks.json",
+    "scope": "Question presentation, native question-node IDs, row durations, source/export hashes and current runtime observations. Prior pill checkpoint retained."
   }
 }

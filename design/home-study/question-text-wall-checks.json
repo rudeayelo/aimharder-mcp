@@ -1,0 +1,527 @@
+{
+  "date": "2026-11-01",
+  "scope": "English desktop Light/Dark question text wall only",
+  "native": {
+    "before": {
+      "NXGWi": 333120929,
+      "UEEFt": 4237331551,
+      "mEDaF": 3691509500,
+      "PjJf8": 1650117863,
+      "Bjaja": 4238398241,
+      "itt5n": 604049046,
+      "uzAUz": 2233030325,
+      "Qg3nb": 1753876597,
+      "T37OLV": 686938949,
+      "qJZFz": 419846746,
+      "bMKmj": 3229289495,
+      "PuPqO": 566233180,
+      "idH0v": 2137281768,
+      "OWSCj": 2026614655,
+      "kUGfy": 958832331
+    },
+    "after": {
+      "NXGWi": 333120929,
+      "UEEFt": 4237331551,
+      "mEDaF": 3691509500,
+      "PjJf8": 1650117863,
+      "Bjaja": 4238398241,
+      "itt5n": 604049046,
+      "uzAUz": 2233030325,
+      "Qg3nb": 1753876597,
+      "T37OLV": 686938949,
+      "qJZFz": 419846746,
+      "bMKmj": 3229289495,
+      "PuPqO": 566233180,
+      "idH0v": 2137281768,
+      "OWSCj": 2026614655,
+      "kUGfy": 958832331
+    },
+    "changed": [],
+    "sections": [
+      {
+        "id": "ES3Gf",
+        "questions": [
+          {
+            "id": "nXfms",
+            "content": "What\u2019s tomorrow\u2019s WOD?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "z3sLg",
+            "content": "When is my next booking?",
+            "fill": "#1765B0",
+            "opacity": 1,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "wL7Hh",
+            "content": "Show my activity this week.",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "Ut9Xf",
+            "content": "What classes can I book tomorrow?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "i9H4Mz",
+            "content": "Has tomorrow\u2019s workout been published?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "l9TGl",
+            "content": "What\u2019s my recorded 1RM for back squat?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "z9Yj2",
+            "content": "What weights are prescribed for RX?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "NYGaC",
+            "content": "Are there places in the 18:00 class?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "MWcOz",
+            "content": "Show my last five activity entries.",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "I2TXF5",
+            "content": "What\u2019s the conditioning block today?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "oeekC",
+            "content": "Show the classes on Friday.",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "sPJhQ",
+            "content": "How many activity entries did I log in October?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "bARDY",
+            "content": "Show today\u2019s strength block.",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "NoUG0",
+            "content": "What have I booked this week?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "RRUCo",
+            "content": "What did I record on Monday?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "W0iiH",
+            "content": "Which workout levels are available?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "N1HjZi",
+            "content": "What time is the first class tomorrow?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "O1M1Id",
+            "content": "What\u2019s my recorded 1RM for deadlift?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "RO5Nc",
+            "content": "How many rounds are prescribed?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "Aux1k",
+            "content": "Show my upcoming bookings.",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          }
+        ],
+        "topicPills": [
+          {
+            "id": "Y8kvAM",
+            "name": "Classes & bookings / featured"
+          }
+        ]
+      },
+      {
+        "id": "lKHEL",
+        "questions": [
+          {
+            "id": "DHpCe",
+            "content": "What\u2019s tomorrow\u2019s WOD?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "Cb3MX",
+            "content": "When is my next booking?",
+            "fill": "#47A3F6",
+            "opacity": 1,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "h7oGM",
+            "content": "Show my activity this week.",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "GX2gu",
+            "content": "What classes can I book tomorrow?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "mGRHc",
+            "content": "Has tomorrow\u2019s workout been published?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "j7Q5X",
+            "content": "What\u2019s my recorded 1RM for back squat?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "oeD0x",
+            "content": "What weights are prescribed for RX?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "tYebk",
+            "content": "Are there places in the 18:00 class?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "qQEhj",
+            "content": "Show my last five activity entries.",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "janvT",
+            "content": "What\u2019s the conditioning block today?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "XZZ4b",
+            "content": "Show the classes on Friday.",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "x4wKc",
+            "content": "How many activity entries did I log in October?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "U86CAX",
+            "content": "Show today\u2019s strength block.",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "BjWxu",
+            "content": "What have I booked this week?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "cSsWT",
+            "content": "What did I record on Monday?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "YukUD",
+            "content": "Which workout levels are available?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "cKNtc",
+            "content": "What time is the first class tomorrow?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "c9Q81",
+            "content": "What\u2019s my recorded 1RM for deadlift?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "r5VUfk",
+            "content": "How many rounds are prescribed?",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          },
+          {
+            "id": "Wg6JG",
+            "content": "Show my upcoming bookings.",
+            "fill": "$home-ink",
+            "opacity": 0.28,
+            "fontSize": 32,
+            "fontWeight": "500"
+          }
+        ],
+        "topicPills": [
+          {
+            "id": "SfQ9u",
+            "name": "Classes & bookings / featured"
+          }
+        ]
+      }
+    ]
+  },
+  "savedInDesktopApp": true,
+  "editedIndicatorAbsent": true,
+  "browser": {
+    "viewport": [
+      1200,
+      919
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "fontSize": 32,
+    "fontWeight": 500,
+    "questionBorderWidth": "0px",
+    "questionBackground": "rgba(0, 0, 0, 0)",
+    "inactiveOpacity": 0.28,
+    "directions": [
+      "normal",
+      "reverse",
+      "normal",
+      "reverse"
+    ],
+    "oneMatchingFeaturedPair": true,
+    "pageOverflow": false,
+    "lightObservedWarningsErrors": 0,
+    "observations": [
+      {
+        "at": 1793546886830,
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "count": 1,
+        "fontSize": "32px",
+        "matching": true,
+        "overflow": false,
+        "question": "q15",
+        "topic": "workouts",
+        "transform": "matrix(1, 0, 0, 1, -71.0973, 0)"
+      },
+      {
+        "at": 1793546889913,
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "count": 1,
+        "fontSize": "32px",
+        "matching": true,
+        "overflow": false,
+        "question": "q11",
+        "topic": "records",
+        "transform": "matrix(1, 0, 0, 1, -114.068, 0)"
+      },
+      {
+        "at": 1793546892996,
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "count": 1,
+        "fontSize": "32px",
+        "matching": true,
+        "overflow": false,
+        "question": "q0",
+        "topic": "classes",
+        "transform": "matrix(1, 0, 0, 1, -157.064, 0)"
+      },
+      {
+        "at": 1793546896070,
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "count": 1,
+        "fontSize": "32px",
+        "matching": true,
+        "overflow": false,
+        "question": "q15",
+        "topic": "workouts",
+        "transform": "matrix(1, 0, 0, 1, -199.795, 0)"
+      }
+    ]
+  },
+  "artifacts": [
+    {
+      "file": "question-ticker.css",
+      "sha256": "b668e8b6fd9b4c3567e2501b910b89045902b3eeabf907857239ff0837bd5e36"
+    },
+    {
+      "file": "question-ticker.js",
+      "sha256": "b3d9a40914c0e69b3932ba3663786faa8360f46a6c2167ef1e1478d8142cf522"
+    },
+    {
+      "file": "question-ticker-data.json",
+      "sha256": "d8b4e710098acc86179cef402dd0bcbab5dfe1c269d728343733b473ec6988aa"
+    },
+    {
+      "file": "hero-motion-prototype.html",
+      "sha256": "0908e0c5afaa4537ce9b201649aaf402bbcfdb7d96a61ffac653fbc459315ad1"
+    },
+    {
+      "file": "previews/ES3Gf.png",
+      "sha256": "8963c73ea14eb58698755ece62ae20584263ee7fcd25f19d07e7dae2dd42a0a7",
+      "format": "PNG",
+      "width": 1440,
+      "height": 587
+    },
+    {
+      "file": "previews/lKHEL.png",
+      "sha256": "0faea00805f7191ef296e37387e5d065fb3eb18443251f589994ba7db6c16ce3",
+      "format": "PNG",
+      "width": 1440,
+      "height": 587
+    },
+    {
+      "file": "previews/uAXkc.png",
+      "sha256": "e8ba4700e20e9a17ed8218e99f0c2de03a04eb110e5a97df7542a5eaab65116a",
+      "format": "PNG",
+      "width": 1440,
+      "height": 2608
+    },
+    {
+      "file": "previews/p7u8w.png",
+      "sha256": "5784c32f5a974ab1cb681bf0482d8737a784d8366bb85be76855f11eb66109c7",
+      "format": "PNG",
+      "width": 1440,
+      "height": 2608
+    },
+    {
+      "file": "previews/questions-text-wall-light.jpg",
+      "sha256": "babaff3ef340260ab88f072a2597aef10f4c02833b119942e18c5286cd13308a",
+      "format": "JPEG",
+      "width": 1200,
+      "height": 1326
+    },
+    {
+      "file": "previews/questions-text-wall-dark.jpg",
+      "sha256": "c2ecdcd4852d8d587fe1e71e6ca5686854314ada4195babca16ffca39c627774",
+      "format": "JPEG",
+      "width": 1200,
+      "height": 1326
+    }
+  ],
+  "brokenLocalLinks": [],
+  "pending": [
+    "Owner visual approval",
+    "Actual OS/device acceptance and production integration",
+    "Wider variant propagation"
+  ]
+}

@@ -1,5 +1,7 @@
 # AIHarder — question ticker study
 
+**Current refinement:** questions now form a large unboxed text wall. The owner superseded the initial question-pill treatment below; topic pills are retained. See the text-wall revision at the end and [current checks](question-text-wall-checks.json).
+
 Date: 2026-11-01. Current English desktop Light/Dark refinement under #95.
 
 ## Owner brief and reference lock
@@ -37,3 +39,15 @@ Browser inspection at 1200px confirmed both themes, four rows/20 accessible orig
 [Animated Light](https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/hero-motion-prototype.html?theme=light&reply=long#questions) · [Animated Dark](https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/hero-motion-prototype.html?theme=dark&reply=long#questions) · [Pen Light section](previews/ES3Gf.png) · [Pen Dark section](previews/lKHEL.png) · [Light browser capture](previews/questions-ticker-light.jpg) · [Dark browser capture](previews/questions-ticker-dark.jpg).
 
 This is a throwaway visual prototype with fictional questions and no live account calls. Records wording refers to recorded entries/1RM, not attendance or a verified historical maximum. No production API, authentication, package dependencies, deployment, distribution or validation-policy decision changed; existing ADRs apply, so no new ADR or MCP runtime suite is needed. Owner visual approval, production motion controls/performance and propagation to the other variants remain pending.
+
+## Text-wall refinement — 2026-11-01
+
+The owner requested questions without pills and larger typography, while retaining alternating directions. The questions now use Geist 32px/500, 1.25 line height and -0.6px tracking, with no padding, fill, border or rounded container. Inactive text uses the theme ink at 28% opacity; the featured question is opaque blue (`#1765b0` Light / `#47a3f6` Dark). Only the category topics retain their pills. Four 52px rows, 14px row gaps, edge fades, heading and section geometry remain unchanged.
+
+Question widths follow the actual text instead of per-question fixed widths. The 40px space between phrases also separates duplicate marquee groups, and the wrap translation includes half that gap. Longer row cycles (176/208/192/216 seconds) keep the enlarged text drifting at a similar gentle pixel speed. Directions remain left/right/left/right.
+
+Larger phrases cannot always fit entirely within the central unfaded window. The three-second selector therefore ranks matching questions by visible fraction, distance to center and preferred row, requiring at least 60% in the readable window and the phrase center inside it. This preserves topic rotation instead of stalling when no matching large phrase fits completely. A new phrase is chosen after fonts are ready. Decorative semantics, hidden duplicate copies, shared review controls and still/reduced-motion behavior remain applicable.
+
+Updated the two English desktop Pen sections and HTML, preserving all 15 protected roots. Native question nodes are now text rather than pill frames. Saved the document and inspected native screenshots plus actual Light/Dark browser renders. At 1200px, computed question styles confirm 32px text, zero border and transparent background; one featured question matched its topic across four observations approximately three seconds apart, with no horizontal page overflow. The normal/reverse directions are retained. JavaScript syntax and local links pass; no production source, dependencies, API contracts or ADR decisions changed. No MCP runtime suite was needed for this visual revision.
+
+[Current checks](question-text-wall-checks.json) · [Light browser capture](previews/questions-text-wall-light.jpg) · [Dark browser capture](previews/questions-text-wall-dark.jpg). The prior pill captures/checks remain historical. Native section/home exports at their existing paths show the latest text-wall design. Owner visual approval and the previously unobserved device/OS acceptance remain pending.

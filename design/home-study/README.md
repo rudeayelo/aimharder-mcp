@@ -1,6 +1,6 @@
 # AIHarder — public home study
 
-**Latest refinement — 2026-11-01:** [Question ticker study](question-ticker-study.md) adds blue headline modulation, transparent-face header marks and the centered four-row question section in the two English desktop Pen homes and the HTML prototype. Native sections depict a static moment; the prototype moves the rows and changes the featured question/topic every three seconds. Other six home variants remain frozen.
+**Latest refinement — 2026-11-01:** the [question ticker study](question-ticker-study.md) now uses a wall of 32px unboxed questions, retaining topic pills, alternating row directions, fading edges and three-second question/topic emphasis. The two English desktop Pen homes and HTML are updated; six other home variants remain frozen. Earlier question-pill captures are historical. [Current checks](question-text-wall-checks.json).
 
 Current checkpoint (2026-11-01): the latest hero is saved in [ahmcp.pen](../ahmcp.pen), in the English desktop Light/Dark frames only. See [Pen synchronization](pen-sync.md) for the native editor handoff, exports and verification. The Grainient background is a static capture; foreground copy, buttons and bubbles remain editable. Character animation and typed replies remain in the [HTML motion prototype](hero-motion-prototype.html).
 

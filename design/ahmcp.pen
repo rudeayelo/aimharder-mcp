@@ -1582,8 +1582,8 @@
         {
           "type": "frame",
           "id": "ES3Gf",
-          "name": "Questions / rotating topic and four prompt tickers",
-          "context": "Decorative examples, not clickable controls. Static snapshot: next-booking question with Classes & bookings featured. HTML changes emphasis every 3 seconds and moves rows in alternating directions.",
+          "name": "Questions / large text wall and topic pills",
+          "context": "Large unboxed question typography, 32px/500. Four alternating ticker rows; one question and matching topic emphasized every 3 seconds in HTML. Static native snapshot.",
           "width": "fill_container",
           "height": 586,
           "fill": "$home-bg",
@@ -1765,162 +1765,77 @@
                   "y": 0,
                   "name": "Question row 1 / leftward",
                   "height": 52,
-                  "gap": 16,
+                  "gap": 40,
                   "alignItems": "center",
                   "children": [
                     {
-                      "type": "frame",
-                      "id": "vfIIk",
+                      "type": "text",
+                      "id": "nXfms",
                       "name": "What’s tomorrow’s WOD? / inactive",
                       "context": "Example q1; topic workouts; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 264,
-                      "height": 52,
-                      "fill": "#F4F7FA",
-                      "cornerRadius": 100,
-                      "stroke": "#DCE4EE",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "CGasO",
-                          "name": "Question text",
-                          "fill": "#7D8B9B",
-                          "content": "What’s tomorrow’s WOD?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "What’s tomorrow’s WOD?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "QxWju",
+                      "type": "text",
+                      "id": "z3sLg",
                       "name": "When is my next booking? / featured",
                       "context": "Example q0; topic classes; timed visual emphasis only.",
-                      "width": 280,
-                      "height": 52,
                       "fill": "#1765B0",
-                      "cornerRadius": 100,
-                      "stroke": "#1765B0",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "Dn4i2",
-                          "name": "Question text",
-                          "fill": "#FFFFFF",
-                          "content": "When is my next booking?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "content": "When is my next booking?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "VrQ0O",
+                      "type": "text",
+                      "id": "wL7Hh",
                       "name": "Show my activity this week. / inactive",
                       "context": "Example q2; topic records; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 286,
-                      "height": 52,
-                      "fill": "#F4F7FA",
-                      "cornerRadius": 100,
-                      "stroke": "#DCE4EE",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "Slfa6",
-                          "name": "Question text",
-                          "fill": "#7D8B9B",
-                          "content": "Show my activity this week.",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "Show my activity this week.",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "MjCGw",
+                      "type": "text",
+                      "id": "Ut9Xf",
                       "name": "What classes can I book tomorrow? / inactive",
                       "context": "Example q3; topic classes; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 344,
-                      "height": 52,
-                      "fill": "#F4F7FA",
-                      "cornerRadius": 100,
-                      "stroke": "#DCE4EE",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "sc7Rq",
-                          "name": "Question text",
-                          "fill": "#7D8B9B",
-                          "content": "What classes can I book tomorrow?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "What classes can I book tomorrow?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "KSwTS",
+                      "type": "text",
+                      "id": "i9H4Mz",
                       "name": "Has tomorrow’s workout been published? / inactive",
                       "context": "Example q4; topic workouts; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 394,
-                      "height": 52,
-                      "fill": "#F4F7FA",
-                      "cornerRadius": 100,
-                      "stroke": "#DCE4EE",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "jKThp",
-                          "name": "Question text",
-                          "fill": "#7D8B9B",
-                          "content": "Has tomorrow’s workout been published?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "Has tomorrow’s workout been published?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     }
                   ]
                 },
@@ -1931,163 +1846,78 @@
                   "y": 66,
                   "name": "Question row 2 / rightward",
                   "height": 52,
-                  "gap": 16,
+                  "gap": 40,
                   "alignItems": "center",
                   "children": [
                     {
-                      "type": "frame",
-                      "id": "deatI",
+                      "type": "text",
+                      "id": "l9TGl",
                       "name": "What’s my recorded 1RM for back squat? / inactive",
                       "context": "Example q5; topic records; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 380,
-                      "height": 52,
-                      "fill": "#F4F7FA",
-                      "cornerRadius": 100,
-                      "stroke": "#DCE4EE",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "u4oZIq",
-                          "name": "Question text",
-                          "fill": "#7D8B9B",
-                          "content": "What’s my recorded 1RM for back squat?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "What’s my recorded 1RM for back squat?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "mdW6m",
+                      "type": "text",
+                      "id": "z9Yj2",
                       "name": "What weights are prescribed for RX? / inactive",
                       "context": "Example q6; topic workouts; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 352,
-                      "height": 52,
-                      "fill": "#F4F7FA",
-                      "cornerRadius": 100,
-                      "stroke": "#DCE4EE",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "XbuQn",
-                          "name": "Question text",
-                          "fill": "#7D8B9B",
-                          "content": "What weights are prescribed for RX?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "What weights are prescribed for RX?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "O46qqr",
+                      "type": "text",
+                      "id": "NYGaC",
                       "name": "Are there places in the 18:00 class? / inactive",
                       "context": "Example q7; topic classes; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 340,
-                      "height": 52,
-                      "fill": "#F4F7FA",
-                      "cornerRadius": 100,
-                      "stroke": "#DCE4EE",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "EYhSg",
-                          "name": "Question text",
-                          "fill": "#7D8B9B",
-                          "content": "Are there places in the 18:00 class?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "Are there places in the 18:00 class?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "b4lOuO",
+                      "type": "text",
+                      "id": "MWcOz",
                       "name": "Show my last five activity entries. / inactive",
                       "context": "Example q8; topic records; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 326,
-                      "height": 52,
-                      "fill": "#F4F7FA",
-                      "cornerRadius": 100,
-                      "stroke": "#DCE4EE",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "LJxqw",
-                          "name": "Question text",
-                          "fill": "#7D8B9B",
-                          "content": "Show my last five activity entries.",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "Show my last five activity entries.",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "J6a6v",
+                      "type": "text",
+                      "id": "I2TXF5",
                       "name": "What’s the conditioning block today? / inactive",
                       "context": "Example q9; topic workouts; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 350,
-                      "height": 52,
-                      "fill": "#F4F7FA",
-                      "cornerRadius": 100,
-                      "stroke": "#DCE4EE",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "ZZr9t",
-                          "name": "Question text",
-                          "fill": "#7D8B9B",
-                          "content": "What’s the conditioning block today?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "What’s the conditioning block today?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     }
                   ]
                 },
@@ -2098,163 +1928,78 @@
                   "y": 132,
                   "name": "Question row 3 / leftward",
                   "height": 52,
-                  "gap": 16,
+                  "gap": 40,
                   "alignItems": "center",
                   "children": [
                     {
-                      "type": "frame",
-                      "id": "D53sm",
+                      "type": "text",
+                      "id": "oeekC",
                       "name": "Show the classes on Friday. / inactive",
                       "context": "Example q10; topic classes; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 284,
-                      "height": 52,
-                      "fill": "#F4F7FA",
-                      "cornerRadius": 100,
-                      "stroke": "#DCE4EE",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "RwFmz",
-                          "name": "Question text",
-                          "fill": "#7D8B9B",
-                          "content": "Show the classes on Friday.",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "Show the classes on Friday.",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "BydON",
+                      "type": "text",
+                      "id": "sPJhQ",
                       "name": "How many activity entries did I log in October? / inactive",
                       "context": "Example q11; topic records; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 448,
-                      "height": 52,
-                      "fill": "#F4F7FA",
-                      "cornerRadius": 100,
-                      "stroke": "#DCE4EE",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "R9QovC",
-                          "name": "Question text",
-                          "fill": "#7D8B9B",
-                          "content": "How many activity entries did I log in October?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "How many activity entries did I log in October?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "AzHVk",
+                      "type": "text",
+                      "id": "bARDY",
                       "name": "Show today’s strength block. / inactive",
                       "context": "Example q12; topic workouts; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 292,
-                      "height": 52,
-                      "fill": "#F4F7FA",
-                      "cornerRadius": 100,
-                      "stroke": "#DCE4EE",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "RIaMa",
-                          "name": "Question text",
-                          "fill": "#7D8B9B",
-                          "content": "Show today’s strength block.",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "Show today’s strength block.",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "EEcL7",
+                      "type": "text",
+                      "id": "NoUG0",
                       "name": "What have I booked this week? / inactive",
                       "context": "Example q13; topic classes; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 308,
-                      "height": 52,
-                      "fill": "#F4F7FA",
-                      "cornerRadius": 100,
-                      "stroke": "#DCE4EE",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "w41SMV",
-                          "name": "Question text",
-                          "fill": "#7D8B9B",
-                          "content": "What have I booked this week?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "What have I booked this week?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "PgYFC",
+                      "type": "text",
+                      "id": "RRUCo",
                       "name": "What did I record on Monday? / inactive",
                       "context": "Example q14; topic records; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 308,
-                      "height": 52,
-                      "fill": "#F4F7FA",
-                      "cornerRadius": 100,
-                      "stroke": "#DCE4EE",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "LWth6",
-                          "name": "Question text",
-                          "fill": "#7D8B9B",
-                          "content": "What did I record on Monday?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "What did I record on Monday?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     }
                   ]
                 },
@@ -2265,163 +2010,78 @@
                   "y": 198,
                   "name": "Question row 4 / rightward",
                   "height": 52,
-                  "gap": 16,
+                  "gap": 40,
                   "alignItems": "center",
                   "children": [
                     {
-                      "type": "frame",
-                      "id": "cemY9",
+                      "type": "text",
+                      "id": "W0iiH",
                       "name": "Which workout levels are available? / inactive",
                       "context": "Example q15; topic workouts; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 350,
-                      "height": 52,
-                      "fill": "#F4F7FA",
-                      "cornerRadius": 100,
-                      "stroke": "#DCE4EE",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "D2jza6",
-                          "name": "Question text",
-                          "fill": "#7D8B9B",
-                          "content": "Which workout levels are available?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "Which workout levels are available?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "yXLm8",
+                      "type": "text",
+                      "id": "N1HjZi",
                       "name": "What time is the first class tomorrow? / inactive",
                       "context": "Example q16; topic classes; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 366,
-                      "height": 52,
-                      "fill": "#F4F7FA",
-                      "cornerRadius": 100,
-                      "stroke": "#DCE4EE",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "Mol16",
-                          "name": "Question text",
-                          "fill": "#7D8B9B",
-                          "content": "What time is the first class tomorrow?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "What time is the first class tomorrow?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "GQgl3",
+                      "type": "text",
+                      "id": "O1M1Id",
                       "name": "What’s my recorded 1RM for deadlift? / inactive",
                       "context": "Example q17; topic records; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 356,
-                      "height": 52,
-                      "fill": "#F4F7FA",
-                      "cornerRadius": 100,
-                      "stroke": "#DCE4EE",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "ExX81",
-                          "name": "Question text",
-                          "fill": "#7D8B9B",
-                          "content": "What’s my recorded 1RM for deadlift?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "What’s my recorded 1RM for deadlift?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "cf2oT",
+                      "type": "text",
+                      "id": "RO5Nc",
                       "name": "How many rounds are prescribed? / inactive",
                       "context": "Example q18; topic workouts; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 332,
-                      "height": 52,
-                      "fill": "#F4F7FA",
-                      "cornerRadius": 100,
-                      "stroke": "#DCE4EE",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "fB03Y",
-                          "name": "Question text",
-                          "fill": "#7D8B9B",
-                          "content": "How many rounds are prescribed?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "How many rounds are prescribed?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "BLdae",
+                      "type": "text",
+                      "id": "Aux1k",
                       "name": "Show my upcoming bookings. / inactive",
                       "context": "Example q19; topic classes; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 304,
-                      "height": 52,
-                      "fill": "#F4F7FA",
-                      "cornerRadius": 100,
-                      "stroke": "#DCE4EE",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "d527Q",
-                          "name": "Question text",
-                          "fill": "#7D8B9B",
-                          "content": "Show my upcoming bookings.",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "Show my upcoming bookings.",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     }
                   ]
                 },
@@ -4571,8 +4231,8 @@
         {
           "type": "frame",
           "id": "lKHEL",
-          "name": "Questions / rotating topic and four prompt tickers",
-          "context": "Decorative examples, not clickable controls. Static snapshot: next-booking question with Classes & bookings featured. HTML changes emphasis every 3 seconds and moves rows in alternating directions.",
+          "name": "Questions / large text wall and topic pills",
+          "context": "Large unboxed question typography, 32px/500. Four alternating ticker rows; one question and matching topic emphasized every 3 seconds in HTML. Static native snapshot.",
           "width": "fill_container",
           "height": 586,
           "fill": "$home-bg",
@@ -4754,162 +4414,77 @@
                   "y": 0,
                   "name": "Question row 1 / leftward",
                   "height": 52,
-                  "gap": 16,
+                  "gap": 40,
                   "alignItems": "center",
                   "children": [
                     {
-                      "type": "frame",
-                      "id": "ClzQP",
+                      "type": "text",
+                      "id": "DHpCe",
                       "name": "What’s tomorrow’s WOD? / inactive",
                       "context": "Example q1; topic workouts; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 264,
-                      "height": 52,
-                      "fill": "#142033",
-                      "cornerRadius": 100,
-                      "stroke": "#2C4058",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "JxAPy",
-                          "name": "Question text",
-                          "fill": "#8B9FB5",
-                          "content": "What’s tomorrow’s WOD?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "What’s tomorrow’s WOD?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "VGgTJ",
+                      "type": "text",
+                      "id": "Cb3MX",
                       "name": "When is my next booking? / featured",
                       "context": "Example q0; topic classes; timed visual emphasis only.",
-                      "width": 280,
-                      "height": 52,
                       "fill": "#47A3F6",
-                      "cornerRadius": 100,
-                      "stroke": "#47A3F6",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "tsXjn",
-                          "name": "Question text",
-                          "fill": "#0D1521",
-                          "content": "When is my next booking?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "content": "When is my next booking?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "fnbnc",
+                      "type": "text",
+                      "id": "h7oGM",
                       "name": "Show my activity this week. / inactive",
                       "context": "Example q2; topic records; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 286,
-                      "height": 52,
-                      "fill": "#142033",
-                      "cornerRadius": 100,
-                      "stroke": "#2C4058",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "SWbDc",
-                          "name": "Question text",
-                          "fill": "#8B9FB5",
-                          "content": "Show my activity this week.",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "Show my activity this week.",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "ggag3",
+                      "type": "text",
+                      "id": "GX2gu",
                       "name": "What classes can I book tomorrow? / inactive",
                       "context": "Example q3; topic classes; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 344,
-                      "height": 52,
-                      "fill": "#142033",
-                      "cornerRadius": 100,
-                      "stroke": "#2C4058",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "W4tTb",
-                          "name": "Question text",
-                          "fill": "#8B9FB5",
-                          "content": "What classes can I book tomorrow?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "What classes can I book tomorrow?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "S4xRT",
+                      "type": "text",
+                      "id": "mGRHc",
                       "name": "Has tomorrow’s workout been published? / inactive",
                       "context": "Example q4; topic workouts; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 394,
-                      "height": 52,
-                      "fill": "#142033",
-                      "cornerRadius": 100,
-                      "stroke": "#2C4058",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "eZ6B8",
-                          "name": "Question text",
-                          "fill": "#8B9FB5",
-                          "content": "Has tomorrow’s workout been published?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "Has tomorrow’s workout been published?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     }
                   ]
                 },
@@ -4920,163 +4495,78 @@
                   "y": 66,
                   "name": "Question row 2 / rightward",
                   "height": 52,
-                  "gap": 16,
+                  "gap": 40,
                   "alignItems": "center",
                   "children": [
                     {
-                      "type": "frame",
-                      "id": "hHNHH",
+                      "type": "text",
+                      "id": "j7Q5X",
                       "name": "What’s my recorded 1RM for back squat? / inactive",
                       "context": "Example q5; topic records; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 380,
-                      "height": 52,
-                      "fill": "#142033",
-                      "cornerRadius": 100,
-                      "stroke": "#2C4058",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "FhuI2",
-                          "name": "Question text",
-                          "fill": "#8B9FB5",
-                          "content": "What’s my recorded 1RM for back squat?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "What’s my recorded 1RM for back squat?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "D1rEX",
+                      "type": "text",
+                      "id": "oeD0x",
                       "name": "What weights are prescribed for RX? / inactive",
                       "context": "Example q6; topic workouts; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 352,
-                      "height": 52,
-                      "fill": "#142033",
-                      "cornerRadius": 100,
-                      "stroke": "#2C4058",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "G0dBS9",
-                          "name": "Question text",
-                          "fill": "#8B9FB5",
-                          "content": "What weights are prescribed for RX?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "What weights are prescribed for RX?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "W91sOO",
+                      "type": "text",
+                      "id": "tYebk",
                       "name": "Are there places in the 18:00 class? / inactive",
                       "context": "Example q7; topic classes; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 340,
-                      "height": 52,
-                      "fill": "#142033",
-                      "cornerRadius": 100,
-                      "stroke": "#2C4058",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "QJtDN",
-                          "name": "Question text",
-                          "fill": "#8B9FB5",
-                          "content": "Are there places in the 18:00 class?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "Are there places in the 18:00 class?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "xr6FK",
+                      "type": "text",
+                      "id": "qQEhj",
                       "name": "Show my last five activity entries. / inactive",
                       "context": "Example q8; topic records; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 326,
-                      "height": 52,
-                      "fill": "#142033",
-                      "cornerRadius": 100,
-                      "stroke": "#2C4058",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "k7554J",
-                          "name": "Question text",
-                          "fill": "#8B9FB5",
-                          "content": "Show my last five activity entries.",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "Show my last five activity entries.",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "K9DvX",
+                      "type": "text",
+                      "id": "janvT",
                       "name": "What’s the conditioning block today? / inactive",
                       "context": "Example q9; topic workouts; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 350,
-                      "height": 52,
-                      "fill": "#142033",
-                      "cornerRadius": 100,
-                      "stroke": "#2C4058",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "RcKt2",
-                          "name": "Question text",
-                          "fill": "#8B9FB5",
-                          "content": "What’s the conditioning block today?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "What’s the conditioning block today?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     }
                   ]
                 },
@@ -5087,163 +4577,78 @@
                   "y": 132,
                   "name": "Question row 3 / leftward",
                   "height": 52,
-                  "gap": 16,
+                  "gap": 40,
                   "alignItems": "center",
                   "children": [
                     {
-                      "type": "frame",
-                      "id": "ZKfsk",
+                      "type": "text",
+                      "id": "XZZ4b",
                       "name": "Show the classes on Friday. / inactive",
                       "context": "Example q10; topic classes; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 284,
-                      "height": 52,
-                      "fill": "#142033",
-                      "cornerRadius": 100,
-                      "stroke": "#2C4058",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "Ub5F8",
-                          "name": "Question text",
-                          "fill": "#8B9FB5",
-                          "content": "Show the classes on Friday.",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "Show the classes on Friday.",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "YA4NK",
+                      "type": "text",
+                      "id": "x4wKc",
                       "name": "How many activity entries did I log in October? / inactive",
                       "context": "Example q11; topic records; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 448,
-                      "height": 52,
-                      "fill": "#142033",
-                      "cornerRadius": 100,
-                      "stroke": "#2C4058",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "MDft2",
-                          "name": "Question text",
-                          "fill": "#8B9FB5",
-                          "content": "How many activity entries did I log in October?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "How many activity entries did I log in October?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "p2kESq",
+                      "type": "text",
+                      "id": "U86CAX",
                       "name": "Show today’s strength block. / inactive",
                       "context": "Example q12; topic workouts; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 292,
-                      "height": 52,
-                      "fill": "#142033",
-                      "cornerRadius": 100,
-                      "stroke": "#2C4058",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "x8TZ5",
-                          "name": "Question text",
-                          "fill": "#8B9FB5",
-                          "content": "Show today’s strength block.",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "Show today’s strength block.",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "NCFPf",
+                      "type": "text",
+                      "id": "BjWxu",
                       "name": "What have I booked this week? / inactive",
                       "context": "Example q13; topic classes; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 308,
-                      "height": 52,
-                      "fill": "#142033",
-                      "cornerRadius": 100,
-                      "stroke": "#2C4058",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "j1pwxY",
-                          "name": "Question text",
-                          "fill": "#8B9FB5",
-                          "content": "What have I booked this week?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "What have I booked this week?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "JUIvl",
+                      "type": "text",
+                      "id": "cSsWT",
                       "name": "What did I record on Monday? / inactive",
                       "context": "Example q14; topic records; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 308,
-                      "height": 52,
-                      "fill": "#142033",
-                      "cornerRadius": 100,
-                      "stroke": "#2C4058",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "r1Wkz",
-                          "name": "Question text",
-                          "fill": "#8B9FB5",
-                          "content": "What did I record on Monday?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "What did I record on Monday?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     }
                   ]
                 },
@@ -5254,163 +4659,78 @@
                   "y": 198,
                   "name": "Question row 4 / rightward",
                   "height": 52,
-                  "gap": 16,
+                  "gap": 40,
                   "alignItems": "center",
                   "children": [
                     {
-                      "type": "frame",
-                      "id": "y94TK",
+                      "type": "text",
+                      "id": "YukUD",
                       "name": "Which workout levels are available? / inactive",
                       "context": "Example q15; topic workouts; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 350,
-                      "height": 52,
-                      "fill": "#142033",
-                      "cornerRadius": 100,
-                      "stroke": "#2C4058",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "N1ZjmL",
-                          "name": "Question text",
-                          "fill": "#8B9FB5",
-                          "content": "Which workout levels are available?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "Which workout levels are available?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "c0TCy",
+                      "type": "text",
+                      "id": "cKNtc",
                       "name": "What time is the first class tomorrow? / inactive",
                       "context": "Example q16; topic classes; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 366,
-                      "height": 52,
-                      "fill": "#142033",
-                      "cornerRadius": 100,
-                      "stroke": "#2C4058",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "Cccj7",
-                          "name": "Question text",
-                          "fill": "#8B9FB5",
-                          "content": "What time is the first class tomorrow?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "What time is the first class tomorrow?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "ADGSj",
+                      "type": "text",
+                      "id": "c9Q81",
                       "name": "What’s my recorded 1RM for deadlift? / inactive",
                       "context": "Example q17; topic records; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 356,
-                      "height": 52,
-                      "fill": "#142033",
-                      "cornerRadius": 100,
-                      "stroke": "#2C4058",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "e3QWNr",
-                          "name": "Question text",
-                          "fill": "#8B9FB5",
-                          "content": "What’s my recorded 1RM for deadlift?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "What’s my recorded 1RM for deadlift?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "sQSGj",
+                      "type": "text",
+                      "id": "r5VUfk",
                       "name": "How many rounds are prescribed? / inactive",
                       "context": "Example q18; topic workouts; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 332,
-                      "height": 52,
-                      "fill": "#142033",
-                      "cornerRadius": 100,
-                      "stroke": "#2C4058",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "y1sf9",
-                          "name": "Question text",
-                          "fill": "#8B9FB5",
-                          "content": "How many rounds are prescribed?",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "How many rounds are prescribed?",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     },
                     {
-                      "type": "frame",
-                      "id": "U2xBD2",
+                      "type": "text",
+                      "id": "Wg6JG",
                       "name": "Show my upcoming bookings. / inactive",
                       "context": "Example q19; topic classes; timed visual emphasis only.",
-                      "opacity": 0.62,
-                      "width": 304,
-                      "height": 52,
-                      "fill": "#142033",
-                      "cornerRadius": 100,
-                      "stroke": "#2C4058",
-                      "strokeWidth": 1,
-                      "padding": [
-                        12,
-                        22
-                      ],
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "h51njN",
-                          "name": "Question text",
-                          "fill": "#8B9FB5",
-                          "content": "Show my upcoming bookings.",
-                          "fontFamily": "Geist",
-                          "fontSize": 16,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "opacity": 0.28,
+                      "fill": "$home-ink",
+                      "content": "Show my upcoming bookings.",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 32,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.6
                     }
                   ]
                 },

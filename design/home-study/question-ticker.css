@@ -5,7 +5,6 @@
   --question-surface: #f4f7fa;
   --question-line: #dce4ee;
   --featured-bg: #1765b0;
-  --featured-ink: #fff;
   --topic-bg: #e3effc;
   --topic-ink: #1765b0;
   --topic-line: #b5cff0;
@@ -19,7 +18,6 @@
   --question-surface: #142033;
   --question-line: #2c4058;
   --featured-bg: #47a3f6;
-  --featured-ink: #0d1521;
   --topic-bg: #16385b;
   --topic-ink: #9ed0ff;
   --topic-line: #34628d;
@@ -74,42 +72,38 @@
 .question-ticker { overflow: hidden; }
 .question-track {
   display: flex;
-  gap: 16px;
+  gap: 40px;
   width: max-content;
   animation: question-drift var(--duration, 112s) linear infinite;
   will-change: transform;
 }
 .question-ticker:nth-child(even) .question-track { animation-direction: reverse; }
-.question-group { display: flex; gap: 16px; margin: 0; padding: 0; list-style: none; }
-.question-chip {
+.question-group { display: flex; gap: 40px; margin: 0; padding: 0; list-style: none; }
+.question-text {
   display: flex;
   align-items: center;
   justify-content: center;
   flex: none;
   height: 52px;
-  width: var(--chip-width);
-  padding: 12px 22px;
-  border: 1px solid var(--question-line);
-  border-radius: 999px;
-  color: var(--question-muted);
-  background: var(--question-surface);
-  opacity: .62;
+  color: var(--ink);
+  opacity: .28;
   white-space: nowrap;
-  font-size: 16px;
-  transition: color .21s, background .21s, border-color .21s, opacity .21s;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -.6px;
+  transition: color .21s, opacity .21s;
 }
-.question-chip.is-featured {
+.question-text.is-featured {
   opacity: 1;
-  background: var(--featured-bg);
-  color: var(--featured-ink);
-  border-color: var(--featured-bg);
+  color: var(--featured-bg);
 }
 .questions-section[data-paused=true] .question-track { animation-play-state: paused; }
 .questions-section[data-still=true] .question-track { animation: none; will-change: auto; }
-@keyframes question-drift { to { transform: translateX(calc(-50% - 8px)); } }
+@keyframes question-drift { to { transform: translateX(calc(-50% - 20px)); } }
 @media (prefers-reduced-motion: reduce) {
   .question-track { animation: none; will-change: auto; }
-  .question-chip, .question-topic { transition: none; }
+  .question-text, .question-topic { transition: none; }
 }
 @media(max-width:850px) {
   .questions-section { padding: 56px 0; }
