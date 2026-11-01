@@ -412,5 +412,12 @@
     "Owner visual approval",
     "Actual OS preference changes and device/performance acceptance",
     "Production integration and wider variant propagation"
-  ]
+  ],
+  "review": {
+    "fixedPoint": "17c323b21657f61e3983a7bf055092b7166cf26c",
+    "reviewedCommit": "ec0a12d",
+    "report": "question-ticker-review.md",
+    "standardsFindings": 0,
+    "specFindings": 0
+  }
 }
