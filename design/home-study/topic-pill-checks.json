@@ -490,11 +490,11 @@
     "Owner visual approval"
   ],
   "review": {
-    "fixedPoint": "060a238",
-    "reviewedCommit": "690cd13",
+    "fixedPoint": "bb8e0c8",
+    "reviewedCommit": "aff20bc",
     "standardsFindings": 0,
     "specFindings": 0,
-    "report": "question-ticker-review.md#compact-topic-pills"
+    "report": "question-ticker-review.md#segmented-topic-geometry"
   },
   "browserSegmentGeometry": [
     {

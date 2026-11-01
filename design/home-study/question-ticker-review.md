@@ -39,3 +39,17 @@ No actionable findings. Requested typography, icon size, transparent zero-width 
 No actionable findings. All three topics use 11px/600 uppercase labels, 16px icons and no minimum height or visible border. Active fill matches the question, with white label/icon colors in both themes. Existing mobile padding, question-wall behavior and frozen variants remain preserved.
 
 Compact-topic findings: Standards **0**, Spec **0**. Owner visual approval remains pending.
+
+## Segmented topic geometry
+
+Separate reviewers checked `bb8e0c8...aff20bc` on 2026-11-01.
+
+### Standards
+
+No actionable findings. The compact first/middle/last corner rules and 4px gap are consistent across widths; the mobile override is removed. Documentation separates current native exports from earlier browser captures. No unrelated behavior changes.
+
+### Spec
+
+No actionable findings. The first pill has 4px right corners, the middle has four 4px corners, the last has 4px left corners, and outer ends stay rounded. Gap is 4px. No unrequested scope.
+
+Segment findings: Standards **0**, Spec **0**.
