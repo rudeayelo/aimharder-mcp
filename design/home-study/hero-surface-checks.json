@@ -30,7 +30,16 @@
       "fpsSchedulingCap": 30
     },
     "horizontalMask": false,
-    "verticalEdgeFade": true
+    "verticalEdgeFade": true,
+    "edgeFades": {
+      "top": true,
+      "bottom": false
+    },
+    "heroBottomBorder": {
+      "light": "#79a4dc",
+      "dark": "#2d609b",
+      "width": 1
+    }
   },
   "browserObservations": {
     "viewports": [
@@ -66,17 +75,29 @@
       ],
       "horizontalMask": false,
       "overflow": false
+    },
+    "blueLowerBoundary": {
+      "viewport": 1200,
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "lightBorder": "1px solid rgb(121, 164, 220)",
+      "darkBorder": "1px solid rgb(45, 96, 155)",
+      "reviewFooterTopBorder": "0px",
+      "bottomFade": false,
+      "overflow": false
     }
   },
   "sourceAssetHashesChecked": 57,
   "screenshots": [
     {
       "file": "previews/hero-grainient-light.png",
-      "sha256": "a5349996825dd69ecca7f69121009cbfb81f3f5aa9af5441f08086a256a2655c"
+      "sha256": "820ebca329603418796f0129f70aa6a6732eb99946320563ab91e199d85db7c0"
     },
     {
       "file": "previews/hero-grainient-dark.png",
-      "sha256": "1b0ebf67f4d479b4307e84859d60c766cc7c1ea9e6ca89a21bf55a8124e0a9bf"
+      "sha256": "bcad54766c2f819c893cc46c1e39fa51b7f09d4ef66ce4807c09911301324556"
     }
   ],
   "pending": [
