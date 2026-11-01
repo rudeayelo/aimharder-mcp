@@ -1636,10 +1636,10 @@
                       "name": "Classes & bookings / featured",
                       "fill": "#1765B0",
                       "cornerRadius": [
-                        100,
+                        18,
                         4,
                         4,
-                        100
+                        18
                       ],
                       "stroke": "#00000000",
                       "gap": 8,
@@ -1716,8 +1716,8 @@
                       "fill": "#F4F7FA",
                       "cornerRadius": [
                         4,
-                        100,
-                        100,
+                        18,
+                        18,
                         4
                       ],
                       "stroke": "#00000000",
@@ -4291,10 +4291,10 @@
                       "name": "Classes & bookings / featured",
                       "fill": "#47A3F6",
                       "cornerRadius": [
-                        100,
+                        18,
                         4,
                         4,
-                        100
+                        18
                       ],
                       "stroke": "#00000000",
                       "gap": 8,
@@ -4371,8 +4371,8 @@
                       "fill": "#142033",
                       "cornerRadius": [
                         4,
-                        100,
-                        100,
+                        18,
+                        18,
                         4
                       ],
                       "stroke": "#00000000",

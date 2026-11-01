@@ -52,10 +52,10 @@
             "name": "Classes & bookings / featured",
             "fill": "#1765B0",
             "cornerRadius": [
-              100,
+              18,
               4,
               4,
-              100
+              18
             ],
             "stroke": "#00000000",
             "gap": 8,
@@ -132,8 +132,8 @@
             "fill": "#F4F7FA",
             "cornerRadius": [
               4,
-              100,
-              100,
+              18,
+              18,
               4
             ],
             "stroke": "#00000000",
@@ -183,10 +183,10 @@
             "name": "Classes & bookings / featured",
             "fill": "#47A3F6",
             "cornerRadius": [
-              100,
+              18,
               4,
               4,
-              100
+              18
             ],
             "stroke": "#00000000",
             "gap": 8,
@@ -263,8 +263,8 @@
             "fill": "#142033",
             "cornerRadius": [
               4,
-              100,
-              100,
+              18,
+              18,
               4
             ],
             "stroke": "#00000000",
@@ -317,10 +317,10 @@
           {
             "id": "Y8kvAM",
             "corners": [
-              100,
+              18,
               4,
               4,
-              100
+              18
             ]
           },
           {
@@ -331,8 +331,8 @@
             "id": "f9YJzm",
             "corners": [
               4,
-              100,
-              100,
+              18,
+              18,
               4
             ]
           }
@@ -345,10 +345,10 @@
           {
             "id": "SfQ9u",
             "corners": [
-              100,
+              18,
               4,
               4,
-              100
+              18
             ]
           },
           {
@@ -359,8 +359,8 @@
             "id": "b6JD21",
             "corners": [
               4,
-              100,
-              100,
+              18,
+              18,
               4
             ]
           }
@@ -421,36 +421,36 @@
   "artifacts": [
     {
       "file": "question-ticker.css",
-      "sha256": "d08862801d1b2dbab7f3502294269b0871388432a4aecdaabc7141a4392de582"
+      "sha256": "b27efc0f353d349e12d9f27f95e8fb462b52eb671bb0028113e2fce66175a0ab"
     },
     {
       "file": "hero-motion-prototype.html",
-      "sha256": "627c56b15e39ccd644cc5adbe0ac0d4ba5a894297d4a98bb63a567fdf78e2fd3"
+      "sha256": "8087ef2602112d4f2d001026eb5326d5743a26f49f38388a5d835fb50e5d03a8"
     },
     {
       "file": "previews/uAXkc.png",
-      "sha256": "62ad65cce69592ebd11fe36f45ef1e21eb08043acd7f93c06b747a7363c0a321",
+      "sha256": "3639732d6c84780a2e644bd3c9dadc8c4844c2110af87b07a3e7a9485dfc9d0c",
       "format": "PNG",
       "width": 1440,
       "height": 2601
     },
     {
       "file": "previews/p7u8w.png",
-      "sha256": "7d2a1fb13feabeb433bc31b0ce9e94d8d3b2939370655bef3c0e4b12d372895a",
+      "sha256": "2084eac205bd90685eab112d1b111da661e1f4a45cc7a368e547eac3590d84ee",
       "format": "PNG",
       "width": 1440,
       "height": 2601
     },
     {
       "file": "previews/ES3Gf.png",
-      "sha256": "d91014bf9ad7f0218e2e4f6c67b8838eb75ccec3b045b06133709616e793ab98",
+      "sha256": "2899b727186b0ee554814013ffe29aef87341b086a8633dadf3167aaec871e2a",
       "format": "PNG",
       "width": 1440,
       "height": 580
     },
     {
       "file": "previews/lKHEL.png",
-      "sha256": "ab803047b027e0961984dea1be77b33f5c10e9d8507eb4d2157405cad8f3b84a",
+      "sha256": "d076511db1782a5c039c3b1c637e5472b36202f76c8c5ad5004c09de62db2819",
       "format": "PNG",
       "width": 1440,
       "height": 580
@@ -474,14 +474,21 @@
       "format": "PNG",
       "width": 548,
       "height": 37,
-      "sha256": "0fbcc7854bbe1804bf2cc1179e21cbb55d3c4c091f69a37d9e4d571fe05ead1f"
+      "sha256": "de3d49426eb6dd5a1de1efb4c1cfc181a32f1fa680bc25d2ffb32ed65f7cfd25"
     },
     {
       "file": "previews/dnPEZ.png",
       "format": "PNG",
       "width": 548,
       "height": 37,
-      "sha256": "ed75a74a60c1e785826ccdf42a0d4f39b0ccdce721fbd4bfe1fdd39359683db3"
+      "sha256": "c941859946973dfd2113b410e2209dbf4ee458a297194d404cbebfee7efff86d"
+    },
+    {
+      "file": "previews/topic-corners-corrected.jpg",
+      "format": "JPEG",
+      "width": 1200,
+      "height": 37,
+      "sha256": "15d58ea209a2a36d8bcb9a6316a0d4107576d0c76e4eb142215a9beacc2c63a7"
     }
   ],
   "brokenLocalLinks": [],
@@ -498,12 +505,14 @@
   },
   "browserSegmentGeometry": [
     {
+      "theme": "light",
+      "gap": "4px",
       "corners": [
         [
-          "999px",
+          "18px",
           "4px",
           "4px",
-          "999px"
+          "18px"
         ],
         [
           "4px",
@@ -513,22 +522,21 @@
         ],
         [
           "4px",
-          "999px",
-          "999px",
+          "18px",
+          "18px",
           "4px"
         ]
-      ],
-      "gap": "4px",
-      "overflow": false,
-      "theme": "light"
+      ]
     },
     {
+      "theme": "dark",
+      "gap": "4px",
       "corners": [
         [
-          "999px",
+          "18px",
           "4px",
           "4px",
-          "999px"
+          "18px"
         ],
         [
           "4px",
@@ -538,14 +546,169 @@
         ],
         [
           "4px",
-          "999px",
-          "999px",
+          "18px",
+          "18px",
           "4px"
         ]
-      ],
-      "gap": "4px",
-      "overflow": false,
-      "theme": "dark"
+      ]
     }
-  ]
+  ],
+  "cornerNormalizationFix": {
+    "reason": "Oversized outer radii caused used inner radii to shrink despite computed declarations showing 4px. Previous computed-style-only checks missed the rendered defect.",
+    "source": "https://drafts.csswg.org/css-backgrounds/#corner-overlap",
+    "cssOldOuter": 999,
+    "nativeOldOuter": 100,
+    "newDesktopOuter": 18,
+    "newNarrowOuter": 16,
+    "inner": 4,
+    "browser": {
+      "before": [
+        {
+          "corners": [
+            "999px",
+            "4px",
+            "4px",
+            "999px"
+          ],
+          "height": 36.5,
+          "width": 180.8984375
+        },
+        {
+          "corners": [
+            "4px",
+            "4px",
+            "4px",
+            "4px"
+          ],
+          "height": 36.5,
+          "width": 184.578125
+        },
+        {
+          "corners": [
+            "4px",
+            "999px",
+            "999px",
+            "4px"
+          ],
+          "height": 36.5,
+          "width": 174.0546875
+        }
+      ],
+      "after": {
+        "gap": "4px",
+        "pills": [
+          {
+            "corners": [
+              "18px",
+              "4px",
+              "4px",
+              "18px"
+            ],
+            "height": 36.5,
+            "width": 180.8984375
+          },
+          {
+            "corners": [
+              "4px",
+              "4px",
+              "4px",
+              "4px"
+            ],
+            "height": 36.5,
+            "width": 184.578125
+          },
+          {
+            "corners": [
+              "4px",
+              "18px",
+              "18px",
+              "4px"
+            ],
+            "height": 36.5,
+            "width": 174.0546875
+          }
+        ],
+        "theme": "light"
+      },
+      "darkAfter": {
+        "gap": "4px",
+        "pills": [
+          {
+            "corners": [
+              "18px",
+              "4px",
+              "4px",
+              "18px"
+            ],
+            "height": 36.5,
+            "width": 180.8984375
+          },
+          {
+            "corners": [
+              "4px",
+              "4px",
+              "4px",
+              "4px"
+            ],
+            "height": 36.5,
+            "width": 184.578125
+          },
+          {
+            "corners": [
+              "4px",
+              "18px",
+              "18px",
+              "4px"
+            ],
+            "height": 36.5,
+            "width": 174.0546875
+          }
+        ],
+        "theme": "dark"
+      }
+    },
+    "pixelProbe": {
+      "beforeCommit": "3ea191d",
+      "beforeNativeExportSha256": "0fbcc7854bbe1804bf2cc1179e21cbb55d3c4c091f69a37d9e4d571fe05ead1f",
+      "coordinates": {
+        "firstTopRight": [
+          180,
+          0
+        ],
+        "firstBottomRight": [
+          180,
+          36
+        ],
+        "lastTopLeft": [
+          374,
+          0
+        ],
+        "lastBottomLeft": [
+          374,
+          36
+        ]
+      },
+      "beforeAlpha": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "afterAlphaLight": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "afterAlphaDark": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "failureExitCode": 1,
+      "fixedExitCode": 0,
+      "note": "Actual native PNG raster sample; component bounds are 548x37. Temporary Python/Pillow harness remained in the debug temp directory."
+    }
+  }
 }
