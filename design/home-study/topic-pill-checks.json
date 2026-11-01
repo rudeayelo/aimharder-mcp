@@ -714,5 +714,9 @@
   "laterQuestionRefinement": {
     "record": "question-size-speed-checks.json",
     "scope": "Current question size, ticker speed and affected source/home/section export hashes; topic geometry remains current."
+  },
+  "laterNativeReplica": {
+    "record": "current-pen-replica-checks.json",
+    "scope": "Current native header/hero alignment, visible page scope and affected native export hashes. HTML behavior remains as recorded."
   }
 }

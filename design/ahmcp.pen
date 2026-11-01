@@ -750,7 +750,7 @@
       "x": 1360,
       "y": 1000,
       "name": "AIHarder / Desktop / English / Light",
-      "context": "Current desktop English home study. Header/hero synchronized from hero-motion-prototype.html. Static long-answer composition; animation remains in HTML. selfh.st icon attribution/license retained in home-study/assets/README.md.",
+      "context": "Current English desktop replica: header, hero and question wall. Poster/long-answer still; 26px questions, 10.5px row gaps, segmented topic pills. Animation remains in HTML. Setup/FAQ/closing/footer are retained as disabled draft layers for later sequential refinement.",
       "theme": {
         "appearance": "light",
         "language": "en"
@@ -772,7 +772,9 @@
             "bottom": 1
           },
           "padding": [
-            13.25,
+            12.75,
+            120,
+            13.75,
             120
           ],
           "justifyContent": "space_between",
@@ -783,7 +785,7 @@
               "type": "ref",
               "ref": "GqxcO",
               "name": "Brand / AIHarder",
-              "width": "fit_content"
+              "width": "fill_container"
             },
             {
               "type": "frame",
@@ -800,7 +802,7 @@
                   "name": "How it works anchor",
                   "fill": "$home-ink",
                   "content": "How it works",
-                  "lineHeight": 1.45,
+                  "lineHeight": 1.5,
                   "fontFamily": "Geist",
                   "fontSize": 14,
                   "fontWeight": "500"
@@ -811,7 +813,7 @@
                   "name": "FAQ anchor",
                   "fill": "$home-ink",
                   "content": "FAQ",
-                  "lineHeight": 1.45,
+                  "lineHeight": 1.5,
                   "fontFamily": "Geist",
                   "fontSize": 14,
                   "fontWeight": "500"
@@ -822,7 +824,8 @@
               "type": "frame",
               "id": "mXWYt",
               "name": "Preferences and sign-in",
-              "gap": 20,
+              "width": "fill_container",
+              "gap": 24,
               "justifyContent": "end",
               "alignItems": "center",
               "children": [
@@ -830,7 +833,7 @@
                   "type": "frame",
                   "id": "mqYEI",
                   "name": "Language and appearance",
-                  "gap": 16,
+                  "gap": 24,
                   "alignItems": "center",
                   "children": [
                     {
@@ -838,16 +841,16 @@
                       "id": "FBKDO",
                       "name": "Language selector",
                       "height": 44,
-                      "gap": 6,
+                      "gap": 7,
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
                           "id": "dBJno",
                           "name": "Language current value",
-                          "fill": "$home-muted",
+                          "fill": "$home-ink",
                           "content": "English",
-                          "lineHeight": 1.45,
+                          "lineHeight": 1.5,
                           "fontFamily": "Geist",
                           "fontSize": 14,
                           "fontWeight": "normal"
@@ -856,11 +859,11 @@
                           "type": "icon",
                           "id": "j7S72",
                           "name": "Language chevron",
-                          "width": 14,
-                          "height": 14,
+                          "width": 12,
+                          "height": 12,
                           "icon": "chevron-down",
                           "library": "lucide",
-                          "fill": "$home-muted"
+                          "fill": "$home-ink"
                         }
                       ]
                     },
@@ -869,7 +872,7 @@
                       "id": "lEPig",
                       "name": "Appearance / cycle System Light Dark",
                       "context": "Current: System. Next click: Light; then Dark; then System. Localized accessible label and tooltip in implementation.",
-                      "width": 44,
+                      "width": 22,
                       "height": 44,
                       "cornerRadius": 8,
                       "justifyContent": "center",
@@ -931,9 +934,10 @@
                   "descendants": {
                     "ugUJO": {
                       "content": "Sign in",
-                      "fontSize": 16,
+                      "fontSize": 14,
                       "textAlign": "center",
-                      "fill": "$home-on-action"
+                      "fill": "$home-on-action",
+                      "lineHeight": 1.5
                     }
                   }
                 }
@@ -1039,7 +1043,7 @@
                       "ref": "UEEFt",
                       "name": "Sign in / hero",
                       "width": 152,
-                      "height": 48,
+                      "height": 50,
                       "fill": {
                         "type": "gradient",
                         "gradientType": "linear",
@@ -1077,7 +1081,8 @@
                           "content": "Sign in",
                           "fontSize": 16,
                           "textAlign": "center",
-                          "fill": "$home-on-action"
+                          "fill": "$home-on-action",
+                          "lineHeight": 1.5
                         }
                       }
                     },
@@ -1086,7 +1091,7 @@
                       "id": "Oep9w",
                       "name": "See how it works anchor",
                       "height": 48,
-                      "gap": 8,
+                      "gap": 10,
                       "alignItems": "center",
                       "children": [
                         {
@@ -1095,7 +1100,7 @@
                           "name": "See how label",
                           "fill": "$home-ink",
                           "content": "See how it works",
-                          "lineHeight": 1.45,
+                          "lineHeight": 1.5,
                           "fontFamily": "Geist",
                           "fontSize": 14,
                           "fontWeight": "500"
@@ -1104,8 +1109,8 @@
                           "type": "icon",
                           "id": "fSjHF",
                           "name": "Arrow to setup",
-                          "width": 18,
-                          "height": 18,
+                          "width": 22,
+                          "height": 22,
                           "icon": "arrow-right",
                           "library": "lucide",
                           "fill": "$home-ink"
@@ -1145,7 +1150,7 @@
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
                           "content": "Works with",
-                          "lineHeight": 1.45,
+                          "lineHeight": 1.5,
                           "fontFamily": "Geist",
                           "fontSize": 13,
                           "fontWeight": "normal"
@@ -1185,7 +1190,7 @@
                                   "name": "ChatGPT product name",
                                   "fill": "$home-ink",
                                   "content": "ChatGPT",
-                                  "lineHeight": 1.45,
+                                  "lineHeight": 1.5,
                                   "fontFamily": "Geist",
                                   "fontSize": 13
                                 }
@@ -1217,7 +1222,7 @@
                                   "name": "Claude product name",
                                   "fill": "$home-ink",
                                   "content": "Claude",
-                                  "lineHeight": 1.45,
+                                  "lineHeight": 1.5,
                                   "fontFamily": "Geist",
                                   "fontSize": 13
                                 }
@@ -1249,7 +1254,7 @@
                                   "name": "Hermes product name",
                                   "fill": "$home-ink",
                                   "content": "Hermes",
-                                  "lineHeight": 1.45,
+                                  "lineHeight": 1.5,
                                   "fontFamily": "Geist",
                                   "fontSize": 13
                                 }
@@ -1281,7 +1286,7 @@
                                   "name": "OpenClaw product name",
                                   "fill": "$home-ink",
                                   "content": "OpenClaw",
-                                  "lineHeight": 1.45,
+                                  "lineHeight": 1.5,
                                   "fontFamily": "Geist",
                                   "fontSize": 13
                                 }
@@ -1313,7 +1318,7 @@
                                   "name": "Pi product name",
                                   "fill": "$home-ink",
                                   "content": "Pi",
-                                  "lineHeight": 1.45,
+                                  "lineHeight": 1.5,
                                   "fontFamily": "Geist",
                                   "fontSize": 13
                                 }
@@ -1471,7 +1476,7 @@
                   ],
                   "layout": "vertical",
                   "gap": 10,
-                  "padding": 28,
+                  "padding": 29,
                   "children": [
                     {
                       "type": "text",
@@ -1519,6 +1524,12 @@
                       "name": "Reply / booking state",
                       "width": "fill_container",
                       "gap": 6,
+                      "padding": [
+                        2,
+                        0,
+                        0,
+                        0
+                      ],
                       "alignItems": "center",
                       "children": [
                         {
@@ -2154,8 +2165,11 @@
         {
           "type": "frame",
           "id": "uxfOi",
+          "x": 0,
+          "y": 1192.5,
           "name": "Three setup tasks",
-          "width": "fill_container",
+          "enabled": false,
+          "width": "fill_container(1440)",
           "fill": "$home-bg",
           "layout": "vertical",
           "gap": 18,
@@ -2796,8 +2810,11 @@
         {
           "type": "frame",
           "id": "H1zcWf",
+          "x": 0,
+          "y": 1832.5,
           "name": "FAQ",
-          "width": "fill_container",
+          "enabled": false,
+          "width": "fill_container(1440)",
           "fill": "$home-surface",
           "gap": 80,
           "padding": [
@@ -3155,8 +3172,11 @@
         {
           "type": "frame",
           "id": "L7kaAs",
+          "x": 0,
+          "y": 2338.5,
           "name": "Closing sign-in",
-          "width": "fill_container",
+          "enabled": false,
+          "width": "fill_container(1440)",
           "fill": "$home-bg",
           "gap": 40,
           "padding": [
@@ -3246,8 +3266,11 @@
         {
           "type": "frame",
           "id": "yZ4bJ",
+          "x": 0,
+          "y": 2514.5,
           "name": "Footer",
-          "width": "fill_container",
+          "enabled": false,
+          "width": "fill_container(1440)",
           "fill": "$home-bg",
           "stroke": "$home-line",
           "strokeWidth": {
@@ -3394,7 +3417,7 @@
       "x": 2960,
       "y": 1000,
       "name": "AIHarder / Desktop / English / Dark",
-      "context": "Current desktop English home study. Header/hero synchronized from hero-motion-prototype.html. Static long-answer composition; animation remains in HTML. selfh.st icon attribution/license retained in home-study/assets/README.md.",
+      "context": "Current English desktop replica: header, hero and question wall. Poster/long-answer still; 26px questions, 10.5px row gaps, segmented topic pills. Animation remains in HTML. Setup/FAQ/closing/footer are retained as disabled draft layers for later sequential refinement.",
       "theme": {
         "appearance": "dark",
         "language": "en"
@@ -3416,7 +3439,9 @@
             "bottom": 1
           },
           "padding": [
-            13.25,
+            12.75,
+            120,
+            13.75,
             120
           ],
           "justifyContent": "space_between",
@@ -3454,7 +3479,7 @@
                   "name": "How it works anchor",
                   "fill": "$home-ink",
                   "content": "How it works",
-                  "lineHeight": 1.45,
+                  "lineHeight": 1.5,
                   "fontFamily": "Geist",
                   "fontSize": 14,
                   "fontWeight": "500"
@@ -3465,7 +3490,7 @@
                   "name": "FAQ anchor",
                   "fill": "$home-ink",
                   "content": "FAQ",
-                  "lineHeight": 1.45,
+                  "lineHeight": 1.5,
                   "fontFamily": "Geist",
                   "fontSize": 14,
                   "fontWeight": "500"
@@ -3477,7 +3502,7 @@
               "id": "oRy16",
               "name": "Preferences and sign-in",
               "width": "fill_container",
-              "gap": 20,
+              "gap": 24,
               "justifyContent": "end",
               "alignItems": "center",
               "children": [
@@ -3485,7 +3510,7 @@
                   "type": "frame",
                   "id": "fhbiS",
                   "name": "Language and appearance",
-                  "gap": 16,
+                  "gap": 24,
                   "alignItems": "center",
                   "children": [
                     {
@@ -3493,16 +3518,16 @@
                       "id": "OPpw1",
                       "name": "Language selector",
                       "height": 44,
-                      "gap": 6,
+                      "gap": 7,
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
                           "id": "fBHop",
                           "name": "Language current value",
-                          "fill": "$home-muted",
+                          "fill": "$home-ink",
                           "content": "English",
-                          "lineHeight": 1.45,
+                          "lineHeight": 1.5,
                           "fontFamily": "Geist",
                           "fontSize": 14,
                           "fontWeight": "normal"
@@ -3511,11 +3536,11 @@
                           "type": "icon",
                           "id": "wNZ7Z",
                           "name": "Language chevron",
-                          "width": 14,
-                          "height": 14,
+                          "width": 12,
+                          "height": 12,
                           "icon": "chevron-down",
                           "library": "lucide",
-                          "fill": "$home-muted"
+                          "fill": "$home-ink"
                         }
                       ]
                     },
@@ -3524,7 +3549,7 @@
                       "id": "DVUg5",
                       "name": "Appearance / cycle System Light Dark",
                       "context": "Current: System. Next click: Light; then Dark; then System. Localized accessible label and tooltip in implementation.",
-                      "width": 44,
+                      "width": 22,
                       "height": 44,
                       "cornerRadius": 8,
                       "justifyContent": "center",
@@ -3586,9 +3611,10 @@
                   "descendants": {
                     "ugUJO": {
                       "content": "Sign in",
-                      "fontSize": 16,
+                      "fontSize": 14,
                       "textAlign": "center",
-                      "fill": "$home-on-action"
+                      "fill": "$home-on-action",
+                      "lineHeight": 1.5
                     }
                   }
                 }
@@ -3694,7 +3720,7 @@
                       "ref": "UEEFt",
                       "name": "Sign in / hero",
                       "width": 152,
-                      "height": 48,
+                      "height": 50,
                       "fill": {
                         "type": "gradient",
                         "gradientType": "linear",
@@ -3732,7 +3758,8 @@
                           "content": "Sign in",
                           "fontSize": 16,
                           "textAlign": "center",
-                          "fill": "$home-on-action"
+                          "fill": "$home-on-action",
+                          "lineHeight": 1.5
                         }
                       }
                     },
@@ -3741,7 +3768,7 @@
                       "id": "B6IOVW",
                       "name": "See how it works anchor",
                       "height": 48,
-                      "gap": 8,
+                      "gap": 10,
                       "alignItems": "center",
                       "children": [
                         {
@@ -3750,7 +3777,7 @@
                           "name": "See how label",
                           "fill": "$home-ink",
                           "content": "See how it works",
-                          "lineHeight": 1.45,
+                          "lineHeight": 1.5,
                           "fontFamily": "Geist",
                           "fontSize": 14,
                           "fontWeight": "500"
@@ -3759,8 +3786,8 @@
                           "type": "icon",
                           "id": "wXm7D",
                           "name": "Arrow to setup",
-                          "width": 18,
-                          "height": 18,
+                          "width": 22,
+                          "height": 22,
                           "icon": "arrow-right",
                           "library": "lucide",
                           "fill": "$home-ink"
@@ -3800,7 +3827,7 @@
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
                           "content": "Works with",
-                          "lineHeight": 1.45,
+                          "lineHeight": 1.5,
                           "fontFamily": "Geist",
                           "fontSize": 13,
                           "fontWeight": "normal"
@@ -3840,7 +3867,7 @@
                                   "name": "ChatGPT product name",
                                   "fill": "$home-ink",
                                   "content": "ChatGPT",
-                                  "lineHeight": 1.45,
+                                  "lineHeight": 1.5,
                                   "fontFamily": "Geist",
                                   "fontSize": 13
                                 }
@@ -3872,7 +3899,7 @@
                                   "name": "Claude product name",
                                   "fill": "$home-ink",
                                   "content": "Claude",
-                                  "lineHeight": 1.45,
+                                  "lineHeight": 1.5,
                                   "fontFamily": "Geist",
                                   "fontSize": 13
                                 }
@@ -3904,7 +3931,7 @@
                                   "name": "Hermes product name",
                                   "fill": "$home-ink",
                                   "content": "Hermes",
-                                  "lineHeight": 1.45,
+                                  "lineHeight": 1.5,
                                   "fontFamily": "Geist",
                                   "fontSize": 13
                                 }
@@ -3936,7 +3963,7 @@
                                   "name": "OpenClaw product name",
                                   "fill": "$home-ink",
                                   "content": "OpenClaw",
-                                  "lineHeight": 1.45,
+                                  "lineHeight": 1.5,
                                   "fontFamily": "Geist",
                                   "fontSize": 13
                                 }
@@ -3968,7 +3995,7 @@
                                   "name": "Pi product name",
                                   "fill": "$home-ink",
                                   "content": "Pi",
-                                  "lineHeight": 1.45,
+                                  "lineHeight": 1.5,
                                   "fontFamily": "Geist",
                                   "fontSize": 13
                                 }
@@ -4126,7 +4153,7 @@
                   ],
                   "layout": "vertical",
                   "gap": 10,
-                  "padding": 28,
+                  "padding": 29,
                   "children": [
                     {
                       "type": "text",
@@ -4174,6 +4201,12 @@
                       "name": "Reply / booking state",
                       "width": "fill_container",
                       "gap": 6,
+                      "padding": [
+                        2,
+                        0,
+                        0,
+                        0
+                      ],
                       "alignItems": "center",
                       "children": [
                         {
@@ -4809,8 +4842,11 @@
         {
           "type": "frame",
           "id": "K7ykrM",
+          "x": 0,
+          "y": 1192.5,
           "name": "Three setup tasks",
-          "width": "fill_container",
+          "enabled": false,
+          "width": "fill_container(1440)",
           "fill": "$home-bg",
           "layout": "vertical",
           "gap": 18,
@@ -5451,8 +5487,11 @@
         {
           "type": "frame",
           "id": "EsRLM",
+          "x": 0,
+          "y": 1832.5,
           "name": "FAQ",
-          "width": "fill_container",
+          "enabled": false,
+          "width": "fill_container(1440)",
           "fill": "$home-surface",
           "gap": 80,
           "padding": [
@@ -5810,8 +5849,11 @@
         {
           "type": "frame",
           "id": "C7OvpZ",
+          "x": 0,
+          "y": 2338.5,
           "name": "Closing sign-in",
-          "width": "fill_container",
+          "enabled": false,
+          "width": "fill_container(1440)",
           "fill": "$home-bg",
           "gap": 40,
           "padding": [
@@ -5901,8 +5943,11 @@
         {
           "type": "frame",
           "id": "oNuGF",
+          "x": 0,
+          "y": 2514.5,
           "name": "Footer",
-          "width": "fill_container",
+          "enabled": false,
+          "width": "fill_container(1440)",
           "fill": "$home-bg",
           "stroke": "$home-line",
           "strokeWidth": {

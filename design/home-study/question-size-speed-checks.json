@@ -374,5 +374,9 @@
       "report": "question-ticker-review.md#faster-tighter-tickers"
     }
   },
-  "currentRecord": "latestFasterTighter; earlier browser/artifact measurements describe the preceding size refinement."
+  "currentRecord": "latestFasterTighter; earlier browser/artifact measurements describe the preceding size refinement.",
+  "laterNativeReplica": {
+    "record": "current-pen-replica-checks.json",
+    "scope": "Current native header/hero alignment, visible page scope and affected native export hashes. HTML behavior remains as recorded."
+  }
 }

@@ -1,5 +1,7 @@
 # AIHarder — current Pen synchronization
 
+The [current editable replica](current-pen-replica.md) supersedes this earlier checkpoint for page scope, header/hero alignment and current native exports. Setup and later sections are retained as disabled drafts inside the active English desktop pages.
+
 This records the preceding hero synchronization checkpoint. The later [question ticker study](question-ticker-study.md) is current for the headline, flat mark and following section; its checks replace the affected asset/export hashes recorded here.
 
 Saved on 2026-11-01 in [ahmcp.pen](../ahmcp.pen), following the owner's request to transfer the current HTML hero to Pen. Only English desktop Light `uAXkc` and Dark `p7u8w`, and their dedicated logo component `GqxcO`, were updated. The in-chat editor timed out on a read attempt; the native Pen desktop MCP completed the edits, and the desktop save indicator was cleared after saving.

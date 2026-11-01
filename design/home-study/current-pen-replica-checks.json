@@ -1,0 +1,666 @@
+{
+  "date": "2026-11-01",
+  "scope": "Current desktop English Light/Dark replica of header, hero and questions",
+  "native": {
+    "frozenRootIds": [
+      "NXGWi",
+      "UEEFt",
+      "mEDaF",
+      "PjJf8",
+      "Bjaja",
+      "itt5n",
+      "uzAUz",
+      "Qg3nb",
+      "T37OLV",
+      "qJZFz",
+      "bMKmj",
+      "PuPqO",
+      "idH0v",
+      "OWSCj",
+      "kUGfy"
+    ],
+    "frozenRootsChanged": [],
+    "drafts": [
+      {
+        "id": "uxfOi",
+        "disabled": true,
+        "contentAndStylesUnchanged": true
+      },
+      {
+        "id": "K7ykrM",
+        "disabled": true,
+        "contentAndStylesUnchanged": true
+      },
+      {
+        "id": "H1zcWf",
+        "disabled": true,
+        "contentAndStylesUnchanged": true
+      },
+      {
+        "id": "EsRLM",
+        "disabled": true,
+        "contentAndStylesUnchanged": true
+      },
+      {
+        "id": "L7kaAs",
+        "disabled": true,
+        "contentAndStylesUnchanged": true
+      },
+      {
+        "id": "C7OvpZ",
+        "disabled": true,
+        "contentAndStylesUnchanged": true
+      },
+      {
+        "id": "yZ4bJ",
+        "disabled": true,
+        "contentAndStylesUnchanged": true
+      },
+      {
+        "id": "oNuGF",
+        "disabled": true,
+        "contentAndStylesUnchanged": true
+      }
+    ],
+    "pages": [
+      {
+        "id": "uAXkc",
+        "bounds": {
+          "x": 1360,
+          "y": 1000,
+          "width": 1440,
+          "height": 1192.5
+        },
+        "visibleSections": [
+          {
+            "id": "Py7nJ",
+            "name": "Header"
+          },
+          {
+            "id": "o4sdvx",
+            "name": "Hero / value and illustrative conversation"
+          },
+          {
+            "id": "ES3Gf",
+            "name": "Questions / large text wall and topic pills"
+          }
+        ],
+        "placeholders": false
+      },
+      {
+        "id": "p7u8w",
+        "bounds": {
+          "x": 2960,
+          "y": 1000,
+          "width": 1440,
+          "height": 1192.5
+        },
+        "visibleSections": [
+          {
+            "id": "Y5q0PC",
+            "name": "Header"
+          },
+          {
+            "id": "QJRsJ",
+            "name": "Hero / value and illustrative conversation"
+          },
+          {
+            "id": "lKHEL",
+            "name": "Questions / large text wall and topic pills"
+          }
+        ],
+        "placeholders": false
+      }
+    ],
+    "lightBounds": [
+      {
+        "id": "Py7nJ",
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 89
+        }
+      },
+      {
+        "id": "tUp34",
+        "bounds": {
+          "x": 120,
+          "y": 12.75,
+          "width": 400,
+          "height": 62.5
+        }
+      },
+      {
+        "id": "bsaOL",
+        "bounds": {
+          "x": 520,
+          "y": 33.5,
+          "width": 400,
+          "height": 21
+        }
+      },
+      {
+        "id": "mXWYt",
+        "bounds": {
+          "x": 920,
+          "y": 20,
+          "width": 400,
+          "height": 48
+        }
+      },
+      {
+        "id": "o4sdvx",
+        "bounds": {
+          "x": 0,
+          "y": 89,
+          "width": 1440,
+          "height": 535
+        }
+      },
+      {
+        "id": "SHo1J",
+        "bounds": {
+          "x": 120,
+          "y": 54,
+          "width": 532,
+          "height": 426
+        }
+      },
+      {
+        "id": "B725s",
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "width": 152,
+          "height": 50
+        }
+      },
+      {
+        "id": "P4z0My",
+        "bounds": {
+          "x": 252,
+          "y": 84,
+          "width": 344,
+          "height": 286
+        }
+      },
+      {
+        "id": "ES3Gf",
+        "bounds": {
+          "x": 0,
+          "y": 624,
+          "width": 1440,
+          "height": 568.5
+        }
+      },
+      {
+        "id": "C4FwI",
+        "bounds": {
+          "x": 120,
+          "y": 257,
+          "width": 1200,
+          "height": 239.5
+        }
+      }
+    ]
+  },
+  "savedInDesktopApp": true,
+  "editedIndicatorAbsent": true,
+  "integratedEditorReopenedAfterSave": true,
+  "browserViewportReset": true,
+  "browser": {
+    "light": {
+      "rects": {
+        "#questions": {
+          "color": "rgb(20, 40, 63)",
+          "font": "16px",
+          "gap": "normal",
+          "height": 569,
+          "lineHeight": "24px",
+          "padding": "72px 0px",
+          "width": 1440,
+          "x": 0,
+          "y": 624
+        },
+        ".actions": {
+          "color": "rgb(20, 40, 63)",
+          "font": "16px",
+          "gap": "24px",
+          "height": 50,
+          "lineHeight": "24px",
+          "padding": "0px",
+          "width": 532,
+          "x": 120,
+          "y": 430.640625
+        },
+        ".answer": {
+          "color": "rgb(20, 40, 63)",
+          "font": "16px",
+          "gap": "normal",
+          "height": 286.25,
+          "lineHeight": "24px",
+          "padding": "28px",
+          "width": 344,
+          "x": 976,
+          "y": 205
+        },
+        ".apps": {
+          "color": "rgb(20, 40, 63)",
+          "font": "16px",
+          "gap": "18px",
+          "height": 24,
+          "lineHeight": "24px",
+          "padding": "0px",
+          "width": 532,
+          "x": 120,
+          "y": 544.140625
+        },
+        ".brand": {
+          "color": "rgb(20, 40, 63)",
+          "font": "21.875px",
+          "gap": "10px",
+          "height": 50,
+          "lineHeight": "21.875px",
+          "padding": "0px",
+          "width": 400,
+          "x": 120,
+          "y": 19
+        },
+        ".brand-mark-light": {
+          "color": "rgb(20, 40, 63)",
+          "font": "21.875px",
+          "gap": "normal",
+          "height": 50,
+          "lineHeight": "21.875px",
+          "padding": "0px",
+          "width": 43.75,
+          "x": 120,
+          "y": 19
+        },
+        ".ground": {
+          "color": "rgb(20, 40, 63)",
+          "font": "16px",
+          "gap": "normal",
+          "height": 20,
+          "lineHeight": "24px",
+          "padding": "0px",
+          "width": 300,
+          "x": 676,
+          "y": 587
+        },
+        ".header-inner": {
+          "color": "rgb(20, 40, 63)",
+          "font": "16px",
+          "gap": "normal",
+          "height": 88,
+          "lineHeight": "24px",
+          "padding": "0px",
+          "width": 1200,
+          "x": 120,
+          "y": 0
+        },
+        ".header-signin": {
+          "color": "rgb(255, 255, 255)",
+          "font": "14px",
+          "gap": "normal",
+          "height": 48,
+          "lineHeight": "21px",
+          "padding": "12px 28px",
+          "width": 142,
+          "x": 1178,
+          "y": 20
+        },
+        ".hero": {
+          "color": "rgb(20, 40, 63)",
+          "font": "16px",
+          "gap": "72px",
+          "height": 534,
+          "lineHeight": "24px",
+          "padding": "32px 0px",
+          "width": 1200,
+          "x": 120,
+          "y": 89
+        },
+        ".hero-band": {
+          "color": "rgb(20, 40, 63)",
+          "font": "16px",
+          "gap": "normal",
+          "height": 535,
+          "lineHeight": "24px",
+          "padding": "0px",
+          "width": 1440,
+          "x": 0,
+          "y": 89
+        },
+        ".intro": {
+          "color": "rgb(20, 40, 63)",
+          "font": "18px",
+          "gap": "normal",
+          "height": 54,
+          "lineHeight": "27px",
+          "padding": "0px",
+          "width": 532,
+          "x": 120,
+          "y": 352.640625
+        },
+        ".kettle": {
+          "color": "rgb(20, 40, 63)",
+          "font": "16px",
+          "gap": "normal",
+          "height": 390,
+          "lineHeight": "24px",
+          "padding": "0px",
+          "width": 360,
+          "x": 644,
+          "y": 207
+        },
+        ".language": {
+          "color": "rgb(20, 40, 63)",
+          "font": "14px",
+          "gap": "7px",
+          "height": 21,
+          "lineHeight": "21px",
+          "padding": "0px",
+          "width": 65.90625,
+          "x": 1042.09375,
+          "y": 33.5
+        },
+        ".nav": {
+          "color": "rgb(20, 40, 63)",
+          "font": "14px",
+          "gap": "32px",
+          "height": 21,
+          "lineHeight": "21px",
+          "padding": "0px",
+          "width": 400,
+          "x": 520,
+          "y": 33.5
+        },
+        ".pitch": {
+          "color": "rgb(20, 40, 63)",
+          "font": "16px",
+          "gap": "24px",
+          "height": 424.28125,
+          "lineHeight": "24px",
+          "padding": "0px",
+          "width": 532,
+          "x": 120,
+          "y": 143.859375
+        },
+        ".question": {
+          "color": "rgb(255, 255, 255)",
+          "font": "16px",
+          "gap": "normal",
+          "height": 60,
+          "lineHeight": "24px",
+          "padding": "18px 22px",
+          "width": 300,
+          "x": 1020,
+          "y": 129
+        },
+        ".question-tickers": {
+          "color": "rgb(20, 40, 63)",
+          "font": "16px",
+          "gap": "10.5px",
+          "height": 239.5,
+          "lineHeight": "24px",
+          "padding": "0px",
+          "width": 1200,
+          "x": 120,
+          "y": 880.5
+        },
+        ".question-topics": {
+          "color": "rgb(20, 40, 63)",
+          "font": "16px",
+          "gap": "4px",
+          "height": 36.5,
+          "lineHeight": "24px",
+          "padding": "0px",
+          "width": 1440,
+          "x": 0,
+          "y": 812
+        },
+        ".questions-heading": {
+          "color": "rgb(20, 40, 63)",
+          "font": "40px",
+          "gap": "normal",
+          "height": 92,
+          "lineHeight": "46px",
+          "padding": "0px",
+          "width": 840,
+          "x": 300,
+          "y": 696
+        },
+        ".scene": {
+          "color": "rgb(20, 40, 63)",
+          "font": "16px",
+          "gap": "normal",
+          "height": 470,
+          "lineHeight": "24px",
+          "padding": "0px",
+          "width": 596,
+          "x": 724,
+          "y": 121
+        },
+        ".site-header": {
+          "color": "rgb(20, 40, 63)",
+          "font": "16px",
+          "gap": "normal",
+          "height": 89,
+          "lineHeight": "24px",
+          "padding": "0px",
+          "width": 1440,
+          "x": 0,
+          "y": 0
+        },
+        ".utilities": {
+          "color": "rgb(20, 40, 63)",
+          "font": "14px",
+          "gap": "24px",
+          "height": 48,
+          "lineHeight": "21px",
+          "padding": "0px",
+          "width": 400,
+          "x": 920,
+          "y": 20
+        },
+        ".utilities>.icon": {
+          "color": "rgb(20, 40, 63)",
+          "font": "14px",
+          "gap": "normal",
+          "height": 22,
+          "lineHeight": "21px",
+          "padding": "0px",
+          "width": 22,
+          "x": 1132,
+          "y": 33
+        },
+        ".works": {
+          "color": "rgb(20, 40, 63)",
+          "font": "16px",
+          "gap": "normal",
+          "height": 63.5,
+          "lineHeight": "24px",
+          "padding": "8px 0px 0px",
+          "width": 532,
+          "x": 120,
+          "y": 504.640625
+        },
+        ".works-label": {
+          "color": "rgb(81, 97, 116)",
+          "font": "13px",
+          "gap": "normal",
+          "height": 19.5,
+          "lineHeight": "19.5px",
+          "padding": "0px",
+          "width": 532,
+          "x": 120,
+          "y": 512.640625
+        },
+        "h1": {
+          "color": "rgb(20, 40, 63)",
+          "font": "56px",
+          "gap": "normal",
+          "height": 184.78125,
+          "lineHeight": "61.6px",
+          "padding": "0px",
+          "width": 532,
+          "x": 120,
+          "y": 143.859375
+        }
+      },
+      "theme": "light"
+    },
+    "dark": {
+      "questionFont": "26px",
+      "rects": {
+        "#questions": {
+          "height": 569,
+          "width": 1440,
+          "x": 0,
+          "y": 624
+        },
+        ".answer": {
+          "height": 286.25,
+          "width": 344,
+          "x": 976,
+          "y": 205
+        },
+        ".brand": {
+          "height": 50,
+          "width": 400,
+          "x": 120,
+          "y": 19
+        },
+        ".header-signin": {
+          "height": 48,
+          "width": 142,
+          "x": 1178,
+          "y": 20
+        },
+        ".hero-band": {
+          "height": 535,
+          "width": 1440,
+          "x": 0,
+          "y": 89
+        },
+        ".nav": {
+          "height": 21,
+          "width": 400,
+          "x": 520,
+          "y": 33.5
+        },
+        ".pitch": {
+          "height": 424.28125,
+          "width": 532,
+          "x": 120,
+          "y": 143.859375
+        },
+        ".question-tickers": {
+          "height": 239.5,
+          "width": 1200,
+          "x": 120,
+          "y": 880.5
+        },
+        ".site-header": {
+          "height": 89,
+          "width": 1440,
+          "x": 0,
+          "y": 0
+        },
+        ".utilities": {
+          "height": 48,
+          "width": 400,
+          "x": 920,
+          "y": 20
+        }
+      },
+      "theme": "dark",
+      "topicFont": "11px"
+    },
+    "viewport": [
+      1440,
+      1000
+    ],
+    "mode": "motion=off&ticker=still&reply=long"
+  },
+  "artifacts": [
+    {
+      "file": "previews/uAXkc.png",
+      "format": "PNG",
+      "width": 1440,
+      "height": 1193,
+      "sha256": "3b08611d5c0a51b8db2b54744c8441ffeb11dbbabf2d917ea2e506501faa1d17"
+    },
+    {
+      "file": "previews/p7u8w.png",
+      "format": "PNG",
+      "width": 1440,
+      "height": 1193,
+      "sha256": "e69edd23199fad71190d2de6c8b4b81e4768bffea124bd50ac1c809d284b0596"
+    },
+    {
+      "file": "previews/Py7nJ.png",
+      "format": "PNG",
+      "width": 1440,
+      "height": 90,
+      "sha256": "9a6015394d0061146d824336097b5cc1667c608c166488cf9ddf407e83d922f3"
+    },
+    {
+      "file": "previews/Y5q0PC.png",
+      "format": "PNG",
+      "width": 1440,
+      "height": 90,
+      "sha256": "ad2aed9098560382f91f3b80c988bbc8ba24c721b2555673d013e4700ed07614"
+    },
+    {
+      "file": "previews/o4sdvx.png",
+      "format": "PNG",
+      "width": 1440,
+      "height": 536,
+      "sha256": "f192e6760cf80fc9fb8de3b5e01e49ff90cfaae5eb2e15530ffb30163171f29f"
+    },
+    {
+      "file": "previews/QJRsJ.png",
+      "format": "PNG",
+      "width": 1440,
+      "height": 536,
+      "sha256": "0954c2e853951dd5f27526eabbf74cba18262ac13cfe0a0b474764abd88b9fb8"
+    },
+    {
+      "file": "previews/ES3Gf.png",
+      "format": "PNG",
+      "width": 1440,
+      "height": 569,
+      "sha256": "de07a91724e820bf94ab456de9114419bc9c4d7b78a86e6d6e5505cd3d63cc50"
+    },
+    {
+      "file": "previews/lKHEL.png",
+      "format": "PNG",
+      "width": 1440,
+      "height": 569,
+      "sha256": "4e208417b0d7c9793d27d73d7a5c55ff2fd172cc930467c078bed23dccd9689c"
+    },
+    {
+      "file": "previews/current-source-light.jpg",
+      "format": "JPEG",
+      "width": 1440,
+      "height": 1308,
+      "sha256": "a2767f53bdb148fb5d04b6964f48973251fcb0d615f63e1c45f6fd405ab5936f"
+    },
+    {
+      "file": "previews/current-source-dark.jpg",
+      "format": "JPEG",
+      "width": 1440,
+      "height": 1308,
+      "sha256": "96d959e675ae0150f2328fdb1469382f1cd5e977c8011c8ee9f0ccac7642f6c1"
+    }
+  ],
+  "verification": {
+    "brokenLocalLinks": [],
+    "sourceHashesChecked": 70,
+    "sourceHashMismatches": [],
+    "runtimeSuite": "Not run; native design and documentation only."
+  }
+}
