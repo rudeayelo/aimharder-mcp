@@ -1,5 +1,7 @@
 # AIHarder — desktop refinement
 
+**Current Pen checkpoint — 2026-11-01:** the latest static hero and header are saved in the two English desktop Light/Dark home frames. See [Pen synchronization](pen-sync.md) and its verification record. Earlier HTML-only/editor-timeout statements below describe the historical checkpoints; they are no longer the current synchronization status. Motion remains in HTML, and the six other home variants remain frozen.
+
 Date: 2026-10-31. Owner-directed revision under #95.
 
 ## Scope

@@ -750,6 +750,7 @@
       "x": 1360,
       "y": 1000,
       "name": "AIHarder / Desktop / English / Light",
+      "context": "Current desktop English home study. Header/hero synchronized from hero-motion-prototype.html. Static long-answer composition; animation remains in HTML. selfh.st icon attribution/license retained in home-study/assets/README.md.",
       "theme": {
         "appearance": "light",
         "language": "en"
@@ -764,14 +765,14 @@
           "id": "Py7nJ",
           "name": "Header",
           "width": "fill_container",
-          "height": 120,
+          "height": 89,
           "fill": "$home-bg",
           "stroke": "$home-line",
           "strokeWidth": {
             "bottom": 1
           },
           "padding": [
-            24,
+            13.25,
             120
           ],
           "justifyContent": "space_between",
@@ -917,27 +918,16 @@
                   "stroke": "#12528F",
                   "strokeWidth": 1,
                   "cornerRadius": 8,
-                  "effect": [
-                    {
-                      "type": "shadow",
-                      "shadowType": "inner",
-                      "color": "#FFFFFF30",
-                      "offset": {
-                        "x": 0,
-                        "y": 1
-                      }
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000001A",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
                     },
-                    {
-                      "type": "shadow",
-                      "shadowType": "outer",
-                      "color": "#14283F29",
-                      "offset": {
-                        "x": 0,
-                        "y": 2
-                      },
-                      "blur": 4
-                    }
-                  ],
+                    "blur": 6
+                  },
                   "descendants": {
                     "ugUJO": {
                       "content": "Sign in",
@@ -955,14 +945,25 @@
           "type": "frame",
           "id": "o4sdvx",
           "name": "Hero / value and illustrative conversation",
-          "context": "Graphic hero: waiting → user question → thinking → answer. Static answer composition; no text composer or paginator.",
+          "context": "Static Grainient render as background only; editable foreground. Source renderer: home-study/render-pen-background.html",
+          "clip": true,
           "width": "fill_container",
-          "fill": "$home-bg",
+          "height": 535,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "home-study/assets/pen/hero-background-light.png",
+            "mode": "stretch"
+          },
+          "stroke": "#79A4DC",
+          "strokeWidth": {
+            "bottom": 1
+          },
           "gap": 72,
           "padding": [
-            72,
+            32,
             120,
-            64,
+            33,
             120
           ],
           "alignItems": "center",
@@ -984,7 +985,7 @@
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
                   "content": "Focus more\non training,\nless on tapping.",
-                  "lineHeight": 1.12,
+                  "lineHeight": 1.1,
                   "fontFamily": "Geist",
                   "fontSize": 56,
                   "fontWeight": "700",
@@ -994,11 +995,11 @@
                   "type": "text",
                   "id": "Zg9SG",
                   "name": "Introduction",
-                  "fill": "$home-muted",
+                  "fill": "$home-ink",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
                   "content": "Book classes, see your workouts and review the activity in your AimHarder account.",
-                  "lineHeight": 1.45,
+                  "lineHeight": 1.5,
                   "fontFamily": "Geist",
                   "fontSize": 18,
                   "fontWeight": "normal"
@@ -1039,27 +1040,16 @@
                       "stroke": "#12528F",
                       "strokeWidth": 1,
                       "cornerRadius": 8,
-                      "effect": [
-                        {
-                          "type": "shadow",
-                          "shadowType": "inner",
-                          "color": "#FFFFFF30",
-                          "offset": {
-                            "x": 0,
-                            "y": 1
-                          }
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#0000001A",
+                        "offset": {
+                          "x": 0,
+                          "y": 4
                         },
-                        {
-                          "type": "shadow",
-                          "shadowType": "outer",
-                          "color": "#14283F29",
-                          "offset": {
-                            "x": 0,
-                            "y": 2
-                          },
-                          "blur": 4
-                        }
-                      ],
+                        "blur": 6
+                      },
                       "descendants": {
                         "ugUJO": {
                           "content": "Sign in",
@@ -1107,7 +1097,7 @@
                   "id": "b6cHY",
                   "name": "Works with / integrated hero logos",
                   "width": "fill_container",
-                  "fill": "$home-bg",
+                  "fill": "#00000000",
                   "layout": "vertical",
                   "padding": [
                     8,
@@ -1175,8 +1165,7 @@
                                   "content": "ChatGPT",
                                   "lineHeight": 1.45,
                                   "fontFamily": "Geist",
-                                  "fontSize": 13,
-                                  "fontWeight": "500"
+                                  "fontSize": 13
                                 }
                               ]
                             },
@@ -1208,8 +1197,7 @@
                                   "content": "Claude",
                                   "lineHeight": 1.45,
                                   "fontFamily": "Geist",
-                                  "fontSize": 13,
-                                  "fontWeight": "500"
+                                  "fontSize": 13
                                 }
                               ]
                             },
@@ -1227,7 +1215,7 @@
                                   "fill": {
                                     "type": "image",
                                     "enabled": true,
-                                    "url": "home-study/assets/apps/hermes-avatar.png",
+                                    "url": "home-study/assets/pen/hermes-selfhst-light.png",
                                     "mode": "contain"
                                   },
                                   "width": 24,
@@ -1241,8 +1229,7 @@
                                   "content": "Hermes",
                                   "lineHeight": 1.45,
                                   "fontFamily": "Geist",
-                                  "fontSize": 13,
-                                  "fontWeight": "500"
+                                  "fontSize": 13
                                 }
                               ]
                             },
@@ -1260,7 +1247,7 @@
                                   "fill": {
                                     "type": "image",
                                     "enabled": true,
-                                    "url": "home-study/assets/apps/openclaw-mono-light.png",
+                                    "url": "home-study/assets/pen/openclaw-selfhst-light.png",
                                     "mode": "contain"
                                   },
                                   "width": 24,
@@ -1274,8 +1261,7 @@
                                   "content": "OpenClaw",
                                   "lineHeight": 1.45,
                                   "fontFamily": "Geist",
-                                  "fontSize": 13,
-                                  "fontWeight": "500"
+                                  "fontSize": 13
                                 }
                               ]
                             },
@@ -1307,8 +1293,7 @@
                                   "content": "Pi",
                                   "lineHeight": 1.45,
                                   "fontFamily": "Geist",
-                                  "fontSize": 13,
-                                  "fontWeight": "500"
+                                  "fontSize": 13
                                 }
                               ]
                             }
@@ -1325,33 +1310,44 @@
               "id": "y0ooM",
               "name": "Graphic hero / attentive kettle and tail-free reply",
               "width": "fill_container",
-              "height": 500,
+              "height": 470,
               "layout": "none",
               "children": [
                 {
-                  "type": "frame",
-                  "id": "XbyNv",
-                  "x": -12,
-                  "y": 476,
-                  "name": "Kettle ground contact",
-                  "width": 204,
-                  "height": 14,
-                  "fill": "#14283F0D",
-                  "cornerRadius": 7,
+                  "type": "ellipse",
+                  "id": "U7dbLY",
+                  "x": -48,
+                  "y": 466,
+                  "name": "Kettle ground contact / wide outer shadow",
+                  "fill": "#14283F4D",
+                  "width": 300,
+                  "height": 20,
                   "effect": {
                     "type": "blur",
-                    "radius": 5
-                  },
-                  "layout": "none"
+                    "radius": 8
+                  }
+                },
+                {
+                  "type": "ellipse",
+                  "id": "j5gnu",
+                  "x": -10,
+                  "y": 471,
+                  "name": "Kettle ground contact / darker core",
+                  "fill": "#14283F59",
+                  "width": 224,
+                  "height": 7,
+                  "effect": {
+                    "type": "blur",
+                    "radius": 2
+                  }
                 },
                 {
                   "type": "frame",
                   "id": "pdqh3",
                   "x": -80,
-                  "y": 96,
+                  "y": 86,
                   "name": "Kettle / looking toward user message",
                   "context": "768px transparent render from the actual 32k body and curved eye rig. Image crop removes transparent margins only.",
-                  "clip": true,
                   "width": 360,
                   "height": 390,
                   "layout": "none",
@@ -1380,13 +1376,23 @@
                   "y": 8,
                   "name": "User question / upper right",
                   "width": 300,
-                  "fill": "$home-bubble",
+                  "fill": "#14283F",
                   "cornerRadius": [
-                    24,
-                    24,
+                    18,
+                    18,
                     6,
-                    24
+                    18
                   ],
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000001A",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 6
+                  },
                   "layout": "vertical",
                   "padding": [
                     18,
@@ -1397,7 +1403,7 @@
                       "type": "text",
                       "id": "uTm9D",
                       "name": "Question / next booking",
-                      "fill": "$home-ink",
+                      "fill": "#FFFFFF",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
                       "content": "When is my next booking?",
@@ -1411,18 +1417,39 @@
                 {
                   "type": "frame",
                   "id": "P4z0My",
-                  "x": 314,
-                  "y": 183,
+                  "x": 252,
+                  "y": 84,
                   "name": "Kettle reply / no speech tail",
-                  "context": "Reply ownership will be conveyed by synchronized character motion and bubble appearance, not a pointer.",
-                  "width": 282,
-                  "fill": "$home-surface",
-                  "cornerRadius": 24,
-                  "stroke": "$home-line",
+                  "context": "Complete fictional WOD answer. No speech pointer or text cursor; animated reveal lives in the HTML prototype.",
+                  "width": 344,
+                  "fill": "#F8FBFF99",
+                  "cornerRadius": [
+                    18,
+                    18,
+                    18,
+                    6
+                  ],
+                  "stroke": "#A9C3E480",
                   "strokeWidth": 1,
+                  "effect": [
+                    {
+                      "type": "background_blur",
+                      "radius": 12
+                    },
+                    {
+                      "type": "shadow",
+                      "shadowType": "outer",
+                      "color": "#0000001A",
+                      "offset": {
+                        "x": 0,
+                        "y": 4
+                      },
+                      "blur": 6
+                    }
+                  ],
                   "layout": "vertical",
                   "gap": 10,
-                  "padding": 24,
+                  "padding": 28,
                   "children": [
                     {
                       "type": "text",
@@ -1458,7 +1485,7 @@
                       "fill": "$home-ink",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "CrossFit",
+                      "content": "WOD",
                       "lineHeight": 1.5,
                       "fontFamily": "Geist",
                       "fontSize": 16,
@@ -1494,6 +1521,33 @@
                           "fontFamily": "Geist",
                           "fontSize": 13,
                           "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Y1JMvM",
+                      "name": "Reply / additional booking detail",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "padding": [
+                        4,
+                        0,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "YRhGZ",
+                          "name": "Reply / long booking example",
+                          "fill": "$home-ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "You also have a booking on Thursday at 18:00. Both are WOD classes. Ask me about the published workout whenever you want to check what is coming up.",
+                          "lineHeight": 1.55,
+                          "fontFamily": "Geist",
+                          "fontSize": 15
                         }
                       ]
                     }
@@ -2135,7 +2189,7 @@
                                   "fill": {
                                     "type": "image",
                                     "enabled": true,
-                                    "url": "home-study/assets/apps/hermes-avatar.png",
+                                    "url": "home-study/assets/pen/hermes-selfhst-light.png",
                                     "mode": "contain"
                                   },
                                   "width": 30,
@@ -2173,7 +2227,7 @@
                                   "fill": {
                                     "type": "image",
                                     "enabled": true,
-                                    "url": "home-study/assets/apps/openclaw.png",
+                                    "url": "home-study/assets/pen/openclaw-selfhst-light.png",
                                     "mode": "contain"
                                   },
                                   "width": 30,
@@ -2347,7 +2401,7 @@
                                   "fill": "$home-ink",
                                   "textGrowth": "fixed-width",
                                   "width": "fill_container",
-                                  "content": "Tomorrow’s CrossFit classes",
+                                  "content": "Tomorrow’s WOD classes",
                                   "lineHeight": 1.45,
                                   "fontFamily": "Geist",
                                   "fontSize": 14,
@@ -2854,27 +2908,16 @@
               "stroke": "#12528F",
               "strokeWidth": 1,
               "cornerRadius": 8,
-              "effect": [
-                {
-                  "type": "shadow",
-                  "shadowType": "inner",
-                  "color": "#FFFFFF30",
-                  "offset": {
-                    "x": 0,
-                    "y": 1
-                  }
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0000001A",
+                "offset": {
+                  "x": 0,
+                  "y": 4
                 },
-                {
-                  "type": "shadow",
-                  "shadowType": "outer",
-                  "color": "#14283F29",
-                  "offset": {
-                    "x": 0,
-                    "y": 2
-                  },
-                  "blur": 4
-                }
-              ],
+                "blur": 6
+              },
               "descendants": {
                 "ugUJO": {
                   "content": "Sign in",
@@ -3037,6 +3080,7 @@
       "x": 2960,
       "y": 1000,
       "name": "AIHarder / Desktop / English / Dark",
+      "context": "Current desktop English home study. Header/hero synchronized from hero-motion-prototype.html. Static long-answer composition; animation remains in HTML. selfh.st icon attribution/license retained in home-study/assets/README.md.",
       "theme": {
         "appearance": "dark",
         "language": "en"
@@ -3051,14 +3095,14 @@
           "id": "Y5q0PC",
           "name": "Header",
           "width": "fill_container",
-          "height": 120,
+          "height": 89,
           "fill": "$home-bg",
           "stroke": "$home-line",
           "strokeWidth": {
             "bottom": 1
           },
           "padding": [
-            24,
+            13.25,
             120
           ],
           "justifyContent": "space_between",
@@ -3069,7 +3113,17 @@
               "type": "ref",
               "ref": "GqxcO",
               "name": "Brand / AIHarder",
-              "width": "fill_container"
+              "width": "fill_container",
+              "descendants": {
+                "OMijO": {
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "home-study/assets/pen/kettle-flat-dark.png",
+                    "mode": "contain"
+                  }
+                }
+              }
             },
             {
               "type": "frame",
@@ -3205,27 +3259,16 @@
                   "stroke": "#61A9EB",
                   "strokeWidth": 1,
                   "cornerRadius": 8,
-                  "effect": [
-                    {
-                      "type": "shadow",
-                      "shadowType": "inner",
-                      "color": "#FFFFFF30",
-                      "offset": {
-                        "x": 0,
-                        "y": 1
-                      }
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000001A",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
                     },
-                    {
-                      "type": "shadow",
-                      "shadowType": "outer",
-                      "color": "#0000003D",
-                      "offset": {
-                        "x": 0,
-                        "y": 2
-                      },
-                      "blur": 4
-                    }
-                  ],
+                    "blur": 6
+                  },
                   "descendants": {
                     "ugUJO": {
                       "content": "Sign in",
@@ -3243,14 +3286,25 @@
           "type": "frame",
           "id": "QJRsJ",
           "name": "Hero / value and illustrative conversation",
-          "context": "Graphic hero: waiting → user question → thinking → answer. Static answer composition; no text composer or paginator.",
+          "context": "Static Grainient render as background only; editable foreground. Source renderer: home-study/render-pen-background.html",
+          "clip": true,
           "width": "fill_container",
-          "fill": "$home-bg",
+          "height": 535,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "home-study/assets/pen/hero-background-dark.png",
+            "mode": "stretch"
+          },
+          "stroke": "#2D609B",
+          "strokeWidth": {
+            "bottom": 1
+          },
           "gap": 72,
           "padding": [
-            72,
+            32,
             120,
-            64,
+            33,
             120
           ],
           "alignItems": "center",
@@ -3272,7 +3326,7 @@
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
                   "content": "Focus more\non training,\nless on tapping.",
-                  "lineHeight": 1.12,
+                  "lineHeight": 1.1,
                   "fontFamily": "Geist",
                   "fontSize": 56,
                   "fontWeight": "700",
@@ -3286,7 +3340,7 @@
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
                   "content": "Book classes, see your workouts and review the activity in your AimHarder account.",
-                  "lineHeight": 1.45,
+                  "lineHeight": 1.5,
                   "fontFamily": "Geist",
                   "fontSize": 18,
                   "fontWeight": "normal"
@@ -3327,27 +3381,16 @@
                       "stroke": "#61A9EB",
                       "strokeWidth": 1,
                       "cornerRadius": 8,
-                      "effect": [
-                        {
-                          "type": "shadow",
-                          "shadowType": "inner",
-                          "color": "#FFFFFF30",
-                          "offset": {
-                            "x": 0,
-                            "y": 1
-                          }
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#0000001A",
+                        "offset": {
+                          "x": 0,
+                          "y": 4
                         },
-                        {
-                          "type": "shadow",
-                          "shadowType": "outer",
-                          "color": "#0000003D",
-                          "offset": {
-                            "x": 0,
-                            "y": 2
-                          },
-                          "blur": 4
-                        }
-                      ],
+                        "blur": 6
+                      },
                       "descendants": {
                         "ugUJO": {
                           "content": "Sign in",
@@ -3395,7 +3438,7 @@
                   "id": "hQWnS",
                   "name": "Works with / integrated hero logos",
                   "width": "fill_container",
-                  "fill": "$home-bg",
+                  "fill": "#00000000",
                   "layout": "vertical",
                   "padding": [
                     8,
@@ -3463,8 +3506,7 @@
                                   "content": "ChatGPT",
                                   "lineHeight": 1.45,
                                   "fontFamily": "Geist",
-                                  "fontSize": 13,
-                                  "fontWeight": "500"
+                                  "fontSize": 13
                                 }
                               ]
                             },
@@ -3496,8 +3538,7 @@
                                   "content": "Claude",
                                   "lineHeight": 1.45,
                                   "fontFamily": "Geist",
-                                  "fontSize": 13,
-                                  "fontWeight": "500"
+                                  "fontSize": 13
                                 }
                               ]
                             },
@@ -3515,7 +3556,7 @@
                                   "fill": {
                                     "type": "image",
                                     "enabled": true,
-                                    "url": "home-study/assets/apps/hermes-avatar.png",
+                                    "url": "home-study/assets/pen/hermes-selfhst-dark.png",
                                     "mode": "contain"
                                   },
                                   "width": 24,
@@ -3529,8 +3570,7 @@
                                   "content": "Hermes",
                                   "lineHeight": 1.45,
                                   "fontFamily": "Geist",
-                                  "fontSize": 13,
-                                  "fontWeight": "500"
+                                  "fontSize": 13
                                 }
                               ]
                             },
@@ -3548,7 +3588,7 @@
                                   "fill": {
                                     "type": "image",
                                     "enabled": true,
-                                    "url": "home-study/assets/apps/openclaw-mono-dark.png",
+                                    "url": "home-study/assets/pen/openclaw-selfhst-dark.png",
                                     "mode": "contain"
                                   },
                                   "width": 24,
@@ -3562,8 +3602,7 @@
                                   "content": "OpenClaw",
                                   "lineHeight": 1.45,
                                   "fontFamily": "Geist",
-                                  "fontSize": 13,
-                                  "fontWeight": "500"
+                                  "fontSize": 13
                                 }
                               ]
                             },
@@ -3595,8 +3634,7 @@
                                   "content": "Pi",
                                   "lineHeight": 1.45,
                                   "fontFamily": "Geist",
-                                  "fontSize": 13,
-                                  "fontWeight": "500"
+                                  "fontSize": 13
                                 }
                               ]
                             }
@@ -3613,33 +3651,44 @@
               "id": "k0XVN",
               "name": "Graphic hero / attentive kettle and tail-free reply",
               "width": "fill_container",
-              "height": 500,
+              "height": 470,
               "layout": "none",
               "children": [
                 {
-                  "type": "frame",
-                  "id": "kqtkA",
-                  "x": -12,
-                  "y": 476,
-                  "name": "Kettle ground contact",
-                  "width": 204,
-                  "height": 14,
-                  "fill": "#14283F0D",
-                  "cornerRadius": 7,
+                  "type": "ellipse",
+                  "id": "Z0lT9M",
+                  "x": -48,
+                  "y": 466,
+                  "name": "Kettle ground contact / wide outer shadow",
+                  "fill": "#000000A6",
+                  "width": 300,
+                  "height": 20,
                   "effect": {
                     "type": "blur",
-                    "radius": 5
-                  },
-                  "layout": "none"
+                    "radius": 8
+                  }
+                },
+                {
+                  "type": "ellipse",
+                  "id": "F40cRP",
+                  "x": -10,
+                  "y": 471,
+                  "name": "Kettle ground contact / darker core",
+                  "fill": "#000000B3",
+                  "width": 224,
+                  "height": 7,
+                  "effect": {
+                    "type": "blur",
+                    "radius": 2
+                  }
                 },
                 {
                   "type": "frame",
                   "id": "Gy1bU",
                   "x": -80,
-                  "y": 96,
+                  "y": 86,
                   "name": "Kettle / looking toward user message",
                   "context": "768px transparent render from the actual 32k body and curved eye rig. Image crop removes transparent margins only.",
-                  "clip": true,
                   "width": 360,
                   "height": 390,
                   "layout": "none",
@@ -3668,13 +3717,23 @@
                   "y": 8,
                   "name": "User question / upper right",
                   "width": 300,
-                  "fill": "$home-bubble",
+                  "fill": "#14283F",
                   "cornerRadius": [
-                    24,
-                    24,
+                    18,
+                    18,
                     6,
-                    24
+                    18
                   ],
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000001A",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 6
+                  },
                   "layout": "vertical",
                   "padding": [
                     18,
@@ -3685,7 +3744,7 @@
                       "type": "text",
                       "id": "a7SoK",
                       "name": "Question / next booking",
-                      "fill": "$home-ink",
+                      "fill": "#FFFFFF",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
                       "content": "When is my next booking?",
@@ -3699,18 +3758,39 @@
                 {
                   "type": "frame",
                   "id": "u7njPQ",
-                  "x": 314,
-                  "y": 183,
+                  "x": 252,
+                  "y": 84,
                   "name": "Kettle reply / no speech tail",
-                  "context": "Reply ownership will be conveyed by synchronized character motion and bubble appearance, not a pointer.",
-                  "width": 282,
-                  "fill": "$home-surface",
-                  "cornerRadius": 24,
-                  "stroke": "$home-line",
+                  "context": "Complete fictional WOD answer. No speech pointer or text cursor; animated reveal lives in the HTML prototype.",
+                  "width": 344,
+                  "fill": "#142B4599",
+                  "cornerRadius": [
+                    18,
+                    18,
+                    18,
+                    6
+                  ],
+                  "stroke": "#48688B80",
                   "strokeWidth": 1,
+                  "effect": [
+                    {
+                      "type": "background_blur",
+                      "radius": 12
+                    },
+                    {
+                      "type": "shadow",
+                      "shadowType": "outer",
+                      "color": "#0000001A",
+                      "offset": {
+                        "x": 0,
+                        "y": 4
+                      },
+                      "blur": 6
+                    }
+                  ],
                   "layout": "vertical",
                   "gap": 10,
-                  "padding": 24,
+                  "padding": 28,
                   "children": [
                     {
                       "type": "text",
@@ -3746,7 +3826,7 @@
                       "fill": "$home-ink",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "CrossFit",
+                      "content": "WOD",
                       "lineHeight": 1.5,
                       "fontFamily": "Geist",
                       "fontSize": 16,
@@ -3782,6 +3862,33 @@
                           "fontFamily": "Geist",
                           "fontSize": 13,
                           "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "fWb4I",
+                      "name": "Reply / additional booking detail",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "padding": [
+                        4,
+                        0,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "xZQmZ",
+                          "name": "Reply / long booking example",
+                          "fill": "$home-ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "You also have a booking on Thursday at 18:00. Both are WOD classes. Ask me about the published workout whenever you want to check what is coming up.",
+                          "lineHeight": 1.55,
+                          "fontFamily": "Geist",
+                          "fontSize": 15
                         }
                       ]
                     }
@@ -4423,7 +4530,7 @@
                                   "fill": {
                                     "type": "image",
                                     "enabled": true,
-                                    "url": "home-study/assets/apps/hermes-avatar.png",
+                                    "url": "home-study/assets/pen/hermes-selfhst-dark.png",
                                     "mode": "contain"
                                   },
                                   "width": 30,
@@ -4461,7 +4568,7 @@
                                   "fill": {
                                     "type": "image",
                                     "enabled": true,
-                                    "url": "home-study/assets/apps/openclaw.png",
+                                    "url": "home-study/assets/pen/openclaw-selfhst-dark.png",
                                     "mode": "contain"
                                   },
                                   "width": 30,
@@ -4635,7 +4742,7 @@
                                   "fill": "$home-ink",
                                   "textGrowth": "fixed-width",
                                   "width": "fill_container",
-                                  "content": "Tomorrow’s CrossFit classes",
+                                  "content": "Tomorrow’s WOD classes",
                                   "lineHeight": 1.45,
                                   "fontFamily": "Geist",
                                   "fontSize": 14,
@@ -5142,27 +5249,16 @@
               "stroke": "#61A9EB",
               "strokeWidth": 1,
               "cornerRadius": 8,
-              "effect": [
-                {
-                  "type": "shadow",
-                  "shadowType": "inner",
-                  "color": "#FFFFFF30",
-                  "offset": {
-                    "x": 0,
-                    "y": 1
-                  }
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0000001A",
+                "offset": {
+                  "x": 0,
+                  "y": 4
                 },
-                {
-                  "type": "shadow",
-                  "shadowType": "outer",
-                  "color": "#0000003D",
-                  "offset": {
-                    "x": 0,
-                    "y": 2
-                  },
-                  "blur": 4
-                }
-              ],
+                "blur": 6
+              },
               "descendants": {
                 "ugUJO": {
                   "content": "Sign in",
@@ -21462,7 +21558,7 @@
           "fill": {
             "type": "image",
             "enabled": true,
-            "url": "home-study/assets/kettle-neutral.png",
+            "url": "home-study/assets/pen/kettle-flat-light.png",
             "mode": "contain"
           },
           "width": 43.75,

@@ -34,10 +34,8 @@
       "sha256": "43c22f63dfacff207666c1cb335ac1753facca009b03a6378d5a349d17eeb9c9"
     }
   ],
-  "pending": [
-    "Sync the larger translucent reply and stronger shadow to the two English desktop pen frames; editor did not answer"
-  ],
-  "penSynchronized": false,
+  "pending": [],
+  "penSynchronized": true,
   "penFrameIds": [
     "uAXkc",
     "p7u8w"
@@ -59,5 +57,7 @@
     "thinkingPseudoElementContent": "none"
   },
   "penBoundsNote": "The character and contact shadow intentionally extend into the inter-column gap; the image clips transparent margins. The bounds visitor flags these intended graphics overlaps, not a clean pass.",
-  "latestMotionChecks": "hero-motion-checks.json"
+  "latestMotionChecks": "hero-motion-checks.json",
+  "penSynchronizationRecord": "pen-sync-checks.json",
+  "penSynchronizationScope": "Static composition only; English desktop Light/Dark; animation remains in HTML"
 }

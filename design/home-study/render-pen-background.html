@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>AIHarder hero background export</title>
+<script>
+  document.documentElement.dataset.theme = new URLSearchParams(location.search).get('theme') === 'dark' ? 'dark' : 'light';
+</script>
+<style>
+  * { box-sizing: border-box; }
+  html, body { width: 1440px; height: 535px; margin: 0; overflow: hidden; }
+  body { background: #fff; }
+  [data-theme=dark] body { background: #0d1521; }
+.hero-band{position:relative;isolation:isolate;overflow:hidden;border-bottom:1px solid #79a4dc}
+.hero-backdrop{position:absolute;inset:0;z-index:-2;opacity:.72;background:linear-gradient(180deg,#e8f2ff,#87b8f1)}
+.grainient-canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
+.hero-band::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,#e8f2ff 0%,#e8f2ff00 100%)}
+[data-theme=dark] .hero-backdrop{opacity:.55;background:linear-gradient(180deg,#0d1521,#174678)}
+[data-theme=dark] .hero-band::before{background:linear-gradient(180deg,#0d1521 0%,#0d152100 22%)}
+.hero-band{width:1440px;height:535px;border:0}
+  .hero-band { width: 1440px; height: 535px; border: 0; }
+</style>
+<main class="hero-band">
+  <div id="hero-grainient" class="hero-backdrop" aria-hidden="true"></div>
+</main>
+<script type="module" src="hero-background-mount.js"></script>
+</html>

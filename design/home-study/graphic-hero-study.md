@@ -1,5 +1,7 @@
 # AIHarder — graphic hero composition
 
+**Current Pen checkpoint — 2026-11-01:** the latest static hero and header are saved in the two English desktop Light/Dark home frames. See [Pen synchronization](pen-sync.md) and its verification record. Earlier HTML-only/editor-timeout statements below describe the historical checkpoints; they are no longer the current synchronization status. Motion remains in HTML, and the six other home variants remain frozen.
+
 Date: 2026-10-31. Desktop English design and throwaway motion experiment under #95.
 
 The owner requested the kettle near the center of the hero, an incoming question above/right, a thinking moment and an answer in another speech bubble. The text composer and example paginator are removed. The agreed headline is **Focus more on training, less on tapping.** It means reducing the management surrounding training, not increasing training volume. The prominent mascot is explicitly authorized for this experiment and supersedes the earlier incidental-only mascot constraint here.

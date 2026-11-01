@@ -2,8 +2,8 @@
   "date": "2026-10-31",
   "kind": "Motion checkpoints before WOD/SVG content update; current content in hero-surface-checks.json",
   "timedAnimation": true,
-  "penSynchronized": false,
-  "penReason": "Previous bubble/shadow changes persisted before this revision. Latest native y=84 attempt did not answer; inspected file still y=170. Existing pen/export edits preserved.",
+  "penSynchronized": true,
+  "penReason": "Saved through native Pen desktop MCP on 2026-11-01 after the in-chat editor timed out; current reply y=84.",
   "timingSeconds": {
     "question": 0.9,
     "reactionDuration": 0.18,
@@ -89,7 +89,6 @@
     }
   ],
   "pending": [
-    "Latest native pen alignment",
     "Owner motion approval",
     "Actual OS preference-change and real-device/performance acceptance"
   ],
@@ -97,5 +96,7 @@
   "review": {
     "standards": "0 actionable findings",
     "spec": "0 actionable findings"
-  }
+  },
+  "penSynchronizationRecord": "pen-sync-checks.json",
+  "penSynchronizationScope": "Static composition only; English desktop Light/Dark; animation remains in HTML"
 }

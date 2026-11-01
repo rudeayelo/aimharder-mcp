@@ -363,5 +363,69 @@
     "provider": "selfh.st/icons",
     "license": "CC BY 4.0",
     "sha256": "7e7170e3cebf88a9f60c7b8421418323c09304da1af4d5e90f4da1dc1c8a2661"
+  },
+  {
+    "file": "pen/kettle-flat-light.png",
+    "derivedFrom": "kettle-flat-light.svg",
+    "method": "Faithful rasterization with @resvg/resvg-js 2.6.2; original SVG paths and colors preserved",
+    "sha256": "73ece1f49d4f1dad2265700ba68453ea1fa8a999b500054e540767f75413c4f6"
+  },
+  {
+    "file": "pen/kettle-flat-dark.png",
+    "derivedFrom": "kettle-flat-dark.svg",
+    "method": "Faithful rasterization with @resvg/resvg-js 2.6.2; original SVG paths and colors preserved",
+    "sha256": "e5a6c6d22c484065963f9b92e53d42dc9f4261c08ead5007a73482c8cdf78bee"
+  },
+  {
+    "file": "pen/hermes-selfhst-light.png",
+    "derivedFrom": "apps/hermes-selfhst-light.svg",
+    "method": "Faithful rasterization with @resvg/resvg-js 2.6.2; original SVG paths and colors preserved",
+    "sha256": "bcfbc2bdb396c4a5f952d94c7e9b08288b7aa90eb6116773beed280006ba710c",
+    "provider": "selfh.st/icons",
+    "license": "CC BY 4.0 collection; original trademarks retained",
+    "licenseFile": "apps/selfhst-LICENSE.txt"
+  },
+  {
+    "file": "pen/hermes-selfhst-dark.png",
+    "derivedFrom": "apps/hermes-selfhst-dark.svg",
+    "method": "Faithful rasterization with @resvg/resvg-js 2.6.2; original SVG paths and colors preserved",
+    "sha256": "0139e7db7c541e756c0ce63ef17e7d040f8c6308b581b5f87e48fdda82a5b49b",
+    "provider": "selfh.st/icons",
+    "license": "CC BY 4.0 collection; original trademarks retained",
+    "licenseFile": "apps/selfhst-LICENSE.txt"
+  },
+  {
+    "file": "pen/openclaw-selfhst-light.png",
+    "derivedFrom": "apps/openclaw-selfhst-light.svg",
+    "method": "Faithful rasterization with @resvg/resvg-js 2.6.2; original SVG paths and colors preserved",
+    "sha256": "2adb1f964ed32b4b9582980dfedc4ea5a988dc4a8a50b29b9ad2e908c375f69a",
+    "provider": "selfh.st/icons",
+    "license": "CC BY 4.0 collection; original trademarks retained",
+    "licenseFile": "apps/selfhst-LICENSE.txt"
+  },
+  {
+    "file": "pen/openclaw-selfhst-dark.png",
+    "derivedFrom": "apps/openclaw-selfhst-dark.svg",
+    "method": "Faithful rasterization with @resvg/resvg-js 2.6.2; original SVG paths and colors preserved",
+    "sha256": "29ba96282b952045af5611bad46bffe7071737b4b2fc4c45ca7b45f169136ef7",
+    "provider": "selfh.st/icons",
+    "license": "CC BY 4.0 collection; original trademarks retained",
+    "licenseFile": "apps/selfhst-LICENSE.txt"
+  },
+  {
+    "file": "pen/hero-background-light.png",
+    "derivedFrom": "../render-pen-background.html",
+    "method": "Browser capture of the existing Grainient background only, still clock 0/frame 0, 1440 x 535; no foreground UI",
+    "sourceNotice": "../vendor/README.md",
+    "theme": "light",
+    "sha256": "2ba9efa94443bcd9a175cf6205f0e508b3da732d1ca813befe86bb4f267dbe9a"
+  },
+  {
+    "file": "pen/hero-background-dark.png",
+    "derivedFrom": "../render-pen-background.html",
+    "method": "Browser capture of the existing Grainient background only, still clock 0/frame 0, 1440 x 535; no foreground UI",
+    "sourceNotice": "../vendor/README.md",
+    "theme": "dark",
+    "sha256": "4f6f6d010ce2f6ad8476f9da3b0433778d61eeac46d4dc869a3cdfe1714768b6"
   }
 ]

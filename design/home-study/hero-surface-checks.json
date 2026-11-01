@@ -1,7 +1,7 @@
 {
   "date": "2026-11-01",
   "scope": "Desktop English Light/Dark HTML surface trial only",
-  "penSynchronized": false,
+  "penSynchronized": true,
   "settings": {
     "headerContentMinHeight": 88,
     "heroVerticalPadding": 32,
@@ -244,7 +244,6 @@
     }
   ],
   "pending": [
-    "Native pen synchronization",
     "Owner visual approval",
     "Actual OS preference changes and real-device GPU/perceptual acceptance",
     "Actual WebGL-unavailable/context-loss exercise"
@@ -263,5 +262,7 @@
   "typingCorrectionCapture": {
     "file": "previews/hero-motion-typing-light.png",
     "sha256": "1858438f249f0bd559b3017c83aed4a69f774043a7e2d0863fe15f03a65e8b8d"
-  }
+  },
+  "penSynchronizationRecord": "pen-sync-checks.json",
+  "penSynchronizationScope": "Static composition only; English desktop Light/Dark; animation remains in HTML"
 }

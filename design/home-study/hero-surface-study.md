@@ -1,5 +1,7 @@
 # AIHarder hero — Grainient and flat header mark
 
+**Current Pen checkpoint — 2026-11-01:** the latest static hero and header are saved in the two English desktop Light/Dark home frames. See [Pen synchronization](pen-sync.md) and its verification record. Earlier HTML-only/editor-timeout statements below describe the historical checkpoints; they are no longer the current synchronization status. Motion remains in HTML, and the six other home variants remain frozen.
+
 Date: 2026-11-01. Current desktop English Light/Dark HTML trial under #95.
 
 The owner supplied a React Bits Grainient export and requested adapting it as the hero background, reducing header/hero vertical spacing, lowering the reply's background opacity and making a flat header mascot: navy kettle silhouette, white circular face, navy eyes. This refines the existing home prototype; no additional product screens or locale/device variants were created.
