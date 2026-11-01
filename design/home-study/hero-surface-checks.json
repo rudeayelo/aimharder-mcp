@@ -28,7 +28,9 @@
       "clickSwirl": false,
       "dprCap": 1,
       "fpsSchedulingCap": 30
-    }
+    },
+    "horizontalMask": false,
+    "verticalEdgeFade": true
   },
   "browserObservations": {
     "viewports": [
@@ -53,17 +55,28 @@
       "typing": false,
       "scrollWidth": 1200
     },
-    "consoleWarningsAndErrorsObserved": 0
+    "consoleWarningsAndErrorsObserved": 0,
+    "fullWidthCorrection": {
+      "viewport": 1200,
+      "heroWidth": 1200,
+      "backgroundWidth": 1200,
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "horizontalMask": false,
+      "overflow": false
+    }
   },
   "sourceAssetHashesChecked": 57,
   "screenshots": [
     {
       "file": "previews/hero-grainient-light.png",
-      "sha256": "3d41d7ed086613c241de3157e0a9c2538ca44a164191cf3992b67bfc6e0ac1f3"
+      "sha256": "a5349996825dd69ecca7f69121009cbfb81f3f5aa9af5441f08086a256a2655c"
     },
     {
       "file": "previews/hero-grainient-dark.png",
-      "sha256": "b29106aa079d51517f93df8602873faeecf22f0ab817cc45893a9c5626480b4a"
+      "sha256": "1b0ebf67f4d479b4307e84859d60c766cc7c1ea9e6ca89a21bf55a8124e0a9bf"
     }
   ],
   "pending": [
