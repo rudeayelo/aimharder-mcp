@@ -325,49 +325,57 @@
         "file": "assets/pen/hermes-selfhst-dark.png",
         "width": 128,
         "height": 128,
-        "sha256": "0139e7db7c541e756c0ce63ef17e7d040f8c6308b581b5f87e48fdda82a5b49b"
+        "sha256": "0139e7db7c541e756c0ce63ef17e7d040f8c6308b581b5f87e48fdda82a5b49b",
+        "format": "PNG"
       },
       {
         "file": "assets/pen/hermes-selfhst-light.png",
         "width": 128,
         "height": 128,
-        "sha256": "bcfbc2bdb396c4a5f952d94c7e9b08288b7aa90eb6116773beed280006ba710c"
+        "sha256": "bcfbc2bdb396c4a5f952d94c7e9b08288b7aa90eb6116773beed280006ba710c",
+        "format": "PNG"
       },
       {
         "file": "assets/pen/hero-background-dark.png",
-        "width": 65536,
-        "height": 4293001688,
-        "sha256": "4f6f6d010ce2f6ad8476f9da3b0433778d61eeac46d4dc869a3cdfe1714768b6"
+        "width": 1440,
+        "height": 535,
+        "sha256": "4795af5a19ff051b77e69f4495a313fd6af6a7d46631ba6806c1426ec78f20b7",
+        "format": "PNG"
       },
       {
         "file": "assets/pen/hero-background-light.png",
-        "width": 65536,
-        "height": 4293001688,
-        "sha256": "2ba9efa94443bcd9a175cf6205f0e508b3da732d1ca813befe86bb4f267dbe9a"
+        "width": 1440,
+        "height": 535,
+        "sha256": "eff9852b7fad00fa70465b5dfc2eab06631db67dd33ff02b437caffe20629ef1",
+        "format": "PNG"
       },
       {
         "file": "assets/pen/kettle-flat-dark.png",
         "width": 256,
         "height": 292,
-        "sha256": "e5a6c6d22c484065963f9b92e53d42dc9f4261c08ead5007a73482c8cdf78bee"
+        "sha256": "e5a6c6d22c484065963f9b92e53d42dc9f4261c08ead5007a73482c8cdf78bee",
+        "format": "PNG"
       },
       {
         "file": "assets/pen/kettle-flat-light.png",
         "width": 256,
         "height": 292,
-        "sha256": "73ece1f49d4f1dad2265700ba68453ea1fa8a999b500054e540767f75413c4f6"
+        "sha256": "73ece1f49d4f1dad2265700ba68453ea1fa8a999b500054e540767f75413c4f6",
+        "format": "PNG"
       },
       {
         "file": "assets/pen/openclaw-selfhst-dark.png",
         "width": 128,
         "height": 128,
-        "sha256": "29ba96282b952045af5611bad46bffe7071737b4b2fc4c45ca7b45f169136ef7"
+        "sha256": "29ba96282b952045af5611bad46bffe7071737b4b2fc4c45ca7b45f169136ef7",
+        "format": "PNG"
       },
       {
         "file": "assets/pen/openclaw-selfhst-light.png",
         "width": 128,
         "height": 128,
-        "sha256": "2adb1f964ed32b4b9582980dfedc4ea5a988dc4a8a50b29b9ad2e908c375f69a"
+        "sha256": "2adb1f964ed32b4b9582980dfedc4ea5a988dc4a8a50b29b9ad2e908c375f69a",
+        "format": "PNG"
       }
     ],
     "exports": [
@@ -408,5 +416,13 @@
         "sha256": "580272aea7c26537e7d01c89589b2e53f19d1fa0bce02051b8451273c23bc5b0"
       }
     ]
+  },
+  "review": {
+    "fixedPoint": "c133d9b90e0221eb645c99a6a71aca205e1a310c",
+    "synchronizationCommit": "067b4bd",
+    "report": "pen-sync-review.md",
+    "standardsRemainingFindings": 0,
+    "specRemainingFindings": 0,
+    "backgroundFormatFindingResolved": true
   }
 }

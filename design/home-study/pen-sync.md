@@ -16,7 +16,7 @@ Only the Grainient background is a raster capture, exported at 1440 × 535 from 
 
 - Inspected native exports of both headers and heroes, the flat logo component, full reply and client row. Saved the document in the desktop app and checked that its Edited indicator disappeared.
 - Compared 15 protected root objects before/after through the Pen API: all fingerprints matched. This includes the six other home variants, old state/specimen boards and original shared components. The dedicated updated logo has only the two active home references.
-- Checked native node properties for dimensions, colors, shadows, themed assets, WOD copy and absence of CrossFit labels in the two active pages. [Verification record](pen-sync-checks.json) contains IDs and fingerprints. Updated exports are actual Pen renders, not browser captures.
+- Checked native node properties for dimensions, colors, shadows, themed assets, WOD copy and absence of CrossFit labels in the two active pages. [Verification record](pen-sync-checks.json) and [two-axis review](pen-sync-review.md) contain IDs and fingerprints. Updated exports are actual Pen renders, not browser captures.
 - Bounds diagnostics still flag intentional overflow: the transparent character image and contact shadows extend below the 470px scene into the hero padding, and the character extends into the inter-column gap. Export inspection shows the complete visible character/contact; this is not a clean bounds-visitor pass.
 - Playback, typing, thinking and reply emotes remain in the [HTML prototype](hero-motion-prototype.html). This static synchronization does not implement animation in Pen, validate production integration or establish owner approval.
 

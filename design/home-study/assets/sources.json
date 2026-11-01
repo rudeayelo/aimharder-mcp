@@ -415,17 +415,17 @@
   {
     "file": "pen/hero-background-light.png",
     "derivedFrom": "../render-pen-background.html",
-    "method": "Browser capture of the existing Grainient background only, still clock 0/frame 0, 1440 x 535; no foreground UI",
+    "method": "Browser capture of the existing Grainient background only, still clock 0/frame 0, 1440 x 535; no foreground UI; browser JPEG decoded and saved as PNG without resizing",
     "sourceNotice": "../vendor/README.md",
     "theme": "light",
-    "sha256": "2ba9efa94443bcd9a175cf6205f0e508b3da732d1ca813befe86bb4f267dbe9a"
+    "sha256": "eff9852b7fad00fa70465b5dfc2eab06631db67dd33ff02b437caffe20629ef1"
   },
   {
     "file": "pen/hero-background-dark.png",
     "derivedFrom": "../render-pen-background.html",
-    "method": "Browser capture of the existing Grainient background only, still clock 0/frame 0, 1440 x 535; no foreground UI",
+    "method": "Browser capture of the existing Grainient background only, still clock 0/frame 0, 1440 x 535; no foreground UI; browser JPEG decoded and saved as PNG without resizing",
     "sourceNotice": "../vendor/README.md",
     "theme": "dark",
-    "sha256": "4f6f6d010ce2f6ad8476f9da3b0433778d61eeac46d4dc869a3cdfe1714768b6"
+    "sha256": "4795af5a19ff051b77e69f4495a313fd6af6a7d46631ba6806c1426ec78f20b7"
   }
 ]
