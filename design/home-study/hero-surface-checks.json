@@ -156,6 +156,11 @@
         "answer"
       ],
       "overflow": false
+    },
+    "replyCaretRemoved": {
+      "caretElements": 0,
+      "pseudoElementContent": "none",
+      "typingRetained": true
     }
   },
   "sourceAssetHashesChecked": 57,
@@ -185,5 +190,9 @@
     "unavailableContext": "Canvas removed, no allocated resources",
     "failedShader": "Canvas removed; 4/4 shaders and 2/2 programs deleted; context released",
     "actualGpuFailure": "Not exercised"
+  },
+  "typingCorrectionCapture": {
+    "file": "previews/hero-motion-typing-light.png",
+    "sha256": "1858438f249f0bd559b3017c83aed4a69f774043a7e2d0863fe15f03a65e8b8d"
   }
 }

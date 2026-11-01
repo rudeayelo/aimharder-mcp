@@ -58,7 +58,17 @@
       "characters": 211,
       "scrollWidth": 1200
     },
-    "consoleWarningsAndErrorsObserved": 0
+    "consoleWarningsAndErrorsObserved": 0,
+    "caretRemoved": {
+      "viewport": 1200,
+      "at": 2.7,
+      "typed": 53,
+      "characters": 211,
+      "caretElements": 0,
+      "pseudoElementContent": "none",
+      "playbackClockChanged": true,
+      "consoleWarningsAndErrorsObserved": 0
+    }
   },
   "screenshots": [
     {
@@ -75,7 +85,7 @@
     },
     {
       "file": "previews/hero-motion-typing-light.png",
-      "sha256": "8f7e894e3a24fdf04a95fe4b02f8e93ff52868d76bba1715083b53f32316d183"
+      "sha256": "1858438f249f0bd559b3017c83aed4a69f774043a7e2d0863fe15f03a65e8b8d"
     }
   ],
   "pending": [

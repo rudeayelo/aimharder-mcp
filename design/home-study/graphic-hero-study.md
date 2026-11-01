@@ -79,3 +79,9 @@ The final Standards and Spec reviews found no actionable issues. A later browser
 ## Surface refinement — 2026-11-01
 
 The later [Grainient/flat-mark study](hero-surface-study.md) is current for background, header symbol, vertical density and reply alpha. The timing/typewriter behavior above is retained. Earlier captures are checkpoints; current Light/Dark surface captures are linked in that study. Native pen synchronization remains outside this verified HTML revision.
+
+## Reply typing without editor caret — 2026-11-01
+
+The owner reported an unwanted editor-like line during reply typing. The line came from the `typing-caret::after` pseudo-element attached to partially revealed text runs. Removed both that decoration and its per-frame class toggle; also removed the positioning rule used only by the caret. Text reveal, preserved line footprint, shared animation clock, Pause/Replay and the complete reduced-motion answer remain unchanged. No native pen, API or architecture/ADR change is involved.
+
+Browser inspection at 2.7s confirmed 53/211 visible characters, zero caret elements and `none` for all text-run after pseudo-elements. Playback continued without console warnings/errors. The entry-module URL is versioned for this correction so cached earlier JavaScript does not keep toggling the removed class. [Typing capture](previews/hero-motion-typing-light.png) and checks were refreshed. JavaScript syntax and whitespace checks pass.

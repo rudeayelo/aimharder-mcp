@@ -86,7 +86,6 @@ function typeAnswer(time, complete = false) {
     const n = Math.max(0, Math.min(run.text.length, count-run.start));
     run.visible.textContent = run.text.slice(0, n).join('');
     run.remainder.textContent = run.text.slice(n).join('');
-    run.visible.classList.toggle('typing-caret', n > 0 && n < run.text.length);
   }
   stage.dataset.typed = String(count);
   stage.dataset.characters = String(totalCharacters);
