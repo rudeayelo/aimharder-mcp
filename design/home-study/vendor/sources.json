@@ -1,0 +1,21 @@
+{
+  "date": "2026-11-01",
+  "source": "https://github.com/DavidHDev/react-bits/blob/4dc7b5b7772e1217c8fb8d2a7aa074302180e5b4/src/content/Backgrounds/Grainient/Grainient.jsx",
+  "upstreamSha256": "54e16ec1ea2beae8d50c5774626bc3d113293321095673017aea5a1960555905",
+  "pastedSourceMatchesUpstream": true,
+  "license": "MIT + Commons Clause; retained in react-bits-LICENSE.md",
+  "files": [
+    {
+      "file": "../grainient-background.js",
+      "sha256": "5a60c4916ac86b298f9a3933296b9584573d481fd74e960d2bfd95d452503397"
+    },
+    {
+      "file": "../hero-background-mount.js",
+      "sha256": "68b55158c215f0a12b17f75449960b1ea51fcd8c3b008766a91decc6a30ec594"
+    },
+    {
+      "file": "react-bits-LICENSE.md",
+      "sha256": "4bdd1fa59a6b7d5954bc3b213dbc34e455c635a94bbcecf9293553797d0fad02"
+    }
+  ]
+}

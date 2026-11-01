@@ -38,3 +38,7 @@ The two active AIHarder desktop views use the unedited original Hermes portrait 
 ## Graphic hero poses — 2026-10-31
 
 `kettle-hero-attention.png` and `kettle-hero-thinking.png` are 768px RGBA renders from the unchanged 32k body and complete curved eye rig. The [pose renderer](../render-hero-pose.html) and [pose manifest](../hero-pose-assets.json) record reproducible body/gaze parameters, alpha bounds and source hashes. No user reference image was copied into the repository, no raster retouch was performed and no new AI artwork was generated.
+
+## Flat header mascot — 2026-11-01
+
+`kettle-flat-light.svg` and `kettle-flat-dark.svg` use the existing neutral poster alpha as an automatically traced vector silhouette. The handle hole is retained; a white face circle and navy eye capsules provide the requested flat construction. Dark retains navy/white fills with a thin light outer keyline. [Exporter](../render-flat-mark.html) and [surface study](../hero-surface-study.md) record the method. Original PNG/model assets are unchanged. React Bits background source has a separate retained [license notice](../vendor/README.md).

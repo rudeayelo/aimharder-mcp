@@ -1,5 +1,7 @@
 # AIHarder — public home study
 
+Latest HTML refinement (2026-11-01): [Grainient background and flat header mark](hero-surface-study.md), with more compact vertical spacing and a 60%-alpha reply surface. Current desktop English Light/Dark only; native pen and other variants are not synchronized to this refinement.
+
 Additional graphic experiment: the [kettle-led hero study](graphic-hero-study.md) uses the agreed “Focus more on training, less on tapping” headline and an [animated 3D prototype](hero-motion-prototype.html). The current HTML trial uses a faster reaction, half-length thinking, right-aligned compact bubbles, rapid typed replies and a small hop/dance during writing. The pen contains the previous larger translucent reply and stronger shadow; the latest compact stack is still pending there because the editor did not answer; the six other home variants and older HTML prototype remain at their previous checkpoint.
 
 **Active refinement:** the working name is now **AIHarder**. Only the English desktop Light/Dark frames are being refined; Spanish/mobile variants and the HTML prototype remain at the previous checkpoint until agreement. The [desktop refinement](desktop-refinement.md) is the current review target. Button A is selected; the latest candidate uses a 25% larger logo, a bold headline and attenuated Works with logos. This later scope supersedes the earlier all-variant iteration below.

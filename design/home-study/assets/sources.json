@@ -300,5 +300,17 @@
     "derivedFrom": "../render-hero-pose.html?pose=thinking",
     "change": "Transparent 768px render of the unchanged 32k body and curved eye rig. Pose changes body rotation and complete recessed-eye geometry; no raster retouch or AI image generation.",
     "sha256": "de39fdd996c601602f34b1effcb16e5705a8678c5821be6b1636a3440c1c17c4"
+  },
+  {
+    "file": "kettle-flat-light.svg",
+    "source": "Derived from kettle-neutral.png alpha with render-flat-mark.html; flat face and eye primitives per owner brief",
+    "derivedFrom": "kettle-neutral.png",
+    "sha256": "8d99a0a04383912a6bb3d5127b06cbdc77ca9507cc6416f34cc42cf4c6d6430e"
+  },
+  {
+    "file": "kettle-flat-dark.svg",
+    "source": "Derived from kettle-neutral.png alpha with render-flat-mark.html; flat face and eye primitives per owner brief",
+    "derivedFrom": "kettle-neutral.png",
+    "sha256": "e8e82d16d29aac094d6b4a8a10edf38c4e2a3793b5cda794b88e3a7d943df3b1"
   }
 ]

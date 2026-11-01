@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>AIHarder flat mark export</title>
+<p>Vector silhouette derived from the existing neutral kettle poster. No new mascot shape.</p><div id="preview"></div><a id="save">Preparing SVG…</a>
+<script>
+const image=new Image();image.src='assets/kettle-neutral.png';image.onload=()=>{
+ const canvas=document.createElement('canvas');canvas.width=canvas.height=512;const c=canvas.getContext('2d');c.drawImage(image,0,0);const pixels=c.getImageData(0,0,512,512).data;
+ const inside=(x,y)=>x>=0&&y>=0&&x<512&&y<512&&pixels[(y*512+x)*4+3]>=160;
+ const edges=new Map();const edge=(x,y,xx,yy)=>{const key=x+','+y;if(!edges.has(key))edges.set(key,[]);edges.get(key).push([xx,yy]);};
+ for(let y=0;y<512;y++)for(let x=0;x<512;x++)if(inside(x,y)){
+  if(!inside(x,y-1))edge(x,y,x+1,y);if(!inside(x+1,y))edge(x+1,y,x+1,y+1);
+  if(!inside(x,y+1))edge(x+1,y+1,x,y+1);if(!inside(x-1,y))edge(x,y+1,x,y);
+ }
+ const loops=[];
+ while(edges.size){const first=edges.keys().next().value;let key=first;const loop=[];
+  do{const p=key.split(',').map(Number);loop.push(p);const next=edges.get(key);if(!next?.length)break;const end=next.pop();if(!next.length)edges.delete(key);key=end.join(',');}while(key!==first&&loop.length<5000);
+  if(loop.length>60)loops.push(loop);
+ }
+ function simplify(points,eps){if(points.length<3)return points;const a=points[0],b=points.at(-1),dx=b[0]-a[0],dy=b[1]-a[1];let max=0,index=0;
+  for(let i=1;i<points.length-1;i++){const t=Math.max(0,Math.min(1,((points[i][0]-a[0])*dx+(points[i][1]-a[1])*dy)/(dx*dx+dy*dy||1)));const dist=Math.hypot(points[i][0]-a[0]-t*dx,points[i][1]-a[1]-t*dy);if(dist>max){max=dist;index=i;}}
+  return max>eps?[...simplify(points.slice(0,index+1),eps).slice(0,-1),...simplify(points.slice(index),eps)]:[a,b];
+ }
+ const path=loops.map(loop=>{const half=Math.floor(loop.length/2);const pts=[...simplify(loop.slice(0,half+1),1.4).slice(0,-1),...simplify([...loop.slice(half),loop[0]],1.4).slice(0,-1)];const mid=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2];const start=mid(pts.at(-1),pts[0]);return 'M'+start.join(' ')+pts.map((p,i)=>'Q'+p.join(' ')+','+mid(p,pts[(i+1)%pts.length]).join(' ')).join('')+'Z';}).join('');
+ const svg=outline=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="76 66 360 410" role="img" aria-label="AIHarder kettle"><path fill="#14283F" fill-rule="evenodd" ${outline?'stroke="#EDF3FA" stroke-width="4"':''} d="${path}"/><circle cx="256" cy="320" r="110" fill="#FFFFFF"/><g fill="#14283F"><rect x="200" y="287" width="25" height="55" rx="12.5"/><rect x="286" y="287" width="25" height="55" rx="12.5"/></g></svg>`;
+ document.querySelector('#preview').innerHTML=svg(false);document.querySelector('#preview svg').style.width='180px';
+ for(const [name,outline] of [['light',false],['dark',true]]){const a=name==='light'?document.querySelector('#save'):document.body.appendChild(document.createElement('a'));a.id='save-'+name;a.textContent='Save '+name+' SVG';a.download='kettle-flat-'+name+'.svg';a.href='data:image/svg+xml;base64,'+btoa(svg(outline));}
+};</script></html>

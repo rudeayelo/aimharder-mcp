@@ -92,7 +92,7 @@ Report bugs or propose changes in [GitHub Issues](https://github.com/rudeayelo/a
 
 ## License
 
-[MIT](LICENSE).
+[MIT](LICENSE) for project-authored code. Third-party design-study assets retain their respective notices in `design/home-study/assets/` and `design/home-study/vendor/`.
 
 The hosted [schedule, workout and booking-view queries](https://github.com/rudeayelo/aimharder-mcp/blob/main/docs/hosted-schedule-queries.md) retain their existing inputs/results, uncertainty and own-account calculated loads for both roles. Automated evidence uses real HTTP MCP and isolated account objects with synthetic upstream responses; actual ChatGPT/Hermes query acceptance remains pending.
 

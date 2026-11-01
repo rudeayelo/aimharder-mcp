@@ -75,3 +75,7 @@ Browser inspection verified the 180ms reaction, 16px gaps/zero right-edge offset
 The native pen and its exports were already modified at the start of this revision: the previous larger translucent reply and stronger shadow had eventually persisted, despite the earlier tool timeout. They were preserved. The new attempt to move the native reply to y=84 also timed out; the latest file inspection still shows y=170 in both active homes. The current compact stack and all timing/typewriter/emote changes are therefore verified in HTML; latest pen alignment remains pending. No direct pen-file edits were made. No API, production configuration, dependencies or architecture/security/distribution decisions changed; no ADR update is required.
 
 The final Standards and Spec reviews found no actionable issues. A later browser read confirmed paused time/text remained at 3.602s and 147 characters. JavaScript syntax, capture hashes and documentation links were checked; no production runtime test suite was run for this isolated visual prototype.
+
+## Surface refinement — 2026-11-01
+
+The later [Grainient/flat-mark study](hero-surface-study.md) is current for background, header symbol, vertical density and reply alpha. The timing/typewriter behavior above is retained. Earlier captures are checkpoints; current Light/Dark surface captures are linked in that study. Native pen synchronization remains outside this verified HTML revision.

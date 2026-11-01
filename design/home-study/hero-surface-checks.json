@@ -1,0 +1,86 @@
+{
+  "date": "2026-11-01",
+  "scope": "Desktop English Light/Dark HTML surface trial only",
+  "penSynchronized": false,
+  "settings": {
+    "headerContentMinHeight": 88,
+    "heroVerticalPadding": 32,
+    "replyAlpha": 0.6,
+    "replyBackdropBlur": 12,
+    "grainient": {
+      "colorsLight": [
+        "#ffffff",
+        "#0065e0"
+      ],
+      "colorsDark": [
+        "#0d1521",
+        "#0065e0"
+      ],
+      "angle": 180,
+      "flow": 0.8,
+      "silk": 0.5,
+      "grainAmount": 0.08,
+      "scale": 1.4,
+      "grainSize": 1.3,
+      "saturation": 0.99,
+      "stir": 0.95,
+      "intro": false,
+      "clickSwirl": false,
+      "dprCap": 1,
+      "fpsSchedulingCap": 30
+    }
+  },
+  "browserObservations": {
+    "viewports": [
+      1200,
+      1440
+    ],
+    "backgroundRenderer": "webgl2",
+    "normalCanvasCount": 2,
+    "headerTotalHeight": 89,
+    "heroPadding": "32px 0px",
+    "replyLight": "rgba(244, 247, 250, 0.6)",
+    "replyDark": "rgba(20, 32, 51, 0.6)",
+    "backgroundClockBeforePause": 0.849,
+    "pausedClock": 0.862,
+    "pausedFrame": 90,
+    "laterPauseReadUnchanged": true,
+    "motionOff": {
+      "backgroundClock": 0,
+      "frame": 0,
+      "motion": "still",
+      "canvasCount": 1,
+      "typing": false,
+      "scrollWidth": 1200
+    },
+    "consoleWarningsAndErrorsObserved": 0
+  },
+  "sourceAssetHashesChecked": 57,
+  "screenshots": [
+    {
+      "file": "previews/hero-grainient-light.png",
+      "sha256": "3d41d7ed086613c241de3157e0a9c2538ca44a164191cf3992b67bfc6e0ac1f3"
+    },
+    {
+      "file": "previews/hero-grainient-dark.png",
+      "sha256": "b29106aa079d51517f93df8602873faeecf22f0ab817cc45893a9c5626480b4a"
+    }
+  ],
+  "pending": [
+    "Native pen synchronization",
+    "Owner visual approval",
+    "Actual OS preference changes and real-device GPU/perceptual acceptance",
+    "Actual WebGL-unavailable/context-loss exercise"
+  ],
+  "architectureAndApiChange": false,
+  "thirdPartyNotice": "vendor/README.md",
+  "review": {
+    "standards": "No residual findings after initialization cleanup fix",
+    "spec": "0 actionable findings"
+  },
+  "initializationFailureStubs": {
+    "unavailableContext": "Canvas removed, no allocated resources",
+    "failedShader": "Canvas removed; 4/4 shaders and 2/2 programs deleted; context released",
+    "actualGpuFailure": "Not exercised"
+  }
+}
