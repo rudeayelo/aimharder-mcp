@@ -42,16 +42,17 @@
     },
     "lightTopWash": "#e8f2ff to transparent over 100% height",
     "bubbles": {
-      "questionLight": "#d9e9ff",
-      "questionDark": "#203d5e",
+      "questionLight": "#14283f",
+      "questionDark": "#14283f",
       "replyLight": "#f8fbff99",
       "replyDark": "#142b4599",
       "mainRadius": 18,
       "distinctiveCorner": 6,
       "thinkingRadius": 16,
-      "shadow": "0px 3px 12px",
-      "lightShadowAlpha": 0.07,
-      "darkShadowAlpha": 0.15
+      "shadow": "rgba(0, 0, 0, 0.1) 0px 4px 6px 0px",
+      "lightShadowAlpha": 0.1,
+      "darkShadowAlpha": 0.1,
+      "questionText": "#ffffff"
     },
     "kettleShadow": {
       "outerWidth": 300,
@@ -70,7 +71,8 @@
       "radius": "50%",
       "filter": "grayscale(1) contrast(.8)",
       "rowOpacityUnchanged": 0.65
-    }
+    },
+    "productButtonShadow": "rgba(0, 0, 0, 0.1) 0px 4px 6px 0px"
   },
   "browserObservations": {
     "viewports": [
@@ -136,17 +138,35 @@
       "hermesRadius": "50%",
       "hermesFilter": "grayscale(1) contrast(0.8)",
       "overflow": false
+    },
+    "inverseQuestionAndSharedShadow": {
+      "viewport": 1200,
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "questionFill": "rgb(20, 40, 63)",
+      "questionText": "rgb(255, 255, 255)",
+      "computedShadow": "rgba(0, 0, 0, 0.1) 0px 4px 6px 0px",
+      "checkedElements": [
+        "header primary",
+        "hero primary",
+        "question",
+        "thinking",
+        "answer"
+      ],
+      "overflow": false
     }
   },
   "sourceAssetHashesChecked": 57,
   "screenshots": [
     {
       "file": "previews/hero-grainient-light.png",
-      "sha256": "c98c950bdc4120e76c7c00e2065cbb43435d96af8f4622c7a0adfea6c64f6699"
+      "sha256": "5bb5c7e7eaf2f9164dd8cceedb6026809a26bab575ae5a82805858d19ac90108"
     },
     {
       "file": "previews/hero-grainient-dark.png",
-      "sha256": "ec11839d58f52f97d7581b0a988a1c6a00bfdc7ee4ab0d2796e3cfdf1d093bd5"
+      "sha256": "53f7474557b75012ea3161141c6e324030f96a88c2c8ea01aedd848878ce5fba"
     }
   ],
   "pending": [

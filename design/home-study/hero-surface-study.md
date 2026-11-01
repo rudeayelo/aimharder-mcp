@@ -55,3 +55,9 @@ The owner's subsequent notes requested a very pale blue upper hero distinct from
 - Hermes retains the original girl portrait with a CSS-only circular 20px avatar, grayscale and 0.8 contrast. The shared Works with row opacity remains 65%. No source asset was retouched or replaced. A simplified vector portrait is an alternative proposal, not a generated or approved asset.
 
 Inspected the combined refinements in Light/Dark at 1200px. Computed styles confirmed the pale upper wash, 18px/6px corners, subtle shared shadow, 266px centered shadow footprint and Hermes' original asset/20px/circular/contrast treatment; neither view overflows. Captures/checks are updated. These remain desktop English HTML refinements; no native pen, product API, architecture or ADR change is involved.
+
+## Inverse incoming message and exact shared shadow — 2026-11-01
+
+The owner requested a navy initial message with white text and the exact shadow `rgba(0,0,0,0.1) 0px 4px 6px 0px` for buttons and bubbles. Both HTML sources now use `#14283f` / white for the incoming bubble in both themes. Primary product buttons and all three bubble states use that single shadow, superseding the earlier inset/drop combination and the softer bubble shadows. Button gradients/borders, reply translucency, corner radii, mascot contact shadow, motion and layout remain as before. Prototype review controls are outside the product design. No native pen, API or architecture/ADR changes are involved.
+
+Verified Light/Dark at 1200px: the initial bubble computes to navy/white and header/hero primary buttons plus question/thinking/answer bubbles all compute to the exact requested shadow. Updated captures and metadata record this CSS-only revision; no broader runtime checks are required.
