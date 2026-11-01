@@ -396,5 +396,12 @@
   "viewportResetAfterCheck": true,
   "pending": [
     "Owner visual approval"
-  ]
+  ],
+  "review": {
+    "fixedPoint": "060a238",
+    "reviewedCommit": "690cd13",
+    "standardsFindings": 0,
+    "specFindings": 0,
+    "report": "question-ticker-review.md#compact-topic-pills"
+  }
 }

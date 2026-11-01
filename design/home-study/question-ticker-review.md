@@ -25,3 +25,17 @@ No actionable documented violations or material heuristic findings. The revision
 No actionable findings. Questions are now unboxed at 32px, while topic pills remain. Four alternating rows, fading edges and timed topic/question emphasis are preserved. The larger-phrase selection rule maintains rotation. Native Light/Dark exports match the owner’s text-wall request, with no additional screens or services and unchanged protected-root fingerprints.
 
 Text-wall findings: Standards **0**, Spec **0**. Owner visual approval remains pending.
+
+## Compact topic pills
+
+Reviewed `060a238...690cd13` on 2026-11-01 by separate reviewers.
+
+### Standards
+
+No actionable findings. Requested typography, icon size, transparent zero-width border and natural height are consistent. Active colors reuse the question token; unused tokens and the obsolete mobile font override are removed. English documentation distinguishes current styling and historical evidence. No lifecycle or production behavior changes.
+
+### Spec
+
+No actionable findings. All three topics use 11px/600 uppercase labels, 16px icons and no minimum height or visible border. Active fill matches the question, with white label/icon colors in both themes. Existing mobile padding, question-wall behavior and frozen variants remain preserved.
+
+Compact-topic findings: Standards **0**, Spec **0**. Owner visual approval remains pending.
