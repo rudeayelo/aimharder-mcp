@@ -312,5 +312,56 @@
     "source": "Derived from kettle-neutral.png alpha with render-flat-mark.html; flat face and eye primitives per owner brief",
     "derivedFrom": "kettle-neutral.png",
     "sha256": "e8e82d16d29aac094d6b4a8a10edf38c4e2a3793b5cda794b88e3a7d943df3b1"
+  },
+  {
+    "file": "apps/hermes-selfhst-light.svg",
+    "source": "https://raw.githubusercontent.com/selfhst/icons/02dd039d62a8e7132f4828e69162fca30bd43bb5/svg/hermes-agent-dark.svg",
+    "catalog": "https://dashboardicons.com/icons/external/selfhst/hermes-agent",
+    "provider": "selfh.st/icons",
+    "license": "CC BY 4.0 collection; original trademarks retained",
+    "uiTheme": "light",
+    "upstreamVariant": "dark",
+    "changes": "None; unmodified SVG",
+    "sha256": "6fb2bad073b382c5e8023564608908dece63079314835777d4d278b7fbb936ef"
+  },
+  {
+    "file": "apps/hermes-selfhst-dark.svg",
+    "source": "https://raw.githubusercontent.com/selfhst/icons/02dd039d62a8e7132f4828e69162fca30bd43bb5/svg/hermes-agent-light.svg",
+    "catalog": "https://dashboardicons.com/icons/external/selfhst/hermes-agent",
+    "provider": "selfh.st/icons",
+    "license": "CC BY 4.0 collection; original trademarks retained",
+    "uiTheme": "dark",
+    "upstreamVariant": "light",
+    "changes": "None; unmodified SVG",
+    "sha256": "c703a243737d7a69c2f950fd76864efa1b89282996444abbb01b323e9a952ae1"
+  },
+  {
+    "file": "apps/openclaw-selfhst-light.svg",
+    "source": "https://raw.githubusercontent.com/selfhst/icons/02dd039d62a8e7132f4828e69162fca30bd43bb5/svg/openclaw-dark.svg",
+    "catalog": "https://dashboardicons.com/icons/external/selfhst/openclaw",
+    "provider": "selfh.st/icons",
+    "license": "CC BY 4.0 collection; original trademarks retained",
+    "uiTheme": "light",
+    "upstreamVariant": "dark",
+    "changes": "None; unmodified SVG",
+    "sha256": "41fc7541d91cc0772cec92b20030db94fb9ee48936e58e4a19c6c1f59d9b44e0"
+  },
+  {
+    "file": "apps/openclaw-selfhst-dark.svg",
+    "source": "https://raw.githubusercontent.com/selfhst/icons/02dd039d62a8e7132f4828e69162fca30bd43bb5/svg/openclaw-light.svg",
+    "catalog": "https://dashboardicons.com/icons/external/selfhst/openclaw",
+    "provider": "selfh.st/icons",
+    "license": "CC BY 4.0 collection; original trademarks retained",
+    "uiTheme": "dark",
+    "upstreamVariant": "light",
+    "changes": "None; unmodified SVG",
+    "sha256": "1c8fa1897bd92580f14f441ac44c32e5281174b98dd825a22abeff595f5e546e"
+  },
+  {
+    "file": "apps/selfhst-LICENSE.txt",
+    "source": "https://raw.githubusercontent.com/selfhst/icons/02dd039d62a8e7132f4828e69162fca30bd43bb5/LICENSE",
+    "provider": "selfh.st/icons",
+    "license": "CC BY 4.0",
+    "sha256": "7e7170e3cebf88a9f60c7b8421418323c09304da1af4d5e90f4da1dc1c8a2661"
   }
 ]

@@ -66,13 +66,21 @@
       "centerPreserved": true
     },
     "hermes": {
-      "assetUnchanged": true,
-      "width": 20,
-      "radius": "50%",
-      "filter": "grayscale(1) contrast(.8)",
+      "format": "SVG",
+      "light": "apps/hermes-selfhst-light.svg",
+      "dark": "apps/hermes-selfhst-dark.svg",
+      "width": 24,
+      "radius": 0,
+      "filter": "none",
       "rowOpacityUnchanged": 0.65
     },
-    "productButtonShadow": "rgba(0, 0, 0, 0.1) 0px 4px 6px 0px"
+    "productButtonShadow": "rgba(0, 0, 0, 0.1) 0px 4px 6px 0px",
+    "openclaw": {
+      "format": "SVG",
+      "light": "apps/openclaw-selfhst-light.svg",
+      "dark": "apps/openclaw-selfhst-dark.svg",
+      "width": 24
+    }
   },
   "browserObservations": {
     "viewports": [
@@ -161,17 +169,33 @@
       "caretElements": 0,
       "pseudoElementContent": "none",
       "typingRetained": true
+    },
+    "wodAndSvgIcons": {
+      "viewport": 1200,
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "label": "WOD",
+      "longCopy": "Both are WOD classes.",
+      "characters": 201,
+      "hermesAndOpenclawLoaded": true,
+      "iconWidth": 24,
+      "iconFilter": "none",
+      "hermesRadius": "0px",
+      "overflow": false,
+      "consoleWarningsAndErrorsObserved": 0
     }
   },
-  "sourceAssetHashesChecked": 57,
+  "sourceAssetHashesChecked": 62,
   "screenshots": [
     {
       "file": "previews/hero-grainient-light.png",
-      "sha256": "5bb5c7e7eaf2f9164dd8cceedb6026809a26bab575ae5a82805858d19ac90108"
+      "sha256": "d8008f583d6bfd60f06e0bbdd7976fb4bea02e7f746424441a192731257a8f7e"
     },
     {
       "file": "previews/hero-grainient-dark.png",
-      "sha256": "53f7474557b75012ea3161141c6e324030f96a88c2c8ea01aedd848878ce5fba"
+      "sha256": "d926607d4f9bec6f271bdca8917d64c080a1424c84c7a20e873063eb54f56a8a"
     }
   ],
   "pending": [

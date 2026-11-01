@@ -17,7 +17,7 @@ The owner requested the kettle near the center of the hero, an incoming question
 
 The owner's annotated screenshot supplies the composition. Preserve the established AIHarder/Krona One wordmark, Geist bold heading, accepted blue button A, shared content gutters, muted monochrome client row and simple language/theme affordances. The waiting state reuses the neutral poster. Attention and thinking use new transparent renders from the existing 32k model and curved eye rig, following the owner’s three-quarter pose reference. No raster retouch or AI-generated replacement artwork is used. Lucide supplies UI icons. Original client assets and font provenance remain in assets/sources.json. The bubbles are native layout primitives with no speech tails. Character motion and response timing will communicate who is replying. No new product screens or mobile/Spanish variants were created.
 
-The booking conversation is fictional: **When is my next booking? → Tomorrow at 19:00. CrossFit. Booking confirmed.** No live request was made. Keeping it short makes the surrounding administration concrete and lets the mascot carry the illustration.
+The booking conversation is fictional: **When is my next booking? → Tomorrow at 19:00. WOD. Booking confirmed.** No live request was made. Keeping it short makes the surrounding administration concrete and lets the mascot carry the illustration.
 
 ## Verification and next step
 
@@ -85,3 +85,7 @@ The later [Grainient/flat-mark study](hero-surface-study.md) is current for back
 The owner reported an unwanted editor-like line during reply typing. The line came from the `typing-caret::after` pseudo-element attached to partially revealed text runs. Removed both that decoration and its per-frame class toggle; also removed the positioning rule used only by the caret. Text reveal, preserved line footprint, shared animation clock, Pause/Replay and the complete reduced-motion answer remain unchanged. No native pen, API or architecture/ADR change is involved.
 
 Browser inspection at 2.7s confirmed 53/211 visible characters, zero caret elements and `none` for all text-run after pseudo-elements. Playback continued without console warnings/errors. The entry-module URL is versioned for this correction so cached earlier JavaScript does not keep toggling the removed class. [Typing capture](previews/hero-motion-typing-light.png) and checks were refreshed. JavaScript syntax and whitespace checks pass.
+
+## WOD example label — 2026-11-01
+
+The owner requested WOD instead of CrossFit. The active short answer and both HTML still sources now show **WOD**. The optional long answer says **Both are WOD classes.** Native/frozen variants and earlier captures remain historical checkpoints. Current content and client SVG variants are recorded in the [surface study](hero-surface-study.md).

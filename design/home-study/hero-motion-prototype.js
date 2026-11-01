@@ -48,7 +48,7 @@ for (const [id, key, value] of [
 if (params.get('reply') === 'long') {
   const copy = document.createElement('p');
   copy.className = 'long-copy';
-  copy.textContent = 'You also have a booking on Thursday at 18:00. Both classes are CrossFit. Ask me about the published workout whenever you want to check what is coming up.';
+  copy.textContent = 'You also have a booking on Thursday at 18:00. Both are WOD classes. Ask me about the published workout whenever you want to check what is coming up.';
   document.querySelector('.answer').append(copy);
 }
 // Retain the complete text footprint so typing never resizes the bubble.
