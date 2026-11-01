@@ -81,3 +81,17 @@ No actionable findings. Base size and four durations change consistently, preser
 No actionable findings. Questions use 26px through the shared base rule, with modestly faster movement. Alternating directions, the three-second question/topic rotation and frozen variants remain unchanged.
 
 Size/speed findings: Standards **0**, Spec **0**.
+
+## Faster, tighter tickers
+
+Separate reviewers checked `3a74689...909b8bd` on 2026-11-01.
+
+### Standards
+
+No actionable findings. Durations produce approximately 30% faster drift, and 10.5px is exactly 25% less gap. Lifecycle and emphasis timing remain unchanged. Documentation distinguishes current measurements from historical checkpoints.
+
+### Spec
+
+No actionable findings. The cumulative requests for faster movement and 25% smaller row gaps are implemented; native field/fade geometry is updated consistently. Row heights, alternating directions and the three-second emphasis interval remain unchanged.
+
+Faster/tighter findings: Standards **0**, Spec **0**.

@@ -365,7 +365,14 @@
         "width": 1440,
         "height": 2591
       }
-    ]
+    ],
+    "review": {
+      "fixedPoint": "3a74689",
+      "reviewedCommit": "909b8bd",
+      "standardsFindings": 0,
+      "specFindings": 0,
+      "report": "question-ticker-review.md#faster-tighter-tickers"
+    }
   },
   "currentRecord": "latestFasterTighter; earlier browser/artifact measurements describe the preceding size refinement."
 }
