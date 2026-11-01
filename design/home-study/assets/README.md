@@ -42,3 +42,5 @@ The two active AIHarder desktop views use the unedited original Hermes portrait 
 ## Flat header mascot — 2026-11-01
 
 `kettle-flat-light.svg` and `kettle-flat-dark.svg` use the existing neutral poster alpha as an automatically traced vector silhouette. The handle hole is retained; a white face circle and navy eye capsules provide the requested flat construction. Dark retains navy/white fills with a thin light outer keyline. [Exporter](../render-flat-mark.html) and [surface study](../hero-surface-study.md) record the method. Original PNG/model assets are unchanged. React Bits background source has a separate retained [license notice](../vendor/README.md).
+
+The current HTML hero displays the unchanged Hermes girl portrait as a 20px circular avatar with CSS grayscale/0.8 contrast. Source hashes and the shared logo-row opacity are unchanged. This is a reversible display treatment, not a replacement client logo or new artwork.

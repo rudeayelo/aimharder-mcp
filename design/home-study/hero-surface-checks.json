@@ -39,6 +39,37 @@
       "light": "#79a4dc",
       "dark": "#2d609b",
       "width": 1
+    },
+    "lightTopWash": "#e8f2ff to transparent over 100% height",
+    "bubbles": {
+      "questionLight": "#d9e9ff",
+      "questionDark": "#203d5e",
+      "replyLight": "#f8fbff99",
+      "replyDark": "#142b4599",
+      "mainRadius": 18,
+      "distinctiveCorner": 6,
+      "thinkingRadius": 16,
+      "shadow": "0px 3px 12px",
+      "lightShadowAlpha": 0.07,
+      "darkShadowAlpha": 0.15
+    },
+    "kettleShadow": {
+      "outerWidth": 300,
+      "narrowOuterWidth": 266,
+      "coreWidth": 224,
+      "narrowCoreWidth": 198,
+      "lightOuterAlpha": 0.3,
+      "lightCoreAlpha": 0.35,
+      "darkOuterAlpha": 0.65,
+      "darkCoreAlpha": 0.7,
+      "centerPreserved": true
+    },
+    "hermes": {
+      "assetUnchanged": true,
+      "width": 20,
+      "radius": "50%",
+      "filter": "grayscale(1) contrast(.8)",
+      "rowOpacityUnchanged": 0.65
     }
   },
   "browserObservations": {
@@ -87,17 +118,35 @@
       "reviewFooterTopBorder": "0px",
       "bottomFade": false,
       "overflow": false
+    },
+    "latestCombinedRefinement": {
+      "viewport": 1200,
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "questionRadius": "18px 18px 6px",
+      "answerRadius": "18px 18px 18px 6px",
+      "lightBubbleShadow": "rgba(35, 75, 122, 0.07) 0px 3px 12px 0px",
+      "lightGround": "rgba(20, 40, 63, 0.3)",
+      "darkGround": "rgba(0, 0, 0, 0.65)",
+      "groundWidth": 266,
+      "hermesSource": "assets/apps/hermes-avatar.png",
+      "hermesWidth": 20,
+      "hermesRadius": "50%",
+      "hermesFilter": "grayscale(1) contrast(0.8)",
+      "overflow": false
     }
   },
   "sourceAssetHashesChecked": 57,
   "screenshots": [
     {
       "file": "previews/hero-grainient-light.png",
-      "sha256": "820ebca329603418796f0129f70aa6a6732eb99946320563ab91e199d85db7c0"
+      "sha256": "c98c950bdc4120e76c7c00e2065cbb43435d96af8f4622c7a0adfea6c64f6699"
     },
     {
       "file": "previews/hero-grainient-dark.png",
-      "sha256": "bcad54766c2f819c893cc46c1e39fa51b7f09d4ef66ce4807c09911301324556"
+      "sha256": "ec11839d58f52f97d7581b0a988a1c6a00bfdc7ee4ab0d2796e3cfdf1d093bd5"
     }
   ],
   "pending": [
