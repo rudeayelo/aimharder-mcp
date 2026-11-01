@@ -424,5 +424,9 @@
     "standardsRemainingFindings": 0,
     "specRemainingFindings": 0,
     "backgroundFormatFindingResolved": true
+  },
+  "supersededFields": {
+    "record": "question-ticker-checks.json",
+    "scope": "Current heading/logo and following section; affected current asset/export hashes. Earlier checkpoint evidence retained."
   }
 }

@@ -1,0 +1,416 @@
+{
+  "date": "2026-11-01",
+  "kind": "Desktop EN Light/Dark headline, transparent mark and question ticker study",
+  "native": {
+    "protectedBefore": {
+      "NXGWi": 333120929,
+      "UEEFt": 4237331551,
+      "mEDaF": 3691509500,
+      "PjJf8": 1650117863,
+      "Bjaja": 4238398241,
+      "itt5n": 604049046,
+      "uzAUz": 2233030325,
+      "Qg3nb": 1753876597,
+      "T37OLV": 686938949,
+      "qJZFz": 419846746,
+      "bMKmj": 3229289495,
+      "PuPqO": 566233180,
+      "idH0v": 2137281768,
+      "OWSCj": 2026614655,
+      "kUGfy": 958832331
+    },
+    "protectedAfter": {
+      "NXGWi": 333120929,
+      "UEEFt": 4237331551,
+      "mEDaF": 3691509500,
+      "PjJf8": 1650117863,
+      "Bjaja": 4238398241,
+      "itt5n": 604049046,
+      "uzAUz": 2233030325,
+      "Qg3nb": 1753876597,
+      "T37OLV": 686938949,
+      "qJZFz": 419846746,
+      "bMKmj": 3229289495,
+      "PuPqO": 566233180,
+      "idH0v": 2137281768,
+      "OWSCj": 2026614655,
+      "kUGfy": 958832331
+    },
+    "changedProtectedRoots": [],
+    "sections": [
+      {
+        "page": "uAXkc",
+        "section": "ES3Gf",
+        "intro": "x0KbFU",
+        "topicRow": "V3K3t",
+        "window": "C4FwI"
+      },
+      {
+        "page": "p7u8w",
+        "section": "lKHEL",
+        "intro": "XP4Os",
+        "topicRow": "dnPEZ",
+        "window": "EMqFN"
+      }
+    ],
+    "headings": [
+      {
+        "type": "frame",
+        "id": "JWPFr",
+        "name": "Headline / training and tapping modulation",
+        "width": "fill_container",
+        "layout": "vertical",
+        "children": [
+          {
+            "type": "text",
+            "id": "NXIKW",
+            "name": "Training headline",
+            "fill": "$home-ink",
+            "textGrowth": "fixed-width",
+            "width": "fill_container",
+            "content": "Focus more\non training,",
+            "lineHeight": 1.1,
+            "fontFamily": "Geist",
+            "fontSize": 56,
+            "fontWeight": "700",
+            "letterSpacing": -1.5
+          },
+          {
+            "type": "text",
+            "id": "x589VK",
+            "name": "Less on tapping / blue emphasis",
+            "fill": "#1476CC",
+            "textGrowth": "fixed-width",
+            "width": "fill_container",
+            "content": "less on tapping.",
+            "lineHeight": 1.1,
+            "fontFamily": "Geist",
+            "fontSize": 56,
+            "fontWeight": "700",
+            "letterSpacing": -1.5
+          }
+        ]
+      },
+      {
+        "type": "frame",
+        "id": "he0Ay",
+        "name": "Headline / training and tapping modulation",
+        "width": "fill_container",
+        "layout": "vertical",
+        "children": [
+          {
+            "type": "text",
+            "id": "a1BSR",
+            "name": "Training headline",
+            "fill": "$home-ink",
+            "textGrowth": "fixed-width",
+            "width": "fill_container",
+            "content": "Focus more\non training,",
+            "lineHeight": 1.1,
+            "fontFamily": "Geist",
+            "fontSize": 56,
+            "fontWeight": "700",
+            "letterSpacing": -1.5
+          },
+          {
+            "type": "text",
+            "id": "VfaCq",
+            "name": "Less on tapping / blue emphasis",
+            "fill": "#47A3F6",
+            "textGrowth": "fixed-width",
+            "width": "fill_container",
+            "content": "less on tapping.",
+            "lineHeight": 1.1,
+            "fontFamily": "Geist",
+            "fontSize": 56,
+            "fontWeight": "700",
+            "letterSpacing": -1.5
+          }
+        ]
+      }
+    ],
+    "placeholders": [
+      {
+        "id": "uAXkc",
+        "placeholder": false
+      },
+      {
+        "id": "p7u8w",
+        "placeholder": false
+      },
+      {
+        "id": "GqxcO",
+        "placeholder": false
+      }
+    ],
+    "sectionProblems": [
+      {
+        "id": "ES3Gf",
+        "problems": [
+          {
+            "id": "t9SQhN",
+            "name": "Question row 1 / leftward",
+            "problem": "partially clipped"
+          },
+          {
+            "id": "bNgbC",
+            "name": "Question row 2 / rightward",
+            "problem": "partially clipped"
+          },
+          {
+            "id": "z4HJ9E",
+            "name": "Question row 3 / leftward",
+            "problem": "partially clipped"
+          },
+          {
+            "id": "KupCr",
+            "name": "Question row 4 / rightward",
+            "problem": "partially clipped"
+          }
+        ]
+      },
+      {
+        "id": "lKHEL",
+        "problems": [
+          {
+            "id": "DfUa2",
+            "name": "Question row 1 / leftward",
+            "problem": "partially clipped"
+          },
+          {
+            "id": "XsH4S",
+            "name": "Question row 2 / rightward",
+            "problem": "partially clipped"
+          },
+          {
+            "id": "HXbQU",
+            "name": "Question row 3 / leftward",
+            "problem": "partially clipped"
+          },
+          {
+            "id": "MOZTy",
+            "name": "Question row 4 / rightward",
+            "problem": "partially clipped"
+          }
+        ]
+      }
+    ]
+  },
+  "savedInDesktopApp": true,
+  "editedIndicatorAbsentAfterSave": true,
+  "staticPenComposition": true,
+  "htmlAnimation": true,
+  "otherHomeVariantsUpdated": false,
+  "artifacts": [
+    {
+      "file": "assets/kettle-flat-light.svg",
+      "sha256": "69a9e80c933805584e495e86fd56b2ce50f386f1cd50309ffbf2c60fa53a5411"
+    },
+    {
+      "file": "assets/kettle-flat-dark.svg",
+      "sha256": "0dc7c50f69a077f0a3922ffcb9d3d3b3a5fcfc5ea27078d9cf1306fd7398803b"
+    },
+    {
+      "file": "assets/pen/kettle-flat-light.png",
+      "sha256": "d9989c9ec262f168460efa83410e36369f2f0229f1dd8dc3830c3b3ac83e7c6a",
+      "format": "PNG",
+      "width": 256,
+      "height": 292
+    },
+    {
+      "file": "assets/pen/kettle-flat-dark.png",
+      "sha256": "0ac8fd06a6b8b2777b05ca8941c9e8903c2aac1e3a587694f346b600ec34d0b1",
+      "format": "PNG",
+      "width": 256,
+      "height": 292
+    },
+    {
+      "file": "question-ticker-data.json",
+      "sha256": "9c34040cf30e0b5a7db81a400bf9ceaf3cce09453b54cb1a7683eeaa1f9e1c29"
+    },
+    {
+      "file": "question-ticker.css",
+      "sha256": "1846e63463f3b75fffb2b958b2d5138c9fda674e307ca2c1a0e1935f8d18b4c0"
+    },
+    {
+      "file": "question-ticker.js",
+      "sha256": "51f1430b9d3d643a0e82fdafe53b857a5882e525997f802f7802a98569918f0e"
+    },
+    {
+      "file": "render-flat-mark.html",
+      "sha256": "56f95bfabb9343df71b8aae8dde9328a14e694f25b3babff04399f7b2a809735"
+    },
+    {
+      "file": "hero-motion-prototype.html",
+      "sha256": "1139339c041016c21654fe6e99981a280c61b1d17d60dd17b9899405dff7dc84"
+    },
+    {
+      "file": "previews/uAXkc.png",
+      "sha256": "1843cc8e433468c486092d2596af1209108f098a68059b757778864ccf431838",
+      "format": "PNG",
+      "width": 1440,
+      "height": 2608
+    },
+    {
+      "file": "previews/p7u8w.png",
+      "sha256": "b5c1f1625780be9ee97a6f2087acaae01f40e4499dad52fcebbe0ba79e546aa6",
+      "format": "PNG",
+      "width": 1440,
+      "height": 2608
+    },
+    {
+      "file": "previews/o4sdvx.png",
+      "sha256": "7f85db12044989f69322c4f215aa7fcfc97c7d9e130a4b9cbb9d758c9dd516db",
+      "format": "PNG",
+      "width": 1440,
+      "height": 536
+    },
+    {
+      "file": "previews/QJRsJ.png",
+      "sha256": "f0c08c8f8d700e56a61e8ed6ea653e6c9082c594bdb4409e142812049ee2f03c",
+      "format": "PNG",
+      "width": 1440,
+      "height": 536
+    },
+    {
+      "file": "previews/Py7nJ.png",
+      "sha256": "11a4626d934317ad5f720f51e79bc59f0b6dcdd1c2480771d80b385850ffdb6a",
+      "format": "PNG",
+      "width": 1440,
+      "height": 90
+    },
+    {
+      "file": "previews/Y5q0PC.png",
+      "sha256": "614b9bcc209653d1cb6df13fa40ea2d67c10eee909a172d44c460526b7aee34b",
+      "format": "PNG",
+      "width": 1440,
+      "height": 90
+    },
+    {
+      "file": "previews/ES3Gf.png",
+      "sha256": "ac177d5ae4da368378e57ce35b36c0c9637561e5ddccec0e07e2bc723023854f",
+      "format": "PNG",
+      "width": 1440,
+      "height": 587
+    },
+    {
+      "file": "previews/lKHEL.png",
+      "sha256": "a0ec855d4063cae13b284863f8fc77a05e8831e7f013d01a3f8daa8b31af3948",
+      "format": "PNG",
+      "width": 1440,
+      "height": 587
+    },
+    {
+      "file": "previews/questions-ticker-light.jpg",
+      "sha256": "a10a4eadfe603209855d6ee3b10dc9f956aafa0eaa30cc2b1ffa9d7d90eca4f9",
+      "format": "JPEG",
+      "width": 1200,
+      "height": 1326
+    },
+    {
+      "file": "previews/questions-ticker-dark.jpg",
+      "sha256": "9be69b5efc29ed8be2dbe50f2338c9f4a6c642b8d899acd4e1ee05385d5177a6",
+      "format": "JPEG",
+      "width": 1200,
+      "height": 1326
+    }
+  ],
+  "assetHashesChecked": 70,
+  "assetHashMismatches": [],
+  "brokenLocalLinks": [],
+  "browser": {
+    "viewport": [
+      1200,
+      919
+    ],
+    "rows": 4,
+    "uniqueAccessibleQuestions": 20,
+    "duplicateCopiesAriaHidden": true,
+    "oneFeaturedPair": true,
+    "topicQuestionMatched": true,
+    "observations": [
+      {
+        "at": 1793546097285,
+        "featuredQuestions": 1,
+        "featuredTopics": 1,
+        "match": true,
+        "question": "q0",
+        "topic": "classes",
+        "transform": "matrix(1, 0, 0, 1, -1.28745, 0)"
+      },
+      {
+        "at": 1793546100358,
+        "featuredQuestions": 1,
+        "featuredTopics": 1,
+        "match": true,
+        "question": "q6",
+        "topic": "workouts",
+        "transform": "matrix(1, 0, 0, 1, -48.9737, 0)"
+      },
+      {
+        "at": 1793546103437,
+        "featuredQuestions": 1,
+        "featuredTopics": 1,
+        "match": true,
+        "question": "q11",
+        "topic": "records",
+        "transform": "matrix(1, 0, 0, 1, -96.8979, 0)"
+      },
+      {
+        "at": 1793546106514,
+        "featuredQuestions": 1,
+        "featuredTopics": 1,
+        "match": true,
+        "question": "q16",
+        "topic": "classes",
+        "transform": "matrix(1, 0, 0, 1, -144.838, 0)"
+      }
+    ],
+    "alternatingDirections": [
+      "normal",
+      "reverse",
+      "normal",
+      "reverse"
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "pageOverflow": false,
+    "pauseStoppedTrackAndEmphasis": true,
+    "replayResumedBoth": true,
+    "motionOff": {
+      "still": true,
+      "animationName": "none"
+    },
+    "actualOsPreferenceChangeTested": false,
+    "observedDarkWarningsErrors": 0
+  },
+  "logoPixels": {
+    "light": {
+      "faceAlpha": 0,
+      "handleAlpha": 0,
+      "eyeRgba": [
+        20,
+        40,
+        63,
+        255
+      ]
+    },
+    "dark": {
+      "faceAlpha": 0,
+      "handleAlpha": 0,
+      "eyeRgba": [
+        255,
+        255,
+        255,
+        255
+      ]
+    }
+  },
+  "pending": [
+    "Owner visual approval",
+    "Actual OS preference changes and device/performance acceptance",
+    "Production integration and wider variant propagation"
+  ]
+}

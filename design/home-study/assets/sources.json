@@ -305,13 +305,15 @@
     "file": "kettle-flat-light.svg",
     "source": "Derived from kettle-neutral.png alpha with render-flat-mark.html; flat face and eye primitives per owner brief",
     "derivedFrom": "kettle-neutral.png",
-    "sha256": "8d99a0a04383912a6bb3d5127b06cbdc77ca9507cc6416f34cc42cf4c6d6430e"
+    "sha256": "69a9e80c933805584e495e86fd56b2ce50f386f1cd50309ffbf2c60fa53a5411",
+    "currentTreatment": "Transparent circular face cutout; navy silhouette/eyes for Light, white silhouette/eyes for Dark; no keyline."
   },
   {
     "file": "kettle-flat-dark.svg",
     "source": "Derived from kettle-neutral.png alpha with render-flat-mark.html; flat face and eye primitives per owner brief",
     "derivedFrom": "kettle-neutral.png",
-    "sha256": "e8e82d16d29aac094d6b4a8a10edf38c4e2a3793b5cda794b88e3a7d943df3b1"
+    "sha256": "0dc7c50f69a077f0a3922ffcb9d3d3b3a5fcfc5ea27078d9cf1306fd7398803b",
+    "currentTreatment": "Transparent circular face cutout; navy silhouette/eyes for Light, white silhouette/eyes for Dark; no keyline."
   },
   {
     "file": "apps/hermes-selfhst-light.svg",
@@ -368,13 +370,15 @@
     "file": "pen/kettle-flat-light.png",
     "derivedFrom": "kettle-flat-light.svg",
     "method": "Faithful rasterization with @resvg/resvg-js 2.6.2; original SVG paths and colors preserved",
-    "sha256": "73ece1f49d4f1dad2265700ba68453ea1fa8a999b500054e540767f75413c4f6"
+    "sha256": "d9989c9ec262f168460efa83410e36369f2f0229f1dd8dc3830c3b3ac83e7c6a",
+    "currentTreatment": "Transparent circular face cutout; navy silhouette/eyes for Light, white silhouette/eyes for Dark; no keyline."
   },
   {
     "file": "pen/kettle-flat-dark.png",
     "derivedFrom": "kettle-flat-dark.svg",
     "method": "Faithful rasterization with @resvg/resvg-js 2.6.2; original SVG paths and colors preserved",
-    "sha256": "e5a6c6d22c484065963f9b92e53d42dc9f4261c08ead5007a73482c8cdf78bee"
+    "sha256": "0ac8fd06a6b8b2777b05ca8941c9e8903c2aac1e3a587694f346b600ec34d0b1",
+    "currentTreatment": "Transparent circular face cutout; navy silhouette/eyes for Light, white silhouette/eyes for Dark; no keyline."
   },
   {
     "file": "pen/hermes-selfhst-light.png",

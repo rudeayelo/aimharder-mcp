@@ -1,5 +1,7 @@
 # AIHarder — public home study
 
+**Latest refinement — 2026-11-01:** [Question ticker study](question-ticker-study.md) adds blue headline modulation, transparent-face header marks and the centered four-row question section in the two English desktop Pen homes and the HTML prototype. Native sections depict a static moment; the prototype moves the rows and changes the featured question/topic every three seconds. Other six home variants remain frozen.
+
 Current checkpoint (2026-11-01): the latest hero is saved in [ahmcp.pen](../ahmcp.pen), in the English desktop Light/Dark frames only. See [Pen synchronization](pen-sync.md) for the native editor handoff, exports and verification. The Grainient background is a static capture; foreground copy, buttons and bubbles remain editable. Character animation and typed replies remain in the [HTML motion prototype](hero-motion-prototype.html).
 
 The working product name is **AIHarder** with Krona One. The two active homes contain the bold “Focus more on training, less on tapping” headline, compact header/hero, flat header mascot, blue background, revised bubbles, WOD copy and themed client icons. The six other homes and previous state/specimen boards remain at their earlier checkpoints until agreement. `aimharder-mcp` remains the technical package name.

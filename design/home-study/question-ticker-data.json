@@ -1,0 +1,37 @@
+{
+  "topics": [
+    {"id":"classes","label":"Classes & bookings","icon":"calendar-days"},
+    {"id":"workouts","label":"Workouts & weights","icon":"dumbbell"},
+    {"id":"records","label":"Activity & records","icon":"activity"}
+  ],
+  "rows": [
+    [
+      {"id":"q1","topic":"workouts","text":"What’s tomorrow’s WOD?","width":264},
+      {"id":"q0","topic":"classes","text":"When is my next booking?","width":280},
+      {"id":"q2","topic":"records","text":"Show my activity this week.","width":286},
+      {"id":"q3","topic":"classes","text":"What classes can I book tomorrow?","width":344},
+      {"id":"q4","topic":"workouts","text":"Has tomorrow’s workout been published?","width":394}
+    ],
+    [
+      {"id":"q5","topic":"records","text":"What’s my recorded 1RM for back squat?","width":380},
+      {"id":"q6","topic":"workouts","text":"What weights are prescribed for RX?","width":352},
+      {"id":"q7","topic":"classes","text":"Are there places in the 18:00 class?","width":340},
+      {"id":"q8","topic":"records","text":"Show my last five activity entries.","width":326},
+      {"id":"q9","topic":"workouts","text":"What’s the conditioning block today?","width":350}
+    ],
+    [
+      {"id":"q10","topic":"classes","text":"Show the classes on Friday.","width":284},
+      {"id":"q11","topic":"records","text":"How many activity entries did I log in October?","width":448},
+      {"id":"q12","topic":"workouts","text":"Show today’s strength block.","width":292},
+      {"id":"q13","topic":"classes","text":"What have I booked this week?","width":308},
+      {"id":"q14","topic":"records","text":"What did I record on Monday?","width":308}
+    ],
+    [
+      {"id":"q15","topic":"workouts","text":"Which workout levels are available?","width":350},
+      {"id":"q16","topic":"classes","text":"What time is the first class tomorrow?","width":366},
+      {"id":"q17","topic":"records","text":"What’s my recorded 1RM for deadlift?","width":356},
+      {"id":"q18","topic":"workouts","text":"How many rounds are prescribed?","width":332},
+      {"id":"q19","topic":"classes","text":"Show my upcoming bookings.","width":304}
+    ]
+  ]
+}
