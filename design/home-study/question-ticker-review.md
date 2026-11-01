@@ -53,3 +53,17 @@ No actionable findings. The compact first/middle/last corner rules and 4px gap a
 No actionable findings. The first pill has 4px right corners, the middle has four 4px corners, the last has 4px left corners, and outer ends stay rounded. Gap is 4px. No unrequested scope.
 
 Segment findings: Standards **0**, Spec **0**.
+
+## Inner-corner rendering correction
+
+Separate reviewers checked `3ea191d...980c98a` on 2026-11-01.
+
+### Standards
+
+No actionable findings. Bounded outer radii fit the desktop/narrow heights and preserve the intended inner corners. Documentation corrects the earlier computed-style verification gap and records a rendered regression check against the previous export. No new dependencies or production behavior changes.
+
+### Spec
+
+No actionable findings. The fix addresses the rendered symptom: 18px exterior radii fit the 36.5px desktop height, preserving 4px interior corners. Current native Light/Dark exports and raster probes confirm the visible correction. The middle pill and 4px spacing remain unchanged.
+
+Corner-fix findings: Standards **0**, Spec **0**. Owner visual approval remains pending.

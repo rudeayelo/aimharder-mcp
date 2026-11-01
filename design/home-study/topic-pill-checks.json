@@ -497,11 +497,11 @@
     "Owner visual approval"
   ],
   "review": {
-    "fixedPoint": "bb8e0c8",
-    "reviewedCommit": "aff20bc",
+    "fixedPoint": "3ea191d",
+    "reviewedCommit": "980c98a",
     "standardsFindings": 0,
     "specFindings": 0,
-    "report": "question-ticker-review.md#segmented-topic-geometry"
+    "report": "question-ticker-review.md#inner-corner-rendering-correction"
   },
   "browserSegmentGeometry": [
     {
