@@ -662,5 +662,12 @@
     "sourceHashesChecked": 70,
     "sourceHashMismatches": [],
     "runtimeSuite": "Not run; native design and documentation only."
+  },
+  "review": {
+    "fixedPoint": "2ccaff9",
+    "reviewedCommit": "f189849",
+    "standardsFindings": 0,
+    "specFindings": 0,
+    "report": "current-pen-replica-review.md"
   }
 }

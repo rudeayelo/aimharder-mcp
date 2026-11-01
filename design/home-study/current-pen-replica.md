@@ -32,7 +32,7 @@ The source prototype currently contains the header and two refined sections. To 
 
 All eight draft roots retain their content, descendant structure and styling. Semantic comparison normalizes their changed visibility, cached flow coordinates and the editor's equivalent `fill_container(1440)` fallback representation. Fifteen other protected roots, including all six frozen locale/device variants and the original shared components/boards, match their previous fingerprints exactly.
 
-Inspected native screenshots of both complete pages, headers and heroes; exported current native PNGs. Inspected both browser themes at the same width, checked dimensions/colors against the source, saved the document and confirmed that its Edited indicator disappeared. The temporary browser viewport was reset and the comparison tab closed. [Checks](current-pen-replica-checks.json) record native state, browser geometry and artifact hashes.
+Inspected native screenshots of both complete pages, headers and heroes; exported current native PNGs. Inspected both browser themes at the same width, checked dimensions/colors against the source, saved the document and confirmed that its Edited indicator disappeared. The temporary browser viewport was reset and the comparison tab closed. [Checks](current-pen-replica-checks.json) record native state, browser geometry and artifact hashes. The [separate Standards/Spec review](current-pen-replica-review.md) reports no actionable findings.
 
 [Current Light page](previews/uAXkc.png) · [Current Dark page](previews/p7u8w.png) · [Light browser source](previews/current-source-light.jpg) · [Dark browser source](previews/current-source-dark.jpg).
 
