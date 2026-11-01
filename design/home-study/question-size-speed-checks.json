@@ -205,5 +205,167 @@
     "standardsFindings": 0,
     "specFindings": 0,
     "report": "question-ticker-review.md#question-size-and-speed"
-  }
+  },
+  "latestFasterTighter": {
+    "native": {
+      "protectedChanged": [],
+      "windows": [
+        {
+          "id": "C4FwI",
+          "height": 239.5,
+          "rows": [
+            {
+              "id": "t9SQhN",
+              "y": 0
+            },
+            {
+              "id": "bNgbC",
+              "y": 62.5
+            },
+            {
+              "id": "z4HJ9E",
+              "y": 125
+            },
+            {
+              "id": "KupCr",
+              "y": 187.5
+            }
+          ]
+        },
+        {
+          "id": "EMqFN",
+          "height": 239.5,
+          "rows": [
+            {
+              "id": "DfUa2",
+              "y": 0
+            },
+            {
+              "id": "XsH4S",
+              "y": 62.5
+            },
+            {
+              "id": "HXbQU",
+              "y": 125
+            },
+            {
+              "id": "MOZTy",
+              "y": 187.5
+            }
+          ]
+        }
+      ]
+    },
+    "browser": {
+      "light": {
+        "fieldHeight": 239.5,
+        "font": "26px",
+        "overflow": false,
+        "rowGap": "10.5px",
+        "rows": [
+          {
+            "direction": "normal",
+            "duration": 100,
+            "pixelsPerSecond": 20.148125
+          },
+          {
+            "direction": "reverse",
+            "duration": 118,
+            "pixelsPerSecond": 19.69167108050847
+          },
+          {
+            "direction": "normal",
+            "duration": 109,
+            "pixelsPerSecond": 19.22462729357798
+          },
+          {
+            "direction": "reverse",
+            "duration": 123,
+            "pixelsPerSecond": 18.099657012195124
+          }
+        ],
+        "theme": "light"
+      },
+      "dark": {
+        "durations": [
+          "100s",
+          "118s",
+          "109s",
+          "123s"
+        ],
+        "fieldHeight": 239.5,
+        "font": "26px",
+        "overflow": false,
+        "rowGap": "10.5px",
+        "theme": "dark"
+      }
+    },
+    "previousDurations": [
+      130,
+      154,
+      142,
+      160
+    ],
+    "durations": [
+      100,
+      118,
+      109,
+      123
+    ],
+    "speedIncreasePercent": [
+      30.000000000000004,
+      30.508474576271194,
+      30.27522935779816,
+      30.081300813008127
+    ],
+    "previousRowGap": 14,
+    "rowGap": 10.5,
+    "rowGapReductionPercent": 25,
+    "emphasisIntervalMs": 3000,
+    "savedInDesktopApp": true,
+    "editedIndicatorAbsent": true,
+    "artifacts": [
+      {
+        "file": "question-ticker.css",
+        "sha256": "9c2c8c8120b98419656720bdfeb2629c9ca679500ec590e7c6dcaa4b2dafbe42"
+      },
+      {
+        "file": "question-ticker.js",
+        "sha256": "fd83b46d11d669503bdce8bff3eb6cb76e7fa411a06dac9db876249f484be055"
+      },
+      {
+        "file": "hero-motion-prototype.html",
+        "sha256": "e51e66646fa983e5f6eb598f37e7679c6d00e7677fee0021de357e0e7e33fd7d"
+      },
+      {
+        "file": "previews/ES3Gf.png",
+        "sha256": "de07a91724e820bf94ab456de9114419bc9c4d7b78a86e6d6e5505cd3d63cc50",
+        "format": "PNG",
+        "width": 1440,
+        "height": 569
+      },
+      {
+        "file": "previews/lKHEL.png",
+        "sha256": "4e208417b0d7c9793d27d73d7a5c55ff2fd172cc930467c078bed23dccd9689c",
+        "format": "PNG",
+        "width": 1440,
+        "height": 569
+      },
+      {
+        "file": "previews/uAXkc.png",
+        "sha256": "7c0cd45dbe466dd1461052f0aa2aacc65913aacbe39573c7fe195165018dadcb",
+        "format": "PNG",
+        "width": 1440,
+        "height": 2591
+      },
+      {
+        "file": "previews/p7u8w.png",
+        "sha256": "96cd092ba8131081baa407b91ca3b40437418622ecd74289edb244f7a2669df1",
+        "format": "PNG",
+        "width": 1440,
+        "height": 2591
+      }
+    ]
+  },
+  "currentRecord": "latestFasterTighter; earlier browser/artifact measurements describe the preceding size refinement."
 }

@@ -1,6 +1,6 @@
 # AIHarder — question ticker study
 
-**Current refinement:** questions now form an unboxed 26px text wall with slightly faster ticker drift. The [size/speed checks](question-size-speed-checks.json) are current for those properties. The owner superseded the initial question-pill treatment below; topic pills are retained. See the text-wall revision at the end and [current checks](question-text-wall-checks.json).
+**Current refinement:** questions now form an unboxed 26px text wall with a further 30% faster ticker drift and 10.5px row gaps. The [size/speed checks](question-size-speed-checks.json) are current for those properties. The owner superseded the initial question-pill treatment below; topic pills are retained. See the text-wall revision at the end and [current checks](question-text-wall-checks.json).
 
 Date: 2026-11-01. Current English desktop Light/Dark refinement under #95.
 
@@ -85,3 +85,11 @@ The owner annotated 32px → 26px question text and requested slightly faster ti
 The row durations are now 130/154/142/160 seconds instead of 176/208/192/216. Shorter text also shortens the travel distance, so simply reducing duration by 10% would have made the visible movement slower. Browser geometry/duration measurements before and after show a 10.6–11.2% increase in computed linear pixel speed, a small acceleration: approximately 15.50/15.09/14.76/13.91 px/s. This is a designed CSS travel-rate check, not a device-performance benchmark. The three-second question/topic emphasis interval stays unchanged.
 
 Native screenshots and exports were inspected and saved; 20 questions per active page are 26px, and all 15 protected-root fingerprints match. Browser inspection confirms 26px in Light/Dark, the four new durations, alternating normal/reverse directions, matching topic/question emphasis after a tick, no page overflow and no observed warnings/errors in the inspected Dark session. JavaScript syntax and document links pass. [Current checks](question-size-speed-checks.json) include measurements and source/export hashes; earlier size/speed checkpoints are historical. No API, production dependency, architecture or ADR decision changes, so no MCP runtime suite is needed.
+
+## Faster, tighter tickers — 2026-11-01
+
+The owner asked for faster tickers, then a 25% smaller gap between rows. Row durations are now 100/118/109/123 seconds, giving approximately 30% higher linear speed than the preceding 130/154/142/160-second trial at the same 26px text size. The question/topic emphasis interval remains 3000ms, and directions still alternate.
+
+The `.question-tickers` gap changes from 14px to 10.5px across existing widths/themes. Row boxes remain 52px high; only the inter-row gap is reduced. The four-row field shrinks from 250px to 239.5px. Native row positions are 0/62.5/125/187.5px, with matching fade height and content-driven section height. Other six home variants remain frozen.
+
+Browser checks in Light/Dark confirm the four durations, 26px text, 10.5px gap, 239.5px field and no page overflow. Native screenshots/exports were inspected and saved; protected roots match their preserved baseline. JavaScript syntax passes. [Checks](question-size-speed-checks.json) store the latest measurements under `latestFasterTighter`; prior values/asset hashes remain historical. No API, dependencies, architecture or ADR decision changed; no MCP runtime suite applies to this visual refinement.

@@ -56,7 +56,7 @@
 .question-tickers {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10.5px;
   width: min(1200px, calc(100% - 80px));
   margin: auto;
   overflow: hidden;

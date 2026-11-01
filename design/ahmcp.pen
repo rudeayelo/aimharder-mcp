@@ -1583,7 +1583,7 @@
           "type": "frame",
           "id": "ES3Gf",
           "name": "Questions / large text wall and topic pills",
-          "context": "Unboxed question typography, 26px/500. Four alternating ticker rows; one question and matching topic emphasized every 3 seconds in HTML. Static native snapshot; HTML cycles 130/154/142/160 seconds for slightly faster drift.",
+          "context": "Unboxed question typography, 26px/500. Four alternating ticker rows; one question and matching topic emphasized every 3 seconds in HTML. Static native snapshot; HTML cycles 100/118/109/123 seconds for about 30% faster drift than the prior trial.",
           "width": "fill_container",
           "fill": "$home-bg",
           "stroke": "$home-line",
@@ -1761,7 +1761,7 @@
               "name": "Four ticker rows / faded edges",
               "clip": true,
               "width": 1200,
-              "height": 250,
+              "height": 239.5,
               "layout": "none",
               "children": [
                 {
@@ -1849,7 +1849,7 @@
                   "type": "frame",
                   "id": "bNgbC",
                   "x": 0,
-                  "y": 66,
+                  "y": 62.5,
                   "name": "Question row 2 / rightward",
                   "height": 52,
                   "gap": 40,
@@ -1931,7 +1931,7 @@
                   "type": "frame",
                   "id": "z4HJ9E",
                   "x": 0,
-                  "y": 132,
+                  "y": 125,
                   "name": "Question row 3 / leftward",
                   "height": 52,
                   "gap": 40,
@@ -2013,7 +2013,7 @@
                   "type": "frame",
                   "id": "KupCr",
                   "x": 0,
-                  "y": 198,
+                  "y": 187.5,
                   "name": "Question row 4 / rightward",
                   "height": 52,
                   "gap": 40,
@@ -2117,7 +2117,7 @@
                     ]
                   },
                   "width": 96,
-                  "height": 250
+                  "height": 239.5
                 },
                 {
                   "type": "rectangle",
@@ -2145,7 +2145,7 @@
                     ]
                   },
                   "width": 96,
-                  "height": 250
+                  "height": 239.5
                 }
               ]
             }
@@ -4238,7 +4238,7 @@
           "type": "frame",
           "id": "lKHEL",
           "name": "Questions / large text wall and topic pills",
-          "context": "Unboxed question typography, 26px/500. Four alternating ticker rows; one question and matching topic emphasized every 3 seconds in HTML. Static native snapshot; HTML cycles 130/154/142/160 seconds for slightly faster drift.",
+          "context": "Unboxed question typography, 26px/500. Four alternating ticker rows; one question and matching topic emphasized every 3 seconds in HTML. Static native snapshot; HTML cycles 100/118/109/123 seconds for about 30% faster drift than the prior trial.",
           "width": "fill_container",
           "fill": "$home-bg",
           "stroke": "$home-line",
@@ -4416,7 +4416,7 @@
               "name": "Four ticker rows / faded edges",
               "clip": true,
               "width": 1200,
-              "height": 250,
+              "height": 239.5,
               "layout": "none",
               "children": [
                 {
@@ -4504,7 +4504,7 @@
                   "type": "frame",
                   "id": "XsH4S",
                   "x": 0,
-                  "y": 66,
+                  "y": 62.5,
                   "name": "Question row 2 / rightward",
                   "height": 52,
                   "gap": 40,
@@ -4586,7 +4586,7 @@
                   "type": "frame",
                   "id": "HXbQU",
                   "x": 0,
-                  "y": 132,
+                  "y": 125,
                   "name": "Question row 3 / leftward",
                   "height": 52,
                   "gap": 40,
@@ -4668,7 +4668,7 @@
                   "type": "frame",
                   "id": "MOZTy",
                   "x": 0,
-                  "y": 198,
+                  "y": 187.5,
                   "name": "Question row 4 / rightward",
                   "height": 52,
                   "gap": 40,
@@ -4772,7 +4772,7 @@
                     ]
                   },
                   "width": 96,
-                  "height": 250
+                  "height": 239.5
                 },
                 {
                   "type": "rectangle",
@@ -4800,7 +4800,7 @@
                     ]
                   },
                   "width": 96,
-                  "height": 250
+                  "height": 239.5
                 }
               ]
             }
