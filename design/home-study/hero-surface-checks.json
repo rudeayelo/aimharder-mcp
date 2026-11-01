@@ -80,6 +80,25 @@
       "light": "apps/openclaw-selfhst-light.svg",
       "dark": "apps/openclaw-selfhst-dark.svg",
       "width": 24
+    },
+    "sceneHeight": {
+      "desktop": 470,
+      "mobile": 520,
+      "mobileMaxWidth": 850
+    },
+    "plantedOffsets": {
+      "desktop": {
+        "kettleTop": 86,
+        "groundTop": 466
+      },
+      "desktopMax1320": {
+        "kettleTop": 116,
+        "groundTop": 450
+      },
+      "mobileMax850": {
+        "kettleTop": 126,
+        "groundTop": 460
+      }
     }
   },
   "browserObservations": {
@@ -185,17 +204,43 @@
       "hermesRadius": "0px",
       "overflow": false,
       "consoleWarningsAndErrorsObserved": 0
-    }
+    },
+    "compactScene": [
+      {
+        "viewport": 1044,
+        "theme": "light",
+        "scene": 470,
+        "kettleTop": 116,
+        "groundTop": 450,
+        "overflow": false
+      },
+      {
+        "viewport": 1440,
+        "theme": "dark",
+        "scene": 470,
+        "kettleTop": 86,
+        "groundTop": 466,
+        "overflow": false
+      },
+      {
+        "viewport": 850,
+        "theme": "dark",
+        "scene": 520,
+        "kettleTop": 126,
+        "groundTop": 460,
+        "check": "Computed mobile values preserved; no new mobile visual design"
+      }
+    ]
   },
   "sourceAssetHashesChecked": 62,
   "screenshots": [
     {
       "file": "previews/hero-grainient-light.png",
-      "sha256": "d8008f583d6bfd60f06e0bbdd7976fb4bea02e7f746424441a192731257a8f7e"
+      "sha256": "35474f27ee1787772c9f1d12d2bf281904de408eab63f1e0a6d385de16a78256"
     },
     {
       "file": "previews/hero-grainient-dark.png",
-      "sha256": "d926607d4f9bec6f271bdca8917d64c080a1424c84c7a20e873063eb54f56a8a"
+      "sha256": "b63ce23e0c7c892fdb621d34ad713a022c99a42057a4ed5049bb902f9f1c3ed9"
     }
   ],
   "pending": [
