@@ -1,0 +1,202 @@
+{
+  "date": "2026-11-01",
+  "scope": "English desktop Light/Dark question size and ticker speed",
+  "native": {
+    "before": {
+      "NXGWi": 333120929,
+      "UEEFt": 4237331551,
+      "mEDaF": 3691509500,
+      "PjJf8": 1650117863,
+      "Bjaja": 4238398241,
+      "itt5n": 604049046,
+      "uzAUz": 2233030325,
+      "Qg3nb": 1753876597,
+      "T37OLV": 686938949,
+      "qJZFz": 419846746,
+      "bMKmj": 3229289495,
+      "PuPqO": 566233180,
+      "idH0v": 2137281768,
+      "OWSCj": 2026614655,
+      "kUGfy": 958832331
+    },
+    "after": {
+      "NXGWi": 333120929,
+      "UEEFt": 4237331551,
+      "mEDaF": 3691509500,
+      "PjJf8": 1650117863,
+      "Bjaja": 4238398241,
+      "itt5n": 604049046,
+      "uzAUz": 2233030325,
+      "Qg3nb": 1753876597,
+      "T37OLV": 686938949,
+      "qJZFz": 419846746,
+      "bMKmj": 3229289495,
+      "PuPqO": 566233180,
+      "idH0v": 2137281768,
+      "OWSCj": 2026614655,
+      "kUGfy": 958832331
+    },
+    "changed": [],
+    "sections": [
+      {
+        "id": "ES3Gf",
+        "questionCount": 20,
+        "fontSizes": [
+          26
+        ]
+      },
+      {
+        "id": "lKHEL",
+        "questionCount": 20,
+        "fontSizes": [
+          26
+        ]
+      }
+    ]
+  },
+  "savedInDesktopApp": true,
+  "editedIndicatorAbsent": true,
+  "browser": {
+    "before": {
+      "font": "32px",
+      "rows": [
+        {
+          "duration": 176,
+          "gap": 40,
+          "pixelsPerSecond": 13.940651633522728,
+          "width": 2413.5546875
+        },
+        {
+          "duration": 208,
+          "gap": 40,
+          "pixelsPerSecond": 13.647122896634617,
+          "width": 2798.6015625
+        },
+        {
+          "duration": 192,
+          "gap": 40,
+          "pixelsPerSecond": 13.306844075520834,
+          "width": 2514.9140625
+        },
+        {
+          "duration": 216,
+          "gap": 40,
+          "pixelsPerSecond": 12.577944155092592,
+          "width": 2676.8359375
+        }
+      ]
+    },
+    "after": {
+      "font": "26px",
+      "overflow": false,
+      "rows": [
+        {
+          "direction": "normal",
+          "duration": 130,
+          "gap": 40,
+          "pixelsPerSecond": 15.498557692307692,
+          "width": 1974.8125
+        },
+        {
+          "direction": "reverse",
+          "duration": 154,
+          "gap": 40,
+          "pixelsPerSecond": 15.088423295454543,
+          "width": 2283.6171875
+        },
+        {
+          "direction": "normal",
+          "duration": 142,
+          "gap": 40,
+          "pixelsPerSecond": 14.75693221830986,
+          "width": 2055.484375
+        },
+        {
+          "direction": "reverse",
+          "duration": 160,
+          "gap": 40,
+          "pixelsPerSecond": 13.914111328125,
+          "width": 2186.2578125
+        }
+      ],
+      "theme": "light"
+    },
+    "dark": {
+      "directions": [
+        "normal",
+        "reverse",
+        "normal",
+        "reverse"
+      ],
+      "durations": [
+        "130s",
+        "154s",
+        "142s",
+        "160s"
+      ],
+      "font": "26px",
+      "overflow": false,
+      "questionTopic": "classes",
+      "theme": "dark",
+      "topic": "classes"
+    },
+    "highlightAfterNextTick": {
+      "topic": "workouts",
+      "questionTopic": "workouts",
+      "featuredQuestions": 1
+    },
+    "observedDarkWarningsErrors": 0
+  },
+  "speedIncreasePercent": [
+    11.175274296638381,
+    10.561203337410774,
+    10.897310696355088,
+    10.623096720392233
+  ],
+  "artifacts": [
+    {
+      "file": "question-ticker.css",
+      "sha256": "78e41bb6b307eb7b4219b71d90f6221d63378f42d2129965a430b3e9c78a6496"
+    },
+    {
+      "file": "question-ticker.js",
+      "sha256": "4b2475c858cd206aebfb76a4b7042ee25652ebbe0d61aa85d95650d49ef3b596"
+    },
+    {
+      "file": "hero-motion-prototype.html",
+      "sha256": "a71729a03c5357030b4aa731cc2da9482df0c2d0ffcf02777a322c0f062a8140"
+    },
+    {
+      "file": "previews/ES3Gf.png",
+      "sha256": "c0512a8240565b5c29f4b59e63107fdf30f700a94c806dced58eee59ffa0a5bc",
+      "format": "PNG",
+      "width": 1440,
+      "height": 580
+    },
+    {
+      "file": "previews/lKHEL.png",
+      "sha256": "ba7be80280fe41ed651cfb8e1228faf20071c0f42fddd2903873d99ecea68202",
+      "format": "PNG",
+      "width": 1440,
+      "height": 580
+    },
+    {
+      "file": "previews/uAXkc.png",
+      "sha256": "7c8ff038fb5fe825d0cb9c1b027f9ece2b6a90d8cc69c87618e103678cef2b60",
+      "format": "PNG",
+      "width": 1440,
+      "height": 2601
+    },
+    {
+      "file": "previews/p7u8w.png",
+      "sha256": "19e7a3bf54582ef277634485e515a0e16bce2b2a2f1df524fd4a7bf9287b1148",
+      "format": "PNG",
+      "width": 1440,
+      "height": 2601
+    }
+  ],
+  "pending": [
+    "Owner visual approval",
+    "Actual device/performance acceptance and wider variant propagation"
+  ]
+}

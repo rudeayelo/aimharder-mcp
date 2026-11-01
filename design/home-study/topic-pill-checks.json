@@ -710,5 +710,9 @@
       "fixedExitCode": 0,
       "note": "Actual native PNG raster sample; component bounds are 548x37. Temporary Python/Pillow harness remained in the debug temp directory."
     }
+  },
+  "laterQuestionRefinement": {
+    "record": "question-size-speed-checks.json",
+    "scope": "Current question size, ticker speed and affected source/home/section export hashes; topic geometry remains current."
   }
 }

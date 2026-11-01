@@ -34,7 +34,7 @@ for (const [index, row] of rows.entries()) {
   viewport.className = 'question-ticker';
   const track = document.createElement('div');
   track.className = 'question-track';
-  track.style.setProperty('--duration', `${[176, 208, 192, 216][index]}s`);
+  track.style.setProperty('--duration', `${[130, 154, 142, 160][index]}s`);
   for (let copy = 0; copy < 2; copy++) {
     const group = document.createElement('ul');
     group.className = 'question-group';

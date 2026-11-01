@@ -1,6 +1,6 @@
 # AIHarder — question ticker study
 
-**Current refinement:** questions now form a large unboxed text wall. The owner superseded the initial question-pill treatment below; topic pills are retained. See the text-wall revision at the end and [current checks](question-text-wall-checks.json).
+**Current refinement:** questions now form an unboxed 26px text wall with slightly faster ticker drift. The [size/speed checks](question-size-speed-checks.json) are current for those properties. The owner superseded the initial question-pill treatment below; topic pills are retained. See the text-wall revision at the end and [current checks](question-text-wall-checks.json).
 
 Date: 2026-11-01. Current English desktop Light/Dark refinement under #95.
 
@@ -77,3 +77,11 @@ Outer radii are now bounded at 18px in desktop CSS/native Pen and 16px with the 
 A temporary Python/Pillow pixel probe exercised the actual exported component: at the first pill's two right corners and the last pill's two left corners, the prior immutable export had alpha 255 (square) and failed; corrected Light and Dark exports have alpha 0 and pass. This is a rendered regression check, rather than another assertion of the declarations. The small component and isolated property normalization made broad bisection/log instrumentation unnecessary. No debug logging or test dependency was added to the repository. The current native and browser exports were inspected and saved, and all protected roots remain unchanged. [Checks](topic-pill-checks.json) record the exact samples, immutable before-image hash and browser observations.
 
 Existing architecture/security/distribution ADRs remain applicable; no API or production runtime behavior changed. No MCP runtime suite is needed for this rendering-only correction. Owner visual approval remains pending.
+
+## Question size and drift refinement — 2026-11-01
+
+The owner annotated 32px → 26px question text and requested slightly faster tickers. The base `.question-text` rule is now 26px in both themes and across existing widths, rather than a special exception for the annotated 1044px viewport. Only questions change size: the section title, topic labels, 500 weight, tracking, 52px row boxes, masks, gaps and alternating directions remain unchanged. Both English desktop native Pen sections use 26px text; the six frozen variants remain untouched.
+
+The row durations are now 130/154/142/160 seconds instead of 176/208/192/216. Shorter text also shortens the travel distance, so simply reducing duration by 10% would have made the visible movement slower. Browser geometry/duration measurements before and after show a 10.6–11.2% increase in computed linear pixel speed, a small acceleration: approximately 15.50/15.09/14.76/13.91 px/s. This is a designed CSS travel-rate check, not a device-performance benchmark. The three-second question/topic emphasis interval stays unchanged.
+
+Native screenshots and exports were inspected and saved; 20 questions per active page are 26px, and all 15 protected-root fingerprints match. Browser inspection confirms 26px in Light/Dark, the four new durations, alternating normal/reverse directions, matching topic/question emphasis after a tick, no page overflow and no observed warnings/errors in the inspected Dark session. JavaScript syntax and document links pass. [Current checks](question-size-speed-checks.json) include measurements and source/export hashes; earlier size/speed checkpoints are historical. No API, production dependency, architecture or ADR decision changes, so no MCP runtime suite is needed.
