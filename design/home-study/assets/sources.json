@@ -431,5 +431,25 @@
     "sourceNotice": "../vendor/README.md",
     "theme": "dark",
     "sha256": "4795af5a19ff051b77e69f4495a313fd6af6a7d46631ba6806c1426ec78f20b7"
+  },
+  {
+    "file": "lucide/mouse-pointer-2.svg",
+    "source": "https://unpkg.com/lucide-static@0.468.0/icons/mouse-pointer-2.svg",
+    "sha256": "e683912be42173892c4d55daf1eebff781d8c36a85f376bcf8722bdf37f2e27b"
+  },
+  {
+    "file": "lucide/loader-circle.svg",
+    "source": "https://unpkg.com/lucide-static@0.468.0/icons/loader-circle.svg",
+    "sha256": "44ad0f822a89b28a3feecf7276686c818a92a4a9c77cc51404c58929e30f0f3a"
+  },
+  {
+    "file": "pen/how-background-light.png",
+    "source": "Local still rendering of ../render-how-background.html?theme=light at 1440x683; background only, app-integrated Grainient adaptation; see ../vendor/README.md",
+    "sha256": "bd8e284e5ee3deca0155159a7cc48c5607962feb0699d211e538b99c97b28a9d"
+  },
+  {
+    "file": "pen/how-background-dark.png",
+    "source": "Local still rendering of ../render-how-background.html?theme=dark at 1440x683; background only, app-integrated Grainient adaptation; see ../vendor/README.md",
+    "sha256": "2918972faa9035cdeda346f3a782c74131e817058f7f35d2cccc4a7a7d731cea"
   }
 ]

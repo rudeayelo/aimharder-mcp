@@ -750,7 +750,7 @@
       "x": 1360,
       "y": 1000,
       "name": "AIHarder / Desktop / English / Light",
-      "context": "Current English desktop replica: header, hero and question wall. Poster/long-answer still; 26px questions, 10.5px row gaps, segmented topic pills. Animation remains in HTML. Setup/FAQ/closing/footer are retained as disabled draft layers for later sequential refinement.",
+      "context": "Current English desktop study: header, hero, question wall and How you get started. How to is an editable success still; actual animation is in HTML. FAQ/closing/footer remain disabled drafts for sequential refinement.",
       "theme": {
         "appearance": "light",
         "language": "en"
@@ -2164,15 +2164,18 @@
         },
         {
           "type": "frame",
-          "id": "uxfOi",
-          "x": 0,
-          "y": 1192.5,
-          "name": "Three setup tasks",
-          "enabled": false,
-          "width": "fill_container(1440)",
-          "fill": "$home-bg",
+          "id": "ZLrrd",
+          "name": "How you get started / animated demo still",
+          "context": "Success still at 6.2s. Editable foreground; background capture only. Runtime source home-study/how-to-prototype.js. Synthetic examples; no connection or installation occurs.",
+          "width": "fill_container",
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "home-study/assets/pen/how-background-light.png",
+            "mode": "stretch"
+          },
           "layout": "vertical",
-          "gap": 18,
+          "gap": 48,
           "padding": [
             80,
             120
@@ -2180,87 +2183,90 @@
           "children": [
             {
               "type": "text",
-              "id": "UOlcc",
-              "name": "Setup heading",
-              "metadata": {
-                "type": "home-copy",
-                "key": "home-setupTitle"
-              },
-              "fill": "$home-ink",
+              "id": "q55tb",
+              "name": "How to heading",
+              "fill": "#FFFFFF",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "Your account. Connected.",
-              "lineHeight": 1.45,
+              "content": "How you get started",
+              "lineHeight": 1.2,
+              "textAlign": "center",
               "fontFamily": "Geist",
-              "fontSize": 36,
-              "fontWeight": "600"
-            },
-            {
-              "type": "text",
-              "id": "k5hKqC",
-              "name": "Setup introduction",
-              "metadata": {
-                "type": "home-copy",
-                "key": "home-setupIntro"
-              },
-              "fill": "$home-muted",
-              "textGrowth": "fixed-width",
-              "width": "fill_container",
-              "content": "Three steps, then you’re ready to ask.",
-              "lineHeight": 1.45,
-              "fontFamily": "Geist",
-              "fontSize": 17,
-              "fontWeight": "normal"
+              "fontSize": 40,
+              "fontWeight": "700",
+              "letterSpacing": -1
             },
             {
               "type": "frame",
-              "id": "ELo57",
-              "name": "Setup steps",
+              "id": "F7sN57",
+              "name": "Three animated steps",
               "width": "fill_container",
-              "gap": 40,
-              "padding": [
-                24,
-                0,
-                0,
-                0
-              ],
+              "gap": 32,
               "children": [
                 {
                   "type": "frame",
-                  "id": "iX7Ia",
-                  "name": "Setup step 1",
+                  "id": "sdPxT",
+                  "name": "Step 1 / Connect your account",
                   "width": "fill_container",
                   "layout": "vertical",
-                  "gap": 12,
+                  "gap": 24,
                   "children": [
                     {
                       "type": "frame",
-                      "id": "pDqlo",
-                      "name": "Step 1 / graphical explanation",
+                      "id": "qCKFL",
+                      "name": "Demo 1 / success snapshot",
+                      "clip": true,
                       "width": "fill_container",
-                      "height": 208,
-                      "fill": "$home-surface",
-                      "cornerRadius": 12,
-                      "layout": "vertical",
-                      "gap": 10,
-                      "padding": 28,
-                      "justifyContent": "center",
-                      "alignItems": "center",
+                      "height": 320,
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 215,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#FFFFFF",
+                            "position": 0
+                          },
+                          {
+                            "color": "#F3F7FC",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "cornerRadius": 16,
+                      "stroke": "#FFFFFFA6",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#071A3526",
+                        "offset": {
+                          "x": 0,
+                          "y": 10
+                        },
+                        "blur": 30
+                      },
+                      "layout": "none",
                       "children": [
                         {
                           "type": "frame",
-                          "id": "xL5T4",
-                          "name": "AimHarder original logo / light plate",
-                          "width": 180,
-                          "height": 40,
-                          "fill": "#FFFFFF",
-                          "cornerRadius": 4,
-                          "justifyContent": "center",
-                          "alignItems": "center",
+                          "id": "diVji",
+                          "x": 61.33,
+                          "y": 44,
+                          "name": "Fictional AimHarder form",
+                          "width": 256,
+                          "height": 231,
+                          "layout": "none",
                           "children": [
                             {
                               "type": "rectangle",
-                              "id": "t84Mwi",
+                              "id": "KJAbw",
+                              "x": 43,
+                              "y": 0,
                               "name": "Original AimHarder logo",
                               "fill": {
                                 "type": "image",
@@ -2268,93 +2274,138 @@
                                 "url": "home-study/assets/apps/aimharder.png",
                                 "mode": "contain"
                               },
-                              "width": 172,
+                              "width": 170,
                               "height": 38
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "kzd3S",
-                          "name": "AimHarder email / pseudo input",
-                          "width": 230,
-                          "height": 34,
-                          "fill": "$home-bg",
-                          "cornerRadius": 5,
-                          "stroke": "$home-line",
-                          "strokeWidth": 1,
-                          "padding": [
-                            8,
-                            10
-                          ],
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "VVr5R",
-                              "name": "Email placeholder",
-                              "fill": "$home-muted",
-                              "textGrowth": "fixed-width",
-                              "width": "fill_container",
-                              "content": "Your AimHarder email",
-                              "lineHeight": 1.45,
-                              "fontFamily": "Geist",
-                              "fontSize": 12,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "j0BOqu",
-                          "name": "Password / pseudo input",
-                          "width": 230,
-                          "height": 34,
-                          "fill": "$home-bg",
-                          "cornerRadius": 5,
-                          "stroke": "$home-line",
-                          "strokeWidth": 1,
-                          "gap": 12,
-                          "padding": [
-                            8,
-                            10
-                          ],
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "oNtxi",
-                              "name": "Masked password",
-                              "fill": "$home-muted",
-                              "textGrowth": "fixed-width",
-                              "width": "fill_container",
-                              "content": "••••••••••",
-                              "lineHeight": 1.45,
-                              "fontFamily": "Geist",
-                              "fontSize": 12,
-                              "fontWeight": "normal",
-                              "letterSpacing": 1.5
                             },
                             {
                               "type": "frame",
-                              "id": "smgiN",
-                              "name": "Connection illustration / check",
-                              "width": 18,
-                              "height": 18,
-                              "fill": "$home-action",
-                              "cornerRadius": 9,
+                              "id": "W45qLz",
+                              "x": 0,
+                              "y": 59,
+                              "name": "Username / filled",
+                              "width": 256,
+                              "height": 48,
+                              "fill": "#FFFFFFB3",
+                              "cornerRadius": 8,
+                              "stroke": "#CFD9E6",
+                              "strokeWidth": 1,
+                              "layout": "vertical",
+                              "padding": [
+                                6,
+                                12
+                              ],
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "onZUa",
+                                  "name": "Field label",
+                                  "fill": "#6A7B90",
+                                  "content": "Username",
+                                  "lineHeight": 1.4,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 10,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "DnGr8",
+                                  "name": "Fictional value",
+                                  "fill": "#14283F",
+                                  "content": "alex@example.com",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "TYtdu",
+                              "x": 0,
+                              "y": 119,
+                              "name": "Password / filled",
+                              "width": 256,
+                              "height": 48,
+                              "fill": "#FFFFFFB3",
+                              "cornerRadius": 8,
+                              "stroke": "#CFD9E6",
+                              "strokeWidth": 1,
+                              "layout": "vertical",
+                              "padding": [
+                                6,
+                                12
+                              ],
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "X3oGzo",
+                                  "name": "Field label",
+                                  "fill": "#6A7B90",
+                                  "content": "Password",
+                                  "lineHeight": 1.4,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 10,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "pSSjy",
+                                  "name": "Fictional value",
+                                  "fill": "#14283F",
+                                  "content": "••••••••",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "PNHv2",
+                              "x": 0,
+                              "y": 187,
+                              "name": "Connected / success",
+                              "width": 256,
+                              "height": 44,
+                              "fill": "#15734D",
+                              "cornerRadius": 8,
+                              "stroke": "#116340",
+                              "strokeWidth": 1,
+                              "effect": {
+                                "type": "shadow",
+                                "shadowType": "outer",
+                                "color": "#0000001A",
+                                "offset": {
+                                  "x": 0,
+                                  "y": 4
+                                },
+                                "blur": 6
+                              },
+                              "gap": 7,
                               "justifyContent": "center",
                               "alignItems": "center",
                               "children": [
                                 {
                                   "type": "icon",
-                                  "id": "f0pFA",
-                                  "name": "Connected illustration",
-                                  "width": 12,
-                                  "height": 12,
+                                  "id": "nTXRH",
+                                  "name": "Check / Lucide",
+                                  "width": 16,
+                                  "height": 16,
                                   "icon": "check",
                                   "library": "lucide",
-                                  "fill": "$home-on-action"
+                                  "fill": "#FFFFFF"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "unzPv",
+                                  "name": "Success label",
+                                  "fill": "#FFFFFF",
+                                  "content": "Connected",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 14,
+                                  "fontWeight": "600"
                                 }
                               ]
                             }
@@ -2363,333 +2414,560 @@
                       ]
                     },
                     {
-                      "type": "text",
-                      "id": "Dm62U",
-                      "name": "Step 1 number",
-                      "fill": "$home-action",
-                      "textGrowth": "fixed-width",
+                      "type": "frame",
+                      "id": "jjZRH",
+                      "name": "Step 1 caption",
                       "width": "fill_container",
-                      "content": "01",
-                      "lineHeight": 1.45,
-                      "fontFamily": "Geist",
-                      "fontSize": 16,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "xCMqL",
-                      "name": "Step 1 title",
-                      "metadata": {
-                        "type": "home-copy",
-                        "key": "home-step1"
-                      },
-                      "fill": "$home-ink",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Connect AimHarder",
-                      "lineHeight": 1.45,
-                      "fontFamily": "Geist",
-                      "fontSize": 21,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "SM6y5",
-                      "name": "Step 1 description",
-                      "metadata": {
-                        "type": "home-copy",
-                        "key": "home-step1Body"
-                      },
-                      "fill": "$home-muted",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Link your existing AimHarder account. Keep training with your gym as usual.",
-                      "lineHeight": 1.45,
-                      "fontFamily": "Geist",
-                      "fontSize": 16,
-                      "fontWeight": "normal"
+                      "layout": "vertical",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "TdpOr",
+                          "name": "Number and title",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "k6Khs",
+                              "name": "Step number",
+                              "fill": "#14283FB3",
+                              "content": "01",
+                              "fontFamily": "Geist",
+                              "fontSize": 15,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "CIRwG",
+                              "name": "Step title",
+                              "fill": "#14283F",
+                              "content": "Connect your account",
+                              "lineHeight": 1.4,
+                              "fontFamily": "Geist",
+                              "fontSize": 20,
+                              "fontWeight": "600",
+                              "letterSpacing": -0.35
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "hntnc",
+                          "name": "Step description / provisional",
+                          "fill": "#203F64",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Link your AimHarder account to bring your training into the conversation.",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        }
+                      ]
                     }
                   ]
                 },
                 {
                   "type": "frame",
-                  "id": "T9rizY",
-                  "name": "Setup step 2",
+                  "id": "f5y9gQ",
+                  "name": "Step 2 / Choose your AI app",
                   "width": "fill_container",
                   "layout": "vertical",
-                  "gap": 12,
+                  "gap": 24,
                   "children": [
                     {
                       "type": "frame",
-                      "id": "D26Vv",
-                      "name": "Step 2 / graphical explanation",
+                      "id": "wYY0X",
+                      "name": "Demo 2 / success snapshot",
+                      "clip": true,
                       "width": "fill_container",
-                      "height": 208,
-                      "fill": "$home-surface",
-                      "cornerRadius": 12,
-                      "layout": "vertical",
-                      "gap": 10,
-                      "padding": 28,
-                      "justifyContent": "center",
-                      "alignItems": "center",
+                      "height": 320,
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 215,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#FFFFFF",
+                            "position": 0
+                          },
+                          {
+                            "color": "#F3F7FC",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "cornerRadius": 16,
+                      "stroke": "#FFFFFFA6",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#071A3526",
+                        "offset": {
+                          "x": 0,
+                          "y": 10
+                        },
+                        "blur": 30
+                      },
+                      "layout": "none",
                       "children": [
                         {
+                          "type": "text",
+                          "id": "j0cMQ",
+                          "x": 20,
+                          "y": 20,
+                          "name": "AI app selector heading",
+                          "fill": "#14283F",
+                          "content": "Your AI apps",
+                          "lineHeight": 1.8461538461538463,
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        },
+                        {
                           "type": "frame",
-                          "id": "jyWKb",
-                          "name": "Choose an AI app / logo row",
-                          "width": "fill_container",
-                          "gap": 12,
-                          "justifyContent": "center",
+                          "id": "maqIi",
+                          "x": 20,
+                          "y": 58,
+                          "name": "Clipped scrolling app list",
+                          "clip": true,
+                          "width": 338.67,
+                          "height": 246,
+                          "layout": "none",
                           "children": [
                             {
                               "type": "frame",
-                              "id": "hRpNR",
-                              "name": "ChatGPT / app tile",
-                              "width": 64,
-                              "height": 64,
-                              "fill": "$home-bg",
-                              "cornerRadius": 12,
-                              "stroke": "$home-line",
-                              "strokeWidth": 1,
-                              "justifyContent": "center",
-                              "alignItems": "center",
+                              "id": "eietP",
+                              "x": 0,
+                              "y": -80,
+                              "name": "App list / scrolled 80px",
+                              "width": 338.67,
+                              "layout": "vertical",
+                              "gap": 4,
                               "children": [
                                 {
-                                  "type": "rectangle",
-                                  "id": "KwKhp",
-                                  "name": "chatgpt / original brand symbol",
-                                  "fill": {
-                                    "type": "image",
-                                    "enabled": true,
-                                    "url": "home-study/assets/apps/chatgpt-light.png",
-                                    "mode": "contain"
-                                  },
-                                  "width": 30,
-                                  "height": 30
-                                }
-                              ]
-                            },
-                            {
-                              "type": "frame",
-                              "id": "spU9G",
-                              "name": "Claude / app tile",
-                              "width": 64,
-                              "height": 64,
-                              "fill": "$home-bg",
-                              "cornerRadius": 12,
-                              "stroke": "$home-line",
-                              "strokeWidth": 1,
-                              "justifyContent": "center",
-                              "alignItems": "center",
-                              "children": [
+                                  "type": "frame",
+                                  "id": "HEpx6",
+                                  "name": "Claude",
+                                  "width": "fill_container",
+                                  "height": 62,
+                                  "fill": "#FFFFFFC9",
+                                  "cornerRadius": 10,
+                                  "stroke": "#DCE5EF",
+                                  "strokeWidth": 1,
+                                  "gap": 10,
+                                  "padding": 10,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "rectangle",
+                                      "id": "XcJeM",
+                                      "name": "Claude original symbol",
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "home-study/assets/apps/claude-light.png",
+                                        "mode": "contain"
+                                      },
+                                      "width": 26,
+                                      "height": 26
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "BqPE7",
+                                      "name": "Service name",
+                                      "fill": "#14283F",
+                                      "content": "Claude",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
                                 {
-                                  "type": "rectangle",
-                                  "id": "b3GUmH",
-                                  "name": "claude / original brand symbol",
-                                  "fill": {
-                                    "type": "image",
-                                    "enabled": true,
-                                    "url": "home-study/assets/apps/claude-light.png",
-                                    "mode": "contain"
-                                  },
-                                  "width": 30,
-                                  "height": 30
-                                }
-                              ]
-                            },
-                            {
-                              "type": "frame",
-                              "id": "qz8OT",
-                              "name": "Hermes / app tile",
-                              "width": 64,
-                              "height": 64,
-                              "fill": "$home-bg",
-                              "cornerRadius": 12,
-                              "stroke": "$home-line",
-                              "strokeWidth": 1,
-                              "justifyContent": "center",
-                              "alignItems": "center",
-                              "children": [
+                                  "type": "frame",
+                                  "id": "amHh0",
+                                  "name": "Hermes",
+                                  "width": "fill_container",
+                                  "height": 62,
+                                  "fill": "#FFFFFFC9",
+                                  "cornerRadius": 10,
+                                  "stroke": "#DCE5EF",
+                                  "strokeWidth": 1,
+                                  "gap": 10,
+                                  "padding": 10,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "rectangle",
+                                      "id": "V1LQW2",
+                                      "name": "Hermes original symbol",
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "home-study/assets/pen/hermes-selfhst-light.png",
+                                        "mode": "contain"
+                                      },
+                                      "width": 26,
+                                      "height": 26
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "lZS6X",
+                                      "name": "Service name",
+                                      "fill": "#14283F",
+                                      "content": "Hermes",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
                                 {
-                                  "type": "rectangle",
-                                  "id": "F4zHV9",
-                                  "name": "hermes / original brand symbol",
-                                  "fill": {
-                                    "type": "image",
-                                    "enabled": true,
-                                    "url": "home-study/assets/pen/hermes-selfhst-light.png",
-                                    "mode": "contain"
-                                  },
-                                  "width": 30,
-                                  "height": 30
+                                  "type": "frame",
+                                  "id": "JM770",
+                                  "name": "OpenClaw",
+                                  "width": "fill_container",
+                                  "height": 62,
+                                  "fill": "#FFFFFFC9",
+                                  "cornerRadius": 10,
+                                  "stroke": "#DCE5EF",
+                                  "strokeWidth": 1,
+                                  "gap": 10,
+                                  "padding": 10,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "rectangle",
+                                      "id": "POQC1",
+                                      "name": "OpenClaw original symbol",
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "home-study/assets/pen/openclaw-selfhst-light.png",
+                                        "mode": "contain"
+                                      },
+                                      "width": 26,
+                                      "height": 26
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "o0E2ty",
+                                      "name": "Service name",
+                                      "fill": "#14283F",
+                                      "content": "OpenClaw",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "YwYSy",
+                                  "name": "Pi",
+                                  "width": "fill_container",
+                                  "height": 62,
+                                  "fill": "#FFFFFFC9",
+                                  "cornerRadius": 10,
+                                  "stroke": "#DCE5EF",
+                                  "strokeWidth": 1,
+                                  "gap": 10,
+                                  "padding": 10,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "rectangle",
+                                      "id": "itHF7",
+                                      "name": "Pi original symbol",
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "home-study/assets/apps/pi-mono-light.png",
+                                        "mode": "contain"
+                                      },
+                                      "width": 26,
+                                      "height": 26
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "qdXBI",
+                                      "name": "Service name",
+                                      "fill": "#14283F",
+                                      "content": "Pi",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "gBcMR",
+                                  "name": "ChatGPT / hovered and installed",
+                                  "width": "fill_container",
+                                  "height": 62,
+                                  "fill": "#EDF5FF",
+                                  "cornerRadius": 10,
+                                  "stroke": "#BFD6F0",
+                                  "strokeWidth": 1,
+                                  "gap": 10,
+                                  "padding": 10,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "rectangle",
+                                      "id": "m72Vc8",
+                                      "name": "ChatGPT original symbol",
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "home-study/assets/apps/chatgpt-light.png",
+                                        "mode": "contain"
+                                      },
+                                      "width": 26,
+                                      "height": 26
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "i0NWM",
+                                      "name": "Service name",
+                                      "fill": "#14283F",
+                                      "content": "ChatGPT",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "N69wJu",
+                                      "name": "Flexible action spacer",
+                                      "width": "fill_container",
+                                      "height": 1
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "ZjhYJ",
+                                      "name": "Installed / success",
+                                      "width": 96,
+                                      "height": 32,
+                                      "fill": "#15734D",
+                                      "cornerRadius": 8,
+                                      "stroke": "#116340",
+                                      "strokeWidth": 1,
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#0000001A",
+                                        "offset": {
+                                          "x": 0,
+                                          "y": 4
+                                        },
+                                        "blur": 6
+                                      },
+                                      "gap": 7,
+                                      "justifyContent": "center",
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "icon",
+                                          "id": "MbuuB",
+                                          "name": "Check / Lucide",
+                                          "width": 14,
+                                          "height": 14,
+                                          "icon": "check",
+                                          "library": "lucide",
+                                          "fill": "#FFFFFF"
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "Gsv55",
+                                          "name": "Success label",
+                                          "fill": "#FFFFFF",
+                                          "content": "Installed",
+                                          "fontFamily": "Geist",
+                                          "fontSize": 11,
+                                          "fontWeight": "600"
+                                        }
+                                      ]
+                                    }
+                                  ]
                                 }
                               ]
                             }
                           ]
                         },
                         {
-                          "type": "frame",
-                          "id": "J9AQX",
-                          "name": "Choose an AI app / logo row",
-                          "width": "fill_container",
-                          "gap": 12,
-                          "justifyContent": "center",
-                          "children": [
-                            {
-                              "type": "frame",
-                              "id": "a3ZfQ",
-                              "name": "OpenClaw / app tile",
-                              "width": 64,
-                              "height": 64,
-                              "fill": "$home-bg",
-                              "cornerRadius": 12,
-                              "stroke": "$home-line",
-                              "strokeWidth": 1,
-                              "justifyContent": "center",
-                              "alignItems": "center",
-                              "children": [
-                                {
-                                  "type": "rectangle",
-                                  "id": "z98KSp",
-                                  "name": "openclaw / original brand symbol",
-                                  "fill": {
-                                    "type": "image",
-                                    "enabled": true,
-                                    "url": "home-study/assets/pen/openclaw-selfhst-light.png",
-                                    "mode": "contain"
-                                  },
-                                  "width": 30,
-                                  "height": 30
-                                }
-                              ]
-                            },
-                            {
-                              "type": "frame",
-                              "id": "dOyN5",
-                              "name": "Pi / app tile",
-                              "width": 64,
-                              "height": 64,
-                              "fill": "$home-bg",
-                              "cornerRadius": 12,
-                              "stroke": "$home-line",
-                              "strokeWidth": 1,
-                              "justifyContent": "center",
-                              "alignItems": "center",
-                              "children": [
-                                {
-                                  "type": "rectangle",
-                                  "id": "cGsOR",
-                                  "name": "pi / original brand symbol",
-                                  "fill": {
-                                    "type": "image",
-                                    "enabled": true,
-                                    "url": "home-study/assets/apps/pi.png",
-                                    "mode": "contain"
-                                  },
-                                  "width": 30,
-                                  "height": 30
-                                }
-                              ]
-                            }
-                          ]
+                          "type": "rectangle",
+                          "cornerRadius": 3,
+                          "id": "cYCU5",
+                          "x": 367.67,
+                          "y": 58,
+                          "name": "Scrollbar track",
+                          "fill": "#E3E9F1",
+                          "width": 3,
+                          "height": 236
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 3,
+                          "id": "HOEU3",
+                          "x": 367.67,
+                          "y": 206,
+                          "name": "Scrollbar thumb / scrolled",
+                          "fill": "#AEBED0",
+                          "width": 3,
+                          "height": 88
                         }
                       ]
                     },
                     {
-                      "type": "text",
-                      "id": "YWdr9",
-                      "name": "Step 2 number",
-                      "fill": "$home-action",
-                      "textGrowth": "fixed-width",
+                      "type": "frame",
+                      "id": "iq2dV",
+                      "name": "Step 2 caption",
                       "width": "fill_container",
-                      "content": "02",
-                      "lineHeight": 1.45,
-                      "fontFamily": "Geist",
-                      "fontSize": 16,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "S33QoY",
-                      "name": "Step 2 title",
-                      "metadata": {
-                        "type": "home-copy",
-                        "key": "home-step2"
-                      },
-                      "fill": "$home-ink",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Connect your AI chat",
-                      "lineHeight": 1.45,
-                      "fontFamily": "Geist",
-                      "fontSize": 21,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "ACrHj",
-                      "name": "Step 2 description",
-                      "metadata": {
-                        "type": "home-copy",
-                        "key": "home-step2Body"
-                      },
-                      "fill": "$home-muted",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Choose your app and follow its connection guide.",
-                      "lineHeight": 1.45,
-                      "fontFamily": "Geist",
-                      "fontSize": 16,
-                      "fontWeight": "normal"
+                      "layout": "vertical",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "ThILz",
+                          "name": "Number and title",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "doXDw",
+                              "name": "Step number",
+                              "fill": "#14283FB3",
+                              "content": "02",
+                              "fontFamily": "Geist",
+                              "fontSize": 15,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "XF3yM",
+                              "name": "Step title",
+                              "fill": "#14283F",
+                              "content": "Choose your AI app",
+                              "lineHeight": 1.4,
+                              "fontFamily": "Geist",
+                              "fontSize": 20,
+                              "fontWeight": "600",
+                              "letterSpacing": -0.35
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "x7WaS",
+                          "name": "Step description / provisional",
+                          "fill": "#203F64",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Pick the AI app you already use and add AIHarder.",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        }
+                      ]
                     }
                   ]
                 },
                 {
                   "type": "frame",
-                  "id": "mqvGu",
-                  "name": "Setup step 3",
+                  "id": "OxzCe",
+                  "name": "Step 3 / Just ask",
                   "width": "fill_container",
                   "layout": "vertical",
-                  "gap": 12,
+                  "gap": 24,
                   "children": [
                     {
                       "type": "frame",
-                      "id": "f2B9kg",
-                      "name": "Step 3 / graphical explanation",
+                      "id": "fH2Ww",
+                      "name": "Demo 3 / success snapshot",
+                      "clip": true,
                       "width": "fill_container",
-                      "height": 208,
-                      "fill": "$home-surface",
-                      "cornerRadius": 12,
-                      "layout": "vertical",
-                      "gap": 10,
-                      "padding": 28,
-                      "justifyContent": "center",
-                      "alignItems": "center",
+                      "height": 320,
+                      "fill": "#F7FAF8",
+                      "cornerRadius": 16,
+                      "stroke": "#FFFFFFA6",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#071A3526",
+                        "offset": {
+                          "x": 0,
+                          "y": 10
+                        },
+                        "blur": 30
+                      },
+                      "layout": "none",
                       "children": [
                         {
+                          "type": "rectangle",
+                          "id": "peHHQ",
+                          "x": 20,
+                          "y": 22,
+                          "name": "ChatGPT header symbol",
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "home-study/assets/apps/chatgpt-light.png",
+                            "mode": "contain"
+                          },
+                          "width": 20,
+                          "height": 20
+                        },
+                        {
+                          "type": "text",
+                          "id": "xLhel",
+                          "x": 48,
+                          "y": 24,
+                          "name": "Chat service",
+                          "fill": "#596A7D",
+                          "content": "ChatGPT",
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        },
+                        {
                           "type": "frame",
-                          "id": "sgirG",
-                          "name": "First question preview",
-                          "width": "fill_container",
-                          "fill": "$home-bubble",
+                          "id": "S47qz",
+                          "x": 172,
+                          "y": 68,
+                          "name": "User question",
+                          "width": 186.67,
+                          "height": 44,
+                          "fill": "#E2EEE9",
                           "cornerRadius": [
-                            12,
-                            12,
-                            3,
-                            12
+                            14,
+                            14,
+                            4,
+                            14
                           ],
-                          "padding": 12,
+                          "justifyContent": "center",
+                          "alignItems": "center",
                           "children": [
                             {
                               "type": "text",
-                              "id": "uyifz",
-                              "name": "First class question",
-                              "fill": "$home-ink",
-                              "textGrowth": "fixed-width",
-                              "width": "fill_container",
-                              "content": "What classes are on tomorrow?",
-                              "lineHeight": 1.45,
-                              "textAlign": "right",
+                              "id": "udP44",
+                              "name": "Question text",
+                              "fill": "#14283F",
+                              "content": "When is my next booking?",
                               "fontFamily": "Geist",
                               "fontSize": 13,
                               "fontWeight": "normal"
@@ -2697,109 +2975,111 @@
                           ]
                         },
                         {
+                          "type": "rectangle",
+                          "id": "fsNMW",
+                          "x": 20,
+                          "y": 133,
+                          "name": "ChatGPT assistant avatar",
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "home-study/assets/apps/chatgpt-light.png",
+                            "mode": "contain"
+                          },
+                          "width": 24,
+                          "height": 24
+                        },
+                        {
                           "type": "frame",
-                          "id": "sFTau",
-                          "name": "First useful answer preview",
-                          "width": "fill_container",
-                          "gap": 12,
-                          "alignItems": "center",
+                          "id": "sqKWz",
+                          "x": 54,
+                          "y": 132,
+                          "name": "Plain text assistant answer",
+                          "width": 304.67,
+                          "layout": "vertical",
+                          "gap": 5,
                           "children": [
                             {
-                              "type": "icon",
-                              "id": "Z6xoE",
-                              "name": "Classes answer",
-                              "width": 24,
-                              "height": 24,
-                              "icon": "calendar-days",
-                              "library": "lucide",
-                              "fill": "$home-action"
+                              "type": "text",
+                              "id": "jUEiK",
+                              "name": "Assistant name",
+                              "fill": "#6A7889",
+                              "content": "ChatGPT",
+                              "fontFamily": "Geist",
+                              "fontSize": 11,
+                              "fontWeight": "600"
                             },
                             {
-                              "type": "frame",
-                              "id": "RaUQ0",
-                              "name": "Class answer text",
+                              "type": "text",
+                              "id": "HVSia",
+                              "name": "Fictional booking answer",
+                              "fill": "#14283F",
+                              "textGrowth": "fixed-width",
                               "width": "fill_container",
-                              "layout": "vertical",
-                              "gap": 4,
-                              "children": [
-                                {
-                                  "type": "text",
-                                  "id": "dcsYM",
-                                  "name": "Class answer title",
-                                  "fill": "$home-ink",
-                                  "textGrowth": "fixed-width",
-                                  "width": "fill_container",
-                                  "content": "Tomorrow’s WOD classes",
-                                  "lineHeight": 1.45,
-                                  "fontFamily": "Geist",
-                                  "fontSize": 14,
-                                  "fontWeight": "500"
-                                },
-                                {
-                                  "type": "text",
-                                  "id": "VvTdx",
-                                  "name": "Class answer times",
-                                  "fill": "$home-muted",
-                                  "textGrowth": "fixed-width",
-                                  "width": "fill_container",
-                                  "content": "07:00 · 18:00 · 19:00",
-                                  "lineHeight": 1.45,
-                                  "fontFamily": "Geist",
-                                  "fontSize": 12,
-                                  "fontWeight": "normal"
-                                }
-                              ]
+                              "content": "Tomorrow at 19:00 — WOD. You also have a booking on Thursday at 18:00.",
+                              "lineHeight": 1.55,
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
                             }
                           ]
                         }
                       ]
                     },
                     {
-                      "type": "text",
-                      "id": "BjRsY",
-                      "name": "Step 3 number",
-                      "fill": "$home-action",
-                      "textGrowth": "fixed-width",
+                      "type": "frame",
+                      "id": "KyNN2",
+                      "name": "Step 3 caption",
                       "width": "fill_container",
-                      "content": "03",
-                      "lineHeight": 1.45,
-                      "fontFamily": "Geist",
-                      "fontSize": 16,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "u9jEXZ",
-                      "name": "Step 3 title",
-                      "metadata": {
-                        "type": "home-copy",
-                        "key": "home-step3"
-                      },
-                      "fill": "$home-ink",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Ask your first question",
-                      "lineHeight": 1.45,
-                      "fontFamily": "Geist",
-                      "fontSize": 21,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "EoEd1",
-                      "name": "Step 3 description",
-                      "metadata": {
-                        "type": "home-copy",
-                        "key": "home-step3Body"
-                      },
-                      "fill": "$home-muted",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Try: “What classes can I book tomorrow?”",
-                      "lineHeight": 1.45,
-                      "fontFamily": "Geist",
-                      "fontSize": 16,
-                      "fontWeight": "normal"
+                      "layout": "vertical",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "mShQO",
+                          "name": "Number and title",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "P7DTfr",
+                              "name": "Step number",
+                              "fill": "#14283FB3",
+                              "content": "03",
+                              "fontFamily": "Geist",
+                              "fontSize": 15,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "D7Fax",
+                              "name": "Step title",
+                              "fill": "#14283F",
+                              "content": "Just ask",
+                              "lineHeight": 1.4,
+                              "fontFamily": "Geist",
+                              "fontSize": 20,
+                              "fontWeight": "600",
+                              "letterSpacing": -0.35
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "e9kmdh",
+                          "name": "Step description / provisional",
+                          "fill": "#203F64",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Ask about your classes, workouts and records. Your assistant takes it from there.",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        }
+                      ]
                     }
                   ]
                 }
@@ -3417,7 +3697,7 @@
       "x": 2960,
       "y": 1000,
       "name": "AIHarder / Desktop / English / Dark",
-      "context": "Current English desktop replica: header, hero and question wall. Poster/long-answer still; 26px questions, 10.5px row gaps, segmented topic pills. Animation remains in HTML. Setup/FAQ/closing/footer are retained as disabled draft layers for later sequential refinement.",
+      "context": "Current English desktop study: header, hero, question wall and How you get started. How to is an editable success still; actual animation is in HTML. FAQ/closing/footer remain disabled drafts for sequential refinement.",
       "theme": {
         "appearance": "dark",
         "language": "en"
@@ -4841,15 +5121,18 @@
         },
         {
           "type": "frame",
-          "id": "K7ykrM",
-          "x": 0,
-          "y": 1192.5,
-          "name": "Three setup tasks",
-          "enabled": false,
-          "width": "fill_container(1440)",
-          "fill": "$home-bg",
+          "id": "I95ri7",
+          "name": "How you get started / animated demo still",
+          "context": "Success still at 6.2s. Editable foreground; background capture only. Runtime source home-study/how-to-prototype.js. Synthetic examples; no connection or installation occurs.",
+          "width": "fill_container",
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "home-study/assets/pen/how-background-dark.png",
+            "mode": "stretch"
+          },
           "layout": "vertical",
-          "gap": 18,
+          "gap": 48,
           "padding": [
             80,
             120
@@ -4857,87 +5140,90 @@
           "children": [
             {
               "type": "text",
-              "id": "OqEO4",
-              "name": "Setup heading",
-              "metadata": {
-                "type": "home-copy",
-                "key": "home-setupTitle"
-              },
-              "fill": "$home-ink",
+              "id": "M6jdi",
+              "name": "How to heading",
+              "fill": "#FFFFFF",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "Your account. Connected.",
-              "lineHeight": 1.45,
+              "content": "How you get started",
+              "lineHeight": 1.2,
+              "textAlign": "center",
               "fontFamily": "Geist",
-              "fontSize": 36,
-              "fontWeight": "600"
-            },
-            {
-              "type": "text",
-              "id": "ivwgh",
-              "name": "Setup introduction",
-              "metadata": {
-                "type": "home-copy",
-                "key": "home-setupIntro"
-              },
-              "fill": "$home-muted",
-              "textGrowth": "fixed-width",
-              "width": "fill_container",
-              "content": "Three steps, then you’re ready to ask.",
-              "lineHeight": 1.45,
-              "fontFamily": "Geist",
-              "fontSize": 17,
-              "fontWeight": "normal"
+              "fontSize": 40,
+              "fontWeight": "700",
+              "letterSpacing": -1
             },
             {
               "type": "frame",
-              "id": "m1m6QU",
-              "name": "Setup steps",
+              "id": "hGpyU",
+              "name": "Three animated steps",
               "width": "fill_container",
-              "gap": 40,
-              "padding": [
-                24,
-                0,
-                0,
-                0
-              ],
+              "gap": 32,
               "children": [
                 {
                   "type": "frame",
-                  "id": "pa1oe",
-                  "name": "Setup step 1",
+                  "id": "bfI4k",
+                  "name": "Step 1 / Connect your account",
                   "width": "fill_container",
                   "layout": "vertical",
-                  "gap": 12,
+                  "gap": 24,
                   "children": [
                     {
                       "type": "frame",
-                      "id": "OKJik",
-                      "name": "Step 1 / graphical explanation",
+                      "id": "EUJYl",
+                      "name": "Demo 1 / success snapshot",
+                      "clip": true,
                       "width": "fill_container",
-                      "height": 208,
-                      "fill": "$home-surface",
-                      "cornerRadius": 12,
-                      "layout": "vertical",
-                      "gap": 10,
-                      "padding": 28,
-                      "justifyContent": "center",
-                      "alignItems": "center",
+                      "height": 320,
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 215,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#FFFFFF",
+                            "position": 0
+                          },
+                          {
+                            "color": "#F3F7FC",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "cornerRadius": 16,
+                      "stroke": "#FFFFFFA6",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#071A3526",
+                        "offset": {
+                          "x": 0,
+                          "y": 10
+                        },
+                        "blur": 30
+                      },
+                      "layout": "none",
                       "children": [
                         {
                           "type": "frame",
-                          "id": "ZF8mH",
-                          "name": "AimHarder original logo / light plate",
-                          "width": 180,
-                          "height": 40,
-                          "fill": "#FFFFFF",
-                          "cornerRadius": 4,
-                          "justifyContent": "center",
-                          "alignItems": "center",
+                          "id": "L1yF0",
+                          "x": 61.33,
+                          "y": 44,
+                          "name": "Fictional AimHarder form",
+                          "width": 256,
+                          "height": 231,
+                          "layout": "none",
                           "children": [
                             {
                               "type": "rectangle",
-                              "id": "ClnIS",
+                              "id": "Qd0Cl",
+                              "x": 43,
+                              "y": 0,
                               "name": "Original AimHarder logo",
                               "fill": {
                                 "type": "image",
@@ -4945,93 +5231,138 @@
                                 "url": "home-study/assets/apps/aimharder.png",
                                 "mode": "contain"
                               },
-                              "width": 172,
+                              "width": 170,
                               "height": 38
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "KD9Io",
-                          "name": "AimHarder email / pseudo input",
-                          "width": 230,
-                          "height": 34,
-                          "fill": "$home-bg",
-                          "cornerRadius": 5,
-                          "stroke": "$home-line",
-                          "strokeWidth": 1,
-                          "padding": [
-                            8,
-                            10
-                          ],
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "T6KZqB",
-                              "name": "Email placeholder",
-                              "fill": "$home-muted",
-                              "textGrowth": "fixed-width",
-                              "width": "fill_container",
-                              "content": "Your AimHarder email",
-                              "lineHeight": 1.45,
-                              "fontFamily": "Geist",
-                              "fontSize": 12,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "l89Hz",
-                          "name": "Password / pseudo input",
-                          "width": 230,
-                          "height": 34,
-                          "fill": "$home-bg",
-                          "cornerRadius": 5,
-                          "stroke": "$home-line",
-                          "strokeWidth": 1,
-                          "gap": 12,
-                          "padding": [
-                            8,
-                            10
-                          ],
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "olM1D",
-                              "name": "Masked password",
-                              "fill": "$home-muted",
-                              "textGrowth": "fixed-width",
-                              "width": "fill_container",
-                              "content": "••••••••••",
-                              "lineHeight": 1.45,
-                              "fontFamily": "Geist",
-                              "fontSize": 12,
-                              "fontWeight": "normal",
-                              "letterSpacing": 1.5
                             },
                             {
                               "type": "frame",
-                              "id": "gxusi",
-                              "name": "Connection illustration / check",
-                              "width": 18,
-                              "height": 18,
-                              "fill": "$home-action",
-                              "cornerRadius": 9,
+                              "id": "njeND",
+                              "x": 0,
+                              "y": 59,
+                              "name": "Username / filled",
+                              "width": 256,
+                              "height": 48,
+                              "fill": "#FFFFFFB3",
+                              "cornerRadius": 8,
+                              "stroke": "#CFD9E6",
+                              "strokeWidth": 1,
+                              "layout": "vertical",
+                              "padding": [
+                                6,
+                                12
+                              ],
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "gPF17",
+                                  "name": "Field label",
+                                  "fill": "#6A7B90",
+                                  "content": "Username",
+                                  "lineHeight": 1.4,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 10,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "O6qZB",
+                                  "name": "Fictional value",
+                                  "fill": "#14283F",
+                                  "content": "alex@example.com",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "J9XS7N",
+                              "x": 0,
+                              "y": 119,
+                              "name": "Password / filled",
+                              "width": 256,
+                              "height": 48,
+                              "fill": "#FFFFFFB3",
+                              "cornerRadius": 8,
+                              "stroke": "#CFD9E6",
+                              "strokeWidth": 1,
+                              "layout": "vertical",
+                              "padding": [
+                                6,
+                                12
+                              ],
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "pZgZF",
+                                  "name": "Field label",
+                                  "fill": "#6A7B90",
+                                  "content": "Password",
+                                  "lineHeight": 1.4,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 10,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "ydU8V",
+                                  "name": "Fictional value",
+                                  "fill": "#14283F",
+                                  "content": "••••••••",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "x58tMn",
+                              "x": 0,
+                              "y": 187,
+                              "name": "Connected / success",
+                              "width": 256,
+                              "height": 44,
+                              "fill": "#15734D",
+                              "cornerRadius": 8,
+                              "stroke": "#116340",
+                              "strokeWidth": 1,
+                              "effect": {
+                                "type": "shadow",
+                                "shadowType": "outer",
+                                "color": "#0000001A",
+                                "offset": {
+                                  "x": 0,
+                                  "y": 4
+                                },
+                                "blur": 6
+                              },
+                              "gap": 7,
                               "justifyContent": "center",
                               "alignItems": "center",
                               "children": [
                                 {
                                   "type": "icon",
-                                  "id": "GzMoJ",
-                                  "name": "Connected illustration",
-                                  "width": 12,
-                                  "height": 12,
+                                  "id": "SMy4p",
+                                  "name": "Check / Lucide",
+                                  "width": 16,
+                                  "height": 16,
                                   "icon": "check",
                                   "library": "lucide",
-                                  "fill": "$home-on-action"
+                                  "fill": "#FFFFFF"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "Za3cG",
+                                  "name": "Success label",
+                                  "fill": "#FFFFFF",
+                                  "content": "Connected",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 14,
+                                  "fontWeight": "600"
                                 }
                               ]
                             }
@@ -5040,333 +5371,560 @@
                       ]
                     },
                     {
-                      "type": "text",
-                      "id": "NsrY8",
-                      "name": "Step 1 number",
-                      "fill": "$home-action",
-                      "textGrowth": "fixed-width",
+                      "type": "frame",
+                      "id": "utvmw",
+                      "name": "Step 1 caption",
                       "width": "fill_container",
-                      "content": "01",
-                      "lineHeight": 1.45,
-                      "fontFamily": "Geist",
-                      "fontSize": 16,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "LmD4z",
-                      "name": "Step 1 title",
-                      "metadata": {
-                        "type": "home-copy",
-                        "key": "home-step1"
-                      },
-                      "fill": "$home-ink",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Connect AimHarder",
-                      "lineHeight": 1.45,
-                      "fontFamily": "Geist",
-                      "fontSize": 21,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "BauLk",
-                      "name": "Step 1 description",
-                      "metadata": {
-                        "type": "home-copy",
-                        "key": "home-step1Body"
-                      },
-                      "fill": "$home-muted",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Link your existing AimHarder account. Keep training with your gym as usual.",
-                      "lineHeight": 1.45,
-                      "fontFamily": "Geist",
-                      "fontSize": 16,
-                      "fontWeight": "normal"
+                      "layout": "vertical",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "M1PTE",
+                          "name": "Number and title",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "gm5HY",
+                              "name": "Step number",
+                              "fill": "#FFFFFFB3",
+                              "content": "01",
+                              "fontFamily": "Geist",
+                              "fontSize": 15,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "i8ofqm",
+                              "name": "Step title",
+                              "fill": "#FFFFFF",
+                              "content": "Connect your account",
+                              "lineHeight": 1.4,
+                              "fontFamily": "Geist",
+                              "fontSize": 20,
+                              "fontWeight": "600",
+                              "letterSpacing": -0.35
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "PLsYF",
+                          "name": "Step description / provisional",
+                          "fill": "#C8D8EC",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Link your AimHarder account to bring your training into the conversation.",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        }
+                      ]
                     }
                   ]
                 },
                 {
                   "type": "frame",
-                  "id": "WaYce",
-                  "name": "Setup step 2",
+                  "id": "h2iBR",
+                  "name": "Step 2 / Choose your AI app",
                   "width": "fill_container",
                   "layout": "vertical",
-                  "gap": 12,
+                  "gap": 24,
                   "children": [
                     {
                       "type": "frame",
-                      "id": "lFfIs",
-                      "name": "Step 2 / graphical explanation",
+                      "id": "moH3g",
+                      "name": "Demo 2 / success snapshot",
+                      "clip": true,
                       "width": "fill_container",
-                      "height": 208,
-                      "fill": "$home-surface",
-                      "cornerRadius": 12,
-                      "layout": "vertical",
-                      "gap": 10,
-                      "padding": 28,
-                      "justifyContent": "center",
-                      "alignItems": "center",
+                      "height": 320,
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 215,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#FFFFFF",
+                            "position": 0
+                          },
+                          {
+                            "color": "#F3F7FC",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "cornerRadius": 16,
+                      "stroke": "#FFFFFFA6",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#071A3526",
+                        "offset": {
+                          "x": 0,
+                          "y": 10
+                        },
+                        "blur": 30
+                      },
+                      "layout": "none",
                       "children": [
                         {
+                          "type": "text",
+                          "id": "jX6Jd",
+                          "x": 20,
+                          "y": 20,
+                          "name": "AI app selector heading",
+                          "fill": "#14283F",
+                          "content": "Your AI apps",
+                          "lineHeight": 1.8461538461538463,
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        },
+                        {
                           "type": "frame",
-                          "id": "EwWZO",
-                          "name": "Choose an AI app / logo row",
-                          "width": "fill_container",
-                          "gap": 12,
-                          "justifyContent": "center",
+                          "id": "I6KCs",
+                          "x": 20,
+                          "y": 58,
+                          "name": "Clipped scrolling app list",
+                          "clip": true,
+                          "width": 338.67,
+                          "height": 246,
+                          "layout": "none",
                           "children": [
                             {
                               "type": "frame",
-                              "id": "P3vkhj",
-                              "name": "ChatGPT / app tile",
-                              "width": 64,
-                              "height": 64,
-                              "fill": "$home-bg",
-                              "cornerRadius": 12,
-                              "stroke": "$home-line",
-                              "strokeWidth": 1,
-                              "justifyContent": "center",
-                              "alignItems": "center",
+                              "id": "zz3mD",
+                              "x": 0,
+                              "y": -80,
+                              "name": "App list / scrolled 80px",
+                              "width": 338.67,
+                              "layout": "vertical",
+                              "gap": 4,
                               "children": [
                                 {
-                                  "type": "rectangle",
-                                  "id": "PMVOJ",
-                                  "name": "chatgpt / original brand symbol",
-                                  "fill": {
-                                    "type": "image",
-                                    "enabled": true,
-                                    "url": "home-study/assets/apps/chatgpt-dark.png",
-                                    "mode": "contain"
-                                  },
-                                  "width": 30,
-                                  "height": 30
-                                }
-                              ]
-                            },
-                            {
-                              "type": "frame",
-                              "id": "xQTft",
-                              "name": "Claude / app tile",
-                              "width": 64,
-                              "height": 64,
-                              "fill": "$home-bg",
-                              "cornerRadius": 12,
-                              "stroke": "$home-line",
-                              "strokeWidth": 1,
-                              "justifyContent": "center",
-                              "alignItems": "center",
-                              "children": [
+                                  "type": "frame",
+                                  "id": "HSmAJ",
+                                  "name": "Claude",
+                                  "width": "fill_container",
+                                  "height": 62,
+                                  "fill": "#FFFFFFC9",
+                                  "cornerRadius": 10,
+                                  "stroke": "#DCE5EF",
+                                  "strokeWidth": 1,
+                                  "gap": 10,
+                                  "padding": 10,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "rectangle",
+                                      "id": "FVOQV",
+                                      "name": "Claude original symbol",
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "home-study/assets/apps/claude-light.png",
+                                        "mode": "contain"
+                                      },
+                                      "width": 26,
+                                      "height": 26
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "UN90F",
+                                      "name": "Service name",
+                                      "fill": "#14283F",
+                                      "content": "Claude",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
                                 {
-                                  "type": "rectangle",
-                                  "id": "DhA3y",
-                                  "name": "claude / original brand symbol",
-                                  "fill": {
-                                    "type": "image",
-                                    "enabled": true,
-                                    "url": "home-study/assets/apps/claude-dark.png",
-                                    "mode": "contain"
-                                  },
-                                  "width": 30,
-                                  "height": 30
-                                }
-                              ]
-                            },
-                            {
-                              "type": "frame",
-                              "id": "YffaB",
-                              "name": "Hermes / app tile",
-                              "width": 64,
-                              "height": 64,
-                              "fill": "$home-bg",
-                              "cornerRadius": 12,
-                              "stroke": "$home-line",
-                              "strokeWidth": 1,
-                              "justifyContent": "center",
-                              "alignItems": "center",
-                              "children": [
+                                  "type": "frame",
+                                  "id": "qUz51",
+                                  "name": "Hermes",
+                                  "width": "fill_container",
+                                  "height": 62,
+                                  "fill": "#FFFFFFC9",
+                                  "cornerRadius": 10,
+                                  "stroke": "#DCE5EF",
+                                  "strokeWidth": 1,
+                                  "gap": 10,
+                                  "padding": 10,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "rectangle",
+                                      "id": "nyTfW",
+                                      "name": "Hermes original symbol",
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "home-study/assets/pen/hermes-selfhst-light.png",
+                                        "mode": "contain"
+                                      },
+                                      "width": 26,
+                                      "height": 26
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "ocFwX",
+                                      "name": "Service name",
+                                      "fill": "#14283F",
+                                      "content": "Hermes",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
                                 {
-                                  "type": "rectangle",
-                                  "id": "S9wjV1",
-                                  "name": "hermes / original brand symbol",
-                                  "fill": {
-                                    "type": "image",
-                                    "enabled": true,
-                                    "url": "home-study/assets/pen/hermes-selfhst-dark.png",
-                                    "mode": "contain"
-                                  },
-                                  "width": 30,
-                                  "height": 30
+                                  "type": "frame",
+                                  "id": "gzxCq",
+                                  "name": "OpenClaw",
+                                  "width": "fill_container",
+                                  "height": 62,
+                                  "fill": "#FFFFFFC9",
+                                  "cornerRadius": 10,
+                                  "stroke": "#DCE5EF",
+                                  "strokeWidth": 1,
+                                  "gap": 10,
+                                  "padding": 10,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "rectangle",
+                                      "id": "N5jnjA",
+                                      "name": "OpenClaw original symbol",
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "home-study/assets/pen/openclaw-selfhst-light.png",
+                                        "mode": "contain"
+                                      },
+                                      "width": 26,
+                                      "height": 26
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "AIUim",
+                                      "name": "Service name",
+                                      "fill": "#14283F",
+                                      "content": "OpenClaw",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "vEMjD",
+                                  "name": "Pi",
+                                  "width": "fill_container",
+                                  "height": 62,
+                                  "fill": "#FFFFFFC9",
+                                  "cornerRadius": 10,
+                                  "stroke": "#DCE5EF",
+                                  "strokeWidth": 1,
+                                  "gap": 10,
+                                  "padding": 10,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "rectangle",
+                                      "id": "Lr1Pv",
+                                      "name": "Pi original symbol",
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "home-study/assets/apps/pi-mono-light.png",
+                                        "mode": "contain"
+                                      },
+                                      "width": 26,
+                                      "height": 26
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "kSZNp",
+                                      "name": "Service name",
+                                      "fill": "#14283F",
+                                      "content": "Pi",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "edNhF",
+                                  "name": "ChatGPT / hovered and installed",
+                                  "width": "fill_container",
+                                  "height": 62,
+                                  "fill": "#EDF5FF",
+                                  "cornerRadius": 10,
+                                  "stroke": "#BFD6F0",
+                                  "strokeWidth": 1,
+                                  "gap": 10,
+                                  "padding": 10,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "rectangle",
+                                      "id": "eZE4p",
+                                      "name": "ChatGPT original symbol",
+                                      "fill": {
+                                        "type": "image",
+                                        "enabled": true,
+                                        "url": "home-study/assets/apps/chatgpt-light.png",
+                                        "mode": "contain"
+                                      },
+                                      "width": 26,
+                                      "height": 26
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "AKV06",
+                                      "name": "Service name",
+                                      "fill": "#14283F",
+                                      "content": "ChatGPT",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "TbWp5",
+                                      "name": "Flexible action spacer",
+                                      "width": "fill_container",
+                                      "height": 1
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "L7jKJ",
+                                      "name": "Installed / success",
+                                      "width": 96,
+                                      "height": 32,
+                                      "fill": "#15734D",
+                                      "cornerRadius": 8,
+                                      "stroke": "#116340",
+                                      "strokeWidth": 1,
+                                      "effect": {
+                                        "type": "shadow",
+                                        "shadowType": "outer",
+                                        "color": "#0000001A",
+                                        "offset": {
+                                          "x": 0,
+                                          "y": 4
+                                        },
+                                        "blur": 6
+                                      },
+                                      "gap": 7,
+                                      "justifyContent": "center",
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "icon",
+                                          "id": "SoxBA",
+                                          "name": "Check / Lucide",
+                                          "width": 14,
+                                          "height": 14,
+                                          "icon": "check",
+                                          "library": "lucide",
+                                          "fill": "#FFFFFF"
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "KeK78",
+                                          "name": "Success label",
+                                          "fill": "#FFFFFF",
+                                          "content": "Installed",
+                                          "fontFamily": "Geist",
+                                          "fontSize": 11,
+                                          "fontWeight": "600"
+                                        }
+                                      ]
+                                    }
+                                  ]
                                 }
                               ]
                             }
                           ]
                         },
                         {
-                          "type": "frame",
-                          "id": "GkTX3",
-                          "name": "Choose an AI app / logo row",
-                          "width": "fill_container",
-                          "gap": 12,
-                          "justifyContent": "center",
-                          "children": [
-                            {
-                              "type": "frame",
-                              "id": "HAubi",
-                              "name": "OpenClaw / app tile",
-                              "width": 64,
-                              "height": 64,
-                              "fill": "$home-bg",
-                              "cornerRadius": 12,
-                              "stroke": "$home-line",
-                              "strokeWidth": 1,
-                              "justifyContent": "center",
-                              "alignItems": "center",
-                              "children": [
-                                {
-                                  "type": "rectangle",
-                                  "id": "BXbk2",
-                                  "name": "openclaw / original brand symbol",
-                                  "fill": {
-                                    "type": "image",
-                                    "enabled": true,
-                                    "url": "home-study/assets/pen/openclaw-selfhst-dark.png",
-                                    "mode": "contain"
-                                  },
-                                  "width": 30,
-                                  "height": 30
-                                }
-                              ]
-                            },
-                            {
-                              "type": "frame",
-                              "id": "VulqT",
-                              "name": "Pi / app tile",
-                              "width": 64,
-                              "height": 64,
-                              "fill": "$home-bg",
-                              "cornerRadius": 12,
-                              "stroke": "$home-line",
-                              "strokeWidth": 1,
-                              "justifyContent": "center",
-                              "alignItems": "center",
-                              "children": [
-                                {
-                                  "type": "rectangle",
-                                  "id": "aZneE",
-                                  "name": "pi / original brand symbol",
-                                  "fill": {
-                                    "type": "image",
-                                    "enabled": true,
-                                    "url": "home-study/assets/apps/pi.png",
-                                    "mode": "contain"
-                                  },
-                                  "width": 30,
-                                  "height": 30
-                                }
-                              ]
-                            }
-                          ]
+                          "type": "rectangle",
+                          "cornerRadius": 3,
+                          "id": "D9CyT",
+                          "x": 367.67,
+                          "y": 58,
+                          "name": "Scrollbar track",
+                          "fill": "#E3E9F1",
+                          "width": 3,
+                          "height": 236
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 3,
+                          "id": "ZBGOC",
+                          "x": 367.67,
+                          "y": 206,
+                          "name": "Scrollbar thumb / scrolled",
+                          "fill": "#AEBED0",
+                          "width": 3,
+                          "height": 88
                         }
                       ]
                     },
                     {
-                      "type": "text",
-                      "id": "O9h9aD",
-                      "name": "Step 2 number",
-                      "fill": "$home-action",
-                      "textGrowth": "fixed-width",
+                      "type": "frame",
+                      "id": "tbevt",
+                      "name": "Step 2 caption",
                       "width": "fill_container",
-                      "content": "02",
-                      "lineHeight": 1.45,
-                      "fontFamily": "Geist",
-                      "fontSize": 16,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "yK87c",
-                      "name": "Step 2 title",
-                      "metadata": {
-                        "type": "home-copy",
-                        "key": "home-step2"
-                      },
-                      "fill": "$home-ink",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Connect your AI chat",
-                      "lineHeight": 1.45,
-                      "fontFamily": "Geist",
-                      "fontSize": 21,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "xpBZU",
-                      "name": "Step 2 description",
-                      "metadata": {
-                        "type": "home-copy",
-                        "key": "home-step2Body"
-                      },
-                      "fill": "$home-muted",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Choose your app and follow its connection guide.",
-                      "lineHeight": 1.45,
-                      "fontFamily": "Geist",
-                      "fontSize": 16,
-                      "fontWeight": "normal"
+                      "layout": "vertical",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "aviW0",
+                          "name": "Number and title",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "WlDoM",
+                              "name": "Step number",
+                              "fill": "#FFFFFFB3",
+                              "content": "02",
+                              "fontFamily": "Geist",
+                              "fontSize": 15,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "JjUbo",
+                              "name": "Step title",
+                              "fill": "#FFFFFF",
+                              "content": "Choose your AI app",
+                              "lineHeight": 1.4,
+                              "fontFamily": "Geist",
+                              "fontSize": 20,
+                              "fontWeight": "600",
+                              "letterSpacing": -0.35
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "kCjG7",
+                          "name": "Step description / provisional",
+                          "fill": "#C8D8EC",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Pick the AI app you already use and add AIHarder.",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        }
+                      ]
                     }
                   ]
                 },
                 {
                   "type": "frame",
-                  "id": "C3jNI8",
-                  "name": "Setup step 3",
+                  "id": "bQbE5",
+                  "name": "Step 3 / Just ask",
                   "width": "fill_container",
                   "layout": "vertical",
-                  "gap": 12,
+                  "gap": 24,
                   "children": [
                     {
                       "type": "frame",
-                      "id": "irUYo",
-                      "name": "Step 3 / graphical explanation",
+                      "id": "i1jHnb",
+                      "name": "Demo 3 / success snapshot",
+                      "clip": true,
                       "width": "fill_container",
-                      "height": 208,
-                      "fill": "$home-surface",
-                      "cornerRadius": 12,
-                      "layout": "vertical",
-                      "gap": 10,
-                      "padding": 28,
-                      "justifyContent": "center",
-                      "alignItems": "center",
+                      "height": 320,
+                      "fill": "#F7FAF8",
+                      "cornerRadius": 16,
+                      "stroke": "#FFFFFFA6",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#071A3526",
+                        "offset": {
+                          "x": 0,
+                          "y": 10
+                        },
+                        "blur": 30
+                      },
+                      "layout": "none",
                       "children": [
                         {
+                          "type": "rectangle",
+                          "id": "k3qIvj",
+                          "x": 20,
+                          "y": 22,
+                          "name": "ChatGPT header symbol",
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "home-study/assets/apps/chatgpt-light.png",
+                            "mode": "contain"
+                          },
+                          "width": 20,
+                          "height": 20
+                        },
+                        {
+                          "type": "text",
+                          "id": "Q73rcM",
+                          "x": 48,
+                          "y": 24,
+                          "name": "Chat service",
+                          "fill": "#596A7D",
+                          "content": "ChatGPT",
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        },
+                        {
                           "type": "frame",
-                          "id": "I5jRa",
-                          "name": "First question preview",
-                          "width": "fill_container",
-                          "fill": "$home-bubble",
+                          "id": "ClWRG",
+                          "x": 172,
+                          "y": 68,
+                          "name": "User question",
+                          "width": 186.67,
+                          "height": 44,
+                          "fill": "#E2EEE9",
                           "cornerRadius": [
-                            12,
-                            12,
-                            3,
-                            12
+                            14,
+                            14,
+                            4,
+                            14
                           ],
-                          "padding": 12,
+                          "justifyContent": "center",
+                          "alignItems": "center",
                           "children": [
                             {
                               "type": "text",
-                              "id": "EV9vR",
-                              "name": "First class question",
-                              "fill": "$home-ink",
-                              "textGrowth": "fixed-width",
-                              "width": "fill_container",
-                              "content": "What classes are on tomorrow?",
-                              "lineHeight": 1.45,
-                              "textAlign": "right",
+                              "id": "pxAma",
+                              "name": "Question text",
+                              "fill": "#14283F",
+                              "content": "When is my next booking?",
                               "fontFamily": "Geist",
                               "fontSize": 13,
                               "fontWeight": "normal"
@@ -5374,109 +5932,111 @@
                           ]
                         },
                         {
+                          "type": "rectangle",
+                          "id": "WQmF2",
+                          "x": 20,
+                          "y": 133,
+                          "name": "ChatGPT assistant avatar",
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "home-study/assets/apps/chatgpt-light.png",
+                            "mode": "contain"
+                          },
+                          "width": 24,
+                          "height": 24
+                        },
+                        {
                           "type": "frame",
-                          "id": "Rm4EP",
-                          "name": "First useful answer preview",
-                          "width": "fill_container",
-                          "gap": 12,
-                          "alignItems": "center",
+                          "id": "MUo6c",
+                          "x": 54,
+                          "y": 132,
+                          "name": "Plain text assistant answer",
+                          "width": 304.67,
+                          "layout": "vertical",
+                          "gap": 5,
                           "children": [
                             {
-                              "type": "icon",
-                              "id": "RdDbD",
-                              "name": "Classes answer",
-                              "width": 24,
-                              "height": 24,
-                              "icon": "calendar-days",
-                              "library": "lucide",
-                              "fill": "$home-action"
+                              "type": "text",
+                              "id": "FeHnW",
+                              "name": "Assistant name",
+                              "fill": "#6A7889",
+                              "content": "ChatGPT",
+                              "fontFamily": "Geist",
+                              "fontSize": 11,
+                              "fontWeight": "600"
                             },
                             {
-                              "type": "frame",
-                              "id": "jyKCn",
-                              "name": "Class answer text",
+                              "type": "text",
+                              "id": "C66Kr4",
+                              "name": "Fictional booking answer",
+                              "fill": "#14283F",
+                              "textGrowth": "fixed-width",
                               "width": "fill_container",
-                              "layout": "vertical",
-                              "gap": 4,
-                              "children": [
-                                {
-                                  "type": "text",
-                                  "id": "AkgpA",
-                                  "name": "Class answer title",
-                                  "fill": "$home-ink",
-                                  "textGrowth": "fixed-width",
-                                  "width": "fill_container",
-                                  "content": "Tomorrow’s WOD classes",
-                                  "lineHeight": 1.45,
-                                  "fontFamily": "Geist",
-                                  "fontSize": 14,
-                                  "fontWeight": "500"
-                                },
-                                {
-                                  "type": "text",
-                                  "id": "cvotp",
-                                  "name": "Class answer times",
-                                  "fill": "$home-muted",
-                                  "textGrowth": "fixed-width",
-                                  "width": "fill_container",
-                                  "content": "07:00 · 18:00 · 19:00",
-                                  "lineHeight": 1.45,
-                                  "fontFamily": "Geist",
-                                  "fontSize": 12,
-                                  "fontWeight": "normal"
-                                }
-                              ]
+                              "content": "Tomorrow at 19:00 — WOD. You also have a booking on Thursday at 18:00.",
+                              "lineHeight": 1.55,
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
                             }
                           ]
                         }
                       ]
                     },
                     {
-                      "type": "text",
-                      "id": "hYlNu",
-                      "name": "Step 3 number",
-                      "fill": "$home-action",
-                      "textGrowth": "fixed-width",
+                      "type": "frame",
+                      "id": "l5RbrP",
+                      "name": "Step 3 caption",
                       "width": "fill_container",
-                      "content": "03",
-                      "lineHeight": 1.45,
-                      "fontFamily": "Geist",
-                      "fontSize": 16,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "uPKtQ",
-                      "name": "Step 3 title",
-                      "metadata": {
-                        "type": "home-copy",
-                        "key": "home-step3"
-                      },
-                      "fill": "$home-ink",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Ask your first question",
-                      "lineHeight": 1.45,
-                      "fontFamily": "Geist",
-                      "fontSize": 21,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "zf4LP",
-                      "name": "Step 3 description",
-                      "metadata": {
-                        "type": "home-copy",
-                        "key": "home-step3Body"
-                      },
-                      "fill": "$home-muted",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "Try: “What classes can I book tomorrow?”",
-                      "lineHeight": 1.45,
-                      "fontFamily": "Geist",
-                      "fontSize": 16,
-                      "fontWeight": "normal"
+                      "layout": "vertical",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "SxEzn",
+                          "name": "Number and title",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "DU0Fa",
+                              "name": "Step number",
+                              "fill": "#FFFFFFB3",
+                              "content": "03",
+                              "fontFamily": "Geist",
+                              "fontSize": 15,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "jHibY",
+                              "name": "Step title",
+                              "fill": "#FFFFFF",
+                              "content": "Just ask",
+                              "lineHeight": 1.4,
+                              "fontFamily": "Geist",
+                              "fontSize": 20,
+                              "fontWeight": "600",
+                              "letterSpacing": -0.35
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "dJSzP",
+                          "name": "Step description / provisional",
+                          "fill": "#C8D8EC",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Ask about your classes, workouts and records. Your assistant takes it from there.",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        }
+                      ]
                     }
                   ]
                 }

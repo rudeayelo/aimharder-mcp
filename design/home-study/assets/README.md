@@ -60,3 +60,9 @@ The two 1440 × 535 background images contain only the still Grainient field and
 ## Transparent-face mark refinement — 2026-11-01
 
 The current flat SVGs and their `pen/` PNG derivatives now have a transparent circular face cutout. Light retains navy silhouette/eyes. Dark uses pure white silhouette/eyes and removes the earlier keyline. The handle hole is also transparent; decoded PNG pixel checks cover both holes and eye colors. This supersedes the filled-white-face and dark-keyline treatments above. Source geometry, themed SVGs, renderer and faithful `@resvg/resvg-js` 2.6.2 derivatives agree; hashes in [sources.json](sources.json) are current. See [question ticker study](../question-ticker-study.md).
+
+## How to section assets — 2026-11-02
+
+The three animated interface demos reuse the existing original AimHarder and app symbols. Their inner panels stay light in both page appearances. New pointer/loading UI icons come from the same Lucide static 0.468.0 package and retain its existing ISC notice. No new logo artwork was generated.
+
+`pen/how-background-light.png` and `pen/how-background-dark.png` are 1440 × 683 background-only still captures of [render-how-background.html](../render-how-background.html). Browser JPEG captures were decoded and saved as genuine PNGs; no foreground UI is baked in. The same app-integrated React Bits notice applies. See [sources.json](sources.json) for relationships and SHA-256 hashes.

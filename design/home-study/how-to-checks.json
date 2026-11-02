@@ -1,0 +1,156 @@
+{
+  "date": "2026-11-02",
+  "scope": "English desktop Light/Dark only; isolated design prototype",
+  "runtime": {
+    "viewports": [
+      [
+        1200,
+        919
+      ],
+      [
+        1440,
+        900
+      ]
+    ],
+    "noHorizontalOverflow": true,
+    "consoleWarningsAndErrors": [],
+    "phaseInspections": [
+      {
+        "chars": "0",
+        "chat": "thinking",
+        "connect": "disabled",
+        "connectOpacity": "1",
+        "install": "scrolling",
+        "listOpacity": "1",
+        "overflow": false,
+        "provider": "chatgpt",
+        "time": "1.400"
+      },
+      {
+        "chars": "56",
+        "chat": "answer",
+        "connect": "ready",
+        "connectOpacity": "1",
+        "install": "ready",
+        "listOpacity": "1",
+        "overflow": false,
+        "provider": "chatgpt",
+        "time": "3.400"
+      },
+      {
+        "chars": "70",
+        "chat": "answer",
+        "connect": "loading",
+        "connectOpacity": "1",
+        "install": "loading",
+        "listOpacity": "1",
+        "overflow": false,
+        "provider": "chatgpt",
+        "time": "4.600"
+      },
+      {
+        "chars": "70",
+        "chat": "answer",
+        "connect": "success",
+        "connectOpacity": "1",
+        "install": "success",
+        "listOpacity": "1",
+        "overflow": false,
+        "provider": "chatgpt",
+        "time": "6.200"
+      },
+      {
+        "chars": "0",
+        "chat": "question",
+        "connect": "success",
+        "connectOpacity": "1",
+        "install": "success",
+        "listOpacity": "1",
+        "overflow": false,
+        "provider": "claude",
+        "time": "8.500"
+      },
+      {
+        "chars": "0",
+        "chat": "thinking",
+        "connect": "success",
+        "connectOpacity": "0",
+        "install": "success",
+        "listOpacity": "0.135",
+        "overflow": false,
+        "provider": "claude",
+        "time": "10.000"
+      },
+      {
+        "chars": "19",
+        "chat": "answer",
+        "connect": "success",
+        "connectOpacity": "1",
+        "install": "success",
+        "listOpacity": "1",
+        "overflow": false,
+        "provider": "hermes",
+        "time": "18.500"
+      }
+    ],
+    "installClickInspection": {
+      "time": 4.05,
+      "cursorTipInsideInstallControl": true
+    },
+    "pause": {
+      "pausedTime": 0.119,
+      "subsequentTime": 0.119
+    },
+    "offscreen": {
+      "paused": true,
+      "time": 0.536,
+      "subsequentTime": 0.536
+    },
+    "stillMode": {
+      "parameter": "motion=off",
+      "time": 6.2,
+      "connect": "success",
+      "install": "success",
+      "chat": "full ChatGPT answer"
+    },
+    "backgroundRenderer": "webgl2"
+  },
+  "pen": {
+    "lightPage": "uAXkc",
+    "darkPage": "p7u8w",
+    "lightSection": "ZLrrd",
+    "darkSection": "I95ri7",
+    "sectionSize": [
+      1440,
+      684
+    ],
+    "htmlSectionSize": [
+      1440,
+      683
+    ],
+    "protectedSubtreesUnchanged": 28,
+    "placeholdersRemaining": 0,
+    "savedViaEditor": true,
+    "foregroundEditable": true,
+    "animationInHTML": true,
+    "exports": [
+      "previews/how-to-pen/ZLrrd.png",
+      "previews/how-to-pen/I95ri7.png",
+      "previews/how-to-pen/uAXkc.png",
+      "previews/how-to-pen/p7u8w.png"
+    ]
+  },
+  "limitations": [
+    "Synthetic demos; no credentials submitted, apps installed or account queried.",
+    "OS reduced-motion branch inspected; explicit motion=off exercised.",
+    "Owner visual and motion acceptance pending.",
+    "Production integration and other locale/device variants pending."
+  ],
+  "checks": {
+    "assetManifest": {
+      "entries": 74,
+      "hashMismatches": []
+    },
+    "changedHTMLLocalReferences": "passed"
+  }
+}
