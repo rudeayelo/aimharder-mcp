@@ -79,7 +79,7 @@
     "savedViaEditor": true
   },
   "support": {
-    "address": "support@ahmcp.link",
+    "address": "support@aiharder.link",
     "source": "docs/product-experience.md accepted design target",
     "mailtoOnly": true,
     "emailSent": false,
@@ -126,5 +126,28 @@
         "theme": "light"
       }
     ]
+  },
+  "designDomainRefinement": {
+    "date": "2026-11-02",
+    "domain": "aiharder.link",
+    "supportAddress": "support@aiharder.link",
+    "previousDesignDomain": "ahmcp.link",
+    "designOnly": true,
+    "historicalBrowserChecksPreserved": true,
+    "browserChecks": [
+      {
+        "email": "support@aiharder.link",
+        "href": "mailto:support@aiharder.link",
+        "overflow": false,
+        "theme": "dark"
+      },
+      {
+        "email": "support@aiharder.link",
+        "href": "mailto:support@aiharder.link",
+        "overflow": false,
+        "theme": "light"
+      }
+    ],
+    "penLightAndDarkTextReadback": true
   }
 }

@@ -1192,7 +1192,8 @@
                                   "content": "ChatGPT",
                                   "lineHeight": 1.5,
                                   "fontFamily": "Geist",
-                                  "fontSize": 13
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
                                 }
                               ]
                             },
@@ -1224,7 +1225,8 @@
                                   "content": "Claude",
                                   "lineHeight": 1.5,
                                   "fontFamily": "Geist",
-                                  "fontSize": 13
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
                                 }
                               ]
                             },
@@ -1256,7 +1258,8 @@
                                   "content": "Hermes",
                                   "lineHeight": 1.5,
                                   "fontFamily": "Geist",
-                                  "fontSize": 13
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
                                 }
                               ]
                             },
@@ -1288,7 +1291,8 @@
                                   "content": "OpenClaw",
                                   "lineHeight": 1.5,
                                   "fontFamily": "Geist",
-                                  "fontSize": 13
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
                                 }
                               ]
                             },
@@ -1320,7 +1324,8 @@
                                   "content": "Pi",
                                   "lineHeight": 1.5,
                                   "fontFamily": "Geist",
-                                  "fontSize": 13
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
                                 }
                               ]
                             }
@@ -1580,7 +1585,8 @@
                           "content": "You also have a booking on Thursday at 18:00. Both are WOD classes. Ask me about the published workout whenever you want to check what is coming up.",
                           "lineHeight": 1.55,
                           "fontFamily": "Geist",
-                          "fontSize": 15
+                          "fontSize": 15,
+                          "fontWeight": "normal"
                         }
                       ]
                     }
@@ -3206,7 +3212,7 @@
                           "id": "pT4jk",
                           "name": "Support email / mailto",
                           "fill": "#1765B0",
-                          "content": "support@ahmcp.link",
+                          "content": "support@aiharder.link",
                           "fontFamily": "Geist",
                           "fontSize": 16,
                           "fontWeight": "500"
@@ -4360,7 +4366,8 @@
                                   "content": "ChatGPT",
                                   "lineHeight": 1.5,
                                   "fontFamily": "Geist",
-                                  "fontSize": 13
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
                                 }
                               ]
                             },
@@ -4392,7 +4399,8 @@
                                   "content": "Claude",
                                   "lineHeight": 1.5,
                                   "fontFamily": "Geist",
-                                  "fontSize": 13
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
                                 }
                               ]
                             },
@@ -4424,7 +4432,8 @@
                                   "content": "Hermes",
                                   "lineHeight": 1.5,
                                   "fontFamily": "Geist",
-                                  "fontSize": 13
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
                                 }
                               ]
                             },
@@ -4456,7 +4465,8 @@
                                   "content": "OpenClaw",
                                   "lineHeight": 1.5,
                                   "fontFamily": "Geist",
-                                  "fontSize": 13
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
                                 }
                               ]
                             },
@@ -4488,7 +4498,8 @@
                                   "content": "Pi",
                                   "lineHeight": 1.5,
                                   "fontFamily": "Geist",
-                                  "fontSize": 13
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
                                 }
                               ]
                             }
@@ -4748,7 +4759,8 @@
                           "content": "You also have a booking on Thursday at 18:00. Both are WOD classes. Ask me about the published workout whenever you want to check what is coming up.",
                           "lineHeight": 1.55,
                           "fontFamily": "Geist",
-                          "fontSize": 15
+                          "fontSize": 15,
+                          "fontWeight": "normal"
                         }
                       ]
                     }
@@ -6374,7 +6386,7 @@
                           "id": "hYoA2",
                           "name": "Support email / mailto",
                           "fill": "#61A9EB",
-                          "content": "support@ahmcp.link",
+                          "content": "support@aiharder.link",
                           "fontFamily": "Geist",
                           "fontSize": 16,
                           "fontWeight": "500"

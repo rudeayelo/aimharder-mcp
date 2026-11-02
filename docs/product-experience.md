@@ -1,6 +1,8 @@
 # Product experience design
 
-FAQ checkpoint, 2026-11-02: the English desktop home now includes **FAQ**, with a support-email invitation beside the heading and five expandable answers. This owner placement supersedes the earlier support-at-end proposal. The [FAQ study](../design/home-study/faq-study.md) records current copy, interaction, references, native states and acceptance limits. `support@ahmcp.link` remains the accepted design target; this work does not activate or validate the inbox. Closing/footer drafts and other device/locale variants remain unchanged.
+Design-domain update, 2026-11-02: the owner selected **aiharder.link** for the design and **support@aiharder.link** for its support contact. This supersedes the earlier public-domain/address presentation below. English desktop Light/Dark copy and Pen use the new address. Technical origins, OAuth callbacks, DNS, mail-provider configuration and historical activation evidence are unchanged; this is not an operational migration or availability claim.
+
+FAQ checkpoint, 2026-11-02: the English desktop home now includes **FAQ**, with a support-email invitation beside the heading and five expandable answers. This owner placement supersedes the earlier support-at-end proposal. The [FAQ study](../design/home-study/faq-study.md) records current copy, interaction, references, native states and acceptance limits. `support@aiharder.link` is the current design target; this work does not activate or validate the inbox. Closing/footer drafts and other device/locale variants remain unchanged.
 
 Home study checkpoint, 2026-11-02: English desktop Light/Dark now include the animated **How you get started** section after the question wall. The latest refinement reuses the vertically inverted hero background, a navy title in Light, a macOS-style demo cursor and an “Other clients” row after ChatGPT. The [directed study](../design/home-study/how-to-study.md) records the three fictional UI demos, source references, timings, editable Pen success stills and browser checks. Closing/footer drafts and the other six variants remain frozen. Captions and owner motion/visual acceptance remain pending; this does not implement live authentication, app installation or production frontend behavior. Existing architecture/security/scope ADRs are unaffected.
 
@@ -20,7 +22,7 @@ The owner accepted the following recommendations on 2026-10-28:
 
 - Design primarily for a member of the owner's gym who wants to use AimHarder through an AI chat. Keep invitation-only admission for the initial pilot. Explain capabilities, setup and recovery without requiring knowledge of MCP.
 - Cover the whole remote-service experience: the public website, invitations and sign-in, AimHarder connection, AI-client authorization, settings, administration, errors and transactional email. Review instructions visible in the AI chat as well. Changes to tool behavior require a specific decision.
-- Keep `ahmcp.link` as the intended public domain. The owner's earlier mention of `ahmcp.com` was a mistake, not a migration request.
+- Use `aiharder.link` as the current design domain (owner revision, 2026-11-02). This supersedes the earlier `ahmcp.link` design choice; it does not migrate the existing runtime.
 - Make the GitHub README a product entry point with immediately discoverable hosted remote and local npm usage paths, shared capabilities, and separate setup guides. Link technical details and validation evidence from the relevant sections.
 - Keep the website design in a pen.dev `.pen` file. The later design handoff fixes the path as `design/ahmcp.pen`; #95 resolves the concrete screen/state inventory within its required coverage.
 
@@ -74,7 +76,7 @@ These are source and tracker observations, not UX decisions:
 - The portal can list currently authorized MCP clients. It has no implemented first-successful-query indicator; an OAuth grant alone is not evidence that a sporting query succeeded.
 - The Mamitsu reference was inspected on 2026-10-28, including its **Other agents** state. It switches the instructions with the client selection; the generic state supplies a copyable server URL and brief Streamable HTTP/OAuth steps. Its installation commands, skills, client support and authentication are not requirements or compatibility evidence for this project.
 - No existing `.pen` or branding asset was found in this checkout during the initial audit.
-- The [acceptance ledger](hosted-pilot-acceptance.md) identifies the isolated test environment separately from the intended production origin. Choosing `ahmcp.link` for the design does not establish production availability.
+- The [acceptance ledger](hosted-pilot-acceptance.md) identifies the isolated test environment separately from the intended production origin. Choosing `aiharder.link` for the design does not establish production availability.
 
 ## Vocabulary and existing decisions
 
