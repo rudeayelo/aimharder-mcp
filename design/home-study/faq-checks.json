@@ -75,7 +75,8 @@
     "otherAnswersEditableDisabledLayers": 4,
     "foregroundEditable": true,
     "runtimeInteractionInHTML": true,
-    "closingAndFooterDisabled": true
+    "closingAndFooterDisabled": true,
+    "savedViaEditor": true
   },
   "support": {
     "address": "support@ahmcp.link",
@@ -87,5 +88,11 @@
   "validation": {
     "assetHashes": "75 existing asset hashes passed; no added assets",
     "changedLocalReferences": "passed"
+  },
+  "review": {
+    "base": "cc63a360e97dd71be508131ce1193da62902abef",
+    "commit": "5d5b4b7",
+    "standardsFindings": 0,
+    "specFindings": 0
   }
 }
