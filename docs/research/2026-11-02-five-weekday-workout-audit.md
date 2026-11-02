@@ -96,3 +96,5 @@ Confirmed guidance/correction targets are EMOM interval versus computed total, t
 Filtered titles remain independent of block positions. Null/absent exercise block association remains a code edge case: base rows survive while variant construction skips them, but no supplied example here establishes visible loss. Prior runtime field differences remain unexplained without deployed artifact/version evidence.
 
 Types 5, 7, 8, 9 and 14 lack live examples. Exhaustive publication coverage, other gyms/locales, media content, personal-load arithmetic/unit provenance, attendance, unique scheduled-session linkage and write acceptance remain outside this audit. No deployment or package publication is established by it.
+
+The subsequent owner-authorized [delivery receipt](../hosted-workout-interpretation-deployment.md) separately establishes main integration, the hosted code-only rollout and exact `0.5.4` npm artifact verification. It preserves this audit's source/coverage limits.
