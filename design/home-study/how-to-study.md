@@ -54,3 +54,5 @@ Two-axis review against `fa244c2...764b5ac`: **Standards 0 findings; Spec 0 find
 Owner-refinement review against `f85c854...4bf267c`: Standards 0 findings; Spec 0 findings. Syntax, current 75 asset hashes and changed study links passed. No runtime/API/security decisions changed; ADRs remain unaffected.
 
 Top-edge refinement (2026-11-02): How to now has a 1px upper border matching the hero’s lower border exactly: `#79a4dc` in Light and `#2d609b` in Dark. Native Pen uses the same top stroke. Background-only exports omit this separate border. No animation, content, scope or ADR decision changes.
+
+Step-number refinement (2026-11-02): numbers use the same type size and line height as their block titles: 20px / 1.4 at desktop, 18px / 1.4 at the existing ≤1100px breakpoint. They use the existing light brand blue `#2490f4` in both appearances. Native desktop numbers match at 20px. No other content, animation, scope or ADR decisions changed.

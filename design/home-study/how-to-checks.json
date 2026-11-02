@@ -219,5 +219,57 @@
       }
     ],
     "nativeTopStrokeMatched": true
+  },
+  "stepNumberRefinement": {
+    "date": "2026-11-02",
+    "color": "#2490f4",
+    "sharedResponsiveTitleSize": true,
+    "nativeDesktopSize": 20,
+    "computedBrowserChecks": [
+      {
+        "overflow": false,
+        "steps": [
+          {
+            "color": "rgb(36, 144, 244)",
+            "number": "20px",
+            "title": "20px"
+          },
+          {
+            "color": "rgb(36, 144, 244)",
+            "number": "20px",
+            "title": "20px"
+          },
+          {
+            "color": "rgb(36, 144, 244)",
+            "number": "20px",
+            "title": "20px"
+          }
+        ],
+        "theme": "dark",
+        "width": 1200
+      },
+      {
+        "overflow": false,
+        "steps": [
+          {
+            "color": "rgb(36, 144, 244)",
+            "number": "20px",
+            "title": "20px"
+          },
+          {
+            "color": "rgb(36, 144, 244)",
+            "number": "20px",
+            "title": "20px"
+          },
+          {
+            "color": "rgb(36, 144, 244)",
+            "number": "20px",
+            "title": "20px"
+          }
+        ],
+        "theme": "light",
+        "width": 1200
+      }
+    ]
   }
 }

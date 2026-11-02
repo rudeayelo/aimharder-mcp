@@ -2437,10 +2437,11 @@
                               "type": "text",
                               "id": "k6Khs",
                               "name": "Step number",
-                              "fill": "#14283F",
+                              "fill": "#2490F4",
                               "content": "01",
+                              "lineHeight": 1.4,
                               "fontFamily": "Geist",
-                              "fontSize": 15,
+                              "fontSize": 20,
                               "fontWeight": "500"
                             },
                             {
@@ -2889,10 +2890,11 @@
                               "type": "text",
                               "id": "doXDw",
                               "name": "Step number",
-                              "fill": "#14283F",
+                              "fill": "#2490F4",
                               "content": "02",
+                              "lineHeight": 1.4,
                               "fontFamily": "Geist",
-                              "fontSize": 15,
+                              "fontSize": 20,
                               "fontWeight": "500"
                             },
                             {
@@ -3086,10 +3088,11 @@
                               "type": "text",
                               "id": "P7DTfr",
                               "name": "Step number",
-                              "fill": "#14283F",
+                              "fill": "#2490F4",
                               "content": "03",
+                              "lineHeight": 1.4,
                               "fontFamily": "Geist",
-                              "fontSize": 15,
+                              "fontSize": 20,
                               "fontWeight": "500"
                             },
                             {
@@ -5434,10 +5437,11 @@
                               "type": "text",
                               "id": "gm5HY",
                               "name": "Step number",
-                              "fill": "#FFFFFF",
+                              "fill": "#2490F4",
                               "content": "01",
+                              "lineHeight": 1.4,
                               "fontFamily": "Geist",
-                              "fontSize": 15,
+                              "fontSize": 20,
                               "fontWeight": "500"
                             },
                             {
@@ -5886,10 +5890,11 @@
                               "type": "text",
                               "id": "WlDoM",
                               "name": "Step number",
-                              "fill": "#FFFFFF",
+                              "fill": "#2490F4",
                               "content": "02",
+                              "lineHeight": 1.4,
                               "fontFamily": "Geist",
-                              "fontSize": 15,
+                              "fontSize": 20,
                               "fontWeight": "500"
                             },
                             {
@@ -6083,10 +6088,11 @@
                               "type": "text",
                               "id": "DU0Fa",
                               "name": "Step number",
-                              "fill": "#FFFFFF",
+                              "fill": "#2490F4",
                               "content": "03",
+                              "lineHeight": 1.4,
                               "fontFamily": "Geist",
-                              "fontSize": 15,
+                              "fontSize": 20,
                               "fontWeight": "500"
                             },
                             {

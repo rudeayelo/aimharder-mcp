@@ -54,9 +54,9 @@
   user-select: none;
 }
 .how-step figcaption { margin-top: 24px; }
-.how-step-title { display: flex; align-items: baseline; gap: 12px; color: var(--how-caption); }
-.how-step-number { font-size: 15px; font-weight: 500; }
-.how-step h3 { margin: 0; font-size: 20px; font-weight: 600; line-height: 1.4; letter-spacing: -.35px; }
+.how-step-title { --how-step-title-size: 20px; display: flex; align-items: baseline; gap: 12px; color: var(--how-caption); }
+.how-step-number { font-size: var(--how-step-title-size); line-height: 1.4; font-weight: 500; color: #2490f4; }
+.how-step h3 { margin: 0; font-size: var(--how-step-title-size); font-weight: 600; line-height: 1.4; letter-spacing: -.35px; }
 .how-step-description { margin: 10px 0 0; color: var(--how-description); font-size: 15px; line-height: 1.5; }
 .connect-demo { width: min(256px, calc(100% - 48px)); margin: 44px auto 0; }
 .connect-logo { display: block; width: 170px; height: 38px; object-fit: contain; margin: 0 auto 21px; }
@@ -122,7 +122,7 @@
 @keyframes how-dot { 50% { transform: translateY(-3px); opacity: .45; } }
 @media(max-width:1100px) {
   .how-grid { gap: 24px; }
-  .how-step h3 { font-size: 18px; }
+  .how-step-title { --how-step-title-size: 18px; }
   .service-option { gap: 8px; padding: 8px; }
   .service-symbol { width: 22px; height: 22px; }
   .service-name { font-size: 12px; }
