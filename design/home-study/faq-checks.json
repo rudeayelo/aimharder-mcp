@@ -86,7 +86,7 @@
     "inboxActivatedOrDeliveryValidated": false
   },
   "validation": {
-    "assetHashes": "75 existing asset hashes passed; no added assets",
+    "assetHashes": "76 current asset hashes passed; Lucide mail added",
     "changedLocalReferences": "passed"
   },
   "review": {
@@ -94,5 +94,37 @@
     "commit": "5d5b4b7",
     "standardsFindings": 0,
     "specFindings": 0
+  },
+  "supportIconRefinement": {
+    "date": "2026-11-02",
+    "icon": "Lucide mail",
+    "size": 18,
+    "gap": 8,
+    "browserChecks": [
+      {
+        "color": "rgb(97, 169, 235)",
+        "decorative": "true",
+        "href": "mailto:support@ahmcp.link",
+        "iconSize": [
+          "18px",
+          "18px"
+        ],
+        "linkText": "support@ahmcp.link",
+        "mask": "url(\"https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/assets/lucide/mail.svg\")",
+        "theme": "dark"
+      },
+      {
+        "color": "rgb(23, 101, 176)",
+        "decorative": "true",
+        "href": "mailto:support@ahmcp.link",
+        "iconSize": [
+          "18px",
+          "18px"
+        ],
+        "linkText": "support@ahmcp.link",
+        "mask": "url(\"https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/assets/lucide/mail.svg\")",
+        "theme": "light"
+      }
+    ]
   }
 }

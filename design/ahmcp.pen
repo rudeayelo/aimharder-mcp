@@ -3185,14 +3185,33 @@
                       "fontWeight": "normal"
                     },
                     {
-                      "type": "text",
-                      "id": "pT4jk",
-                      "name": "Support email / mailto",
-                      "fill": "#1765B0",
-                      "content": "support@ahmcp.link",
-                      "fontFamily": "Geist",
-                      "fontSize": 16,
-                      "fontWeight": "500"
+                      "type": "frame",
+                      "id": "U0YNc",
+                      "name": "Support email with mail icon",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "cr78R",
+                          "name": "Email / Lucide mail",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "mail",
+                          "library": "lucide",
+                          "fill": "#1765B0"
+                        },
+                        {
+                          "type": "text",
+                          "id": "pT4jk",
+                          "name": "Support email / mailto",
+                          "fill": "#1765B0",
+                          "content": "support@ahmcp.link",
+                          "fontFamily": "Geist",
+                          "fontSize": 16,
+                          "fontWeight": "500"
+                        }
+                      ]
                     }
                   ]
                 }
@@ -6334,14 +6353,33 @@
                       "fontWeight": "normal"
                     },
                     {
-                      "type": "text",
-                      "id": "hYoA2",
-                      "name": "Support email / mailto",
-                      "fill": "#61A9EB",
-                      "content": "support@ahmcp.link",
-                      "fontFamily": "Geist",
-                      "fontSize": 16,
-                      "fontWeight": "500"
+                      "type": "frame",
+                      "id": "YCASN",
+                      "name": "Support email with mail icon",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "GtI6W",
+                          "name": "Email / Lucide mail",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "mail",
+                          "library": "lucide",
+                          "fill": "#61A9EB"
+                        },
+                        {
+                          "type": "text",
+                          "id": "hYoA2",
+                          "name": "Support email / mailto",
+                          "fill": "#61A9EB",
+                          "content": "support@ahmcp.link",
+                          "fontFamily": "Geist",
+                          "fontSize": 16,
+                          "fontWeight": "500"
+                        }
+                      ]
                     }
                   ]
                 }

@@ -456,5 +456,10 @@
     "file": "cursor-macos-style.svg",
     "source": "Local macOS-style arrow illustration, black fill/white outline, authored for the UI demos; not an extracted Apple system asset.",
     "sha256": "8d47000a06e6acb3db97abbe73bbabbc4d828c6b8540ff15a320fd58786c8596"
+  },
+  {
+    "file": "lucide/mail.svg",
+    "source": "https://unpkg.com/lucide-static@0.468.0/icons/mail.svg",
+    "sha256": "8a4e4461fb1db38072eb90fa532c6b17bcd4d774951f65b6fc02c63aab547dee"
   }
 ]

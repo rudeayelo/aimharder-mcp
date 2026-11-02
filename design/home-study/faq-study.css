@@ -2,8 +2,9 @@
 .faq-layout { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 80px; align-items: start; }
 .faq-introduction h2 { margin: 0 0 20px; font-size: 40px; font-weight: 700; letter-spacing: -1px; line-height: 1.2; }
 .faq-introduction p { margin: 0 0 8px; max-width: 280px; color: var(--muted); font-size: 16px; line-height: 1.6; }
-.faq-support { color: var(--cta); font-size: 16px; font-weight: 500; text-decoration: underline; text-underline-offset: 4px; }
-[data-theme=dark] .faq-support { color: #61a9eb; }
+.faq-support { display: inline-flex; align-items: center; gap: 8px; color: var(--cta); font-size: 16px; font-weight: 500; text-decoration: underline; text-underline-offset: 4px; }
+.faq-support .icon { width: 18px; height: 18px; }
+[data-theme=dark] .faq-support { display: inline-flex; align-items: center; gap: 8px; color: #61a9eb; }
 .faq-support:hover { text-decoration-thickness: 2px; }
 .faq-item { border-bottom: 1px solid var(--line); }
 .faq-item:first-child { border-top: 1px solid var(--line); }

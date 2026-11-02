@@ -6,7 +6,7 @@ section.innerHTML = `
     <div class="faq-introduction">
       <h2 id="faq-heading">${copy.heading}</h2>
       <p>${copy.supportIntro}</p>
-      <a class="faq-support" href="mailto:${copy.supportEmail}">${copy.supportEmail}</a>
+      <a class="faq-support" href="mailto:${copy.supportEmail}"><i class="icon" style="--icon:url('./assets/lucide/mail.svg')" aria-hidden="true"></i><span>${copy.supportEmail}</span></a>
     </div>
     <div class="faq-list">
       ${copy.items.map((item, index) => `<details class="faq-item"${index === 0 ? ' open' : ''}>
