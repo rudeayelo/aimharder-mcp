@@ -750,7 +750,7 @@
       "x": 1360,
       "y": 1000,
       "name": "AIHarder / Desktop / English / Light",
-      "context": "Current English desktop study: header, hero, question wall and How you get started. How to is an editable success still; actual animation is in HTML. FAQ/closing/footer remain disabled drafts for sequential refinement.",
+      "context": "Current English desktop study: header, hero, question wall, How to and FAQ. FAQ has editable disclosure stills; interactive behavior stays in HTML. Closing/footer remain disabled drafts.",
       "theme": {
         "appearance": "light",
         "language": "en"
@@ -3132,192 +3132,245 @@
         },
         {
           "type": "frame",
-          "id": "H1zcWf",
-          "x": 0,
-          "y": 1832.5,
-          "name": "FAQ",
-          "enabled": false,
-          "width": "fill_container(1440)",
-          "fill": "$home-surface",
+          "id": "RqxLb",
+          "name": "FAQ / support and expandable answers",
+          "context": "First answer expanded. All five answer texts are editable; collapsed answers are disabled layers. Runtime disclosure behavior is in faq-prototype.js. Accepted support email target; inbox activation and delivery are separate.",
+          "width": "fill_container",
+          "fill": "$home-bg",
           "gap": 80,
           "padding": [
-            72,
+            80,
             120
           ],
           "children": [
             {
               "type": "frame",
-              "id": "rKeAR",
-              "name": "FAQ introduction",
+              "id": "QJhhM",
+              "name": "FAQ introduction and support",
               "width": 320,
               "layout": "vertical",
-              "gap": 16,
+              "gap": 20,
               "children": [
                 {
                   "type": "text",
-                  "id": "a4q5h7",
+                  "id": "K0kx90",
                   "name": "FAQ heading",
-                  "metadata": {
-                    "type": "home-copy",
-                    "key": "home-faqTitle"
-                  },
                   "fill": "$home-ink",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "A few things to know.",
-                  "lineHeight": 1.45,
+                  "content": "FAQ",
+                  "lineHeight": 1.2,
                   "fontFamily": "Geist",
-                  "fontSize": 36,
-                  "fontWeight": "600"
+                  "fontSize": 40,
+                  "fontWeight": "700",
+                  "letterSpacing": -1
                 },
                 {
-                  "type": "text",
-                  "id": "VySzn",
-                  "name": "FAQ introduction text",
-                  "metadata": {
-                    "type": "home-copy",
-                    "key": "home-faqIntro"
-                  },
-                  "fill": "$home-muted",
-                  "textGrowth": "fixed-width",
+                  "type": "frame",
+                  "id": "ocSNe",
+                  "name": "Support invitation",
                   "width": "fill_container",
-                  "content": "A little context before you connect.",
-                  "lineHeight": 1.45,
-                  "fontFamily": "Geist",
-                  "fontSize": 17,
-                  "fontWeight": "normal"
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qmoGt",
+                      "name": "Support introduction",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": 280,
+                      "content": "Can’t find the answer you need? Drop us a line.",
+                      "lineHeight": 1.6,
+                      "fontFamily": "Geist",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "pT4jk",
+                      "name": "Support email / mailto",
+                      "fill": "#1765B0",
+                      "content": "support@ahmcp.link",
+                      "fontFamily": "Geist",
+                      "fontSize": 16,
+                      "fontWeight": "500"
+                    }
+                  ]
                 }
               ]
             },
             {
               "type": "frame",
-              "id": "lHh8l",
-              "name": "FAQ rows",
+              "id": "ltaLC",
+              "name": "Five FAQ disclosures",
               "width": "fill_container",
               "layout": "vertical",
               "children": [
                 {
                   "type": "frame",
-                  "id": "se2RT",
+                  "id": "e6KU4V",
                   "name": "FAQ item 1 / expanded",
                   "width": "fill_container",
                   "stroke": "$home-line",
                   "strokeWidth": {
-                    "top": 1
+                    "top": 1,
+                    "bottom": 1
                   },
                   "layout": "vertical",
-                  "gap": 14,
                   "padding": [
-                    20,
+                    1,
                     0
                   ],
                   "children": [
                     {
                       "type": "frame",
-                      "id": "sWAMJ",
-                      "name": "FAQ 1 question row",
+                      "id": "woFTD",
+                      "name": "Question / disclosure trigger",
                       "width": "fill_container",
-                      "gap": 20,
+                      "gap": 24,
+                      "padding": [
+                        24,
+                        0
+                      ],
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
-                          "id": "ZhhSy",
-                          "name": "FAQ 1 question",
-                          "metadata": {
-                            "type": "home-copy",
-                            "key": "home-q1"
-                          },
+                          "id": "dqJh5",
+                          "name": "Question text",
                           "fill": "$home-ink",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
                           "content": "How do I get access?",
-                          "lineHeight": 1.45,
+                          "lineHeight": 1.5,
                           "fontFamily": "Geist",
-                          "fontSize": 17,
-                          "fontWeight": "500"
+                          "fontSize": 18,
+                          "fontWeight": "600"
                         },
                         {
                           "type": "icon",
-                          "id": "y2x9Nh",
-                          "name": "FAQ 1 disclosure",
-                          "width": 18,
-                          "height": 18,
-                          "icon": "minus",
+                          "id": "QeijE",
+                          "name": "Disclosure chevron / Lucide",
+                          "rotation": 180,
+                          "width": 20,
+                          "height": 20,
+                          "icon": "chevron-down",
+                          "library": "lucide",
+                          "fill": "#1765B0"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "k2ngUa",
+                      "name": "Answer body / visible",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "padding": [
+                        0,
+                        44,
+                        24,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "WF3lF",
+                          "name": "Answer text",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "The pilot is invitation-only. Open your invitation email to get started. Already have access? Sign in.",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Geist",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "OIinV",
+                  "name": "FAQ item 2 / collapsed",
+                  "width": "fill_container",
+                  "stroke": "$home-line",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    1,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "ye5Y4",
+                      "name": "Question / disclosure trigger",
+                      "width": "fill_container",
+                      "gap": 24,
+                      "padding": [
+                        24,
+                        0
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "YqFDf",
+                          "name": "Question text",
+                          "fill": "$home-ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Which AI chats can I use?",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 18,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "FcyXF",
+                          "name": "Disclosure chevron / Lucide",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "chevron-down",
                           "library": "lucide",
                           "fill": "$home-muted"
                         }
                       ]
                     },
                     {
-                      "type": "text",
-                      "id": "LI1wT",
-                      "name": "FAQ 1 answer",
-                      "metadata": {
-                        "type": "home-copy",
-                        "key": "home-a1"
-                      },
-                      "fill": "$home-muted",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "The pilot is invitation-only. Open your invitation email to get started. Already have access? Sign in.",
-                      "lineHeight": 1.45,
-                      "fontFamily": "Geist",
-                      "fontSize": 16,
-                      "fontWeight": "normal"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "PnVlC",
-                  "name": "FAQ item 2 / collapsed",
-                  "width": "fill_container",
-                  "stroke": "$home-line",
-                  "strokeWidth": {
-                    "top": 1
-                  },
-                  "layout": "vertical",
-                  "gap": 14,
-                  "padding": [
-                    20,
-                    0
-                  ],
-                  "children": [
-                    {
                       "type": "frame",
-                      "id": "JCf5U",
-                      "name": "FAQ 2 question row",
-                      "width": "fill_container",
-                      "gap": 20,
-                      "alignItems": "center",
+                      "id": "YaVGs",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Answer body / hidden",
+                      "enabled": false,
+                      "width": 800,
+                      "layout": "vertical",
+                      "padding": [
+                        0,
+                        44,
+                        24,
+                        0
+                      ],
                       "children": [
                         {
                           "type": "text",
-                          "id": "L04BMi",
-                          "name": "FAQ 2 question",
-                          "metadata": {
-                            "type": "home-copy",
-                            "key": "home-q2"
-                          },
-                          "fill": "$home-ink",
+                          "id": "zuIdl",
+                          "name": "Answer text",
+                          "fill": "$home-muted",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
-                          "content": "Which AI chats can I use?",
-                          "lineHeight": 1.45,
+                          "content": "Start with the setup guides for ChatGPT and Hermes. For other MCP clients, check their connection requirements before getting started.",
+                          "lineHeight": 1.6,
                           "fontFamily": "Geist",
-                          "fontSize": 17,
-                          "fontWeight": "500"
-                        },
-                        {
-                          "type": "icon",
-                          "id": "AS08C",
-                          "name": "FAQ 2 disclosure",
-                          "width": 18,
-                          "height": 18,
-                          "icon": "plus",
-                          "library": "lucide",
-                          "fill": "$home-muted"
+                          "fontSize": 16,
+                          "fontWeight": "normal"
                         }
                       ]
                     }
@@ -3325,54 +3378,86 @@
                 },
                 {
                   "type": "frame",
-                  "id": "GIiNj",
+                  "id": "fg1Wl",
                   "name": "FAQ item 3 / collapsed",
                   "width": "fill_container",
                   "stroke": "$home-line",
                   "strokeWidth": {
-                    "top": 1
+                    "bottom": 1
                   },
                   "layout": "vertical",
-                  "gap": 14,
                   "padding": [
-                    20,
+                    0,
+                    0,
+                    1,
                     0
                   ],
                   "children": [
                     {
                       "type": "frame",
-                      "id": "xqise",
-                      "name": "FAQ 3 question row",
+                      "id": "XmUDU",
+                      "name": "Question / disclosure trigger",
                       "width": "fill_container",
-                      "gap": 20,
+                      "gap": 24,
+                      "padding": [
+                        24,
+                        0
+                      ],
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
-                          "id": "DRtXh",
-                          "name": "FAQ 3 question",
-                          "metadata": {
-                            "type": "home-copy",
-                            "key": "home-q3"
-                          },
+                          "id": "a4kV3",
+                          "name": "Question text",
                           "fill": "$home-ink",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
                           "content": "What happens to my account details?",
-                          "lineHeight": 1.45,
+                          "lineHeight": 1.5,
                           "fontFamily": "Geist",
-                          "fontSize": 17,
-                          "fontWeight": "500"
+                          "fontSize": 18,
+                          "fontWeight": "600"
                         },
                         {
                           "type": "icon",
-                          "id": "rhN1d",
-                          "name": "FAQ 3 disclosure",
-                          "width": 18,
-                          "height": 18,
-                          "icon": "plus",
+                          "id": "RZlql",
+                          "name": "Disclosure chevron / Lucide",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "chevron-down",
                           "library": "lucide",
                           "fill": "$home-muted"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "G4lrwH",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Answer body / hidden",
+                      "enabled": false,
+                      "width": 800,
+                      "layout": "vertical",
+                      "padding": [
+                        0,
+                        44,
+                        24,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "F0VGJ",
+                          "name": "Answer text",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "The service stores your AimHarder credentials encrypted and can recover them to authenticate. Your AI chat does not receive them.",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Geist",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
                         }
                       ]
                     }
@@ -3380,54 +3465,86 @@
                 },
                 {
                   "type": "frame",
-                  "id": "K145j",
+                  "id": "PrvLT",
                   "name": "FAQ item 4 / collapsed",
                   "width": "fill_container",
                   "stroke": "$home-line",
                   "strokeWidth": {
-                    "top": 1
+                    "bottom": 1
                   },
                   "layout": "vertical",
-                  "gap": 14,
                   "padding": [
-                    20,
+                    0,
+                    0,
+                    1,
                     0
                   ],
                   "children": [
                     {
                       "type": "frame",
-                      "id": "O0qr2H",
-                      "name": "FAQ 4 question row",
+                      "id": "nj4I5",
+                      "name": "Question / disclosure trigger",
                       "width": "fill_container",
-                      "gap": 20,
+                      "gap": 24,
+                      "padding": [
+                        24,
+                        0
+                      ],
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
-                          "id": "ZKh5Z",
-                          "name": "FAQ 4 question",
-                          "metadata": {
-                            "type": "home-copy",
-                            "key": "home-q4"
-                          },
+                          "id": "TEEl3",
+                          "name": "Question text",
                           "fill": "$home-ink",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
                           "content": "Can I disconnect later?",
-                          "lineHeight": 1.45,
+                          "lineHeight": 1.5,
                           "fontFamily": "Geist",
-                          "fontSize": 17,
-                          "fontWeight": "500"
+                          "fontSize": 18,
+                          "fontWeight": "600"
                         },
                         {
                           "type": "icon",
-                          "id": "DvVag",
-                          "name": "FAQ 4 disclosure",
-                          "width": 18,
-                          "height": 18,
-                          "icon": "plus",
+                          "id": "Y4x9sr",
+                          "name": "Disclosure chevron / Lucide",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "chevron-down",
                           "library": "lucide",
                           "fill": "$home-muted"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "OhEHw",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Answer body / hidden",
+                      "enabled": false,
+                      "width": 800,
+                      "layout": "vertical",
+                      "padding": [
+                        0,
+                        44,
+                        24,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "y3NtAf",
+                          "name": "Answer text",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Yes. You can disconnect each AI client independently. Disconnecting AimHarder and deleting your AIHarder account are separate actions.",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Geist",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
                         }
                       ]
                     }
@@ -3435,54 +3552,86 @@
                 },
                 {
                   "type": "frame",
-                  "id": "bA1TD",
+                  "id": "IGjoY",
                   "name": "FAQ item 5 / collapsed",
                   "width": "fill_container",
                   "stroke": "$home-line",
                   "strokeWidth": {
-                    "top": 1
+                    "bottom": 1
                   },
                   "layout": "vertical",
-                  "gap": 14,
                   "padding": [
-                    20,
+                    0,
+                    0,
+                    1,
                     0
                   ],
                   "children": [
                     {
                       "type": "frame",
-                      "id": "QLIeV",
-                      "name": "FAQ 5 question row",
+                      "id": "EYlD5",
+                      "name": "Question / disclosure trigger",
                       "width": "fill_container",
-                      "gap": 20,
+                      "gap": 24,
+                      "padding": [
+                        24,
+                        0
+                      ],
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
-                          "id": "so2Hp",
-                          "name": "FAQ 5 question",
-                          "metadata": {
-                            "type": "home-copy",
-                            "key": "home-q5"
-                          },
+                          "id": "dVMbs",
+                          "name": "Question text",
                           "fill": "$home-ink",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
                           "content": "Is this an official AimHarder service?",
-                          "lineHeight": 1.45,
+                          "lineHeight": 1.5,
                           "fontFamily": "Geist",
-                          "fontSize": 17,
-                          "fontWeight": "500"
+                          "fontSize": 18,
+                          "fontWeight": "600"
                         },
                         {
                           "type": "icon",
-                          "id": "HRFMv",
-                          "name": "FAQ 5 disclosure",
-                          "width": 18,
-                          "height": 18,
-                          "icon": "plus",
+                          "id": "iXkZC",
+                          "name": "Disclosure chevron / Lucide",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "chevron-down",
                           "library": "lucide",
                           "fill": "$home-muted"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "uMnUQ",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Answer body / hidden",
+                      "enabled": false,
+                      "width": 800,
+                      "layout": "vertical",
+                      "padding": [
+                        0,
+                        44,
+                        24,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "F9rY6",
+                          "name": "Answer text",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "No. AIHarder is an independent project and is not affiliated with AimHarder.",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Geist",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
                         }
                       ]
                     }
@@ -3740,7 +3889,7 @@
       "x": 2960,
       "y": 1000,
       "name": "AIHarder / Desktop / English / Dark",
-      "context": "Current English desktop study: header, hero, question wall and How you get started. How to is an editable success still; actual animation is in HTML. FAQ/closing/footer remain disabled drafts for sequential refinement.",
+      "context": "Current English desktop study: header, hero, question wall, How to and FAQ. FAQ has editable disclosure stills; interactive behavior stays in HTML. Closing/footer remain disabled drafts.",
       "theme": {
         "appearance": "dark",
         "language": "en"
@@ -6132,192 +6281,245 @@
         },
         {
           "type": "frame",
-          "id": "EsRLM",
-          "x": 0,
-          "y": 1832.5,
-          "name": "FAQ",
-          "enabled": false,
-          "width": "fill_container(1440)",
-          "fill": "$home-surface",
+          "id": "lkUyn",
+          "name": "FAQ / support and expandable answers",
+          "context": "First answer expanded. All five answer texts are editable; collapsed answers are disabled layers. Runtime disclosure behavior is in faq-prototype.js. Accepted support email target; inbox activation and delivery are separate.",
+          "width": "fill_container",
+          "fill": "$home-bg",
           "gap": 80,
           "padding": [
-            72,
+            80,
             120
           ],
           "children": [
             {
               "type": "frame",
-              "id": "d0aJgD",
-              "name": "FAQ introduction",
+              "id": "RtZ1k",
+              "name": "FAQ introduction and support",
               "width": 320,
               "layout": "vertical",
-              "gap": 16,
+              "gap": 20,
               "children": [
                 {
                   "type": "text",
-                  "id": "oZuDz",
+                  "id": "Mdqc2",
                   "name": "FAQ heading",
-                  "metadata": {
-                    "type": "home-copy",
-                    "key": "home-faqTitle"
-                  },
                   "fill": "$home-ink",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "A few things to know.",
-                  "lineHeight": 1.45,
+                  "content": "FAQ",
+                  "lineHeight": 1.2,
                   "fontFamily": "Geist",
-                  "fontSize": 36,
-                  "fontWeight": "600"
+                  "fontSize": 40,
+                  "fontWeight": "700",
+                  "letterSpacing": -1
                 },
                 {
-                  "type": "text",
-                  "id": "I106W",
-                  "name": "FAQ introduction text",
-                  "metadata": {
-                    "type": "home-copy",
-                    "key": "home-faqIntro"
-                  },
-                  "fill": "$home-muted",
-                  "textGrowth": "fixed-width",
+                  "type": "frame",
+                  "id": "Zr07v",
+                  "name": "Support invitation",
                   "width": "fill_container",
-                  "content": "A little context before you connect.",
-                  "lineHeight": 1.45,
-                  "fontFamily": "Geist",
-                  "fontSize": 17,
-                  "fontWeight": "normal"
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "y0ocr",
+                      "name": "Support introduction",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": 280,
+                      "content": "Can’t find the answer you need? Drop us a line.",
+                      "lineHeight": 1.6,
+                      "fontFamily": "Geist",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hYoA2",
+                      "name": "Support email / mailto",
+                      "fill": "#61A9EB",
+                      "content": "support@ahmcp.link",
+                      "fontFamily": "Geist",
+                      "fontSize": 16,
+                      "fontWeight": "500"
+                    }
+                  ]
                 }
               ]
             },
             {
               "type": "frame",
-              "id": "I0V5qL",
-              "name": "FAQ rows",
+              "id": "cfoZZ",
+              "name": "Five FAQ disclosures",
               "width": "fill_container",
               "layout": "vertical",
               "children": [
                 {
                   "type": "frame",
-                  "id": "z3WSn",
+                  "id": "i1RJmy",
                   "name": "FAQ item 1 / expanded",
                   "width": "fill_container",
                   "stroke": "$home-line",
                   "strokeWidth": {
-                    "top": 1
+                    "top": 1,
+                    "bottom": 1
                   },
                   "layout": "vertical",
-                  "gap": 14,
                   "padding": [
-                    20,
+                    1,
                     0
                   ],
                   "children": [
                     {
                       "type": "frame",
-                      "id": "BaRsc",
-                      "name": "FAQ 1 question row",
+                      "id": "ZyYeJ",
+                      "name": "Question / disclosure trigger",
                       "width": "fill_container",
-                      "gap": 20,
+                      "gap": 24,
+                      "padding": [
+                        24,
+                        0
+                      ],
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
-                          "id": "wqmS3",
-                          "name": "FAQ 1 question",
-                          "metadata": {
-                            "type": "home-copy",
-                            "key": "home-q1"
-                          },
+                          "id": "BvCoA",
+                          "name": "Question text",
                           "fill": "$home-ink",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
                           "content": "How do I get access?",
-                          "lineHeight": 1.45,
+                          "lineHeight": 1.5,
                           "fontFamily": "Geist",
-                          "fontSize": 17,
-                          "fontWeight": "500"
+                          "fontSize": 18,
+                          "fontWeight": "600"
                         },
                         {
                           "type": "icon",
-                          "id": "gZQNs",
-                          "name": "FAQ 1 disclosure",
-                          "width": 18,
-                          "height": 18,
-                          "icon": "minus",
+                          "id": "sQcKq",
+                          "name": "Disclosure chevron / Lucide",
+                          "rotation": 180,
+                          "width": 20,
+                          "height": 20,
+                          "icon": "chevron-down",
+                          "library": "lucide",
+                          "fill": "#2490F4"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "dfPwJ",
+                      "name": "Answer body / visible",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "padding": [
+                        0,
+                        44,
+                        24,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ZkwJB",
+                          "name": "Answer text",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "The pilot is invitation-only. Open your invitation email to get started. Already have access? Sign in.",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Geist",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "vkcB0",
+                  "name": "FAQ item 2 / collapsed",
+                  "width": "fill_container",
+                  "stroke": "$home-line",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    1,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "AzTdV",
+                      "name": "Question / disclosure trigger",
+                      "width": "fill_container",
+                      "gap": 24,
+                      "padding": [
+                        24,
+                        0
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "LefZG",
+                          "name": "Question text",
+                          "fill": "$home-ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Which AI chats can I use?",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 18,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "qsHNg",
+                          "name": "Disclosure chevron / Lucide",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "chevron-down",
                           "library": "lucide",
                           "fill": "$home-muted"
                         }
                       ]
                     },
                     {
-                      "type": "text",
-                      "id": "J3f4y",
-                      "name": "FAQ 1 answer",
-                      "metadata": {
-                        "type": "home-copy",
-                        "key": "home-a1"
-                      },
-                      "fill": "$home-muted",
-                      "textGrowth": "fixed-width",
-                      "width": "fill_container",
-                      "content": "The pilot is invitation-only. Open your invitation email to get started. Already have access? Sign in.",
-                      "lineHeight": 1.45,
-                      "fontFamily": "Geist",
-                      "fontSize": 16,
-                      "fontWeight": "normal"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "d4mnm9",
-                  "name": "FAQ item 2 / collapsed",
-                  "width": "fill_container",
-                  "stroke": "$home-line",
-                  "strokeWidth": {
-                    "top": 1
-                  },
-                  "layout": "vertical",
-                  "gap": 14,
-                  "padding": [
-                    20,
-                    0
-                  ],
-                  "children": [
-                    {
                       "type": "frame",
-                      "id": "M7xZhw",
-                      "name": "FAQ 2 question row",
-                      "width": "fill_container",
-                      "gap": 20,
-                      "alignItems": "center",
+                      "id": "XORfS",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Answer body / hidden",
+                      "enabled": false,
+                      "width": 800,
+                      "layout": "vertical",
+                      "padding": [
+                        0,
+                        44,
+                        24,
+                        0
+                      ],
                       "children": [
                         {
                           "type": "text",
-                          "id": "XZoKw",
-                          "name": "FAQ 2 question",
-                          "metadata": {
-                            "type": "home-copy",
-                            "key": "home-q2"
-                          },
-                          "fill": "$home-ink",
+                          "id": "haACA",
+                          "name": "Answer text",
+                          "fill": "$home-muted",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
-                          "content": "Which AI chats can I use?",
-                          "lineHeight": 1.45,
+                          "content": "Start with the setup guides for ChatGPT and Hermes. For other MCP clients, check their connection requirements before getting started.",
+                          "lineHeight": 1.6,
                           "fontFamily": "Geist",
-                          "fontSize": 17,
-                          "fontWeight": "500"
-                        },
-                        {
-                          "type": "icon",
-                          "id": "T1xH6G",
-                          "name": "FAQ 2 disclosure",
-                          "width": 18,
-                          "height": 18,
-                          "icon": "plus",
-                          "library": "lucide",
-                          "fill": "$home-muted"
+                          "fontSize": 16,
+                          "fontWeight": "normal"
                         }
                       ]
                     }
@@ -6325,54 +6527,86 @@
                 },
                 {
                   "type": "frame",
-                  "id": "dQPix",
+                  "id": "PJ5Z7",
                   "name": "FAQ item 3 / collapsed",
                   "width": "fill_container",
                   "stroke": "$home-line",
                   "strokeWidth": {
-                    "top": 1
+                    "bottom": 1
                   },
                   "layout": "vertical",
-                  "gap": 14,
                   "padding": [
-                    20,
+                    0,
+                    0,
+                    1,
                     0
                   ],
                   "children": [
                     {
                       "type": "frame",
-                      "id": "NOPNW",
-                      "name": "FAQ 3 question row",
+                      "id": "TeyZu",
+                      "name": "Question / disclosure trigger",
                       "width": "fill_container",
-                      "gap": 20,
+                      "gap": 24,
+                      "padding": [
+                        24,
+                        0
+                      ],
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
-                          "id": "EZiLF",
-                          "name": "FAQ 3 question",
-                          "metadata": {
-                            "type": "home-copy",
-                            "key": "home-q3"
-                          },
+                          "id": "i10lQT",
+                          "name": "Question text",
                           "fill": "$home-ink",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
                           "content": "What happens to my account details?",
-                          "lineHeight": 1.45,
+                          "lineHeight": 1.5,
                           "fontFamily": "Geist",
-                          "fontSize": 17,
-                          "fontWeight": "500"
+                          "fontSize": 18,
+                          "fontWeight": "600"
                         },
                         {
                           "type": "icon",
-                          "id": "xq5Up",
-                          "name": "FAQ 3 disclosure",
-                          "width": 18,
-                          "height": 18,
-                          "icon": "plus",
+                          "id": "ftVSM",
+                          "name": "Disclosure chevron / Lucide",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "chevron-down",
                           "library": "lucide",
                           "fill": "$home-muted"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "w4N2Gt",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Answer body / hidden",
+                      "enabled": false,
+                      "width": 800,
+                      "layout": "vertical",
+                      "padding": [
+                        0,
+                        44,
+                        24,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "AXD2D",
+                          "name": "Answer text",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "The service stores your AimHarder credentials encrypted and can recover them to authenticate. Your AI chat does not receive them.",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Geist",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
                         }
                       ]
                     }
@@ -6380,54 +6614,86 @@
                 },
                 {
                   "type": "frame",
-                  "id": "KDo6v",
+                  "id": "AIRAs",
                   "name": "FAQ item 4 / collapsed",
                   "width": "fill_container",
                   "stroke": "$home-line",
                   "strokeWidth": {
-                    "top": 1
+                    "bottom": 1
                   },
                   "layout": "vertical",
-                  "gap": 14,
                   "padding": [
-                    20,
+                    0,
+                    0,
+                    1,
                     0
                   ],
                   "children": [
                     {
                       "type": "frame",
-                      "id": "fz2EQ",
-                      "name": "FAQ 4 question row",
+                      "id": "TucGF",
+                      "name": "Question / disclosure trigger",
                       "width": "fill_container",
-                      "gap": 20,
+                      "gap": 24,
+                      "padding": [
+                        24,
+                        0
+                      ],
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
-                          "id": "glzQ8",
-                          "name": "FAQ 4 question",
-                          "metadata": {
-                            "type": "home-copy",
-                            "key": "home-q4"
-                          },
+                          "id": "f5mfh",
+                          "name": "Question text",
                           "fill": "$home-ink",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
                           "content": "Can I disconnect later?",
-                          "lineHeight": 1.45,
+                          "lineHeight": 1.5,
                           "fontFamily": "Geist",
-                          "fontSize": 17,
-                          "fontWeight": "500"
+                          "fontSize": 18,
+                          "fontWeight": "600"
                         },
                         {
                           "type": "icon",
-                          "id": "quv4w",
-                          "name": "FAQ 4 disclosure",
-                          "width": 18,
-                          "height": 18,
-                          "icon": "plus",
+                          "id": "icKoV",
+                          "name": "Disclosure chevron / Lucide",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "chevron-down",
                           "library": "lucide",
                           "fill": "$home-muted"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "De7SO",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Answer body / hidden",
+                      "enabled": false,
+                      "width": 800,
+                      "layout": "vertical",
+                      "padding": [
+                        0,
+                        44,
+                        24,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "T3iYB",
+                          "name": "Answer text",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Yes. You can disconnect each AI client independently. Disconnecting AimHarder and deleting your AIHarder account are separate actions.",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Geist",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
                         }
                       ]
                     }
@@ -6435,54 +6701,86 @@
                 },
                 {
                   "type": "frame",
-                  "id": "RXnrZ",
+                  "id": "wR24p",
                   "name": "FAQ item 5 / collapsed",
                   "width": "fill_container",
                   "stroke": "$home-line",
                   "strokeWidth": {
-                    "top": 1
+                    "bottom": 1
                   },
                   "layout": "vertical",
-                  "gap": 14,
                   "padding": [
-                    20,
+                    0,
+                    0,
+                    1,
                     0
                   ],
                   "children": [
                     {
                       "type": "frame",
-                      "id": "lGkMk",
-                      "name": "FAQ 5 question row",
+                      "id": "jn7jU",
+                      "name": "Question / disclosure trigger",
                       "width": "fill_container",
-                      "gap": 20,
+                      "gap": 24,
+                      "padding": [
+                        24,
+                        0
+                      ],
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
-                          "id": "mdyhD",
-                          "name": "FAQ 5 question",
-                          "metadata": {
-                            "type": "home-copy",
-                            "key": "home-q5"
-                          },
+                          "id": "lbiKr",
+                          "name": "Question text",
                           "fill": "$home-ink",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
                           "content": "Is this an official AimHarder service?",
-                          "lineHeight": 1.45,
+                          "lineHeight": 1.5,
                           "fontFamily": "Geist",
-                          "fontSize": 17,
-                          "fontWeight": "500"
+                          "fontSize": 18,
+                          "fontWeight": "600"
                         },
                         {
                           "type": "icon",
-                          "id": "PPH2W",
-                          "name": "FAQ 5 disclosure",
-                          "width": 18,
-                          "height": 18,
-                          "icon": "plus",
+                          "id": "aEOpr",
+                          "name": "Disclosure chevron / Lucide",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "chevron-down",
                           "library": "lucide",
                           "fill": "$home-muted"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "KjNGx",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Answer body / hidden",
+                      "enabled": false,
+                      "width": 800,
+                      "layout": "vertical",
+                      "padding": [
+                        0,
+                        44,
+                        24,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "wvQvX",
+                          "name": "Answer text",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "No. AIHarder is an independent project and is not affiliated with AimHarder.",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Geist",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
                         }
                       ]
                     }

@@ -1,0 +1,27 @@
+{
+  "heading": "FAQ",
+  "supportIntro": "Can’t find the answer you need? Drop us a line.",
+  "supportEmail": "support@ahmcp.link",
+  "items": [
+    {
+      "question": "How do I get access?",
+      "answer": "The pilot is invitation-only. Open your invitation email to get started. Already have access? Sign in."
+    },
+    {
+      "question": "Which AI chats can I use?",
+      "answer": "Start with the setup guides for ChatGPT and Hermes. For other MCP clients, check their connection requirements before getting started."
+    },
+    {
+      "question": "What happens to my account details?",
+      "answer": "The service stores your AimHarder credentials encrypted and can recover them to authenticate. Your AI chat does not receive them."
+    },
+    {
+      "question": "Can I disconnect later?",
+      "answer": "Yes. You can disconnect each AI client independently. Disconnecting AimHarder and deleting your AIHarder account are separate actions."
+    },
+    {
+      "question": "Is this an official AimHarder service?",
+      "answer": "No. AIHarder is an independent project and is not affiliated with AimHarder."
+    }
+  ]
+}

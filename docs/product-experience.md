@@ -1,6 +1,8 @@
 # Product experience design
 
-Home study checkpoint, 2026-11-02: English desktop Light/Dark now include the animated **How you get started** section after the question wall. The latest refinement reuses the vertically inverted hero background, a navy title in Light, a macOS-style demo cursor and an “Other clients” row after ChatGPT. The [directed study](../design/home-study/how-to-study.md) records the three fictional UI demos, source references, timings, editable Pen success stills and browser checks. FAQ/closing/footer drafts and the other six variants remain frozen. Captions and owner motion/visual acceptance remain pending; this does not implement live authentication, app installation or production frontend behavior. Existing architecture/security/scope ADRs are unaffected.
+FAQ checkpoint, 2026-11-02: the English desktop home now includes **FAQ**, with a support-email invitation beside the heading and five expandable answers. This owner placement supersedes the earlier support-at-end proposal. The [FAQ study](../design/home-study/faq-study.md) records current copy, interaction, references, native states and acceptance limits. `support@ahmcp.link` remains the accepted design target; this work does not activate or validate the inbox. Closing/footer drafts and other device/locale variants remain unchanged.
+
+Home study checkpoint, 2026-11-02: English desktop Light/Dark now include the animated **How you get started** section after the question wall. The latest refinement reuses the vertically inverted hero background, a navy title in Light, a macOS-style demo cursor and an “Other clients” row after ChatGPT. The [directed study](../design/home-study/how-to-study.md) records the three fictional UI demos, source references, timings, editable Pen success stills and browser checks. Closing/footer drafts and the other six variants remain frozen. Captions and owner motion/visual acceptance remain pending; this does not implement live authentication, app installation or production frontend behavior. Existing architecture/security/scope ADRs are unaffected.
 
 Working-name update, 2026-10-31: the owner selected **AIHarder** without CONNECT to reduce intrusion on the upstream brand. The technical package/repository names remain unchanged. The owner also narrowed visual iteration to English desktop Light/Dark only; Spanish/mobile propagation waits for agreement. The [active desktop design study](../design/home-study/desktop-refinement.md) records the three-part header, exact revised introduction, integrated monochrome client logos, original Hermes portrait and two button-depth proposals. The following AimHarder Connect checkpoints remain historical.
 
@@ -100,7 +102,7 @@ The [existing Resend decision](adr/2026-10-18-resend-transactional-delivery.md) 
 
 ## FAQ presentation
 
-The owner proposed an FAQ format for the help content. Use a short participant-facing FAQ with grouped questions and concise, expandable answers. Put support contact at the end and link to the relevant client guide when a question concerns setup. This is the current presentation direction; final placement is still proposed below.
+The owner proposed an FAQ format for the help content. Use a short participant-facing FAQ with grouped questions and concise, expandable answers. The owner’s 2026-11-02 home revision puts a support-email invitation beside the FAQ heading instead of a generic subtitle. This supersedes the earlier support-at-end proposal. Keep detailed setup/recovery guidance contextual to the relevant client guide; the public-home study uses five concise disclosures and leaves confirmation-policy guidance to settings.
 
 Suggested question groups and coverage:
 

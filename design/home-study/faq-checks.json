@@ -1,0 +1,91 @@
+{
+  "date": "2026-11-02",
+  "scope": "English desktop Light/Dark FAQ only; isolated design prototype",
+  "browser": {
+    "initial": {
+      "height": 616,
+      "mailto": "mailto:support@ahmcp.link",
+      "open": [
+        true,
+        false,
+        false,
+        false,
+        false
+      ],
+      "overflow": false
+    },
+    "afterClick": [
+      true,
+      true,
+      false,
+      false,
+      false
+    ],
+    "afterEnter": [
+      false,
+      true,
+      false,
+      false,
+      false
+    ],
+    "afterSpace": {
+      "focus": "What happens to my account details?",
+      "open": [
+        false,
+        true,
+        true,
+        false,
+        false
+      ],
+      "outline": "solid"
+    },
+    "allOpen": {
+      "answerCount": 5,
+      "open": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "overflow": false
+    },
+    "dark": {
+      "background": "rgb(13, 21, 33)",
+      "email": "rgb(97, 169, 235)",
+      "heading": "rgb(237, 243, 250)",
+      "open": [
+        true,
+        false,
+        false,
+        false,
+        false
+      ],
+      "overflow": false
+    },
+    "console": []
+  },
+  "pen": {
+    "lightPage": "uAXkc",
+    "darkPage": "p7u8w",
+    "lightSection": "RqxLb",
+    "darkSection": "lkUyn",
+    "protectedSubtreesUnchanged": 28,
+    "firstAnswerVisible": true,
+    "otherAnswersEditableDisabledLayers": 4,
+    "foregroundEditable": true,
+    "runtimeInteractionInHTML": true,
+    "closingAndFooterDisabled": true
+  },
+  "support": {
+    "address": "support@ahmcp.link",
+    "source": "docs/product-experience.md accepted design target",
+    "mailtoOnly": true,
+    "emailSent": false,
+    "inboxActivatedOrDeliveryValidated": false
+  },
+  "validation": {
+    "assetHashes": "75 existing asset hashes passed; no added assets",
+    "changedLocalReferences": "passed"
+  }
+}
