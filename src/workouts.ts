@@ -12,11 +12,14 @@ const prescriptionSchema = z.record(z.string(), z.union([scalar, z.array(scalar)
 // The gym renderer uses these labels for a load's tipoud (formaReg 4) or tipoud2 (formaReg 6).
 const loadUnits = ['kg', 'lbs', 'pood', '%BW', '%RM', 'RIR', 'RPE'] as const;
 const distanceUnits = ['m', 'mi', 'yd', 'ft', 'steps', 'km'] as const;
-const blockSchema = z.object({ notes: text.nullable(), prescription: prescriptionSchema });
-const exerciseSchema = z.object({ name: text, sourceExerciseId: z.number().int().positive().safe().nullable().describe('Validated upstream ejerId; null means no supported source identity was supplied.'), blockIndex: z.number().int().nonnegative().nullable(), prescription: prescriptionSchema.describe('Raw exercise values: valueUnit labels valor1; loadUnit labels valor2/valor2h/valor2m when verified. s means seconds and %RM is relative, not kilograms. Within a block, consecutive rows with the same non-null complex marker form a complex; complexrep is its repeat count. Preserve row order and source encodings.'), personalLoad: personalLoadSchema.optional() });
+export const blockPrescriptionGuidance = 'Block fields depend on type. For type=1 (For Time), derive the sequence from valor1; timecap alone does not establish a time limit. For type=10 (Rounds For Time), timecap supplies prescribed rounds; a separate time limit may appear in notes. For type=2 (AMRAP) or 13 (AMRAP Ladder), timecap is a duration: seconds when timecaptype=1, otherwise minutes in the observed renderer. For type=3 (EMOM) with time=0, timecap is minutes per interval, not the total round count. Exercise round groups and roundrepeat supply the interval structure; published EMOM block reps=0 selects consecutive groups and reps=1 selects cycling groups using rondas. This selector is distinct from recorded activity result.reps. For type=6 with sstipo=1 the observed heading is strength. Type=4 identifies Tabata but does not establish missing work/rest timing or round counts. Preserve source encodings and unknown meanings.';
+export const complexPrescriptionGuidance = 'Within each block and difficulty, consecutive exercises with the same non-null complex marker, including 0, form a complex; unmarked rows end it. complexrep, when supplied, is the inner repeat count. For block types 6, 8 and 12, the renderer separately prefixes outer sets from the opening exercise valor1.length when greater than one and its first value is nonempty. Keep outer sets and complexrep distinct; absent complexrep remains unknown, and array length is not a universal round count. Preserve row order and source encodings.';
+export const exerciseSequenceGuidance = 'valor1 entries are ordered values, not a total. For type=1 (For Time), read value positions across exercise rows in source order; the observed renderer suppresses empty/zero positions and may display matching arrays as a shared repetition ladder. For type=13, negative roundrepeat marks a Buy In; subsequent round groups distinguish the initial ladder from its per-round increment. A numeric or string valor1 value of 9999 is the renderer maximum-effort sentinel for the exercise format, not 9999 seconds, repetitions or distance units. Empty values do not establish zero work or a timed rest. Preserve notes alongside configured units and report conflicts instead of correcting units from an exercise name.';
+const blockSchema = z.object({ notes: text.nullable(), prescription: prescriptionSchema.describe(blockPrescriptionGuidance) });
+const exerciseSchema = z.object({ name: text, sourceExerciseId: z.number().int().positive().safe().nullable().describe('Validated upstream ejerId; null means no supported source identity was supplied.'), blockIndex: z.number().int().nonnegative().nullable(), prescription: prescriptionSchema.describe('Raw exercise values: valueUnit labels valor1; loadUnit labels valor2/valor2h/valor2m when verified. s means exercise seconds and %RM is relative, not kilograms. ' + complexPrescriptionGuidance + ' ' + exerciseSequenceGuidance), personalLoad: personalLoadSchema.optional() });
 export const workoutSchema = z.object({
   date: dateSchema, className: z.string(), timeZone: z.string(), sessionId: z.null(),
-  titles: z.array(text), blocks: z.array(blockSchema), exercises: z.array(exerciseSchema),
+  titles: z.array(text).describe('Nonempty feed titles, independently filtered from detail blocks. This array is not indexed by blockIndex; do not pair titles and blocks by position.'), blocks: z.array(blockSchema), exercises: z.array(exerciseSchema),
   variants: z.array(z.object({ label: text, blocks: z.array(blockSchema), exercises: z.array(exerciseSchema) })),
   provenance: z.object({ sourceId: z.number().int().positive(), url: z.string(), dateField: z.literal('recordDate'), dateLabel: text, publicationDateLabel: text.nullable(), classField: z.literal('wodClass') }),
 });
@@ -28,9 +31,9 @@ export function parseFeed(body: unknown) {
   return parsed.data.elements;
 }
 const blockDetailSchema = z.object({
-  notes: text.nullish(), deleted: z.boolean(), type: scalar.optional(), timecap: scalar.optional(), timecaptype: scalar.optional(), time: scalar.optional(), rx: scalar.optional(), rondas: scalar.optional(), sstipo: scalar.optional(),
+  notes: text.nullish(), deleted: z.boolean(), type: scalar.optional(), timecap: scalar.optional(), timecaptype: scalar.optional(), time: scalar.optional(), rx: scalar.optional(), rondas: scalar.optional(), sstipo: scalar.optional(), reps: z.unknown().optional(),
   scaledops: z.union([z.array(text).max(20), z.literal(-1)]).nullish(), scaledver: z.array(z.unknown()).max(20).nullish(),
-});
+}).refine(block => unitIndex(block.type) !== 3 || block.reps === undefined || scalar.safeParse(block.reps).success);
 const exerciseDetailSchema = z.object({ ejerName: text, ejerId: z.unknown().optional(), tipoWOD: z.number().int().nonnegative().nullish(),
     valor1: z.array(scalar).nullish(), valor2: scalar.nullish(), valor2h: scalar.nullish(), valor2m: scalar.nullish(), formaReg: scalar.optional(), tipoud: scalar.optional(), tipoud2: scalar.optional(), round: scalar.optional(), roundrepeat: scalar.optional(), complex: scalar.optional(), complexrep: scalar.optional(),
     scaledver: z.array(z.unknown()).max(20).nullish(),
@@ -43,8 +46,9 @@ function unitIndex(value: unknown) {
   return typeof value === 'number' && Number.isInteger(value) ? value
     : typeof value === 'string' && /^(0|[1-9]\d*)$/.test(value) ? Number(value) : -1;
 }
-function projectBlock({ notes, deleted, scaledops: _scaledops, scaledver: _scaledver, ...prescription }: z.infer<typeof blockDetailSchema>) {
-  return { notes: deleted ? null : notes ?? null, prescription: deleted ? {} : Object.fromEntries(Object.entries(prescription).filter(([, value]) => value !== undefined)) };
+function projectBlock({ notes, deleted, scaledops: _scaledops, scaledver: _scaledver, reps, ...prescription }: z.infer<typeof blockDetailSchema>) {
+  const emomMode = unitIndex(prescription.type) === 3 && reps !== undefined ? { reps: scalar.parse(reps) } : {};
+  return { notes: deleted ? null : notes ?? null, prescription: deleted ? {} : { ...Object.fromEntries(Object.entries(prescription).filter(([, value]) => value !== undefined)), ...emomMode } };
 }
 function projectExercise({ ejerName, ejerId, tipoWOD, scaledver: _scaledver, ...prescription }: z.infer<typeof exerciseDetailSchema>) {
   const form = prescription.formaReg;

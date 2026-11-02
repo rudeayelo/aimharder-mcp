@@ -95,6 +95,36 @@ test('keeps absent, null and zero complex fields distinct without inheriting bas
  expect(workout.variants[0]!.exercises[0]!.prescription).not.toHaveProperty('complex');
  expect(workout.variants[0]!.exercises[0]!.prescription).not.toHaveProperty('complexrep');
 });
+
+test('keeps EMOM sequential and cycling modes distinct without copying a base mode into replacements', async () => {
+ upstream.use(http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({
+  TIPOWODs: [
+   { deleted: false, type: 3, timecap: 1, time: 0, rondas: 2, reps: 0, scaledops: ['CYCLING', 'UNSPECIFIED'], scaledver: [
+    { deleted: false, type: '3', timecap: 1, time: 0, rondas: 2, reps: '1' },
+    { deleted: false, type: 3, timecap: 1, time: 0, rondas: 2 },
+   ] },
+   { deleted: false, type: 3, reps: 1 },
+   { deleted: false, type: 3, reps: null },
+   { deleted: false, type: 3 },
+   { deleted: false, type: 10, reps: [99] },
+  ],
+  ejerRate: ['Movement A', 'Movement B'].map((ejerName, index) => {
+   const row = { ejerName, tipoWOD: 0, valor1: ['8'], round: index + 1, roundrepeat: 6 };
+   return { ...row, scaledver: [row, row] };
+  }),
+ }))));
+ const result = await query(await connect());
+ expect(result.isError).not.toBe(true);
+ const workout = (result.structuredContent as { workouts: { blocks: { prescription: Record<string, unknown> }[]; variants: { blocks: { prescription: Record<string, unknown> }[] }[] }[] }).workouts[0]!;
+ expect(workout.blocks[0]!.prescription).toMatchObject({ type: 3, reps: 0, timecap: 1, time: 0, rondas: 2 });
+ expect(workout.blocks[1]!.prescription).toMatchObject({ reps: 1 });
+ expect(workout.blocks[2]!.prescription).toHaveProperty('reps', null);
+ expect(workout.blocks[3]!.prescription).not.toHaveProperty('reps');
+ expect(workout.blocks[4]!.prescription).not.toHaveProperty('reps');
+ expect(workout.variants[0]!.blocks[0]!.prescription).toMatchObject({ type: '3', reps: '1' });
+ expect(workout.variants[1]!.blocks[0]!.prescription).not.toHaveProperty('reps');
+ expect(requests.every(request => request.method === 'GET' || request.url.pathname === '/api/login')).toBe(true);
+});
 function respond(elements: unknown[]) { upstream.use(http.get('https://sample-gym.aimharder.es/api/activity', () => HttpResponse.json(feed(elements as ReturnType<typeof post>[])))); }
 function personalRecord(id: number, value = '100.5', unit = 'kg') {
  const date = Date.UTC(2026, 8, 24);
