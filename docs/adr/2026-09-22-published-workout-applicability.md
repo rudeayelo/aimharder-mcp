@@ -70,7 +70,7 @@ Consequences: consumers receive explicit guidance for already returned data with
 
 ## Five-weekday prescription amendment (2026-11-02)
 
-Status: accepted, following the [expanded read-only audit](../research/2026-11-02-five-weekday-workout-audit.md) of 26 publications and 22 rendered difficulty labels.
+Status: accepted, following the [expanded read-only audit](../research/2026-11-02-five-weekday-workout-audit.md) of 26 publications and 22 rendered difficulty labels. Integrated, deployed to the existing invited pilot and published in `0.5.4` after the owner's separate delivery request; exact artifact and fresh EMOM read checks are recorded in the [delivery receipt](../hosted-workout-interpretation-deployment.md).
 
 Preserve optional scalar block `reps` only for EMOM (`type=3`) in base/variant and shared own-activity prescriptions. The official published renderer uses `0` for sequential groups and `1` for cyclic slots, with block `rondas` and exercise `round`/`roundrepeat` supplying grouping and totals. Missing/null/unknown values remain explicit source encodings without an inferred mode. This is a published layout selector, separate from personal recorded `result.reps`; do not expand result-field exposure or change write behavior.
 
