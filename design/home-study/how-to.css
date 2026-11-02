@@ -2,7 +2,7 @@
   --how-top: #14283f;
   --how-bottom: #7ba9ef;
   --how-caption: #14283f;
-  --how-description: #203f64;
+  --how-description: #14283f;
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -52,7 +52,7 @@
 }
 .how-step figcaption { margin-top: 24px; }
 .how-step-title { display: flex; align-items: baseline; gap: 12px; color: var(--how-caption); }
-.how-step-number { font-size: 15px; font-weight: 500; opacity: .7; }
+.how-step-number { font-size: 15px; font-weight: 500; }
 .how-step h3 { margin: 0; font-size: 20px; font-weight: 600; line-height: 1.4; letter-spacing: -.35px; }
 .how-step-description { margin: 10px 0 0; color: var(--how-description); font-size: 15px; line-height: 1.5; }
 .connect-demo { width: min(256px, calc(100% - 48px)); margin: 44px auto 0; }

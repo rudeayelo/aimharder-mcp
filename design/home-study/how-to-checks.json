@@ -151,6 +151,22 @@
       "entries": 74,
       "hashMismatches": []
     },
-    "changedHTMLLocalReferences": "passed"
+    "changedHTMLLocalReferences": "passed",
+    "sampledLightDescriptionContrast": {
+      "backgroundPixel": [
+        111,
+        148,
+        218
+      ],
+      "foreground": "#14283f",
+      "ratio": 4.928
+    }
+  },
+  "review": {
+    "base": "fa244c2e2b16be396dd0f539092a1d43041aec44",
+    "reviewedCommit": "764b5ac",
+    "standardsFindings": 0,
+    "specFindings": 0,
+    "subsequentChange": "Light description ink darkened and number opacity removed after a local contrast check; native text synchronized."
   }
 }

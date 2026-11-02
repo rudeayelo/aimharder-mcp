@@ -39,3 +39,7 @@ Only the existing English desktop Light/Dark pages receive this section. Reuse t
 - Native visual inspection and [Light](previews/how-to-pen/ZLrrd.png)/[Dark](previews/how-to-pen/I95ri7.png) exports show the editable success composition. Native line-height rounding yields a 684px section versus 683px in HTML. A native visitor initially reported stale Light clipping/bounds; after export, a fresh full-page traversal confirmed the section at y=1192.5px with only the intentionally scrolled app list clipped. This is not a pixel-identical animation import.
 
 JavaScript syntax, changed local references and asset hashes were checked. No runtime/API/MCP behavior changed; production tests and a filler ADR are not appropriate for this isolated design prototype. Existing scope, security and credential-custody decisions are unaffected. Real provider installation, live authentication, mobile/localized propagation and owner motion/visual acceptance remain unverified/pending.
+
+## Delivery review
+
+Two-axis review against `fa244c2...764b5ac`: **Standards 0 findings; Spec 0 findings**. A final local contrast check then darkened the Light descriptions to `#14283f` and removed step-number opacity; sampled caption-background contrast improved from 3.54:1 to 4.93:1 at y=558px. Native Light/Dark text treatment and exports were updated to match. This is the reviewable prototype checkpoint, not owner approval.
