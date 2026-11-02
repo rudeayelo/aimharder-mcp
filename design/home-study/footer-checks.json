@@ -1,0 +1,61 @@
+{
+  "date": "2026-11-02",
+  "scope": "English desktop Light/Dark closing and footer; isolated visual prototype",
+  "browser": {
+    "initial": {
+      "closing": [
+        178,
+        105
+      ],
+      "domain": "aiharder.link",
+      "github": "https://github.com/rudeayelo/aimharder-mcp",
+      "overflow": false,
+      "reviewControls": 4
+    },
+    "signIn": {
+      "focus": "Close",
+      "open": true,
+      "text": "Real sign-in will be connected during implementation. This view is for reviewing the design and animation."
+    },
+    "escape": {
+      "focusReturned": true,
+      "open": false
+    },
+    "privacy": {
+      "open": true,
+      "text": "The full privacy notice will be linked in the final website. This prototype uses fictional data and connects no accounts."
+    },
+    "close": {
+      "focusReturned": true,
+      "open": false
+    },
+    "dark": {
+      "background": "rgb(20, 32, 51)",
+      "footerBackground": "rgb(13, 21, 33)",
+      "footerText": "rgb(171, 186, 205)",
+      "heading": "rgb(237, 243, 250)",
+      "overflow": false
+    },
+    "console": []
+  },
+  "pen": {
+    "lightClosing": "L7kaAs",
+    "lightFooter": "yZ4bJ",
+    "darkClosing": "C7OvpZ",
+    "darkFooter": "oNuGF",
+    "enabled": true,
+    "protectedSubtreesUnchanged": 26,
+    "otherSixVariantsFrozen": true,
+    "foregroundEditable": true
+  },
+  "limits": [
+    "Review-only Sign in and Privacy notices, no production authentication or complete privacy policy.",
+    "Native static stills versus HTML interaction.",
+    "Domain label does not establish hosting/domain or email activation.",
+    "Owner visual acceptance and other locale/device propagation pending."
+  ],
+  "checks": {
+    "assetHashes": "76 unchanged assets passed; no new assets",
+    "changedLocalReferences": "passed"
+  }
+}

@@ -750,7 +750,7 @@
       "x": 1360,
       "y": 1000,
       "name": "AIHarder / Desktop / English / Light",
-      "context": "Current English desktop study: header, hero, question wall, How to and FAQ. FAQ has editable disclosure stills; interactive behavior stays in HTML. Closing/footer remain disabled drafts.",
+      "context": "Current English desktop home study: header, hero, question wall, How to, FAQ, closing action and footer. Editable native still; animation and disclosures are in HTML. Other six variants remain frozen.",
       "theme": {
         "appearance": "light",
         "language": "en"
@@ -3669,12 +3669,10 @@
         {
           "type": "frame",
           "id": "L7kaAs",
-          "x": 0,
-          "y": 2338.5,
           "name": "Closing sign-in",
-          "enabled": false,
-          "width": "fill_container(1440)",
-          "fill": "$home-bg",
+          "context": "Final sign-in prompt, same action treatment as header/hero. The HTML study opens a review-only sign-in notice; no live authentication.",
+          "width": "fill_container",
+          "fill": "$home-surface",
           "gap": 40,
           "padding": [
             64,
@@ -3703,10 +3701,11 @@
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
                   "content": "Bring your training into the conversation.",
-                  "lineHeight": 1.45,
+                  "lineHeight": 1.2,
                   "fontFamily": "Geist",
                   "fontSize": 32,
-                  "fontWeight": "600"
+                  "fontWeight": "700",
+                  "letterSpacing": -0.7
                 }
               ]
             },
@@ -3763,11 +3762,9 @@
         {
           "type": "frame",
           "id": "yZ4bJ",
-          "x": 0,
-          "y": 2514.5,
           "name": "Footer",
-          "enabled": false,
-          "width": "fill_container(1440)",
+          "context": "Design domain, independent-project disclosure and GitHub/Privacy links. Privacy is a review-only placeholder until the actual notice is supplied.",
+          "width": "fill_container",
           "fill": "$home-bg",
           "stroke": "$home-line",
           "strokeWidth": {
@@ -3775,6 +3772,8 @@
           },
           "gap": 32,
           "padding": [
+            29,
+            120,
             28,
             120
           ],
@@ -3782,21 +3781,42 @@
           "alignItems": "center",
           "children": [
             {
-              "type": "text",
-              "id": "Z4vAMM",
-              "name": "Independent-project disclosure",
-              "metadata": {
-                "type": "home-copy",
-                "key": "home-disclosure"
-              },
-              "fill": "$home-muted",
-              "textGrowth": "fixed-width",
+              "type": "frame",
+              "id": "f0P6f",
+              "name": "Project domain and independence",
               "width": "fill_container",
-              "content": "An independent project. Not affiliated with AimHarder.",
-              "lineHeight": 1.45,
-              "fontFamily": "Geist",
-              "fontSize": 14,
-              "fontWeight": "normal"
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "WcCWu",
+                  "name": "Design domain",
+                  "fill": "$home-ink",
+                  "content": "aiharder.link",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "Z4vAMM",
+                  "name": "Independent-project disclosure",
+                  "metadata": {
+                    "type": "home-copy",
+                    "key": "home-disclosure"
+                  },
+                  "fill": "$home-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "An independent project. Not affiliated with AimHarder.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
             },
             {
               "type": "frame",
@@ -3815,7 +3835,7 @@
                   },
                   "fill": "$home-ink",
                   "content": "GitHub",
-                  "lineHeight": 1.45,
+                  "lineHeight": 1.5,
                   "fontFamily": "Geist",
                   "fontSize": 14,
                   "fontWeight": "500"
@@ -3830,7 +3850,7 @@
                   },
                   "fill": "$home-ink",
                   "content": "Privacy",
-                  "lineHeight": 1.45,
+                  "lineHeight": 1.5,
                   "fontFamily": "Geist",
                   "fontSize": 14,
                   "fontWeight": "500"
@@ -3914,7 +3934,7 @@
       "x": 2960,
       "y": 1000,
       "name": "AIHarder / Desktop / English / Dark",
-      "context": "Current English desktop study: header, hero, question wall, How to and FAQ. FAQ has editable disclosure stills; interactive behavior stays in HTML. Closing/footer remain disabled drafts.",
+      "context": "Current English desktop home study: header, hero, question wall, How to, FAQ, closing action and footer. Editable native still; animation and disclosures are in HTML. Other six variants remain frozen.",
       "theme": {
         "appearance": "dark",
         "language": "en"
@@ -6843,12 +6863,10 @@
         {
           "type": "frame",
           "id": "C7OvpZ",
-          "x": 0,
-          "y": 2338.5,
           "name": "Closing sign-in",
-          "enabled": false,
-          "width": "fill_container(1440)",
-          "fill": "$home-bg",
+          "context": "Final sign-in prompt, same action treatment as header/hero. The HTML study opens a review-only sign-in notice; no live authentication.",
+          "width": "fill_container",
+          "fill": "$home-surface",
           "gap": 40,
           "padding": [
             64,
@@ -6877,10 +6895,11 @@
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
                   "content": "Bring your training into the conversation.",
-                  "lineHeight": 1.45,
+                  "lineHeight": 1.2,
                   "fontFamily": "Geist",
                   "fontSize": 32,
-                  "fontWeight": "600"
+                  "fontWeight": "700",
+                  "letterSpacing": -0.7
                 }
               ]
             },
@@ -6937,11 +6956,9 @@
         {
           "type": "frame",
           "id": "oNuGF",
-          "x": 0,
-          "y": 2514.5,
           "name": "Footer",
-          "enabled": false,
-          "width": "fill_container(1440)",
+          "context": "Design domain, independent-project disclosure and GitHub/Privacy links. Privacy is a review-only placeholder until the actual notice is supplied.",
+          "width": "fill_container",
           "fill": "$home-bg",
           "stroke": "$home-line",
           "strokeWidth": {
@@ -6949,6 +6966,8 @@
           },
           "gap": 32,
           "padding": [
+            29,
+            120,
             28,
             120
           ],
@@ -6956,21 +6975,42 @@
           "alignItems": "center",
           "children": [
             {
-              "type": "text",
-              "id": "v2KIpn",
-              "name": "Independent-project disclosure",
-              "metadata": {
-                "type": "home-copy",
-                "key": "home-disclosure"
-              },
-              "fill": "$home-muted",
-              "textGrowth": "fixed-width",
+              "type": "frame",
+              "id": "bNj8s",
+              "name": "Project domain and independence",
               "width": "fill_container",
-              "content": "An independent project. Not affiliated with AimHarder.",
-              "lineHeight": 1.45,
-              "fontFamily": "Geist",
-              "fontSize": 14,
-              "fontWeight": "normal"
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "rSoky",
+                  "name": "Design domain",
+                  "fill": "$home-ink",
+                  "content": "aiharder.link",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "v2KIpn",
+                  "name": "Independent-project disclosure",
+                  "metadata": {
+                    "type": "home-copy",
+                    "key": "home-disclosure"
+                  },
+                  "fill": "$home-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "An independent project. Not affiliated with AimHarder.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
             },
             {
               "type": "frame",
@@ -6989,7 +7029,7 @@
                   },
                   "fill": "$home-ink",
                   "content": "GitHub",
-                  "lineHeight": 1.45,
+                  "lineHeight": 1.5,
                   "fontFamily": "Geist",
                   "fontSize": 14,
                   "fontWeight": "500"
@@ -7004,7 +7044,7 @@
                   },
                   "fill": "$home-ink",
                   "content": "Privacy",
-                  "lineHeight": 1.45,
+                  "lineHeight": 1.5,
                   "fontFamily": "Geist",
                   "fontSize": 14,
                   "fontWeight": "500"
