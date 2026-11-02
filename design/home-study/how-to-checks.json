@@ -192,6 +192,12 @@
     "browserConsoleErrorsAndWarnings": [],
     "horizontalOverflow": false,
     "nativeForegroundEditable": true,
-    "runtimeCursorCapture": "previews/how-to-cursor.jpg"
+    "runtimeCursorCapture": "previews/how-to-cursor.jpg",
+    "review": {
+      "base": "f85c854",
+      "commit": "4bf267c",
+      "standardsFindings": 0,
+      "specFindings": 0
+    }
   }
 }
