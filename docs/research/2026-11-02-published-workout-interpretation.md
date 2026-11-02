@@ -43,7 +43,7 @@ The current [anonymized MCP tests](../../tests/workouts.test.ts) cover original 
 
 ## Fresh API, MCP, UI and official-renderer comparison (2026-11-02)
 
-Fresh read-only requests through both connected AimHarder MCP surfaces returned the same 2 November WOD publication. The authenticated UI was checked in the unselected, SCALED, INTERMEDIO and RX views. A separate authenticated browser navigation to the exact provenance detail endpoint supplied an independent source response, parsed from document `textContent` and inspected through an allowlist. HTML line-break strings made `innerText` unsuitable for JSON parsing; no byte-exact note comparison is claimed. Official inline `getCabeceraWOD` and `paintWOD` functions were inspected in the authenticated [AimHarder home page](https://aimharder.es/home). Private publication/profile identifiers, personal RM values and calculated personal loads are omitted.
+Fresh read-only requests through both connected AimHarder MCP surfaces returned the same 2 November WOD publication. The authenticated UI's initial view and explicitly selected SCALED, INTERMEDIO and RX labels were checked. The initial modal was not independently verified as an unselected-base mode; the unselected source was compared structurally with a separate authenticated browser navigation to the exact provenance detail endpoint. That independent source response was parsed from document `textContent` and inspected through an allowlist. HTML line-break strings made `innerText` unsuitable for JSON parsing; no byte-exact note comparison is claimed. Official inline `getCabeceraWOD` and `paintWOD` functions were inspected in the authenticated [AimHarder home page](https://aimharder.es/home). Private publication/profile identifiers, personal RM values and calculated personal loads are omitted.
 
 | Observation | Source/UI evidence | Bounded interpretation |
 | --- | --- | --- |
@@ -58,6 +58,8 @@ The official `paintWOD` opens a complex when a non-null marker differs from its 
 The other connected surface omitted complex markers, `sourceExerciseId` and `personalLoad` that the Pilot returned for this same publication. Their deployed versions and the cause of the difference were not established; do not attribute it to the current parser or assume both surfaces run the same artifact. No new deployment or release was performed by this comparison.
 
 This establishes the observed publication's instructions and all three rendered difficulty labels against the inspected fields/renderer. It does not establish arbitrary time-cap units, `round`/`roundrepeat` semantics, other complex-array formats, cross-gym/locale coverage, exhaustive feeds, personal-load correctness or a unique scheduled-session association. No sporting write was sent.
+
+The later [five-weekday audit](2026-11-02-five-weekday-workout-audit.md) extends the sample and supplies additional type-specific interpretations, including an additive type-3 block `reps` preservation correction. Statements in this single-publication note about unresolved broader semantics and its initial guidance-only implementation describe that narrower phase. The expanded record also clarifies that a difficulty-enabled initial UI render selects SCALED rather than proving an unselected-base display.
 
 ## Questions for further bounded comparisons
 

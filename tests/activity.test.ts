@@ -70,6 +70,18 @@ test('retains source complex membership and repetition count in verified own act
   { name: 'Movement B', prescription: { complex: 2, complexrep: '4' } }, { name: 'Run' },
  ] }] });
 });
+test('retains the raw EMOM grouping selector separately from own recorded completed rounds', async () => {
+ respond({ '2026-03-29': [1] });
+ upstream.use(http.get('https://aimharder.es/api/activity/workout', () => HttpResponse.json(detail(1, {
+  TIPOWODs: [{ deleted: false, type: 3, timecap: 1, time: 0, rondas: 2, reps: 1, res: 5 }],
+ }))));
+ const result = await query(await connect());
+ expect(result.isError).not.toBe(true);
+ expect(result.structuredContent).toMatchObject({ entries: [{ blocks: [{
+  prescription: { type: 3, reps: 1, timecap: 1, rondas: 2 }, result: { res: 5, reps: 1 },
+ }] }] });
+ expect(requests.every(request => request.method === 'GET' || request.url.pathname === '/api/login')).toBe(true);
+});
 test('returns personal entries with original detail, explicit dates and no session claim', async () => {
  respond({ '2026-03-29': [1, 1, 2] });
  const result = await query(await connect());
