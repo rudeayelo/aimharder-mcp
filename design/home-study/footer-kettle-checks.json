@@ -1,0 +1,120 @@
+{
+  "date": "2026-11-02",
+  "scope": "Decorative random-emote kettle at FAQ/closing boundary, English desktop Light/Dark",
+  "runtime": {
+    "initialDesktopPlacement": {
+      "boundary": 521.1875,
+      "emote": "idle",
+      "frame": "0",
+      "overflow": false,
+      "questionBottom": 321.1875,
+      "renderer": "ready",
+      "stageAboveBoundary": 204,
+      "stageBelowBoundary": 44,
+      "time": "86.848",
+      "width": 1200
+    },
+    "randomPlayback": {
+      "count": "16",
+      "emote": "look",
+      "frame": "32",
+      "lastEmote": "look",
+      "renderer": "ready",
+      "time": "69.167"
+    },
+    "pause": {
+      "paused": "true",
+      "time": "86.917"
+    },
+    "pausedLater": "86.917",
+    "offscreen": {
+      "paused": "true",
+      "time": "69.900"
+    },
+    "offscreenLater": "69.900",
+    "narrow": {
+      "canvasCount": 0,
+      "display": "none",
+      "faqPadding": "80px",
+      "overflow": false,
+      "width": 1199
+    },
+    "stillFallback": {
+      "renderer": "poster",
+      "canvasCount": 0
+    },
+    "clips": [
+      {
+        "canvasCount": 1,
+        "clip": "blink",
+        "frame": "4",
+        "renderer": "ready"
+      },
+      {
+        "canvasCount": 1,
+        "clip": "rock",
+        "frame": "4",
+        "renderer": "ready"
+      },
+      {
+        "canvasCount": 1,
+        "clip": "curious",
+        "frame": "16",
+        "renderer": "ready"
+      },
+      {
+        "canvasCount": 1,
+        "clip": "look",
+        "frame": "11",
+        "renderer": "ready"
+      },
+      {
+        "canvasCount": 1,
+        "clip": "hop",
+        "frame": "6",
+        "renderer": "ready"
+      }
+    ],
+    "ctaWorks": true,
+    "finalThemes": {
+      "light": {
+        "overflow": false,
+        "padding": "216px",
+        "pose": "curious",
+        "renderer": "ready"
+      },
+      "dark": {
+        "overflow": false,
+        "padding": "216px",
+        "pose": "curious",
+        "renderer": "ready"
+      }
+    },
+    "console": [],
+    "correctedPreflightIssues": [
+      "Widened 3D frustum and recalibrated display crop so the hop does not cut off the handle.",
+      "Clipped transparent canvas overhang with a 12px allowance; final horizontal overflow false in both themes."
+    ]
+  },
+  "pen": {
+    "lightActor": "Q8CwD",
+    "darkActor": "G15vMc",
+    "savedNeutralPlacement": true,
+    "faqPaddingInSavedNeutralState": 200,
+    "htmlFaqPaddingForHopClearance": 216,
+    "finalSpacingSync": "Editor disconnected; reopened view did not answer. Final extra 16px is validated in HTML only.",
+    "protectedSubtreesUnchanged": 26,
+    "otherSixVariantsFrozen": true,
+    "motionInHTMLOnly": true
+  },
+  "limits": [
+    "Browser checks use Chrome; no cross-device performance guarantee.",
+    "OS reduced-motion branch inspected; explicit motion=off poster path exercised.",
+    "No new API/account/service behavior or deployment.",
+    "Owner motion/visual acceptance remains pending."
+  ],
+  "validation": {
+    "assetHashes": "76 unchanged home assets passed; body/model/eye-rig/clip files reused unchanged",
+    "changedLocalReferences": "passed"
+  }
+}

@@ -23,3 +23,16 @@
   .closing-inner h2 { font-size: 28px; }
   .footer-inner { align-items: flex-start; flex-direction: column; gap: 20px; }
 }
+
+/* The body sits mostly in FAQ; its planted base crosses into the closing band. */
+.closing-band { position: relative; }
+.footer-mascot-wrap { display: none; position: absolute; top: 0; left: 0; right: 0; width: calc(100% - 80px); max-width: 1200px; height: 0; margin: auto; pointer-events: none; z-index: 2; }
+.footer-kettle { position: absolute; right: -20px; bottom: -44px; width: 220px; height: 248px; overflow: clip; overflow-clip-margin: 12px; }
+.footer-kettle img, .footer-kettle canvas { position: absolute; left: -13.52px; top: 20.26px; width: 246.52px; height: 246.52px; max-width: none; }
+.footer-kettle[data-renderer=ready] img { visibility: hidden; }
+.footer-kettle-ground { position: absolute; width: 170px; height: 20px; bottom: -10px; left: 25px; background: radial-gradient(ellipse, #14283f59, #14283f22 48%, transparent 73%); filter: blur(3px); }
+[data-theme=dark] .footer-kettle-ground { background: radial-gradient(ellipse, #0009, #0004 48%, transparent 73%); }
+@media(min-width:1200px) {
+  .footer-mascot-wrap { display: block; }
+  .faq-band { padding-bottom: 216px; }
+}

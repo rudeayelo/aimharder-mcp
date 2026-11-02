@@ -33,3 +33,5 @@ All 26 protected root/section subtrees (other variants, components, header, hero
 [Recorded checks](footer-checks.json) cover Light/Dark rendering, no horizontal overflow, native exports, source links, 76 unchanged asset hashes, notice text, native modal focus, Escape/Close and restored trigger focus. No new automated tests or production suite are appropriate for this throwaway visual prototype. Two-axis review against `91f4900...cfab4a5` returned Standards 0 findings and Spec 0 findings.
 
 The actual sign-in integration, complete privacy notice, domain/hosting/mail activation, locale/device propagation and owner visual acceptance remain separate. No operational/API/security change is made; existing ADRs are unaffected.
+
+Later owner refinement: a decorative random-emote kettle now crosses the FAQ/closing boundary. See [boundary study](footer-kettle-study.md) for responsive hiding, placement, lifecycle and the final 16px native-spacing limitation.

@@ -3146,6 +3146,8 @@
           "gap": 80,
           "padding": [
             80,
+            120,
+            200,
             120
           ],
           "children": [
@@ -3756,6 +3758,68 @@
                   "fill": "$home-on-action"
                 }
               }
+            },
+            {
+              "type": "frame",
+              "id": "Q8CwD",
+              "layoutPosition": "absolute",
+              "x": 1120,
+              "y": -204,
+              "name": "Decorative kettle / FAQ boundary",
+              "context": "Neutral static poster of existing hybrid 32k rig. HTML plays random existing emotes at ≥1200px, hidden below. Base crosses 44px into closing; most volume remains in FAQ.",
+              "width": 220,
+              "height": 248,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "S95V2D",
+                  "x": 25,
+                  "y": 238,
+                  "name": "Kettle contact shadow",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "radial",
+                    "enabled": true,
+                    "rotation": 0,
+                    "size": {
+                      "width": 1,
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#14283F59",
+                        "position": 0
+                      },
+                      {
+                        "color": "#00000000",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "width": 170,
+                  "height": 20,
+                  "effect": {
+                    "type": "blur",
+                    "radius": 3
+                  }
+                },
+                {
+                  "type": "rectangle",
+                  "id": "u6mhl0",
+                  "x": -13.52,
+                  "y": 20.26,
+                  "name": "Existing neutral kettle / transparent poster",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "home-study/assets/kettle-neutral.png",
+                    "mode": "contain"
+                  },
+                  "width": 246.52,
+                  "height": 246.52
+                }
+              ]
             }
           ]
         },
@@ -6340,6 +6404,8 @@
           "gap": 80,
           "padding": [
             80,
+            120,
+            200,
             120
           ],
           "children": [
@@ -6950,6 +7016,68 @@
                   "fill": "$home-on-action"
                 }
               }
+            },
+            {
+              "type": "frame",
+              "id": "G15vMc",
+              "layoutPosition": "absolute",
+              "x": 1120,
+              "y": -204,
+              "name": "Decorative kettle / FAQ boundary",
+              "context": "Neutral static poster of existing hybrid 32k rig. HTML plays random existing emotes at ≥1200px, hidden below. Base crosses 44px into closing; most volume remains in FAQ.",
+              "width": 220,
+              "height": 248,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "Hf3zb",
+                  "x": 25,
+                  "y": 238,
+                  "name": "Kettle contact shadow",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "radial",
+                    "enabled": true,
+                    "rotation": 0,
+                    "size": {
+                      "width": 1,
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#00000099",
+                        "position": 0
+                      },
+                      {
+                        "color": "#00000000",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "width": 170,
+                  "height": 20,
+                  "effect": {
+                    "type": "blur",
+                    "radius": 3
+                  }
+                },
+                {
+                  "type": "rectangle",
+                  "id": "ryV4o",
+                  "x": -13.52,
+                  "y": 20.26,
+                  "name": "Existing neutral kettle / transparent poster",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "home-study/assets/kettle-neutral.png",
+                    "mode": "contain"
+                  },
+                  "width": 246.52,
+                  "height": 246.52
+                }
+              ]
             }
           ]
         },
