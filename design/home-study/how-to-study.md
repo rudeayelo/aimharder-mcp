@@ -17,10 +17,10 @@ Full archived Refero style/screen records were retrieved before implementation. 
 
 ## Decisions
 
-- Reuse the app-integrated Grainient renderer and notice for this site's How to background. Light starts at navy `#14283f` and reaches the hero lower-edge blue, sampled around `#7ba9ef`. Dark uses a deeper `#080f1a` to `#174678` range. The title is white. Step captions use dark ink on the lighter lower Light area and light text in Dark.
+- Reuse the app-integrated Grainient renderer and notice for this site's How to background. The latest owner revision supersedes the first navy band: reuse the hero palette, alpha and wash, inverted vertically. Light runs from blue to pale blue, with a navy `#14283f` title. Dark also inverts the hero field and retains white text for contrast. Step captions use dark ink on the lighter lower Light area and light text in Dark.
 - Three equal columns share the existing 1200px content well. Each preview is 320px high, with a clear/light UI surface. Captions place the step number and title together, followed by provisional copy. The title has no subtitle.
 - Step 1: original AimHarder logo, a fictional `alex@example.com` username, password bullets, disabled → ready → loading → green/check action. The illustration cursor clicks the ready control. Content fades before values reset.
-- Step 2: a clipped five-service list starts with ChatGPT below the viewport. A cursor scrolls the list, hovers ChatGPT to reveal Install, clicks, then shows loading and green/check success. It resets through a fade.
+- Step 2: a clipped six-row list starts with ChatGPT below the viewport. “Other clients” follows ChatGPT with a generic Lucide message-circle. A cursor scrolls the list, hovers ChatGPT to reveal Install, clicks, then shows loading and green/check success. It resets through a fade.
 - Step 3: ChatGPT, Claude and Hermes each show a question, thinking dots and a plain-text assistant answer with the correct avatar. Provider tints distinguish them. Both messages fade before the next exchange.
 - Shared review Pause/Replay, reduced-motion/still mode, hidden-tab suspension and offscreen suspension apply. Native Pen represents editable stills of the key states; runtime animation stays in HTML.
 
@@ -43,3 +43,10 @@ JavaScript syntax, changed local references and asset hashes were checked. No ru
 ## Delivery review
 
 Two-axis review against `fa244c2...764b5ac`: **Standards 0 findings; Spec 0 findings**. A final local contrast check then darkened the Light descriptions to `#14283f` and removed step-number opacity; sampled caption-background contrast improved from 3.54:1 to 4.93:1 at y=558px. Native Light/Dark text treatment and exports were updated to match. This is the reviewable prototype checkpoint, not owner approval.
+
+## Owner refinement — 2026-11-02
+
+- Replaced the first navy background with the existing hero field inverted vertically, including the same theme colors, opacity, grain and wash. Light title is navy; Dark stays white over its inverted dark field. The earlier navy-to-blue brief/reference table records the initial iteration, superseded here.
+- Added **Other clients** immediately after ChatGPT in the second preview, using the existing Lucide `message-circle` icon. The list now scrolls 146px at desktop instead of 80px; cursor targeting follows measured row geometry.
+- Replaced the outlined Lucide pointer with a locally authored black arrow/white outline in the macOS style. This is an illustration, not an extracted system asset. Both demo pointers share it; the small white outline is part of the asset rather than a CSS halo. The owner's cursor request supersedes the earlier Lucide pointer choice; UI icons remain Lucide.
+- Native English desktop Light/Dark success stills were synchronized, with all 28 protected subtrees unchanged. Runtime inspection at the click frame confirmed the cursor tip inside Install with the added row. Native success stills intentionally have no cursor because it has already faded.

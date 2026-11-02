@@ -148,7 +148,7 @@
   ],
   "checks": {
     "assetManifest": {
-      "entries": 74,
+      "entries": 75,
       "hashMismatches": []
     },
     "changedHTMLLocalReferences": "passed",
@@ -159,7 +159,8 @@
         218
       ],
       "foreground": "#14283f",
-      "ratio": 4.928
+      "ratio": 4.928,
+      "checkpoint": "Historical first-background contrast check; current blue-to-pale field reviewed visually."
     }
   },
   "review": {
@@ -168,5 +169,29 @@
     "standardsFindings": 0,
     "specFindings": 0,
     "subsequentChange": "Light description ink darkened and number opacity removed after a local contrast check; native text synchronized."
+  },
+  "ownerRevision": {
+    "date": "2026-11-02",
+    "background": "Current hero palette, alpha and wash mirrored vertically; Light title #14283f; Dark title stays white.",
+    "services": [
+      "Claude",
+      "Hermes",
+      "OpenClaw",
+      "Pi",
+      "ChatGPT",
+      "Other clients"
+    ],
+    "genericIcon": "Lucide message-circle",
+    "cursor": "Locally authored macOS-style arrow, black fill and white outline",
+    "installClickInspection": {
+      "time": 4.05,
+      "cursorTipInsideInstallControl": true,
+      "listScrollPx": 146
+    },
+    "penProtectedSubtreesUnchanged": 28,
+    "browserConsoleErrorsAndWarnings": [],
+    "horizontalOverflow": false,
+    "nativeForegroundEditable": true,
+    "runtimeCursorCapture": "previews/how-to-cursor.jpg"
   }
 }

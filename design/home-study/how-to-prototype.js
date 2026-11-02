@@ -6,7 +6,7 @@ const inspect = params.has('howAt') ? Math.max(0, +params.get('howAt') || 0) : n
 const still = params.get('motion') === 'off' || reduced.matches || inspect !== null;
 const symbol = key => `assets/apps/${key === 'hermes' || key === 'openclaw' ? `${key}-selfhst-light.svg` : key === 'pi' ? 'pi-mono-light.png' : `${key}-light.png`}`;
 const icon = name => `<i class="icon" style="--icon:url('./assets/lucide/${name}.svg')" aria-hidden="true"></i>`;
-const cursor = `<img class="demo-cursor" src="assets/lucide/mouse-pointer-2.svg" alt="">`;
+const cursor = `<img class="demo-cursor" src="assets/cursor-macos-style.svg" alt="">`;
 section.innerHTML = `
   <div id="how-grainient" class="how-backdrop" aria-hidden="true"></div>
   <div class="how-inner">
@@ -26,7 +26,7 @@ section.innerHTML = `
       <figure class="how-step">
         <div class="how-preview" id="install-preview" role="img" aria-label="Illustrative animation: scroll through AI apps, choose ChatGPT, and install AIHarder.">
           <div class="services-demo" aria-hidden="true"><p class="services-heading">Your AI apps</p><div class="services-window"><div class="services-list">
-            ${[['claude','Claude'],['hermes','Hermes'],['openclaw','OpenClaw'],['pi','Pi'],['chatgpt','ChatGPT']].map(([key,name]) => `<div class="service-option" data-app="${key}"><img class="service-symbol" src="${symbol(key)}" alt=""><span class="service-name">${name}</span>${key === 'chatgpt' ? '<div class="demo-action service-action" data-action="ready">Install</div>' : ''}</div>`).join('')}
+            ${[['claude','Claude'],['hermes','Hermes'],['openclaw','OpenClaw'],['pi','Pi'],['chatgpt','ChatGPT'],['other','Other clients']].map(([key,name]) => `<div class="service-option" data-app="${key}">${key === 'other' ? '<i class="service-symbol icon" style="--icon:url(\'./assets/lucide/message-circle.svg\')"></i>' : `<img class="service-symbol" src="${symbol(key)}" alt="">`}<span class="service-name">${name}</span>${key === 'chatgpt' ? '<div class="demo-action service-action" data-action="ready">Install</div>' : ''}</div>`).join('')}
           </div></div></div><div class="service-track" aria-hidden="true"><div class="service-thumb"></div></div>${cursor}
         </div>
         <figcaption><div class="how-step-title"><span class="how-step-number">02</span><h3>Choose your AI app</h3></div><p class="how-step-description">Pick the AI app you already use and add AIHarder.</p></figcaption>

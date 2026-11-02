@@ -2185,7 +2185,7 @@
               "type": "text",
               "id": "q55tb",
               "name": "How to heading",
-              "fill": "#FFFFFF",
+              "fill": "#14283F",
               "textGrowth": "fixed-width",
               "width": "fill_container",
               "content": "How you get started",
@@ -2547,8 +2547,8 @@
                               "type": "frame",
                               "id": "eietP",
                               "x": 0,
-                              "y": -80,
-                              "name": "App list / scrolled 80px",
+                              "y": -146,
+                              "name": "App list / scrolled 146px",
                               "width": 338.67,
                               "layout": "vertical",
                               "gap": 4,
@@ -2798,6 +2798,42 @@
                                           "fontWeight": "600"
                                         }
                                       ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "gT1yM",
+                                  "name": "Other clients",
+                                  "width": "fill_container",
+                                  "height": 62,
+                                  "fill": "#FFFFFFC9",
+                                  "cornerRadius": 10,
+                                  "stroke": "#DCE5EF",
+                                  "strokeWidth": 1,
+                                  "gap": 10,
+                                  "padding": 10,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon",
+                                      "id": "ENSqQ",
+                                      "name": "Generic chat / Lucide",
+                                      "width": 26,
+                                      "height": 26,
+                                      "icon": "message-circle",
+                                      "library": "lucide",
+                                      "fill": "#14283F"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "nUio6",
+                                      "name": "Service name",
+                                      "fill": "#14283F",
+                                      "content": "Other clients",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
                                     }
                                   ]
                                 }
@@ -5504,8 +5540,8 @@
                               "type": "frame",
                               "id": "zz3mD",
                               "x": 0,
-                              "y": -80,
-                              "name": "App list / scrolled 80px",
+                              "y": -146,
+                              "name": "App list / scrolled 146px",
                               "width": 338.67,
                               "layout": "vertical",
                               "gap": 4,
@@ -5755,6 +5791,42 @@
                                           "fontWeight": "600"
                                         }
                                       ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "u1LSmz",
+                                  "name": "Other clients",
+                                  "width": "fill_container",
+                                  "height": 62,
+                                  "fill": "#FFFFFFC9",
+                                  "cornerRadius": 10,
+                                  "stroke": "#DCE5EF",
+                                  "strokeWidth": 1,
+                                  "gap": 10,
+                                  "padding": 10,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon",
+                                      "id": "j1zHY",
+                                      "name": "Generic chat / Lucide",
+                                      "width": 26,
+                                      "height": 26,
+                                      "icon": "message-circle",
+                                      "library": "lucide",
+                                      "fill": "#14283F"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "WAd1y",
+                                      "name": "Service name",
+                                      "fill": "#14283F",
+                                      "content": "Other clients",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
                                     }
                                   ]
                                 }

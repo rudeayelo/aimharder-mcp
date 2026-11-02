@@ -444,12 +444,17 @@
   },
   {
     "file": "pen/how-background-light.png",
-    "source": "Local still rendering of ../render-how-background.html?theme=light at 1440x683; background only, app-integrated Grainient adaptation; see ../vendor/README.md",
-    "sha256": "bd8e284e5ee3deca0155159a7cc48c5607962feb0699d211e538b99c97b28a9d"
+    "source": "Local still rendering of ../render-how-background.html?theme=light at 1440x683; same hero palette/wash inverted vertically, background only; see ../vendor/README.md",
+    "sha256": "b395919445ef751d9d6b7e022c0bb74993277c3f2b3c7e84d1d77c15c6c4790b"
   },
   {
     "file": "pen/how-background-dark.png",
-    "source": "Local still rendering of ../render-how-background.html?theme=dark at 1440x683; background only, app-integrated Grainient adaptation; see ../vendor/README.md",
-    "sha256": "2918972faa9035cdeda346f3a782c74131e817058f7f35d2cccc4a7a7d731cea"
+    "source": "Local still rendering of ../render-how-background.html?theme=dark at 1440x683; same hero palette/wash inverted vertically, background only; see ../vendor/README.md",
+    "sha256": "64a453eb1986c0357f8b667f8d025e8659eadacec3f8456d9736612576cedef2"
+  },
+  {
+    "file": "cursor-macos-style.svg",
+    "source": "Local macOS-style arrow illustration, black fill/white outline, authored for the UI demos; not an extracted Apple system asset.",
+    "sha256": "8d47000a06e6acb3db97abbe73bbabbc4d828c6b8540ff15a320fd58786c8596"
   }
 ]
