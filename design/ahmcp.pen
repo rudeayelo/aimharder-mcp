@@ -2174,6 +2174,10 @@
             "url": "home-study/assets/pen/how-background-light.png",
             "mode": "stretch"
           },
+          "stroke": "#79A4DC",
+          "strokeWidth": {
+            "top": 1
+          },
           "layout": "vertical",
           "gap": 48,
           "padding": [
@@ -5166,6 +5170,10 @@
             "enabled": true,
             "url": "home-study/assets/pen/how-background-dark.png",
             "mode": "stretch"
+          },
+          "stroke": "#2D609B",
+          "strokeWidth": {
+            "top": 1
           },
           "layout": "vertical",
           "gap": 48,

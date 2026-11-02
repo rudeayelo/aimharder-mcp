@@ -52,3 +52,5 @@ Two-axis review against `fa244c2...764b5ac`: **Standards 0 findings; Spec 0 find
 - Native English desktop Light/Dark success stills were synchronized, with all 28 protected subtrees unchanged. Runtime inspection at the click frame confirmed the cursor tip inside Install with the added row. Native success stills intentionally have no cursor because it has already faded.
 
 Owner-refinement review against `f85c854...4bf267c`: Standards 0 findings; Spec 0 findings. Syntax, current 75 asset hashes and changed study links passed. No runtime/API/security decisions changed; ADRs remain unaffected.
+
+Top-edge refinement (2026-11-02): How to now has a 1px upper border matching the hero’s lower border exactly: `#79a4dc` in Light and `#2d609b` in Dark. Native Pen uses the same top stroke. Background-only exports omit this separate border. No animation, content, scope or ADR decision changes.

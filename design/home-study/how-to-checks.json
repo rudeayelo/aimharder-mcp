@@ -199,5 +199,25 @@
       "standardsFindings": 0,
       "specFindings": 0
     }
+  },
+  "topEdgeRefinement": {
+    "date": "2026-11-02",
+    "computedBrowserChecks": [
+      {
+        "hero": "rgb(45, 96, 155)",
+        "how": "rgb(45, 96, 155)",
+        "match": true,
+        "theme": "dark",
+        "width": "1px"
+      },
+      {
+        "hero": "rgb(121, 164, 220)",
+        "how": "rgb(121, 164, 220)",
+        "match": true,
+        "theme": "light",
+        "width": "1px"
+      }
+    ],
+    "nativeTopStrokeMatched": true
   }
 }
