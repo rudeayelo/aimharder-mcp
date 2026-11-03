@@ -40,3 +40,7 @@ The two editable English desktop A roots remain `M3U1LB` and `Vqh6E`. They are n
 [Pen Light](previews/private-settings-v2/pen/M3U1LB.png) · [Pen Dark](previews/private-settings-v2/pen/Vqh6E.png).
 
 JavaScript syntax, translation JSON, local links/assets and whitespace are checked. Runtime/backend suites are not rerun for static-only design changes. English/Spanish HTML is current; only the two English desktop A native frames change during this refinement. Public/auth/mobile and B native frames, runtime/API/auth behavior, deployment and existing ADR decisions are unchanged. Real provider/account/client acceptance remains separate.
+
+## Review outcome
+
+Parallel Standards/Spec review of `2866c6f...6df6d06`: Standards found no actionable issues; Spec found ambiguous repeated-provider rows. Correction `bb8b157` adds conditional connection IDs consistently to visible/accessibility labels and confirmation titles. Browser read-back confirms only the selected repeated access is removed, and Spec re-review closed the finding. Zero remaining actionable findings. Native bytes were excluded from code review; editor-render and protected-root comparisons cover the native artifact separately.
