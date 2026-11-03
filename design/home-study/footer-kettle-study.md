@@ -35,3 +35,5 @@ Two-axis review against `dfddbae...b9514e8`: Standards 0 findings; Spec 0 findin
 ## Left placement verification — 2026-11-03
 
 Browser QA at 1044px verified Light/Dark rendering, advancing random emotes (12 selections over about 49 seconds), 16px stage overlap, 84.8px minimum gap between the support link and stage, and no horizontal overflow. At 1023px a fresh page hid the actor and created no footer canvas. At default 1200px the enlarged hop frame remained inside its stage headroom; static `motion=off` retained the enlarged poster without a footer canvas. No browser warnings/errors were observed. See [Light](previews/footer-kettle/left-light.jpg), [Dark](previews/footer-kettle/left-dark.jpg) and the dated refinement in [checks](footer-kettle-checks.json). Native synchronization, real-device performance and owner visual acceptance remain pending. Existing ADRs are unaffected by this visual-only correction.
+
+Two-axis review of `abab691...db91013`: Standards 0 findings; Spec 0 findings. JavaScript syntax, changed-document local links, diff whitespace and all 76 existing asset hashes passed.

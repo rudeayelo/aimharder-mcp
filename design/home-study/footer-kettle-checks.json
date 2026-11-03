@@ -177,6 +177,12 @@
     "previews": [
       "previews/footer-kettle/left-light.jpg",
       "previews/footer-kettle/left-dark.jpg"
-    ]
+    ],
+    "review": {
+      "base": "abab691",
+      "head": "db91013",
+      "standardsFindings": 0,
+      "specFindings": 0
+    }
   }
 }
