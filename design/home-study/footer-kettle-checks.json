@@ -122,5 +122,61 @@
     "commit": "b9514e8",
     "standardsFindings": 0,
     "specFindings": 0
+  },
+  "leftRefinement20261103": {
+    "rootCauseReproduction": {
+      "width": 1044,
+      "display": "none",
+      "paused": true,
+      "pass": false
+    },
+    "light": {
+      "width": 1044,
+      "renderer": "ready",
+      "paused": false,
+      "emoteCount": 12,
+      "timeSeconds": 49.317,
+      "stage": [
+        300,
+        340
+      ],
+      "visibleBody": [
+        239,
+        274
+      ],
+      "overlap": 16,
+      "contactToStageGap": 84.8125,
+      "overflow": false
+    },
+    "dark": {
+      "width": 1044,
+      "renderer": "ready",
+      "overlap": 16,
+      "overflow": false
+    },
+    "narrow": {
+      "width": 1023,
+      "display": "none",
+      "canvasCount": 0,
+      "faqMinHeight": "0px",
+      "overflow": false
+    },
+    "hop": {
+      "width": 1200,
+      "renderer": "ready",
+      "frame": 6,
+      "headroom": "visually verified"
+    },
+    "motionOff": {
+      "renderer": "poster",
+      "canvasCount": 0,
+      "poster": "visible"
+    },
+    "consoleWarningsOrErrors": [],
+    "pen": "Pending: editor reopened but did not answer; previous right-hand still unchanged.",
+    "previews": [
+      "previews/footer-kettle/left-light.jpg",
+      "previews/footer-kettle/left-dark.jpg"
+    ]
   }
 }

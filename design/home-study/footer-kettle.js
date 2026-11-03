@@ -4,7 +4,7 @@ import {eyePoseAt} from '../identity/idol-motion-prototype/hybrid/eye-poses.js';
 const stage = document.querySelector('.footer-kettle');
 const shadow = stage.querySelector('.footer-kettle-ground');
 const params = new URLSearchParams(location.search);
-const wide = matchMedia('(min-width: 1200px)');
+const wide = matchMedia('(min-width: 1024px)');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const frozen = params.get('motion') === 'off' || reduced.matches;
 const clips = ['blink', 'rock', 'curious', 'look', 'hop'];
@@ -64,11 +64,13 @@ async function start() {
     const scene = new THREE.Scene();
     // Widen the frustum for hop headroom, then preserve the neutral poster's crop.
     const frustumScale = Math.tan(13*Math.PI/180)/Math.tan(17.5*Math.PI/180);
-    const displayScale = 195/(405*frustumScale);
+    const stageStyle = getComputedStyle(stage);
+    const displayHeight = parseFloat(stageStyle.getPropertyValue('--kettle-body-height'));
+    const displayScale = displayHeight/(405*frustumScale);
     Object.assign(renderer.domElement.style, {
       width: `${512*displayScale}px`, height: `${512*displayScale}px`,
-      left: `${110-(256+.5*frustumScale)*displayScale}px`,
-      top: `${248-(256+217*frustumScale)*displayScale}px`,
+      left: `${parseFloat(stageStyle.width)/2-(256+.5*frustumScale)*displayScale}px`,
+      top: `${parseFloat(stageStyle.height)-(256+217*frustumScale)*displayScale}px`,
     });
     const camera = new THREE.PerspectiveCamera(35,1,.01,100);
     camera.position.set(3,.76,0); camera.lookAt(0,.5,0);
