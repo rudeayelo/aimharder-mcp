@@ -165,7 +165,7 @@
   "AI apps": "Apps de IA",
   "Settings": "Ajustes",
   "Alex Rivera, account menu": "Alex Rivera, menú de cuenta",
-  "Account settings": "Ajustes de la cuenta",
+  "Account settings": "Ajustes de cuenta",
   "Sign out": "Cerrar sesión",
   "Let’s get you connected.": "Vamos a conectarte.",
   "Connect your AimHarder account, then bring it into your AI chat.": "Conecta tu cuenta de AimHarder y llévala a tu chat de IA.",
@@ -280,5 +280,11 @@
   "You can still sign in with your AIHarder password.": "Podrás seguir entrando con tu contraseña de AIHarder.",
   "Use the Google account with the same verified email.": "Usa la cuenta de Google con el mismo email verificado.",
   "Email verification preview · No email sent": "Vista previa de verificación · No se ha enviado ningún email",
-  "Password update preview · No password changed": "Vista previa del cambio · No se ha cambiado ninguna contraseña"
+  "Password update preview · No password changed": "Vista previa del cambio · No se ha cambiado ninguna contraseña",
+  "Your gyms": "Tus gimnasios",
+  "Your gym": "Tu gimnasio",
+  "Used when you don’t specify a gym in your request.": "Se usa cuando no indicas un gimnasio en tu petición.",
+  "Account menu": "Menú de cuenta",
+  "← Settings": "← Ajustes",
+  "AIHarder is an independent proyect. Not affiliated with AimHarder.": "AIHarder es un proyecto independiente. No está afiliado a AimHarder."
 }

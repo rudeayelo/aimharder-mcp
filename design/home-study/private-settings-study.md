@@ -1,5 +1,7 @@
 # AIHarder — participant settings
 
+**Historical single-frame checkpoint:** the current routes and native Settings roots now use [separate cards and an Account settings page](private-cards-study.md). The details and captures below record the preceding iteration.
+
 Date: 2026-11-03. Current refinement of owner-selected compact A. The owner rejected both the wizard and collapsible sections. Earlier screenshots/checks under `private-settings/` and `private-settings-checks.json` describe the preceding accordion checkpoint, not the current route. B remains historical.
 
 ## Reference lock and decisions

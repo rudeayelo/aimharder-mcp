@@ -1,0 +1,52 @@
+{
+  "layout": {
+    "accountActionsOnMain": false,
+    "cards": 3,
+    "connectedLabel": false,
+    "footer": "AIHarder is an independent proyect. Not affiliated with AimHarder.",
+    "globalActionsOutsideCards": true,
+    "gradient": "linear-gradient(rgb(232, 242, 255), rgb(135, 184, 241))"
+  },
+  "gymDraft": true,
+  "cancelRestoresBoth": {
+    "booking": true,
+    "gym": "central",
+    "saveDisabled": true
+  },
+  "savedTogether": {
+    "booking": false,
+    "gym": "north",
+    "publication": true
+  },
+  "menu": {
+    "focus": "Account settings",
+    "open": true
+  },
+  "escape": {
+    "closed": true,
+    "focus": "account-menu-toggle"
+  },
+  "accountPage": {
+    "accountActions": 3,
+    "credentialInputs": 0,
+    "globalActions": true,
+    "path": "/aimharder-home-95/home-study/account-settings-study.html",
+    "saveControls": 0,
+    "title": "Account settings"
+  },
+  "accountEsDark": {
+    "back": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/private-home-study.html?lang=es&theme=dark&state=configured&v=cards1",
+    "footer": "AIHarder es un proyecto independiente. No está afiliado a AimHarder.",
+    "overflow": false,
+    "theme": "dark",
+    "title": "Ajustes de cuenta"
+  },
+  "settingsEsDark": {
+    "gradient": "linear-gradient(rgb(13, 21, 33), rgb(23, 70, 120))",
+    "menuLink": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/account-settings-study.html?lang=es&theme=dark&state=configured&v=cards1",
+    "overflow": false,
+    "theme": "dark",
+    "title": "Ajustes"
+  },
+  "errors": []
+}

@@ -36220,14 +36220,14 @@
       "x": 1360,
       "y": 21600,
       "name": "AIHarder / Settings A / English / Light",
-      "context": "Configured settings, fixed sections. Owner refinement: larger headings, available gyms/default selection, clear secondary actions, user email/Google/password settings. Fictional HTML interactions; no real authentication or changes.",
+      "context": "Three separate settings cards; blue hero palette on AimHarder. Shared draft/save for gym and confirmation preferences. Identity settings moved to separate Account settings page through avatar menu. Local fictional HTML only.",
       "theme": {
         "appearance": "light",
         "language": "en"
       },
       "clip": true,
       "width": 1440,
-      "height": 1500,
+      "height": 1300,
       "fill": "$home-surface",
       "layout": "vertical",
       "gap": 24,
@@ -36326,6 +36326,30 @@
                   "icon": "sun",
                   "library": "lucide",
                   "fill": "$home-ink"
+                },
+                {
+                  "type": "frame",
+                  "id": "st6ej",
+                  "name": "Account avatar / menu trigger",
+                  "width": 32,
+                  "height": 32,
+                  "fill": "$home-ink",
+                  "cornerRadius": 32,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "zvBQf",
+                      "name": "Fictional initial",
+                      "fill": "$home-bg",
+                      "content": "A",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
                 }
               ]
             }
@@ -36334,14 +36358,11 @@
         {
           "type": "frame",
           "id": "Z6mXe",
-          "name": "Reusable participant frame / 640px",
-          "clip": true,
+          "name": "Separate settings cards / 640px",
           "width": "fill_container",
-          "fill": "$home-bg",
-          "cornerRadius": 16,
           "stroke": "$home-line",
-          "strokeWidth": 1,
           "layout": "vertical",
+          "gap": 20,
           "children": [
             {
               "type": "frame",
@@ -36349,10 +36370,6 @@
               "name": "Settings heading",
               "width": "fill_container",
               "gap": 12,
-              "padding": [
-                24,
-                28
-              ],
               "alignItems": "center",
               "children": [
                 {
@@ -36374,10 +36391,28 @@
               "id": "EUoEC",
               "name": "AimHarder / fixed section",
               "width": "fill_container",
-              "stroke": "$home-line",
-              "strokeWidth": {
-                "top": 1
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 180,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#E8F2FF",
+                    "position": 0
+                  },
+                  {
+                    "color": "#87B8F1",
+                    "position": 1
+                  }
+                ]
               },
+              "cornerRadius": 16,
+              "stroke": "#79A4DC",
+              "strokeWidth": 1,
               "layout": "vertical",
               "children": [
                 {
@@ -36406,17 +36441,6 @@
                       "fontSize": 20,
                       "fontWeight": "700",
                       "letterSpacing": -0.3
-                    },
-                    {
-                      "type": "text",
-                      "id": "hedFb",
-                      "name": "Connection status",
-                      "fill": "#11694B",
-                      "content": "Connected",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Geist",
-                      "fontSize": 12,
-                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -36453,7 +36477,7 @@
                               "type": "text",
                               "id": "lZGoZ",
                               "name": "Account label",
-                              "fill": "$home-muted",
+                              "fill": "#314861",
                               "content": "Account",
                               "lineHeight": 1.5,
                               "fontFamily": "Geist",
@@ -36527,15 +36551,39 @@
                       ],
                       "children": [
                         {
-                          "type": "text",
-                          "id": "J1YmMY",
-                          "name": "Gym label",
-                          "fill": "$home-muted",
-                          "content": "Available gyms",
-                          "lineHeight": 1.5,
-                          "fontFamily": "Geist",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
+                          "type": "frame",
+                          "id": "e5P44A",
+                          "name": "Gym label and default explanation",
+                          "width": "fill_container",
+                          "gap": 24,
+                          "justifyContent": "space_between",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "J1YmMY",
+                              "name": "Gym label",
+                              "fill": "#314861",
+                              "content": "Your gyms",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "ndWrs",
+                              "name": "Default gym explanation",
+                              "fill": "#314861",
+                              "textGrowth": "fixed-width",
+                              "width": 260,
+                              "content": "Used when you don’t specify a gym in your request.",
+                              "lineHeight": 1.5,
+                              "textAlign": "right",
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
                         },
                         {
                           "type": "frame",
@@ -36588,7 +36636,7 @@
                               "type": "text",
                               "id": "r2tjvv",
                               "name": "Default marker",
-                              "fill": "$home-muted",
+                              "fill": "#314861",
                               "content": "Default",
                               "lineHeight": 1.5,
                               "fontFamily": "Geist",
@@ -36651,10 +36699,10 @@
               "id": "rMzQn",
               "name": "AI apps / fixed section",
               "width": "fill_container",
+              "fill": "$home-bg",
+              "cornerRadius": 16,
               "stroke": "$home-line",
-              "strokeWidth": {
-                "top": 1
-              },
+              "strokeWidth": 1,
               "layout": "vertical",
               "children": [
                 {
@@ -36922,10 +36970,10 @@
               "id": "F4HYox",
               "name": "Confirmations / fixed section",
               "width": "fill_container",
+              "fill": "$home-bg",
+              "cornerRadius": 16,
               "stroke": "$home-line",
-              "strokeWidth": {
-                "top": 1
-              },
+              "strokeWidth": 1,
               "layout": "vertical",
               "children": [
                 {
@@ -37104,57 +37152,6 @@
                           "fontWeight": "normal"
                         }
                       ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "yHsof",
-                      "name": "Clean preference actions",
-                      "width": "fill_container",
-                      "gap": 16,
-                      "padding": [
-                        20,
-                        0,
-                        0,
-                        0
-                      ],
-                      "justifyContent": "end",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "taMLQ",
-                          "name": "Cancel / disabled",
-                          "opacity": 0.45,
-                          "fill": "$home-muted",
-                          "content": "Cancel",
-                          "lineHeight": 1.5,
-                          "fontFamily": "Geist",
-                          "fontSize": 13,
-                          "fontWeight": "500"
-                        },
-                        {
-                          "id": "qXZzo",
-                          "type": "ref",
-                          "ref": "UEEFt",
-                          "name": "Save changes / disabled",
-                          "width": 120,
-                          "height": 36,
-                          "padding": [
-                            6,
-                            16
-                          ],
-                          "opacity": 0.45,
-                          "fill": "#1765B0",
-                          "descendants": {
-                            "ugUJO": {
-                              "content": "Save changes",
-                              "fontSize": 13,
-                              "textAlign": "center",
-                              "fill": "#FFFFFF"
-                            }
-                          }
-                        }
-                      ]
                     }
                   ]
                 }
@@ -37162,331 +37159,52 @@
             },
             {
               "type": "frame",
-              "id": "eKpJ6",
-              "name": "Your account / fixed section",
+              "id": "yHsof",
+              "name": "Global Cancel and Save changes",
               "width": "fill_container",
-              "stroke": "$home-line",
-              "strokeWidth": {
-                "top": 1
-              },
-              "layout": "vertical",
+              "gap": 16,
+              "padding": [
+                4,
+                0,
+                0,
+                0
+              ],
+              "justifyContent": "end",
+              "alignItems": "center",
               "children": [
                 {
-                  "type": "frame",
-                  "id": "N9cNYR",
-                  "name": "Section heading",
-                  "width": "fill_container",
-                  "gap": 12,
-                  "padding": [
-                    24,
-                    28,
-                    18,
-                    28
-                  ],
-                  "justifyContent": "space_between",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "ahTLp",
-                      "name": "Section title",
-                      "fill": "$home-ink",
-                      "content": "Your account",
-                      "lineHeight": 1.4,
-                      "fontFamily": "Geist",
-                      "fontSize": 20,
-                      "fontWeight": "700",
-                      "letterSpacing": -0.3
-                    }
-                  ]
+                  "type": "text",
+                  "id": "taMLQ",
+                  "name": "Cancel / disabled",
+                  "opacity": 0.45,
+                  "fill": "$home-muted",
+                  "content": "Cancel",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 13,
+                  "fontWeight": "500"
                 },
                 {
-                  "type": "frame",
-                  "id": "U5vhzi",
-                  "name": "Your account content",
-                  "width": "fill_container",
-                  "layout": "vertical",
+                  "id": "qXZzo",
+                  "type": "ref",
+                  "ref": "UEEFt",
+                  "name": "Save changes / disabled",
+                  "width": 120,
+                  "height": 36,
                   "padding": [
-                    0,
-                    28,
-                    24,
-                    28
+                    6,
+                    16
                   ],
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "O1Lx7",
-                      "name": "Email setting",
-                      "width": "fill_container",
-                      "gap": 12,
-                      "padding": [
-                        16,
-                        0
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "q19hsc",
-                          "name": "Email identity",
-                          "width": "fill_container",
-                          "layout": "vertical",
-                          "gap": 4,
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "I75oW",
-                              "name": "Setting label",
-                              "fill": "$home-muted",
-                              "content": "Email",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 12,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "text",
-                              "id": "Mvc54",
-                              "name": "Fictional value",
-                              "fill": "$home-ink",
-                              "content": "alex@example.com",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "t8LZV",
-                          "name": "Change email button",
-                          "fill": "#F7F9FB",
-                          "cornerRadius": 8,
-                          "stroke": "$home-line",
-                          "strokeWidth": 1,
-                          "effect": {
-                            "type": "shadow",
-                            "shadowType": "outer",
-                            "color": "#0000001A",
-                            "offset": {
-                              "x": 0,
-                              "y": 4
-                            },
-                            "blur": 6
-                          },
-                          "padding": [
-                            8,
-                            12
-                          ],
-                          "justifyContent": "center",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "aVhp3",
-                              "name": "Action label",
-                              "fill": "$home-ink",
-                              "content": "Change email",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 13,
-                              "fontWeight": "500"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "jp4iv",
-                      "name": "Google setting",
-                      "width": "fill_container",
-                      "stroke": "$home-line",
-                      "strokeWidth": {
-                        "top": 1
-                      },
-                      "gap": 12,
-                      "padding": [
-                        16,
-                        0
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "id": "cbN1c",
-                          "name": "Official Google G",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "home-study/assets/google-g.png",
-                            "mode": "contain"
-                          },
-                          "width": 20,
-                          "height": 20
-                        },
-                        {
-                          "type": "frame",
-                          "id": "U7NL3",
-                          "name": "Google identity",
-                          "width": "fill_container",
-                          "layout": "vertical",
-                          "gap": 4,
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "BpoXP",
-                              "name": "Setting label",
-                              "fill": "$home-muted",
-                              "content": "Google",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 12,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "text",
-                              "id": "T8xiqU",
-                              "name": "Fictional value",
-                              "fill": "$home-ink",
-                              "content": "alex@example.com",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "EOFOL",
-                          "name": "Disconnect button",
-                          "fill": "#F7F9FB",
-                          "cornerRadius": 8,
-                          "stroke": "$home-line",
-                          "strokeWidth": 1,
-                          "effect": {
-                            "type": "shadow",
-                            "shadowType": "outer",
-                            "color": "#0000001A",
-                            "offset": {
-                              "x": 0,
-                              "y": 4
-                            },
-                            "blur": 6
-                          },
-                          "padding": [
-                            8,
-                            12
-                          ],
-                          "justifyContent": "center",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "R0MKY",
-                              "name": "Action label",
-                              "fill": "$home-ink",
-                              "content": "Disconnect",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 13,
-                              "fontWeight": "500"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "h5YIv",
-                      "name": "AIHarder password setting",
-                      "width": "fill_container",
-                      "stroke": "$home-line",
-                      "strokeWidth": {
-                        "top": 1
-                      },
-                      "gap": 12,
-                      "padding": [
-                        16,
-                        0
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "vwYzf",
-                          "name": "AIHarder password identity",
-                          "width": "fill_container",
-                          "layout": "vertical",
-                          "gap": 4,
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "sAXYk",
-                              "name": "Setting label",
-                              "fill": "$home-muted",
-                              "content": "AIHarder password",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 12,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "text",
-                              "id": "WhlM7",
-                              "name": "Fictional value",
-                              "fill": "$home-ink",
-                              "content": "••••••••",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "efHhS",
-                          "name": "Change password button",
-                          "fill": "#F7F9FB",
-                          "cornerRadius": 8,
-                          "stroke": "$home-line",
-                          "strokeWidth": 1,
-                          "effect": {
-                            "type": "shadow",
-                            "shadowType": "outer",
-                            "color": "#0000001A",
-                            "offset": {
-                              "x": 0,
-                              "y": 4
-                            },
-                            "blur": 6
-                          },
-                          "padding": [
-                            8,
-                            12
-                          ],
-                          "justifyContent": "center",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "OrHph",
-                              "name": "Action label",
-                              "fill": "$home-ink",
-                              "content": "Change password",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 13,
-                              "fontWeight": "500"
-                            }
-                          ]
-                        }
-                      ]
+                  "opacity": 0.45,
+                  "fill": "#1765B0",
+                  "descendants": {
+                    "ugUJO": {
+                      "content": "Save changes",
+                      "fontSize": 13,
+                      "textAlign": "center",
+                      "fill": "#FFFFFF"
                     }
-                  ]
+                  }
                 }
               ]
             }
@@ -37506,7 +37224,7 @@
               "id": "JZfcO",
               "name": "Independent project",
               "fill": "$home-muted",
-              "content": "An independent project. Not affiliated with AimHarder.",
+              "content": "AIHarder is an independent proyect. Not affiliated with AimHarder.",
               "lineHeight": 1.5,
               "fontFamily": "Geist",
               "fontSize": 11,
@@ -37552,14 +37270,14 @@
       "x": 2960,
       "y": 21600,
       "name": "AIHarder / Settings A / English / Dark",
-      "context": "Configured settings, fixed sections. Owner refinement: larger headings, available gyms/default selection, clear secondary actions, user email/Google/password settings. Fictional HTML interactions; no real authentication or changes.",
+      "context": "Three separate settings cards; blue hero palette on AimHarder. Shared draft/save for gym and confirmation preferences. Identity settings moved to separate Account settings page through avatar menu. Local fictional HTML only.",
       "theme": {
         "appearance": "dark",
         "language": "en"
       },
       "clip": true,
       "width": 1440,
-      "height": 1500,
+      "height": 1300,
       "fill": "$home-surface",
       "layout": "vertical",
       "gap": 24,
@@ -37658,6 +37376,30 @@
                   "icon": "moon",
                   "library": "lucide",
                   "fill": "$home-ink"
+                },
+                {
+                  "type": "frame",
+                  "id": "JWvQd",
+                  "name": "Account avatar / menu trigger",
+                  "width": 32,
+                  "height": 32,
+                  "fill": "$home-ink",
+                  "cornerRadius": 32,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "bJ1zm",
+                      "name": "Fictional initial",
+                      "fill": "$home-bg",
+                      "content": "A",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
                 }
               ]
             }
@@ -37666,14 +37408,11 @@
         {
           "type": "frame",
           "id": "P11PB",
-          "name": "Reusable participant frame / 640px",
-          "clip": true,
+          "name": "Separate settings cards / 640px",
           "width": "fill_container",
-          "fill": "$home-bg",
-          "cornerRadius": 16,
           "stroke": "$home-line",
-          "strokeWidth": 1,
           "layout": "vertical",
+          "gap": 20,
           "children": [
             {
               "type": "frame",
@@ -37681,10 +37420,6 @@
               "name": "Settings heading",
               "width": "fill_container",
               "gap": 12,
-              "padding": [
-                24,
-                28
-              ],
               "alignItems": "center",
               "children": [
                 {
@@ -37706,10 +37441,28 @@
               "id": "OOkUH",
               "name": "AimHarder / fixed section",
               "width": "fill_container",
-              "stroke": "$home-line",
-              "strokeWidth": {
-                "top": 1
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 180,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#0D1521",
+                    "position": 0
+                  },
+                  {
+                    "color": "#174678",
+                    "position": 1
+                  }
+                ]
               },
+              "cornerRadius": 16,
+              "stroke": "#2D609B",
+              "strokeWidth": 1,
               "layout": "vertical",
               "children": [
                 {
@@ -37738,17 +37491,6 @@
                       "fontSize": 20,
                       "fontWeight": "700",
                       "letterSpacing": -0.3
-                    },
-                    {
-                      "type": "text",
-                      "id": "ikpbi",
-                      "name": "Connection status",
-                      "fill": "#8CDDB7",
-                      "content": "Connected",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Geist",
-                      "fontSize": 12,
-                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -37859,15 +37601,39 @@
                       ],
                       "children": [
                         {
-                          "type": "text",
-                          "id": "NEN0A",
-                          "name": "Gym label",
-                          "fill": "$home-muted",
-                          "content": "Available gyms",
-                          "lineHeight": 1.5,
-                          "fontFamily": "Geist",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
+                          "type": "frame",
+                          "id": "puwMi",
+                          "name": "Gym label and default explanation",
+                          "width": "fill_container",
+                          "gap": 24,
+                          "justifyContent": "space_between",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "NEN0A",
+                              "name": "Gym label",
+                              "fill": "$home-muted",
+                              "content": "Your gyms",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "aV35j",
+                              "name": "Default gym explanation",
+                              "fill": "$home-muted",
+                              "textGrowth": "fixed-width",
+                              "width": 260,
+                              "content": "Used when you don’t specify a gym in your request.",
+                              "lineHeight": 1.5,
+                              "textAlign": "right",
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
                         },
                         {
                           "type": "frame",
@@ -37983,10 +37749,10 @@
               "id": "CA82m",
               "name": "AI apps / fixed section",
               "width": "fill_container",
+              "fill": "$home-bg",
+              "cornerRadius": 16,
               "stroke": "$home-line",
-              "strokeWidth": {
-                "top": 1
-              },
+              "strokeWidth": 1,
               "layout": "vertical",
               "children": [
                 {
@@ -38254,10 +38020,10 @@
               "id": "VljVB",
               "name": "Confirmations / fixed section",
               "width": "fill_container",
+              "fill": "$home-bg",
+              "cornerRadius": 16,
               "stroke": "$home-line",
-              "strokeWidth": {
-                "top": 1
-              },
+              "strokeWidth": 1,
               "layout": "vertical",
               "children": [
                 {
@@ -38436,57 +38202,6 @@
                           "fontWeight": "normal"
                         }
                       ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "yQINR",
-                      "name": "Clean preference actions",
-                      "width": "fill_container",
-                      "gap": 16,
-                      "padding": [
-                        20,
-                        0,
-                        0,
-                        0
-                      ],
-                      "justifyContent": "end",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "S5zEv1",
-                          "name": "Cancel / disabled",
-                          "opacity": 0.45,
-                          "fill": "$home-muted",
-                          "content": "Cancel",
-                          "lineHeight": 1.5,
-                          "fontFamily": "Geist",
-                          "fontSize": 13,
-                          "fontWeight": "500"
-                        },
-                        {
-                          "id": "yZqXa",
-                          "type": "ref",
-                          "ref": "UEEFt",
-                          "name": "Save changes / disabled",
-                          "width": 120,
-                          "height": 36,
-                          "padding": [
-                            6,
-                            16
-                          ],
-                          "opacity": 0.45,
-                          "fill": "#2490F4",
-                          "descendants": {
-                            "ugUJO": {
-                              "content": "Save changes",
-                              "fontSize": 13,
-                              "textAlign": "center",
-                              "fill": "#FFFFFF"
-                            }
-                          }
-                        }
-                      ]
                     }
                   ]
                 }
@@ -38494,331 +38209,52 @@
             },
             {
               "type": "frame",
-              "id": "XJ42J",
-              "name": "Your account / fixed section",
+              "id": "yQINR",
+              "name": "Global Cancel and Save changes",
               "width": "fill_container",
-              "stroke": "$home-line",
-              "strokeWidth": {
-                "top": 1
-              },
-              "layout": "vertical",
+              "gap": 16,
+              "padding": [
+                4,
+                0,
+                0,
+                0
+              ],
+              "justifyContent": "end",
+              "alignItems": "center",
               "children": [
                 {
-                  "type": "frame",
-                  "id": "r25uVL",
-                  "name": "Section heading",
-                  "width": "fill_container",
-                  "gap": 12,
-                  "padding": [
-                    24,
-                    28,
-                    18,
-                    28
-                  ],
-                  "justifyContent": "space_between",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "e0ISAI",
-                      "name": "Section title",
-                      "fill": "$home-ink",
-                      "content": "Your account",
-                      "lineHeight": 1.4,
-                      "fontFamily": "Geist",
-                      "fontSize": 20,
-                      "fontWeight": "700",
-                      "letterSpacing": -0.3
-                    }
-                  ]
+                  "type": "text",
+                  "id": "S5zEv1",
+                  "name": "Cancel / disabled",
+                  "opacity": 0.45,
+                  "fill": "$home-muted",
+                  "content": "Cancel",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 13,
+                  "fontWeight": "500"
                 },
                 {
-                  "type": "frame",
-                  "id": "LsmQv",
-                  "name": "Your account content",
-                  "width": "fill_container",
-                  "layout": "vertical",
+                  "id": "yZqXa",
+                  "type": "ref",
+                  "ref": "UEEFt",
+                  "name": "Save changes / disabled",
+                  "width": 120,
+                  "height": 36,
                   "padding": [
-                    0,
-                    28,
-                    24,
-                    28
+                    6,
+                    16
                   ],
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "tbCE9",
-                      "name": "Email setting",
-                      "width": "fill_container",
-                      "gap": 12,
-                      "padding": [
-                        16,
-                        0
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "P8kuO",
-                          "name": "Email identity",
-                          "width": "fill_container",
-                          "layout": "vertical",
-                          "gap": 4,
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "QIfgA",
-                              "name": "Setting label",
-                              "fill": "$home-muted",
-                              "content": "Email",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 12,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "text",
-                              "id": "JimZw",
-                              "name": "Fictional value",
-                              "fill": "$home-ink",
-                              "content": "alex@example.com",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "mXJBA",
-                          "name": "Change email button",
-                          "fill": "#172438",
-                          "cornerRadius": 8,
-                          "stroke": "$home-line",
-                          "strokeWidth": 1,
-                          "effect": {
-                            "type": "shadow",
-                            "shadowType": "outer",
-                            "color": "#0000001A",
-                            "offset": {
-                              "x": 0,
-                              "y": 4
-                            },
-                            "blur": 6
-                          },
-                          "padding": [
-                            8,
-                            12
-                          ],
-                          "justifyContent": "center",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "wT4EY",
-                              "name": "Action label",
-                              "fill": "$home-ink",
-                              "content": "Change email",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 13,
-                              "fontWeight": "500"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "pLlbI",
-                      "name": "Google setting",
-                      "width": "fill_container",
-                      "stroke": "$home-line",
-                      "strokeWidth": {
-                        "top": 1
-                      },
-                      "gap": 12,
-                      "padding": [
-                        16,
-                        0
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "id": "BjrA0",
-                          "name": "Official Google G",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "home-study/assets/google-g.png",
-                            "mode": "contain"
-                          },
-                          "width": 20,
-                          "height": 20
-                        },
-                        {
-                          "type": "frame",
-                          "id": "Q8Y1iP",
-                          "name": "Google identity",
-                          "width": "fill_container",
-                          "layout": "vertical",
-                          "gap": 4,
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "LJADv",
-                              "name": "Setting label",
-                              "fill": "$home-muted",
-                              "content": "Google",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 12,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "text",
-                              "id": "Bpuwt",
-                              "name": "Fictional value",
-                              "fill": "$home-ink",
-                              "content": "alex@example.com",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "iyQ5M",
-                          "name": "Disconnect button",
-                          "fill": "#172438",
-                          "cornerRadius": 8,
-                          "stroke": "$home-line",
-                          "strokeWidth": 1,
-                          "effect": {
-                            "type": "shadow",
-                            "shadowType": "outer",
-                            "color": "#0000001A",
-                            "offset": {
-                              "x": 0,
-                              "y": 4
-                            },
-                            "blur": 6
-                          },
-                          "padding": [
-                            8,
-                            12
-                          ],
-                          "justifyContent": "center",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "yiEL7",
-                              "name": "Action label",
-                              "fill": "$home-ink",
-                              "content": "Disconnect",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 13,
-                              "fontWeight": "500"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "FrrYu",
-                      "name": "AIHarder password setting",
-                      "width": "fill_container",
-                      "stroke": "$home-line",
-                      "strokeWidth": {
-                        "top": 1
-                      },
-                      "gap": 12,
-                      "padding": [
-                        16,
-                        0
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "NRb7h",
-                          "name": "AIHarder password identity",
-                          "width": "fill_container",
-                          "layout": "vertical",
-                          "gap": 4,
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "e7bXID",
-                              "name": "Setting label",
-                              "fill": "$home-muted",
-                              "content": "AIHarder password",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 12,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "text",
-                              "id": "zHq55",
-                              "name": "Fictional value",
-                              "fill": "$home-ink",
-                              "content": "••••••••",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "vRsdp",
-                          "name": "Change password button",
-                          "fill": "#172438",
-                          "cornerRadius": 8,
-                          "stroke": "$home-line",
-                          "strokeWidth": 1,
-                          "effect": {
-                            "type": "shadow",
-                            "shadowType": "outer",
-                            "color": "#0000001A",
-                            "offset": {
-                              "x": 0,
-                              "y": 4
-                            },
-                            "blur": 6
-                          },
-                          "padding": [
-                            8,
-                            12
-                          ],
-                          "justifyContent": "center",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "yvrSr",
-                              "name": "Action label",
-                              "fill": "$home-ink",
-                              "content": "Change password",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 13,
-                              "fontWeight": "500"
-                            }
-                          ]
-                        }
-                      ]
+                  "opacity": 0.45,
+                  "fill": "#2490F4",
+                  "descendants": {
+                    "ugUJO": {
+                      "content": "Save changes",
+                      "fontSize": 13,
+                      "textAlign": "center",
+                      "fill": "#FFFFFF"
                     }
-                  ]
+                  }
                 }
               ]
             }
@@ -38838,7 +38274,7 @@
               "id": "J6Fh0y",
               "name": "Independent project",
               "fill": "$home-muted",
-              "content": "An independent project. Not affiliated with AimHarder.",
+              "content": "AIHarder is an independent proyect. Not affiliated with AimHarder.",
               "lineHeight": 1.5,
               "fontFamily": "Geist",
               "fontSize": 11,
@@ -40090,6 +39526,1082 @@
                 {
                   "type": "text",
                   "id": "RlSTZ",
+                  "name": "Privacy",
+                  "fill": "$home-muted",
+                  "content": "Privacy",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "YiXOV",
+      "x": 4560,
+      "y": 21600,
+      "name": "AIHarder / Account settings / English / Light",
+      "context": "Separate account identity settings; immediate local specimen actions, no global Save changes. Fictional fields only.",
+      "theme": {
+        "appearance": "light",
+        "language": "en"
+      },
+      "clip": true,
+      "width": 1440,
+      "height": 1000,
+      "fill": "$home-surface",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": [
+        56,
+        400,
+        40,
+        400
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "eyIEW",
+          "name": "Compact identity and appearance / no site menu",
+          "width": "fill_container",
+          "height": 40,
+          "padding": [
+            0,
+            4
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "L1Or3M",
+              "type": "ref",
+              "ref": "GqxcO",
+              "name": "AIHarder identity",
+              "height": 40,
+              "gap": 8,
+              "descendants": {
+                "OMijO": {
+                  "width": 35,
+                  "height": 40,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "home-study/assets/pen/kettle-flat-light.png",
+                    "mode": "contain"
+                  }
+                },
+                "q4b4CU": {
+                  "fontSize": 19,
+                  "letterSpacing": -0.45
+                },
+                "NE7qo": {
+                  "fontSize": 19,
+                  "letterSpacing": -0.45
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "K0CD2",
+              "name": "Language and appearance",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "o6rO8J",
+                  "name": "Language selector",
+                  "gap": 5,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hyNij",
+                      "name": "Language",
+                      "fill": "$home-ink",
+                      "content": "English",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "irWsu",
+                      "name": "Select language / Lucide",
+                      "width": 12,
+                      "height": 12,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$home-ink"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon",
+                  "id": "Q3PZk",
+                  "name": "Appearance / Lucide",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "sun",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                },
+                {
+                  "type": "frame",
+                  "id": "yhW3l",
+                  "name": "Account avatar / menu trigger",
+                  "width": 32,
+                  "height": 32,
+                  "fill": "$home-ink",
+                  "cornerRadius": 32,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "X1KGIb",
+                      "name": "Fictional initial",
+                      "fill": "$home-bg",
+                      "content": "A",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "pP7X3",
+          "name": "Reusable participant frame / 640px",
+          "width": "fill_container",
+          "stroke": "$home-line",
+          "layout": "vertical",
+          "gap": 24,
+          "children": [
+            {
+              "type": "frame",
+              "id": "qOPUX",
+              "name": "Settings heading",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "OHqwc",
+                  "name": "Back to Settings",
+                  "fill": "$home-muted",
+                  "content": "← Settings",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "tGERl",
+                  "name": "Page title",
+                  "fill": "$home-ink",
+                  "content": "Account settings",
+                  "lineHeight": 1.3,
+                  "fontFamily": "Geist",
+                  "fontSize": 32,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.4
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "a5YHbN",
+              "name": "Account identity card",
+              "width": "fill_container",
+              "fill": "$home-bg",
+              "cornerRadius": 16,
+              "stroke": "$home-line",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "e0pKo",
+                  "name": "Your account content",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    24,
+                    28
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "DlNf6",
+                      "name": "Email setting",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "padding": [
+                        16,
+                        0
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "JW8U2",
+                          "name": "Email identity",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "ZLuOj",
+                              "name": "Setting label",
+                              "fill": "$home-muted",
+                              "content": "Email",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "jPY5W",
+                              "name": "Fictional value",
+                              "fill": "$home-ink",
+                              "content": "alex@example.com",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "h0CeL",
+                          "name": "Change email button",
+                          "fill": "#F7F9FB",
+                          "cornerRadius": 8,
+                          "stroke": "$home-line",
+                          "strokeWidth": 1,
+                          "effect": {
+                            "type": "shadow",
+                            "shadowType": "outer",
+                            "color": "#0000001A",
+                            "offset": {
+                              "x": 0,
+                              "y": 4
+                            },
+                            "blur": 6
+                          },
+                          "padding": [
+                            8,
+                            12
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "ERIXZ",
+                              "name": "Action label",
+                              "fill": "$home-ink",
+                              "content": "Change email",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "KFZ3J",
+                      "name": "Google setting",
+                      "width": "fill_container",
+                      "stroke": "$home-line",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "gap": 12,
+                      "padding": [
+                        16,
+                        0
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "lsGmG",
+                          "name": "Official Google G",
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "home-study/assets/google-g.png",
+                            "mode": "contain"
+                          },
+                          "width": 20,
+                          "height": 20
+                        },
+                        {
+                          "type": "frame",
+                          "id": "vGdNK",
+                          "name": "Google identity",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "k2yXa",
+                              "name": "Setting label",
+                              "fill": "$home-muted",
+                              "content": "Google",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "M7jN0h",
+                              "name": "Fictional value",
+                              "fill": "$home-ink",
+                              "content": "alex@example.com",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "NXlXM",
+                          "name": "Disconnect button",
+                          "fill": "#F7F9FB",
+                          "cornerRadius": 8,
+                          "stroke": "$home-line",
+                          "strokeWidth": 1,
+                          "effect": {
+                            "type": "shadow",
+                            "shadowType": "outer",
+                            "color": "#0000001A",
+                            "offset": {
+                              "x": 0,
+                              "y": 4
+                            },
+                            "blur": 6
+                          },
+                          "padding": [
+                            8,
+                            12
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "faFoX",
+                              "name": "Action label",
+                              "fill": "$home-ink",
+                              "content": "Disconnect",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "kdWT0",
+                      "name": "AIHarder password setting",
+                      "width": "fill_container",
+                      "stroke": "$home-line",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "gap": 12,
+                      "padding": [
+                        16,
+                        0
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "vdlSC",
+                          "name": "AIHarder password identity",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "ekSIu",
+                              "name": "Setting label",
+                              "fill": "$home-muted",
+                              "content": "AIHarder password",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "O78A3",
+                              "name": "Fictional value",
+                              "fill": "$home-ink",
+                              "content": "••••••••",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "UOSWc",
+                          "name": "Change password button",
+                          "fill": "#F7F9FB",
+                          "cornerRadius": 8,
+                          "stroke": "$home-line",
+                          "strokeWidth": 1,
+                          "effect": {
+                            "type": "shadow",
+                            "shadowType": "outer",
+                            "color": "#0000001A",
+                            "offset": {
+                              "x": 0,
+                              "y": 4
+                            },
+                            "blur": 6
+                          },
+                          "padding": [
+                            8,
+                            12
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "rSXgH",
+                              "name": "Action label",
+                              "fill": "$home-ink",
+                              "content": "Change password",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "xpTQr",
+          "name": "Quiet support and privacy footer",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "br9BG",
+              "name": "Independent project",
+              "fill": "$home-muted",
+              "content": "AIHarder is an independent proyect. Not affiliated with AimHarder.",
+              "lineHeight": 1.5,
+              "fontFamily": "Geist",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "bG8Ls",
+              "name": "Support and Privacy",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "AAU6F",
+                  "name": "Support",
+                  "fill": "$home-muted",
+                  "content": "Support",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "NJPX6",
+                  "name": "Privacy",
+                  "fill": "$home-muted",
+                  "content": "Privacy",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "e8dyV",
+      "x": 6160,
+      "y": 21600,
+      "name": "AIHarder / Account settings / English / Dark",
+      "context": "Separate account identity settings; immediate local specimen actions, no global Save changes. Fictional fields only.",
+      "theme": {
+        "appearance": "dark",
+        "language": "en"
+      },
+      "clip": true,
+      "width": 1440,
+      "height": 1000,
+      "fill": "$home-surface",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": [
+        56,
+        400,
+        40,
+        400
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "wXGZN",
+          "name": "Compact identity and appearance / no site menu",
+          "width": "fill_container",
+          "height": 40,
+          "padding": [
+            0,
+            4
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "A7Qmju",
+              "type": "ref",
+              "ref": "GqxcO",
+              "name": "AIHarder identity",
+              "height": 40,
+              "gap": 8,
+              "descendants": {
+                "OMijO": {
+                  "width": 35,
+                  "height": 40,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "home-study/assets/pen/kettle-flat-dark.png",
+                    "mode": "contain"
+                  }
+                },
+                "q4b4CU": {
+                  "fontSize": 19,
+                  "letterSpacing": -0.45
+                },
+                "NE7qo": {
+                  "fontSize": 19,
+                  "letterSpacing": -0.45
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "D876T5",
+              "name": "Language and appearance",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "xJxfU",
+                  "name": "Language selector",
+                  "gap": 5,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "N4onYe",
+                      "name": "Language",
+                      "fill": "$home-ink",
+                      "content": "English",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "a14Me",
+                      "name": "Select language / Lucide",
+                      "width": 12,
+                      "height": 12,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$home-ink"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon",
+                  "id": "OLIkO",
+                  "name": "Appearance / Lucide",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "moon",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                },
+                {
+                  "type": "frame",
+                  "id": "A5mWA",
+                  "name": "Account avatar / menu trigger",
+                  "width": 32,
+                  "height": 32,
+                  "fill": "$home-ink",
+                  "cornerRadius": 32,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "VWyeQ",
+                      "name": "Fictional initial",
+                      "fill": "$home-bg",
+                      "content": "A",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "cPUfC",
+          "name": "Reusable participant frame / 640px",
+          "width": "fill_container",
+          "stroke": "$home-line",
+          "layout": "vertical",
+          "gap": 24,
+          "children": [
+            {
+              "type": "frame",
+              "id": "c9IyYw",
+              "name": "Settings heading",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "vfN8g",
+                  "name": "Back to Settings",
+                  "fill": "$home-muted",
+                  "content": "← Settings",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "k1Zmti",
+                  "name": "Page title",
+                  "fill": "$home-ink",
+                  "content": "Account settings",
+                  "lineHeight": 1.3,
+                  "fontFamily": "Geist",
+                  "fontSize": 32,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.4
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "R5K37t",
+              "name": "Account identity card",
+              "width": "fill_container",
+              "fill": "$home-bg",
+              "cornerRadius": 16,
+              "stroke": "$home-line",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "nXonx",
+                  "name": "Your account content",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    24,
+                    28
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "rlnzr",
+                      "name": "Email setting",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "padding": [
+                        16,
+                        0
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "fPrZZ",
+                          "name": "Email identity",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "nbOx7",
+                              "name": "Setting label",
+                              "fill": "$home-muted",
+                              "content": "Email",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "dOPyS",
+                              "name": "Fictional value",
+                              "fill": "$home-ink",
+                              "content": "alex@example.com",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "x9nrq",
+                          "name": "Change email button",
+                          "fill": "#172438",
+                          "cornerRadius": 8,
+                          "stroke": "$home-line",
+                          "strokeWidth": 1,
+                          "effect": {
+                            "type": "shadow",
+                            "shadowType": "outer",
+                            "color": "#0000001A",
+                            "offset": {
+                              "x": 0,
+                              "y": 4
+                            },
+                            "blur": 6
+                          },
+                          "padding": [
+                            8,
+                            12
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "BUWDm",
+                              "name": "Action label",
+                              "fill": "$home-ink",
+                              "content": "Change email",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ff2jI",
+                      "name": "Google setting",
+                      "width": "fill_container",
+                      "stroke": "$home-line",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "gap": 12,
+                      "padding": [
+                        16,
+                        0
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "iY7DN",
+                          "name": "Official Google G",
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "home-study/assets/google-g.png",
+                            "mode": "contain"
+                          },
+                          "width": 20,
+                          "height": 20
+                        },
+                        {
+                          "type": "frame",
+                          "id": "jWs6N",
+                          "name": "Google identity",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "iYUGg",
+                              "name": "Setting label",
+                              "fill": "$home-muted",
+                              "content": "Google",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "RoeSA",
+                              "name": "Fictional value",
+                              "fill": "$home-ink",
+                              "content": "alex@example.com",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "O5YYYQ",
+                          "name": "Disconnect button",
+                          "fill": "#172438",
+                          "cornerRadius": 8,
+                          "stroke": "$home-line",
+                          "strokeWidth": 1,
+                          "effect": {
+                            "type": "shadow",
+                            "shadowType": "outer",
+                            "color": "#0000001A",
+                            "offset": {
+                              "x": 0,
+                              "y": 4
+                            },
+                            "blur": 6
+                          },
+                          "padding": [
+                            8,
+                            12
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "z4ZSI",
+                              "name": "Action label",
+                              "fill": "$home-ink",
+                              "content": "Disconnect",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "XK5wD",
+                      "name": "AIHarder password setting",
+                      "width": "fill_container",
+                      "stroke": "$home-line",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "gap": 12,
+                      "padding": [
+                        16,
+                        0
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "EjGrt",
+                          "name": "AIHarder password identity",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "P2HXlY",
+                              "name": "Setting label",
+                              "fill": "$home-muted",
+                              "content": "AIHarder password",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "L8rLe7",
+                              "name": "Fictional value",
+                              "fill": "$home-ink",
+                              "content": "••••••••",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "k3Renk",
+                          "name": "Change password button",
+                          "fill": "#172438",
+                          "cornerRadius": 8,
+                          "stroke": "$home-line",
+                          "strokeWidth": 1,
+                          "effect": {
+                            "type": "shadow",
+                            "shadowType": "outer",
+                            "color": "#0000001A",
+                            "offset": {
+                              "x": 0,
+                              "y": 4
+                            },
+                            "blur": 6
+                          },
+                          "padding": [
+                            8,
+                            12
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "iAJrL",
+                              "name": "Action label",
+                              "fill": "$home-ink",
+                              "content": "Change password",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "ZZaBw",
+          "name": "Quiet support and privacy footer",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "o1qZ56",
+              "name": "Independent project",
+              "fill": "$home-muted",
+              "content": "AIHarder is an independent proyect. Not affiliated with AimHarder.",
+              "lineHeight": 1.5,
+              "fontFamily": "Geist",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "rcLUn",
+              "name": "Support and Privacy",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "tCXna",
+                  "name": "Support",
+                  "fill": "$home-muted",
+                  "content": "Support",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "Gc2nu",
                   "name": "Privacy",
                   "fill": "$home-muted",
                   "content": "Privacy",
