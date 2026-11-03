@@ -1,5 +1,7 @@
 # AIHarder — compact participant frame and first-entry wizard
 
+**Historical comparison:** superseded by the owner-selected [configured settings study](private-settings-study.md). The reused route no longer serves a wizard or B tabs. Native B remains historical; native A is updated in place.
+
 Date: 2026-11-03. Supersedes the initial private Home proposal, which the owner rejected. The owner wants a small centered container without a site header/menu, minimal copy, two connection steps and a third optional introduction to confirmation settings. The frame should remain useful after setup. The example of three tabs is exploratory, not an accepted requirement.
 
 ## Reference lock before implementation

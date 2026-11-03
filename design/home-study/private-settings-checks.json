@@ -1,0 +1,45 @@
+{
+  "independent": {
+    "booking": false,
+    "publication": true,
+    "saveEnabled": true
+  },
+  "cancel": true,
+  "saved": {
+    "message": "Saved",
+    "saveDisabled": true
+  },
+  "missing": {
+    "addEnabled": true,
+    "apps": 2,
+    "disabled": true
+  },
+  "credentialInputs": 0,
+  "reconnected": true,
+  "independentRevocation": {
+    "focus": "section-1",
+    "remaining": "Hermes",
+    "upstream": true
+  },
+  "duplicateProviders": [
+    "Hermes",
+    "ChatGPT",
+    "ChatGPT"
+  ],
+  "accordionFocus": {
+    "expanded": "false",
+    "focus": "section-1"
+  },
+  "spanishDark": {
+    "credentialInputs": 0,
+    "overflow": false,
+    "theme": "dark",
+    "title": "Ajustes"
+  },
+  "system": {
+    "lang": "es",
+    "state": "configured",
+    "theme": "system"
+  },
+  "errors": []
+}
