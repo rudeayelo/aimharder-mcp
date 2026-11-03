@@ -24985,7 +24985,7 @@
                           "lineHeight": 1.5,
                           "fontFamily": "Geist",
                           "fontSize": 14,
-                          "fontWeight": "600"
+                          "fontWeight": "normal"
                         }
                       ]
                     },
@@ -25212,54 +25212,6 @@
                     0
                   ],
                   "children": [
-                    {
-                      "type": "frame",
-                      "id": "S2gTWI",
-                      "name": "Home breadcrumb",
-                      "width": "fill_container",
-                      "gap": 12,
-                      "padding": [
-                        0,
-                        0,
-                        24,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "o1BAF",
-                          "name": "Breadcrumb / Home",
-                          "fill": "$home-muted",
-                          "content": "Home",
-                          "lineHeight": 1.5,
-                          "fontFamily": "Geist",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "d4XJpB",
-                          "name": "Breadcrumb / /",
-                          "fill": "$home-muted",
-                          "content": "/",
-                          "lineHeight": 1.5,
-                          "fontFamily": "Geist",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "ZGmaq",
-                          "name": "Breadcrumb / Privacy",
-                          "fill": "$home-muted",
-                          "content": "Privacy",
-                          "lineHeight": 1.5,
-                          "fontFamily": "Geist",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
                     {
                       "type": "text",
                       "id": "pDapL",
@@ -26116,7 +26068,7 @@
                           "lineHeight": 1.5,
                           "fontFamily": "Geist",
                           "fontSize": 14,
-                          "fontWeight": "600"
+                          "fontWeight": "normal"
                         }
                       ]
                     },
@@ -26343,54 +26295,6 @@
                     0
                   ],
                   "children": [
-                    {
-                      "type": "frame",
-                      "id": "Xlkik",
-                      "name": "Home breadcrumb",
-                      "width": "fill_container",
-                      "gap": 12,
-                      "padding": [
-                        0,
-                        0,
-                        24,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "Ib3wh",
-                          "name": "Breadcrumb / Home",
-                          "fill": "$home-muted",
-                          "content": "Home",
-                          "lineHeight": 1.5,
-                          "fontFamily": "Geist",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "BVA18",
-                          "name": "Breadcrumb / /",
-                          "fill": "$home-muted",
-                          "content": "/",
-                          "lineHeight": 1.5,
-                          "fontFamily": "Geist",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "S1aKX",
-                          "name": "Breadcrumb / Privacy",
-                          "fill": "$home-muted",
-                          "content": "Privacy",
-                          "lineHeight": 1.5,
-                          "fontFamily": "Geist",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
                     {
                       "type": "text",
                       "id": "Y7amIP",

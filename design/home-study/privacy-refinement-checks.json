@@ -1,0 +1,991 @@
+{
+  "date": "2026-11-03",
+  "scope": "Remove Privacy breadcrumb and keep index typography stable",
+  "runtime": {
+    "beforeInactive": {
+      "border": "2px",
+      "fontWeight": "400",
+      "height": 33
+    },
+    "beforeActive": {
+      "border": "2px",
+      "fontWeight": "600",
+      "height": 54
+    },
+    "lightStates": [
+      {
+        "active": "About this notice",
+        "geometry": [
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "About this notice",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Information we use",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 41
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Your AimHarder credentials",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 82
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "What your AI app receives",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 144
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Sign-in and security",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 185
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Disconnecting and deleting",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 226
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Questions about your data",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 288
+          }
+        ]
+      },
+      {
+        "active": "Information we use",
+        "geometry": [
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "About this notice",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Information we use",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 41
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Your AimHarder credentials",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 82
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "What your AI app receives",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 144
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Sign-in and security",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 185
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Disconnecting and deleting",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 226
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Questions about your data",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 288
+          }
+        ]
+      },
+      {
+        "active": "Your AimHarder credentials",
+        "geometry": [
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "About this notice",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Information we use",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 41
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Your AimHarder credentials",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 82
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "What your AI app receives",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 144
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Sign-in and security",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 185
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Disconnecting and deleting",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 226
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Questions about your data",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 288
+          }
+        ]
+      },
+      {
+        "active": "What your AI app receives",
+        "geometry": [
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "About this notice",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Information we use",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 41
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Your AimHarder credentials",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 82
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "What your AI app receives",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 144
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Sign-in and security",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 185
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Disconnecting and deleting",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 226
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Questions about your data",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 288
+          }
+        ]
+      },
+      {
+        "active": "Sign-in and security",
+        "geometry": [
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "About this notice",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Information we use",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 41
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Your AimHarder credentials",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 82
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "What your AI app receives",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 144
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Sign-in and security",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 185
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Disconnecting and deleting",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 226
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Questions about your data",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 288
+          }
+        ]
+      },
+      {
+        "active": "Disconnecting and deleting",
+        "geometry": [
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "About this notice",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Information we use",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 41
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Your AimHarder credentials",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 82
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "What your AI app receives",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 144
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Sign-in and security",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 185
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Disconnecting and deleting",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 226
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Questions about your data",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 288
+          }
+        ]
+      },
+      {
+        "active": "Questions about your data",
+        "geometry": [
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "About this notice",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Information we use",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 41
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Your AimHarder credentials",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 82
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "What your AI app receives",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 144
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Sign-in and security",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 185
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Disconnecting and deleting",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 226
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Questions about your data",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 288
+          }
+        ]
+      }
+    ],
+    "darkStates": [
+      {
+        "active": "About this notice",
+        "geometry": [
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "About this notice",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Information we use",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 41
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Your AimHarder credentials",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 82
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "What your AI app receives",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 144
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Sign-in and security",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 185
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Disconnecting and deleting",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 226
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Questions about your data",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 288
+          }
+        ]
+      },
+      {
+        "active": "Information we use",
+        "geometry": [
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "About this notice",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Information we use",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 41
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Your AimHarder credentials",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 82
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "What your AI app receives",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 144
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Sign-in and security",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 185
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Disconnecting and deleting",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 226
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Questions about your data",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 288
+          }
+        ]
+      },
+      {
+        "active": "Your AimHarder credentials",
+        "geometry": [
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "About this notice",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Information we use",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 41
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Your AimHarder credentials",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 82
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "What your AI app receives",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 144
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Sign-in and security",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 185
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Disconnecting and deleting",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 226
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Questions about your data",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 288
+          }
+        ]
+      },
+      {
+        "active": "What your AI app receives",
+        "geometry": [
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "About this notice",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Information we use",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 41
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Your AimHarder credentials",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 82
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "What your AI app receives",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 144
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Sign-in and security",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 185
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Disconnecting and deleting",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 226
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Questions about your data",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 288
+          }
+        ]
+      },
+      {
+        "active": "Sign-in and security",
+        "geometry": [
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "About this notice",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Information we use",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 41
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Your AimHarder credentials",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 82
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "What your AI app receives",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 144
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Sign-in and security",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 185
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Disconnecting and deleting",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 226
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Questions about your data",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 288
+          }
+        ]
+      },
+      {
+        "active": "Disconnecting and deleting",
+        "geometry": [
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "About this notice",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Information we use",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 41
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Your AimHarder credentials",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 82
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "What your AI app receives",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 144
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Sign-in and security",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 185
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Disconnecting and deleting",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 226
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Questions about your data",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 288
+          }
+        ]
+      },
+      {
+        "active": "Questions about your data",
+        "geometry": [
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "About this notice",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Information we use",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 41
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Your AimHarder credentials",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 82
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "What your AI app receives",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 144
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Sign-in and security",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 185
+          },
+          {
+            "border": "2px",
+            "height": 54,
+            "text": "Disconnecting and deleting",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 226
+          },
+          {
+            "border": "2px",
+            "height": 33,
+            "text": "Questions about your data",
+            "weight": "400",
+            "width": 190,
+            "x": 0,
+            "y": 288
+          }
+        ]
+      }
+    ],
+    "final": {
+      "borderWidth": "2px",
+      "breadcrumbs": 0,
+      "fontWeight": "400",
+      "width": 1200
+    }
+  },
+  "pen": {
+    "pages": [
+      "U3l0MJ",
+      "g8DEOq"
+    ],
+    "breadcrumb": "removed",
+    "contentsWeight": "400 for every state",
+    "protectedCompared": 10,
+    "protectedUnchanged": 10
+  },
+  "limits": [
+    "Previous native nested clipping diagnostics remain unresolved; this refinement does not claim a clean structural pass."
+  ]
+}

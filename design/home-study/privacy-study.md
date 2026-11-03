@@ -47,3 +47,10 @@ This delivery changes design artifacts only. The content does not supersede acce
 Review correction: the first Spec pass found that Home treated `theme=system` as Light. Home now resolves System through the browser preference before mounting themed assets and reloads if that preference changes. An actual Privacy → Home → Privacy round trip retained `theme=system` and the current dark OS palette; the Home lower How to rule also matched Dark. The initial Spec finding remains recorded as resolved, not omitted.
 
 Final review: Standards 0 findings on the initial delivery and correction. Spec initially reported one System-return mismatch; after `5c28061`, no actionable findings remain. JavaScript syntax, changed-document/local-resource links, checks JSON and all 76 existing asset hashes passed. These checks do not approve legal copy or clear the native visitor diagnostics.
+
+
+## Index and title refinement — 2026-11-03
+
+Removed the Home/Privacy breadcrumb in HTML and both native Privacy pages. The brand still provides a route home. The reported index jump was reproduced at 1030px: the same label grew from 33px at weight 400 to 54px at weight 600, while its left border remained 2px in both states. Removed the active font-weight override, keeping all labels at normal weight (400); only text and border color change. The existing transparent 2px inactive border remains reserved. Native contents use normal weight throughout as well.
+
+Actual anchor navigation across all seven sections in each theme at 1030px retained identical item dimensions/relative positions in every active state. [Refinement checks](privacy-refinement-checks.json) retain the failing measurements and passing geometry. [Updated browser](previews/privacy-refinement/browser-light.jpg) · [Native Light](previews/privacy-refinement/pen/U3l0MJ.png) · [Native Dark](previews/privacy-refinement/pen/g8DEOq.png). Existing home/other-device variants and shared components remain unchanged. The prior native nested-bounds diagnostics and legal-draft limitations remain; no API or ADR decision changes.
