@@ -33121,6 +33121,3098 @@
           ]
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "f9e3b",
+      "x": 1360,
+      "y": 14710,
+      "name": "AIHarder / Recovery request / Desktop / English / Light",
+      "context": "Local design preview only. Recovery request and generic inbox confirmation; no email or provider request. No account existence disclosure.",
+      "theme": {
+        "appearance": "light",
+        "language": "en"
+      },
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$home-bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "q3z96",
+          "layoutPosition": "absolute",
+          "x": 1264,
+          "y": 24,
+          "name": "Authentication language and appearance",
+          "context": "Discreet language selector and cycling appearance control, not the public header.",
+          "width": 144,
+          "gap": 24,
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "fQ2HN",
+              "name": "Language selector",
+              "height": 44,
+              "gap": 7,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "yH4yN",
+                  "name": "Language current value",
+                  "fill": "$home-ink",
+                  "content": "English",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "icon",
+                  "id": "djAu4",
+                  "name": "Language chevron",
+                  "width": 12,
+                  "height": 12,
+                  "icon": "chevron-down",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "oFZL9",
+              "name": "Appearance / cycle System Light Dark",
+              "context": "Current appearance: Light. Next: Dark, then System.",
+              "width": 22,
+              "height": 44,
+              "cornerRadius": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "ddcZg",
+                  "name": "System appearance / monitor",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "sun",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "NLLuy",
+          "name": "Centered authentication flow",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            72,
+            120,
+            40,
+            120
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "m8mkMH",
+              "name": "Recovery request / centered",
+              "width": 400,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "pfylt",
+                  "name": "Centered AIHarder identity",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    32,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "bA2AC",
+                      "type": "ref",
+                      "ref": "GqxcO",
+                      "name": "AIHarder / return home",
+                      "height": 50,
+                      "descendants": {
+                        "OMijO": {
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "home-study/assets/pen/kettle-flat-light.png",
+                            "mode": "contain"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "rb5ac",
+                  "name": "Recovery heading",
+                  "fill": "$home-ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Forgot password?",
+                  "lineHeight": 1.15,
+                  "textAlign": "center",
+                  "fontFamily": "Geist",
+                  "fontSize": 36,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.8
+                },
+                {
+                  "type": "frame",
+                  "id": "C7AC1o",
+                  "name": "Recovery introduction",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    12,
+                    0,
+                    28,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "AeK55",
+                      "name": "Recovery instructions",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Enter the email you use for AIHarder. We’ll help you reset your password.",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Geist",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "eXrN2",
+                  "name": "Recovery email field",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    0,
+                    0,
+                    20,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "fwDHR",
+                      "name": "Email label",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Email",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "pracX",
+                      "name": "Email input / empty",
+                      "width": "fill_container",
+                      "height": 48,
+                      "fill": "$home-bg",
+                      "cornerRadius": 8,
+                      "stroke": "$home-line",
+                      "strokeWidth": 1,
+                      "padding": [
+                        12,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "FEfym",
+                          "name": "Email placeholder",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "you@example.com",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "sPTTP",
+                  "type": "ref",
+                  "ref": "UEEFt",
+                  "name": "Send reset link / local preview",
+                  "width": "fill_container",
+                  "height": 48,
+                  "cornerRadius": 8,
+                  "stroke": "#12528F",
+                  "strokeWidth": 1,
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#2174B9",
+                        "position": 0
+                      },
+                      {
+                        "color": "#1765B0",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000001A",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 6
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "descendants": {
+                    "ugUJO": {
+                      "content": "Send reset link",
+                      "fontSize": 16,
+                      "fill": "$home-on-action",
+                      "textAlign": "center"
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "woMLF",
+                  "name": "Reserved feedback and return",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    52,
+                    0,
+                    0,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "nZSf7",
+                      "name": "Recovery secondary action",
+                      "fill": "#1765B0",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Back to sign in",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Geist",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "xLu7G",
+          "name": "Quiet authentication footer / no border",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            16,
+            120,
+            24,
+            120
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "pfQ9i",
+              "name": "Independent-project disclosure",
+              "fill": "$home-muted",
+              "content": "An independent project. Not affiliated with AimHarder.",
+              "lineHeight": 1.5,
+              "fontFamily": "Geist",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "tE6ry",
+              "name": "Authentication support and privacy links",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "S0PC5",
+                  "name": "Authentication support link",
+                  "fill": "$home-muted",
+                  "content": "Support",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "y8nC9s",
+                  "name": "Authentication privacy link",
+                  "fill": "$home-muted",
+                  "content": "Privacy",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "IajMZ",
+      "x": 2960,
+      "y": 14710,
+      "name": "AIHarder / Recovery request / Desktop / English / Dark",
+      "context": "Local design preview only. Recovery request and generic inbox confirmation; no email or provider request. No account existence disclosure.",
+      "theme": {
+        "appearance": "dark",
+        "language": "en"
+      },
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$home-bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "j06Ae",
+          "layoutPosition": "absolute",
+          "x": 1264,
+          "y": 24,
+          "name": "Authentication language and appearance",
+          "context": "Discreet language selector and cycling appearance control, not the public header.",
+          "width": 144,
+          "gap": 24,
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "LVEUl",
+              "name": "Language selector",
+              "height": 44,
+              "gap": 7,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "H2IGi",
+                  "name": "Language current value",
+                  "fill": "$home-ink",
+                  "content": "English",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "icon",
+                  "id": "q7RwUh",
+                  "name": "Language chevron",
+                  "width": 12,
+                  "height": 12,
+                  "icon": "chevron-down",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "dS0lz",
+              "name": "Appearance / cycle System Light Dark",
+              "context": "Current appearance: Dark. Next: System, then Light.",
+              "width": 22,
+              "height": 44,
+              "cornerRadius": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "g46jnj",
+                  "name": "System appearance / monitor",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "moon",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "B0He8W",
+          "name": "Centered authentication flow",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            72,
+            120,
+            40,
+            120
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "ewcJC",
+              "name": "Recovery request / centered",
+              "width": 400,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "jbjhF",
+                  "name": "Centered AIHarder identity",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    32,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "YA6er",
+                      "type": "ref",
+                      "ref": "GqxcO",
+                      "name": "AIHarder / return home",
+                      "height": 50,
+                      "descendants": {
+                        "OMijO": {
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "home-study/assets/pen/kettle-flat-dark.png",
+                            "mode": "contain"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "AlfJs",
+                  "name": "Recovery heading",
+                  "fill": "$home-ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Forgot password?",
+                  "lineHeight": 1.15,
+                  "textAlign": "center",
+                  "fontFamily": "Geist",
+                  "fontSize": 36,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.8
+                },
+                {
+                  "type": "frame",
+                  "id": "Osf5I",
+                  "name": "Recovery introduction",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    12,
+                    0,
+                    28,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "nenWu",
+                      "name": "Recovery instructions",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Enter the email you use for AIHarder. We’ll help you reset your password.",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Geist",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "tusoN",
+                  "name": "Recovery email field",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    0,
+                    0,
+                    20,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "KobeT",
+                      "name": "Email label",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Email",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qZ8ii",
+                      "name": "Email input / empty",
+                      "width": "fill_container",
+                      "height": 48,
+                      "fill": "$home-bg",
+                      "cornerRadius": 8,
+                      "stroke": "$home-line",
+                      "strokeWidth": 1,
+                      "padding": [
+                        12,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "rxMnN",
+                          "name": "Email placeholder",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "you@example.com",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "g2J8k",
+                  "type": "ref",
+                  "ref": "UEEFt",
+                  "name": "Send reset link / local preview",
+                  "width": "fill_container",
+                  "height": 48,
+                  "cornerRadius": 8,
+                  "stroke": "#61A9EB",
+                  "strokeWidth": 1,
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#47A3F6",
+                        "position": 0
+                      },
+                      {
+                        "color": "#2490F4",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000001A",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 6
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "descendants": {
+                    "ugUJO": {
+                      "content": "Send reset link",
+                      "fontSize": 16,
+                      "fill": "$home-on-action",
+                      "textAlign": "center"
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "CHMUl",
+                  "name": "Reserved feedback and return",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    52,
+                    0,
+                    0,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "dIFHA",
+                      "name": "Recovery secondary action",
+                      "fill": "#61A9EB",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Back to sign in",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Geist",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "p1BIXA",
+          "name": "Quiet authentication footer / no border",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            16,
+            120,
+            24,
+            120
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "cTx4x",
+              "name": "Independent-project disclosure",
+              "fill": "$home-muted",
+              "content": "An independent project. Not affiliated with AimHarder.",
+              "lineHeight": 1.5,
+              "fontFamily": "Geist",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "jOiSG",
+              "name": "Authentication support and privacy links",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "H7Q8V",
+                  "name": "Authentication support link",
+                  "fill": "$home-muted",
+                  "content": "Support",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "GAl5Q",
+                  "name": "Authentication privacy link",
+                  "fill": "$home-muted",
+                  "content": "Privacy",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "wibes",
+      "x": 1360,
+      "y": 15850,
+      "name": "AIHarder / Recovery request / Desktop / Español / Light",
+      "context": "Local design preview only. Recovery request and generic inbox confirmation; no email or provider request. No account existence disclosure.",
+      "theme": {
+        "appearance": "light",
+        "language": "es"
+      },
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$home-bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "Uhut5",
+          "layoutPosition": "absolute",
+          "x": 1264,
+          "y": 24,
+          "name": "Authentication language and appearance",
+          "context": "Discreet language selector and cycling appearance control, not the public header.",
+          "width": 144,
+          "gap": 24,
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "tSrEl",
+              "name": "Language selector",
+              "height": 44,
+              "gap": 7,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "K9GUdA",
+                  "name": "Language current value",
+                  "fill": "$home-ink",
+                  "content": "Español",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "icon",
+                  "id": "oPI1B",
+                  "name": "Language chevron",
+                  "width": 12,
+                  "height": 12,
+                  "icon": "chevron-down",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "G5Rrd4",
+              "name": "Appearance / cycle System Light Dark",
+              "context": "Current appearance: Light. Next: Dark, then System.",
+              "width": 22,
+              "height": 44,
+              "cornerRadius": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "J1IfYW",
+                  "name": "System appearance / monitor",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "sun",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "n4Uxcr",
+          "name": "Centered authentication flow",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            72,
+            120,
+            40,
+            120
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "u9WVs",
+              "name": "Recovery request / centered",
+              "width": 400,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "xpvah",
+                  "name": "Centered AIHarder identity",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    32,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "PAVg2",
+                      "type": "ref",
+                      "ref": "GqxcO",
+                      "name": "AIHarder / return home",
+                      "height": 50,
+                      "descendants": {
+                        "OMijO": {
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "home-study/assets/pen/kettle-flat-light.png",
+                            "mode": "contain"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "f6MEb",
+                  "name": "Recovery heading",
+                  "fill": "$home-ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "¿Has olvidado tu contraseña?",
+                  "lineHeight": 1.15,
+                  "textAlign": "center",
+                  "fontFamily": "Geist",
+                  "fontSize": 36,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.8
+                },
+                {
+                  "type": "frame",
+                  "id": "Uob8p",
+                  "name": "Recovery introduction",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    12,
+                    0,
+                    28,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hop2f",
+                      "name": "Recovery instructions",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Introduce el correo que usas en AIHarder. Te ayudaremos a restablecer tu contraseña.",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Geist",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "L7Y4N",
+                  "name": "Recovery email field",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    0,
+                    0,
+                    20,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "GzVUH",
+                      "name": "Email label",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Correo electrónico",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "SM910",
+                      "name": "Email input / empty",
+                      "width": "fill_container",
+                      "height": 48,
+                      "fill": "$home-bg",
+                      "cornerRadius": 8,
+                      "stroke": "$home-line",
+                      "strokeWidth": 1,
+                      "padding": [
+                        12,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "e5J0c",
+                          "name": "Email placeholder",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "you@example.com",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "dPKB3",
+                  "type": "ref",
+                  "ref": "UEEFt",
+                  "name": "Send reset link / local preview",
+                  "width": "fill_container",
+                  "height": 48,
+                  "cornerRadius": 8,
+                  "stroke": "#12528F",
+                  "strokeWidth": 1,
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#2174B9",
+                        "position": 0
+                      },
+                      {
+                        "color": "#1765B0",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000001A",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 6
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "descendants": {
+                    "ugUJO": {
+                      "content": "Enviar enlace",
+                      "fontSize": 16,
+                      "fill": "$home-on-action",
+                      "textAlign": "center"
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "BchdX",
+                  "name": "Reserved feedback and return",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    52,
+                    0,
+                    0,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hQX2B",
+                      "name": "Recovery secondary action",
+                      "fill": "#1765B0",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Volver a entrar",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Geist",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "myMey",
+          "name": "Quiet authentication footer / no border",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            16,
+            120,
+            24,
+            120
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "MKLzO",
+              "name": "Independent-project disclosure",
+              "fill": "$home-muted",
+              "content": "Un proyecto independiente. No afiliado a AimHarder.",
+              "lineHeight": 1.5,
+              "fontFamily": "Geist",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "d6RZo0",
+              "name": "Authentication support and privacy links",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "o8Ic3",
+                  "name": "Authentication support link",
+                  "fill": "$home-muted",
+                  "content": "Soporte",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "SCXcE",
+                  "name": "Authentication privacy link",
+                  "fill": "$home-muted",
+                  "content": "Privacidad",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "bTwVh",
+      "x": 2960,
+      "y": 15850,
+      "name": "AIHarder / Recovery request / Desktop / Español / Dark",
+      "context": "Local design preview only. Recovery request and generic inbox confirmation; no email or provider request. No account existence disclosure.",
+      "theme": {
+        "appearance": "dark",
+        "language": "es"
+      },
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$home-bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "n2usN",
+          "layoutPosition": "absolute",
+          "x": 1264,
+          "y": 24,
+          "name": "Authentication language and appearance",
+          "context": "Discreet language selector and cycling appearance control, not the public header.",
+          "width": 144,
+          "gap": 24,
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "Bwnze",
+              "name": "Language selector",
+              "height": 44,
+              "gap": 7,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "eyyBA",
+                  "name": "Language current value",
+                  "fill": "$home-ink",
+                  "content": "Español",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "icon",
+                  "id": "te3G6",
+                  "name": "Language chevron",
+                  "width": 12,
+                  "height": 12,
+                  "icon": "chevron-down",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "wMtg4",
+              "name": "Appearance / cycle System Light Dark",
+              "context": "Current appearance: Dark. Next: System, then Light.",
+              "width": 22,
+              "height": 44,
+              "cornerRadius": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "dNlt7",
+                  "name": "System appearance / monitor",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "moon",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "q3erl",
+          "name": "Centered authentication flow",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            72,
+            120,
+            40,
+            120
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "vICBI",
+              "name": "Recovery request / centered",
+              "width": 400,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ml5c1",
+                  "name": "Centered AIHarder identity",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    32,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "IxKp8",
+                      "type": "ref",
+                      "ref": "GqxcO",
+                      "name": "AIHarder / return home",
+                      "height": 50,
+                      "descendants": {
+                        "OMijO": {
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "home-study/assets/pen/kettle-flat-dark.png",
+                            "mode": "contain"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "VyDPm",
+                  "name": "Recovery heading",
+                  "fill": "$home-ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "¿Has olvidado tu contraseña?",
+                  "lineHeight": 1.15,
+                  "textAlign": "center",
+                  "fontFamily": "Geist",
+                  "fontSize": 36,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.8
+                },
+                {
+                  "type": "frame",
+                  "id": "HAeH8",
+                  "name": "Recovery introduction",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    12,
+                    0,
+                    28,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "cRQo5",
+                      "name": "Recovery instructions",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Introduce el correo que usas en AIHarder. Te ayudaremos a restablecer tu contraseña.",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Geist",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "C9DZb",
+                  "name": "Recovery email field",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    0,
+                    0,
+                    20,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "G1I1j",
+                      "name": "Email label",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Correo electrónico",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Fk769",
+                      "name": "Email input / empty",
+                      "width": "fill_container",
+                      "height": 48,
+                      "fill": "$home-bg",
+                      "cornerRadius": 8,
+                      "stroke": "$home-line",
+                      "strokeWidth": 1,
+                      "padding": [
+                        12,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "gZr4J",
+                          "name": "Email placeholder",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "you@example.com",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "f3ccYP",
+                  "type": "ref",
+                  "ref": "UEEFt",
+                  "name": "Send reset link / local preview",
+                  "width": "fill_container",
+                  "height": 48,
+                  "cornerRadius": 8,
+                  "stroke": "#61A9EB",
+                  "strokeWidth": 1,
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#47A3F6",
+                        "position": 0
+                      },
+                      {
+                        "color": "#2490F4",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000001A",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 6
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "descendants": {
+                    "ugUJO": {
+                      "content": "Enviar enlace",
+                      "fontSize": 16,
+                      "fill": "$home-on-action",
+                      "textAlign": "center"
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "S9wjA",
+                  "name": "Reserved feedback and return",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    52,
+                    0,
+                    0,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "iIrbU",
+                      "name": "Recovery secondary action",
+                      "fill": "#61A9EB",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Volver a entrar",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Geist",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "rLaIw",
+          "name": "Quiet authentication footer / no border",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            16,
+            120,
+            24,
+            120
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "IwMeK",
+              "name": "Independent-project disclosure",
+              "fill": "$home-muted",
+              "content": "Un proyecto independiente. No afiliado a AimHarder.",
+              "lineHeight": 1.5,
+              "fontFamily": "Geist",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "PEG35",
+              "name": "Authentication support and privacy links",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "qQW2y",
+                  "name": "Authentication support link",
+                  "fill": "$home-muted",
+                  "content": "Soporte",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "WGVFD",
+                  "name": "Authentication privacy link",
+                  "fill": "$home-muted",
+                  "content": "Privacidad",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "j6Soqk",
+      "x": 1360,
+      "y": 16990,
+      "name": "AIHarder / Recovery confirmation / Desktop / English / Light",
+      "context": "Local design preview only. Recovery request and generic inbox confirmation; no email or provider request. No account existence disclosure.",
+      "theme": {
+        "appearance": "light",
+        "language": "en"
+      },
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$home-bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "T0etMV",
+          "layoutPosition": "absolute",
+          "x": 1264,
+          "y": 24,
+          "name": "Authentication language and appearance",
+          "context": "Discreet language selector and cycling appearance control, not the public header.",
+          "width": 144,
+          "gap": 24,
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "D3Dcs",
+              "name": "Language selector",
+              "height": 44,
+              "gap": 7,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "PYfuR",
+                  "name": "Language current value",
+                  "fill": "$home-ink",
+                  "content": "English",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "icon",
+                  "id": "NTTtJ",
+                  "name": "Language chevron",
+                  "width": 12,
+                  "height": 12,
+                  "icon": "chevron-down",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "x5SA28",
+              "name": "Appearance / cycle System Light Dark",
+              "context": "Current appearance: Light. Next: Dark, then System.",
+              "width": 22,
+              "height": 44,
+              "cornerRadius": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "jMWmS",
+                  "name": "System appearance / monitor",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "sun",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "VuptD",
+          "name": "Centered authentication flow",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            72,
+            120,
+            40,
+            120
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "a4pB60",
+              "name": "Recovery confirmation / centered",
+              "width": 400,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ge4XM",
+                  "name": "Centered AIHarder identity",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    32,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "TVBTP",
+                      "type": "ref",
+                      "ref": "GqxcO",
+                      "name": "AIHarder / return home",
+                      "height": 50,
+                      "descendants": {
+                        "OMijO": {
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "home-study/assets/pen/kettle-flat-light.png",
+                            "mode": "contain"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Xluwd",
+                  "name": "Mail confirmation icon",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    20,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "RD1lm",
+                      "name": "Mail / Lucide",
+                      "width": 32,
+                      "height": 32,
+                      "icon": "mail",
+                      "library": "lucide",
+                      "fill": "$home-blue"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "F9Rtn",
+                  "name": "Recovery heading",
+                  "fill": "$home-ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Check your inbox",
+                  "lineHeight": 1.15,
+                  "textAlign": "center",
+                  "fontFamily": "Geist",
+                  "fontSize": 36,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.8
+                },
+                {
+                  "type": "frame",
+                  "id": "XssUI",
+                  "name": "Recovery introduction",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    12,
+                    0,
+                    28,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "e691VW",
+                      "name": "Recovery instructions",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "If this email is linked to an AIHarder account, you’ll receive a password reset link.",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Geist",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "UfEMS",
+                  "name": "Inbox guidance",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    28,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "H5k4q",
+                      "name": "Spam and support guidance",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Check your spam folder. If nothing arrives, try again or contact support.",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Geist",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "id": "Q8Ny3g",
+                  "type": "ref",
+                  "ref": "UEEFt",
+                  "name": "Back to sign in",
+                  "width": "fill_container",
+                  "height": 48,
+                  "cornerRadius": 8,
+                  "stroke": "#12528F",
+                  "strokeWidth": 1,
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#2174B9",
+                        "position": 0
+                      },
+                      {
+                        "color": "#1765B0",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000001A",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 6
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "descendants": {
+                    "ugUJO": {
+                      "content": "Back to sign in",
+                      "fontSize": 16,
+                      "fill": "$home-on-action",
+                      "textAlign": "center"
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "WIqF7",
+                  "name": "Alternative email action",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    24,
+                    0,
+                    0,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "B9eK7c",
+                      "name": "Recovery secondary action",
+                      "fill": "#1765B0",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Try another email",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Geist",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "pX6Qk",
+          "name": "Quiet authentication footer / no border",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            16,
+            120,
+            24,
+            120
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "T3T0kI",
+              "name": "Independent-project disclosure",
+              "fill": "$home-muted",
+              "content": "An independent project. Not affiliated with AimHarder.",
+              "lineHeight": 1.5,
+              "fontFamily": "Geist",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "x8kjBA",
+              "name": "Authentication support and privacy links",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "F97aS",
+                  "name": "Authentication support link",
+                  "fill": "$home-muted",
+                  "content": "Support",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "tbrk7",
+                  "name": "Authentication privacy link",
+                  "fill": "$home-muted",
+                  "content": "Privacy",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "eQRfd",
+      "x": 2960,
+      "y": 16990,
+      "name": "AIHarder / Recovery confirmation / Desktop / English / Dark",
+      "context": "Local design preview only. Recovery request and generic inbox confirmation; no email or provider request. No account existence disclosure.",
+      "theme": {
+        "appearance": "dark",
+        "language": "en"
+      },
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$home-bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "hhOA2",
+          "layoutPosition": "absolute",
+          "x": 1264,
+          "y": 24,
+          "name": "Authentication language and appearance",
+          "context": "Discreet language selector and cycling appearance control, not the public header.",
+          "width": 144,
+          "gap": 24,
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "G0ykyJ",
+              "name": "Language selector",
+              "height": 44,
+              "gap": 7,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "nDwUU",
+                  "name": "Language current value",
+                  "fill": "$home-ink",
+                  "content": "English",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "icon",
+                  "id": "DQVKa",
+                  "name": "Language chevron",
+                  "width": 12,
+                  "height": 12,
+                  "icon": "chevron-down",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "kAMxw",
+              "name": "Appearance / cycle System Light Dark",
+              "context": "Current appearance: Dark. Next: System, then Light.",
+              "width": 22,
+              "height": 44,
+              "cornerRadius": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "F6YWc",
+                  "name": "System appearance / monitor",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "moon",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "iyzU2",
+          "name": "Centered authentication flow",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            72,
+            120,
+            40,
+            120
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "aod7K",
+              "name": "Recovery confirmation / centered",
+              "width": 400,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "U5iDoe",
+                  "name": "Centered AIHarder identity",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    32,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "jsHwE",
+                      "type": "ref",
+                      "ref": "GqxcO",
+                      "name": "AIHarder / return home",
+                      "height": 50,
+                      "descendants": {
+                        "OMijO": {
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "home-study/assets/pen/kettle-flat-dark.png",
+                            "mode": "contain"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "hClIw",
+                  "name": "Mail confirmation icon",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    20,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "s8lNf",
+                      "name": "Mail / Lucide",
+                      "width": 32,
+                      "height": 32,
+                      "icon": "mail",
+                      "library": "lucide",
+                      "fill": "$home-blue"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "ZUW2a",
+                  "name": "Recovery heading",
+                  "fill": "$home-ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Check your inbox",
+                  "lineHeight": 1.15,
+                  "textAlign": "center",
+                  "fontFamily": "Geist",
+                  "fontSize": 36,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.8
+                },
+                {
+                  "type": "frame",
+                  "id": "CMgHA",
+                  "name": "Recovery introduction",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    12,
+                    0,
+                    28,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "g29C6y",
+                      "name": "Recovery instructions",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "If this email is linked to an AIHarder account, you’ll receive a password reset link.",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Geist",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "fw7QG",
+                  "name": "Inbox guidance",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    28,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "DWoGE",
+                      "name": "Spam and support guidance",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Check your spam folder. If nothing arrives, try again or contact support.",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Geist",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "id": "GQxOx",
+                  "type": "ref",
+                  "ref": "UEEFt",
+                  "name": "Back to sign in",
+                  "width": "fill_container",
+                  "height": 48,
+                  "cornerRadius": 8,
+                  "stroke": "#61A9EB",
+                  "strokeWidth": 1,
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#47A3F6",
+                        "position": 0
+                      },
+                      {
+                        "color": "#2490F4",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000001A",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 6
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "descendants": {
+                    "ugUJO": {
+                      "content": "Back to sign in",
+                      "fontSize": 16,
+                      "fill": "$home-on-action",
+                      "textAlign": "center"
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "tYiEm",
+                  "name": "Alternative email action",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    24,
+                    0,
+                    0,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "cM7bS",
+                      "name": "Recovery secondary action",
+                      "fill": "#61A9EB",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Try another email",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Geist",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "U6FUSq",
+          "name": "Quiet authentication footer / no border",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            16,
+            120,
+            24,
+            120
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "w1iuW",
+              "name": "Independent-project disclosure",
+              "fill": "$home-muted",
+              "content": "An independent project. Not affiliated with AimHarder.",
+              "lineHeight": 1.5,
+              "fontFamily": "Geist",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "xvMLA",
+              "name": "Authentication support and privacy links",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "XKZb8",
+                  "name": "Authentication support link",
+                  "fill": "$home-muted",
+                  "content": "Support",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "TIRhl",
+                  "name": "Authentication privacy link",
+                  "fill": "$home-muted",
+                  "content": "Privacy",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "NElwi",
+      "x": 1360,
+      "y": 18130,
+      "name": "AIHarder / Recovery confirmation / Desktop / Español / Light",
+      "context": "Local design preview only. Recovery request and generic inbox confirmation; no email or provider request. No account existence disclosure.",
+      "theme": {
+        "appearance": "light",
+        "language": "es"
+      },
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$home-bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "g1TNqx",
+          "layoutPosition": "absolute",
+          "x": 1264,
+          "y": 24,
+          "name": "Authentication language and appearance",
+          "context": "Discreet language selector and cycling appearance control, not the public header.",
+          "width": 144,
+          "gap": 24,
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "kh8Xc",
+              "name": "Language selector",
+              "height": 44,
+              "gap": 7,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "z7A1IR",
+                  "name": "Language current value",
+                  "fill": "$home-ink",
+                  "content": "Español",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "icon",
+                  "id": "Up71K",
+                  "name": "Language chevron",
+                  "width": 12,
+                  "height": 12,
+                  "icon": "chevron-down",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "fxFpv",
+              "name": "Appearance / cycle System Light Dark",
+              "context": "Current appearance: Light. Next: Dark, then System.",
+              "width": 22,
+              "height": 44,
+              "cornerRadius": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "V0VWm",
+                  "name": "System appearance / monitor",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "sun",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "FTqm0",
+          "name": "Centered authentication flow",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            72,
+            120,
+            40,
+            120
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "SsN7H",
+              "name": "Recovery confirmation / centered",
+              "width": 400,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Tpwbd",
+                  "name": "Centered AIHarder identity",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    32,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "NOye2",
+                      "type": "ref",
+                      "ref": "GqxcO",
+                      "name": "AIHarder / return home",
+                      "height": 50,
+                      "descendants": {
+                        "OMijO": {
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "home-study/assets/pen/kettle-flat-light.png",
+                            "mode": "contain"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "JsFVJ",
+                  "name": "Mail confirmation icon",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    20,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "ppdOa",
+                      "name": "Mail / Lucide",
+                      "width": 32,
+                      "height": 32,
+                      "icon": "mail",
+                      "library": "lucide",
+                      "fill": "$home-blue"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "u3VqPY",
+                  "name": "Recovery heading",
+                  "fill": "$home-ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Revisa tu correo",
+                  "lineHeight": 1.15,
+                  "textAlign": "center",
+                  "fontFamily": "Geist",
+                  "fontSize": 36,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.8
+                },
+                {
+                  "type": "frame",
+                  "id": "ezeds",
+                  "name": "Recovery introduction",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    12,
+                    0,
+                    28,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "q3Gc4z",
+                      "name": "Recovery instructions",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Si este correo está vinculado a una cuenta de AIHarder, recibirás un enlace para restablecer tu contraseña.",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Geist",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "r58osD",
+                  "name": "Inbox guidance",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    28,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "c8xHe",
+                      "name": "Spam and support guidance",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Revisa la carpeta de spam. Si no llega nada, inténtalo de nuevo o contacta con soporte.",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Geist",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "id": "L2MlHA",
+                  "type": "ref",
+                  "ref": "UEEFt",
+                  "name": "Back to sign in",
+                  "width": "fill_container",
+                  "height": 48,
+                  "cornerRadius": 8,
+                  "stroke": "#12528F",
+                  "strokeWidth": 1,
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#2174B9",
+                        "position": 0
+                      },
+                      {
+                        "color": "#1765B0",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000001A",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 6
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "descendants": {
+                    "ugUJO": {
+                      "content": "Volver a entrar",
+                      "fontSize": 16,
+                      "fill": "$home-on-action",
+                      "textAlign": "center"
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "R3wgw",
+                  "name": "Alternative email action",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    24,
+                    0,
+                    0,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hMkDl",
+                      "name": "Recovery secondary action",
+                      "fill": "#1765B0",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Usar otro correo",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Geist",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "MQQN3",
+          "name": "Quiet authentication footer / no border",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            16,
+            120,
+            24,
+            120
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "zUjUW",
+              "name": "Independent-project disclosure",
+              "fill": "$home-muted",
+              "content": "Un proyecto independiente. No afiliado a AimHarder.",
+              "lineHeight": 1.5,
+              "fontFamily": "Geist",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "UNiVM",
+              "name": "Authentication support and privacy links",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "V9btQ",
+                  "name": "Authentication support link",
+                  "fill": "$home-muted",
+                  "content": "Soporte",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "jF56d",
+                  "name": "Authentication privacy link",
+                  "fill": "$home-muted",
+                  "content": "Privacidad",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "mlYB3",
+      "x": 2960,
+      "y": 18130,
+      "name": "AIHarder / Recovery confirmation / Desktop / Español / Dark",
+      "context": "Local design preview only. Recovery request and generic inbox confirmation; no email or provider request. No account existence disclosure.",
+      "theme": {
+        "appearance": "dark",
+        "language": "es"
+      },
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$home-bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "XxREx",
+          "layoutPosition": "absolute",
+          "x": 1264,
+          "y": 24,
+          "name": "Authentication language and appearance",
+          "context": "Discreet language selector and cycling appearance control, not the public header.",
+          "width": 144,
+          "gap": 24,
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "k3NQL8",
+              "name": "Language selector",
+              "height": 44,
+              "gap": 7,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "sdW3i",
+                  "name": "Language current value",
+                  "fill": "$home-ink",
+                  "content": "Español",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "icon",
+                  "id": "HKdbD",
+                  "name": "Language chevron",
+                  "width": 12,
+                  "height": 12,
+                  "icon": "chevron-down",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "QmeFa",
+              "name": "Appearance / cycle System Light Dark",
+              "context": "Current appearance: Dark. Next: System, then Light.",
+              "width": 22,
+              "height": 44,
+              "cornerRadius": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "Wq6qy",
+                  "name": "System appearance / monitor",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "moon",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "CoQ8i",
+          "name": "Centered authentication flow",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            72,
+            120,
+            40,
+            120
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "Kmboi",
+              "name": "Recovery confirmation / centered",
+              "width": 400,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "JHuVE",
+                  "name": "Centered AIHarder identity",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    32,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "MsiZl",
+                      "type": "ref",
+                      "ref": "GqxcO",
+                      "name": "AIHarder / return home",
+                      "height": 50,
+                      "descendants": {
+                        "OMijO": {
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "home-study/assets/pen/kettle-flat-dark.png",
+                            "mode": "contain"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "AbPUQ",
+                  "name": "Mail confirmation icon",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    20,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "vq1Ja",
+                      "name": "Mail / Lucide",
+                      "width": 32,
+                      "height": 32,
+                      "icon": "mail",
+                      "library": "lucide",
+                      "fill": "$home-blue"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "s3scu",
+                  "name": "Recovery heading",
+                  "fill": "$home-ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Revisa tu correo",
+                  "lineHeight": 1.15,
+                  "textAlign": "center",
+                  "fontFamily": "Geist",
+                  "fontSize": 36,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.8
+                },
+                {
+                  "type": "frame",
+                  "id": "RRKOU",
+                  "name": "Recovery introduction",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    12,
+                    0,
+                    28,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "f6za7H",
+                      "name": "Recovery instructions",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Si este correo está vinculado a una cuenta de AIHarder, recibirás un enlace para restablecer tu contraseña.",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Geist",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "arx4U",
+                  "name": "Inbox guidance",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    28,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "KXKvg",
+                      "name": "Spam and support guidance",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Revisa la carpeta de spam. Si no llega nada, inténtalo de nuevo o contacta con soporte.",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Geist",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "id": "vbSMa",
+                  "type": "ref",
+                  "ref": "UEEFt",
+                  "name": "Back to sign in",
+                  "width": "fill_container",
+                  "height": 48,
+                  "cornerRadius": 8,
+                  "stroke": "#61A9EB",
+                  "strokeWidth": 1,
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#47A3F6",
+                        "position": 0
+                      },
+                      {
+                        "color": "#2490F4",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000001A",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 6
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "descendants": {
+                    "ugUJO": {
+                      "content": "Volver a entrar",
+                      "fontSize": 16,
+                      "fill": "$home-on-action",
+                      "textAlign": "center"
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "De05Z",
+                  "name": "Alternative email action",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    24,
+                    0,
+                    0,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "BpxiU",
+                      "name": "Recovery secondary action",
+                      "fill": "#61A9EB",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Usar otro correo",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Geist",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "vmoW0",
+          "name": "Quiet authentication footer / no border",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            16,
+            120,
+            24,
+            120
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "bZffV",
+              "name": "Independent-project disclosure",
+              "fill": "$home-muted",
+              "content": "Un proyecto independiente. No afiliado a AimHarder.",
+              "lineHeight": 1.5,
+              "fontFamily": "Geist",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "RfuOG",
+              "name": "Authentication support and privacy links",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "nuBUu",
+                  "name": "Authentication support link",
+                  "fill": "$home-muted",
+                  "content": "Soporte",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "tTQuj",
+                  "name": "Authentication privacy link",
+                  "fill": "$home-muted",
+                  "content": "Privacidad",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "themes": {

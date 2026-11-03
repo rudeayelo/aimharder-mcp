@@ -1,6 +1,6 @@
 // Local interaction specimen only: never send, log or persist field values.
 import {lang,t,localize} from './public-copy.js';
-import {mountPublicNavigation} from './public-navigation.js';
+import {mountPublicNavigation} from './public-navigation.js?v=recovery1';
 mountPublicNavigation();
 localize(document.querySelector('.auth-preferences'));
 localize(document.querySelector('.login-band'));localize(document.querySelector('.privacy-review'));localize(document.querySelector('dialog'));
@@ -10,8 +10,7 @@ const label=submit.querySelector('span');
 const message=(text,kind='info')=>{feedback.textContent=t(text);feedback.dataset.kind=kind;};
 const notice=document.querySelector('#login-notice');
 for(const [id,title,body] of [
- ['google-signin','Google sign-in','Google sign-in will be connected during implementation. This preview does not contact Google or connect an account.'],
- ['forgot-password','Password recovery','The password recovery page is the next design step. This preview sends no recovery email.']
+ ['google-signin','Google sign-in','Google sign-in will be connected during implementation. This preview does not contact Google or connect an account.']
 ])document.querySelector('#'+id).addEventListener('click',()=>{notice.querySelector('h2').textContent=t(title);notice.querySelector('p').textContent=t(body);notice.showModal();});
 form.addEventListener('submit',event=>{
  event.preventDefault();

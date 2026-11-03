@@ -1,0 +1,80 @@
+{
+  "date": "2026-11-03",
+  "scope": "Local design prototype; no recovery/authentication/email requests. Synthetic example address only, not retained in evidence.",
+  "initial": {
+    "enabled": true,
+    "footerBorder": "0px",
+    "headerCount": 0,
+    "heading": "Forgot password?",
+    "overflow": false,
+    "unnamed": true,
+    "url": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/recovery-study.html?lang=en&theme=light"
+  },
+  "empty": {
+    "focus": "recovery-email",
+    "message": "Enter your email address."
+  },
+  "invalid": {
+    "message": "Enter a valid email address."
+  },
+  "loading": {
+    "disabled": true,
+    "label": "Sending…"
+  },
+  "sent": {
+    "copy": "If this email is linked to an AIHarder account, you’ll receive a password reset link.",
+    "emailEmpty": true,
+    "focus": "sent-title",
+    "requestHidden": true,
+    "sentVisible": true,
+    "url": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/recovery-study.html?lang=en&theme=light"
+  },
+  "retry": {
+    "empty": true,
+    "focus": "recovery-email",
+    "requestVisible": true
+  },
+  "spanish": {
+    "back": [
+      "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/login-study.html?lang=es&theme=dark",
+      "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/login-study.html?lang=es&theme=dark"
+    ],
+    "button": "Enviar enlace",
+    "heading": "¿Has olvidado tu contraseña?",
+    "lang": "es",
+    "overflow": false,
+    "theme": "dark"
+  },
+  "spanishConfirmation": {
+    "copy": "Si este correo está vinculado a una cuenta de AIHarder, recibirás un enlace para restablecer tu contraseña.",
+    "heading": "Revisa tu correo",
+    "overflow": false,
+    "sentVisible": true
+  },
+  "returnToLogin": {
+    "enabled": true,
+    "heading": "Hola de nuevo",
+    "url": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/login-study.html?lang=es&theme=dark"
+  },
+  "system": {
+    "back": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/login-study.html?lang=es&theme=system",
+    "theme": "dark",
+    "url": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/recovery-study.html?lang=es&theme=system"
+  },
+  "consoleErrors": [],
+  "native": {
+    "pages": [
+      "f9e3b",
+      "IajMZ",
+      "wibes",
+      "bTwVh",
+      "j6Soqk",
+      "eQRfd",
+      "NElwi",
+      "mlYB3"
+    ],
+    "protectedPagesUnchanged": 16,
+    "rootPlaceholdersCleared": true,
+    "boundsVisitor": "Existing nested-layout diagnostics are unresolved; not claimed clean. Complete rendered views inspected."
+  }
+}

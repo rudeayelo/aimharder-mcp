@@ -150,5 +150,15 @@
   "Privacy content could not be loaded. Please reload this page or contact support@aiharder.link.": "No se ha podido cargar el contenido de privacidad. Recarga la página o escribe a support@aiharder.link.",
   "Appearance and language": "Tema e idioma",
   "Support and privacy": "Soporte y privacidad",
-  "Loading preview…": "Cargando vista previa…"
+  "Loading preview…": "Cargando vista previa…",
+  "Enter the email you use for AIHarder. We’ll help you reset your password.": "Introduce el correo que usas en AIHarder. Te ayudaremos a restablecer tu contraseña.",
+  "Send reset link": "Enviar enlace",
+  "Back to sign in": "Volver a entrar",
+  "Check your inbox": "Revisa tu correo",
+  "If this email is linked to an AIHarder account, you’ll receive a password reset link.": "Si este correo está vinculado a una cuenta de AIHarder, recibirás un enlace para restablecer tu contraseña.",
+  "Check your spam folder. If nothing arrives, try again or contact support.": "Revisa la carpeta de spam. Si no llega nada, inténtalo de nuevo o contacta con soporte.",
+  "Try another email": "Usar otro correo",
+  "Sending…": "Enviando…",
+  "AIHarder · Recovery design study · No email is sent": "AIHarder · Diseño de recuperación · No se envían correos",
+  "View confirmation": "Ver confirmación"
 }

@@ -17,6 +17,7 @@ export function mountPublicNavigation({reloadAppearance = false} = {}) {
     const icon = mode==='system'?'monitor':mode==='dark'?'moon':'sun';
     document.querySelector('#appearance-icon').style.setProperty('--icon',`url('./assets/lucide/${icon}.svg')`);
     for (const link of document.querySelectorAll('[data-home],[data-home-anchor]')) link.href=urlFor('hero-motion-prototype.html',link.dataset.homeAnchor||'');
+    for (const link of document.querySelectorAll('[data-recover]')) link.href=urlFor('recovery-study.html');
     for (const link of document.querySelectorAll('[data-signin]')) link.href=urlFor('login-study.html');
     for (const link of document.querySelectorAll('[data-privacy],#privacy-self')) link.href=urlFor('privacy-study.html');
   };

@@ -179,3 +179,7 @@ The design prototype now disables credential fields and submit in its initial HT
 ### Login identity and provider-action refinement — 2026-11-03
 
 The current Login design now places the existing AIHarder identity above the centered form, omits verification resend, and includes an official gradient Google G in the secondary sign-in action. That action gains a subtle neutral gradient and the previously selected shadow. English/Spanish Light/Dark HTML and native pages are updated. This is prototype presentation only; backend verification, authentication, API behavior and ADR decisions remain unchanged. See [current refinement and evidence](../design/home-study/login-study.md#identity-and-google-action-refinement--2026-11-03).
+
+### Password recovery design — 2026-11-03
+
+The owner requested the next authentication page. The [recovery checkpoint](../design/home-study/recovery-study.md) adds an email-only request and generic inbox confirmation in English/Spanish desktop Light/Dark HTML and eight editable Pen frames. Login links to it with locale/appearance preserved. Local validation/loading/focus/retry states are demonstrated without sending mail or making auth requests. The accepted centered Login shell remains primary. New-password/token and email-template designs remain subsequent work; production auth, recovery policy, API behavior and ADR decisions are unchanged. Existing mobile frames are untouched.

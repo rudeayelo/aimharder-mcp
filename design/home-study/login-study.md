@@ -2,6 +2,8 @@
 
 Date: 2026-11-03. After the Privacy refinements, the owner requested the login page and explicitly asked for current Pen and Spanish versions. This supersedes the earlier English-only desktop freeze: update English/Spanish desktop Light/Dark for Home, Privacy and Login. Keep the four existing mobile variants unchanged. Private account screens remain subsequent work.
 
+Current continuation: [Password recovery](recovery-study.md) now implements the design-only Forgot password destination and inbox confirmation. Earlier recovery-placeholder observations below describe the Login checkpoint at its delivery time.
+
 ## Reference lock and decisions
 
 Primary target: the accepted AIHarder public shell, Geist/Krona, navy and blue, 112 × 40px header action, selected button gradient/border/shadow and independent-project footer. Login is a focused 400px centered form without a surrounding card or new mascot illustration. The owner subsequently requested a distinct authentication shell: no public header/navigation, a flat canvas, discreet language/appearance controls, and a quiet text-only footer with the independent-project disclosure, Support and Privacy. There is no GitHub link, footer rule or public-site CTA. No WebGL is used.

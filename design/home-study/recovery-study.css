@@ -1,0 +1,2 @@
+/* Design preview only; shares the accepted centered authentication shell. */
+.recovery-flow [hidden]{display:none!important}.recovery-back{display:flex;width:fit-content;margin:0 auto;justify-content:center}.recovery-mail{display:block;width:32px;height:32px;margin:0 auto 20px;color:var(--blue)}.recovery-help{margin:-4px 0 28px;color:var(--muted);font-size:14px;line-height:1.5;text-align:center}#recovery-sent .recovery-back{margin-top:24px}#sent-title:focus{outline:none}
