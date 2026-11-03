@@ -203,3 +203,7 @@ The owner removed collapsibility from selected A, requested larger page/section 
 ### Separate settings cards and account page — 2026-11-03
 
 The owner requested separate containers, a blue AimHarder card matching the public hero palette, Your gym/Your gyms with a default explanation, removal of Connected, and global Cancel/Save below all cards. The [current static checkpoint](../design/home-study/private-cards-study.md) shares the local gym/confirmation draft under those actions and moves email/Google/password operations to a separate avatar-menu Account settings page. The requested private-footer disclosure is applied to both pages. Locale/theme navigation and draft/cancel/save behavior are browser checked; four English desktop native frames are inspected. Production persistence, unsaved navigation handling, account verification and backend save coordination remain distinct implementation contracts. No API/authentication/security ADR or deployed behavior changes.
+
+### Private page surface experiment — 2026-11-03
+
+The owner requested the hero gradient across the private page and the reply-bubble treatment on all containers. The [visual checkpoint](../design/home-study/private-glass-study.md) applies the existing hero surface tokens to Settings and Account settings in bilingual HTML and the four current English desktop native frames. Existing composition and interactions remain; API/auth/security/ADR and deployed behavior are unaffected.

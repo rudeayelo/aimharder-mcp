@@ -1,0 +1,43 @@
+{
+  "light": {
+    "cards": [
+      {
+        "background": "rgba(248, 251, 255, 0.6)",
+        "blur": "blur(12px)",
+        "border": "rgba(169, 195, 228, 0.5)",
+        "radius": "18px 18px 18px 6px",
+        "shadow": "rgba(0, 0, 0, 0.1) 0px 4px 6px 0px"
+      },
+      {
+        "background": "rgba(248, 251, 255, 0.6)",
+        "blur": "blur(12px)",
+        "border": "rgba(169, 195, 228, 0.5)",
+        "radius": "18px 18px 18px 6px",
+        "shadow": "rgba(0, 0, 0, 0.1) 0px 4px 6px 0px"
+      },
+      {
+        "background": "rgba(248, 251, 255, 0.6)",
+        "blur": "blur(12px)",
+        "border": "rgba(169, 195, 228, 0.5)",
+        "radius": "18px 18px 18px 6px",
+        "shadow": "rgba(0, 0, 0, 0.1) 0px 4px 6px 0px"
+      }
+    ],
+    "overflow": false,
+    "page": "linear-gradient(rgb(232, 242, 255), rgb(135, 184, 241))"
+  },
+  "dark": {
+    "background": "rgba(20, 43, 69, 0.6)",
+    "blur": "blur(12px)",
+    "overflow": false,
+    "page": "linear-gradient(rgb(13, 21, 33), rgb(23, 70, 120))"
+  },
+  "account": {
+    "background": "rgba(20, 43, 69, 0.6)",
+    "overflow": false,
+    "page": "linear-gradient(rgb(13, 21, 33), rgb(23, 70, 120))",
+    "saveControls": 0,
+    "title": "Ajustes de cuenta"
+  },
+  "errors": []
+}

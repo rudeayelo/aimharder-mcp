@@ -36220,7 +36220,7 @@
       "x": 1360,
       "y": 21600,
       "name": "AIHarder / Settings A / English / Light",
-      "context": "Three separate settings cards; blue hero palette on AimHarder. Shared draft/save for gym and confirmation preferences. Identity settings moved to separate Account settings page through avatar menu. Local fictional HTML only.",
+      "context": "Page-wide hero palette gradient. Containers reuse public hero answer-bubble fill, border, 12px backdrop blur, asymmetric corners and subtle shadow. Existing local settings/account actions unchanged.",
       "theme": {
         "appearance": "light",
         "language": "en"
@@ -36228,7 +36228,25 @@
       "clip": true,
       "width": 1440,
       "height": 1300,
-      "fill": "$home-surface",
+      "fill": {
+        "type": "gradient",
+        "gradientType": "linear",
+        "enabled": true,
+        "rotation": 180,
+        "size": {
+          "height": 1
+        },
+        "colors": [
+          {
+            "color": "#E8F2FF",
+            "position": 0
+          },
+          {
+            "color": "#87B8F1",
+            "position": 1
+          }
+        ]
+      },
       "layout": "vertical",
       "gap": 24,
       "padding": [
@@ -36391,28 +36409,31 @@
               "id": "EUoEC",
               "name": "AimHarder / fixed section",
               "width": "fill_container",
-              "fill": {
-                "type": "gradient",
-                "gradientType": "linear",
-                "enabled": true,
-                "rotation": 180,
-                "size": {
-                  "height": 1
-                },
-                "colors": [
-                  {
-                    "color": "#E8F2FF",
-                    "position": 0
-                  },
-                  {
-                    "color": "#87B8F1",
-                    "position": 1
-                  }
-                ]
-              },
-              "cornerRadius": 16,
-              "stroke": "#79A4DC",
+              "fill": "#F8FBFF99",
+              "cornerRadius": [
+                18,
+                18,
+                18,
+                6
+              ],
+              "stroke": "#A9C3E480",
               "strokeWidth": 1,
+              "effect": [
+                {
+                  "type": "background_blur",
+                  "radius": 12
+                },
+                {
+                  "type": "shadow",
+                  "shadowType": "outer",
+                  "color": "#0000001A",
+                  "offset": {
+                    "x": 0,
+                    "y": 4
+                  },
+                  "blur": 6
+                }
+              ],
               "layout": "vertical",
               "children": [
                 {
@@ -36699,10 +36720,31 @@
               "id": "rMzQn",
               "name": "AI apps / fixed section",
               "width": "fill_container",
-              "fill": "$home-bg",
-              "cornerRadius": 16,
-              "stroke": "$home-line",
+              "fill": "#F8FBFF99",
+              "cornerRadius": [
+                18,
+                18,
+                18,
+                6
+              ],
+              "stroke": "#A9C3E480",
               "strokeWidth": 1,
+              "effect": [
+                {
+                  "type": "background_blur",
+                  "radius": 12
+                },
+                {
+                  "type": "shadow",
+                  "shadowType": "outer",
+                  "color": "#0000001A",
+                  "offset": {
+                    "x": 0,
+                    "y": 4
+                  },
+                  "blur": 6
+                }
+              ],
               "layout": "vertical",
               "children": [
                 {
@@ -36970,10 +37012,31 @@
               "id": "F4HYox",
               "name": "Confirmations / fixed section",
               "width": "fill_container",
-              "fill": "$home-bg",
-              "cornerRadius": 16,
-              "stroke": "$home-line",
+              "fill": "#F8FBFF99",
+              "cornerRadius": [
+                18,
+                18,
+                18,
+                6
+              ],
+              "stroke": "#A9C3E480",
               "strokeWidth": 1,
+              "effect": [
+                {
+                  "type": "background_blur",
+                  "radius": 12
+                },
+                {
+                  "type": "shadow",
+                  "shadowType": "outer",
+                  "color": "#0000001A",
+                  "offset": {
+                    "x": 0,
+                    "y": 4
+                  },
+                  "blur": 6
+                }
+              ],
               "layout": "vertical",
               "children": [
                 {
@@ -37142,7 +37205,7 @@
                           "type": "text",
                           "id": "YL08v",
                           "name": "Policy reminder",
-                          "fill": "$home-muted",
+                          "fill": "#314861",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
                           "content": "Cancellations and deletions always require confirmation.",
@@ -37177,7 +37240,7 @@
                   "id": "taMLQ",
                   "name": "Cancel / disabled",
                   "opacity": 0.45,
-                  "fill": "$home-muted",
+                  "fill": "#314861",
                   "content": "Cancel",
                   "lineHeight": 1.5,
                   "fontFamily": "Geist",
@@ -37223,7 +37286,7 @@
               "type": "text",
               "id": "JZfcO",
               "name": "Independent project",
-              "fill": "$home-muted",
+              "fill": "#314861",
               "content": "AIHarder is an independent proyect. Not affiliated with AimHarder.",
               "lineHeight": 1.5,
               "fontFamily": "Geist",
@@ -37240,7 +37303,7 @@
                   "type": "text",
                   "id": "VUT72",
                   "name": "Support",
-                  "fill": "$home-muted",
+                  "fill": "#314861",
                   "content": "Support",
                   "lineHeight": 1.5,
                   "fontFamily": "Geist",
@@ -37251,7 +37314,7 @@
                   "type": "text",
                   "id": "nPO3r",
                   "name": "Privacy",
-                  "fill": "$home-muted",
+                  "fill": "#314861",
                   "content": "Privacy",
                   "lineHeight": 1.5,
                   "fontFamily": "Geist",
@@ -37270,7 +37333,7 @@
       "x": 2960,
       "y": 21600,
       "name": "AIHarder / Settings A / English / Dark",
-      "context": "Three separate settings cards; blue hero palette on AimHarder. Shared draft/save for gym and confirmation preferences. Identity settings moved to separate Account settings page through avatar menu. Local fictional HTML only.",
+      "context": "Page-wide hero palette gradient. Containers reuse public hero answer-bubble fill, border, 12px backdrop blur, asymmetric corners and subtle shadow. Existing local settings/account actions unchanged.",
       "theme": {
         "appearance": "dark",
         "language": "en"
@@ -37278,7 +37341,25 @@
       "clip": true,
       "width": 1440,
       "height": 1300,
-      "fill": "$home-surface",
+      "fill": {
+        "type": "gradient",
+        "gradientType": "linear",
+        "enabled": true,
+        "rotation": 180,
+        "size": {
+          "height": 1
+        },
+        "colors": [
+          {
+            "color": "#0D1521",
+            "position": 0
+          },
+          {
+            "color": "#174678",
+            "position": 1
+          }
+        ]
+      },
       "layout": "vertical",
       "gap": 24,
       "padding": [
@@ -37441,28 +37522,31 @@
               "id": "OOkUH",
               "name": "AimHarder / fixed section",
               "width": "fill_container",
-              "fill": {
-                "type": "gradient",
-                "gradientType": "linear",
-                "enabled": true,
-                "rotation": 180,
-                "size": {
-                  "height": 1
-                },
-                "colors": [
-                  {
-                    "color": "#0D1521",
-                    "position": 0
-                  },
-                  {
-                    "color": "#174678",
-                    "position": 1
-                  }
-                ]
-              },
-              "cornerRadius": 16,
-              "stroke": "#2D609B",
+              "fill": "#142B4599",
+              "cornerRadius": [
+                18,
+                18,
+                18,
+                6
+              ],
+              "stroke": "#48688B80",
               "strokeWidth": 1,
+              "effect": [
+                {
+                  "type": "background_blur",
+                  "radius": 12
+                },
+                {
+                  "type": "shadow",
+                  "shadowType": "outer",
+                  "color": "#0000001A",
+                  "offset": {
+                    "x": 0,
+                    "y": 4
+                  },
+                  "blur": 6
+                }
+              ],
               "layout": "vertical",
               "children": [
                 {
@@ -37749,10 +37833,31 @@
               "id": "CA82m",
               "name": "AI apps / fixed section",
               "width": "fill_container",
-              "fill": "$home-bg",
-              "cornerRadius": 16,
-              "stroke": "$home-line",
+              "fill": "#142B4599",
+              "cornerRadius": [
+                18,
+                18,
+                18,
+                6
+              ],
+              "stroke": "#48688B80",
               "strokeWidth": 1,
+              "effect": [
+                {
+                  "type": "background_blur",
+                  "radius": 12
+                },
+                {
+                  "type": "shadow",
+                  "shadowType": "outer",
+                  "color": "#0000001A",
+                  "offset": {
+                    "x": 0,
+                    "y": 4
+                  },
+                  "blur": 6
+                }
+              ],
               "layout": "vertical",
               "children": [
                 {
@@ -38020,10 +38125,31 @@
               "id": "VljVB",
               "name": "Confirmations / fixed section",
               "width": "fill_container",
-              "fill": "$home-bg",
-              "cornerRadius": 16,
-              "stroke": "$home-line",
+              "fill": "#142B4599",
+              "cornerRadius": [
+                18,
+                18,
+                18,
+                6
+              ],
+              "stroke": "#48688B80",
               "strokeWidth": 1,
+              "effect": [
+                {
+                  "type": "background_blur",
+                  "radius": 12
+                },
+                {
+                  "type": "shadow",
+                  "shadowType": "outer",
+                  "color": "#0000001A",
+                  "offset": {
+                    "x": 0,
+                    "y": 4
+                  },
+                  "blur": 6
+                }
+              ],
               "layout": "vertical",
               "children": [
                 {
@@ -39546,7 +39672,7 @@
       "x": 4560,
       "y": 21600,
       "name": "AIHarder / Account settings / English / Light",
-      "context": "Separate account identity settings; immediate local specimen actions, no global Save changes. Fictional fields only.",
+      "context": "Page-wide hero palette gradient. Containers reuse public hero answer-bubble fill, border, 12px backdrop blur, asymmetric corners and subtle shadow. Existing local settings/account actions unchanged.",
       "theme": {
         "appearance": "light",
         "language": "en"
@@ -39554,7 +39680,25 @@
       "clip": true,
       "width": 1440,
       "height": 1000,
-      "fill": "$home-surface",
+      "fill": {
+        "type": "gradient",
+        "gradientType": "linear",
+        "enabled": true,
+        "rotation": 180,
+        "size": {
+          "height": 1
+        },
+        "colors": [
+          {
+            "color": "#E8F2FF",
+            "position": 0
+          },
+          {
+            "color": "#87B8F1",
+            "position": 1
+          }
+        ]
+      },
       "layout": "vertical",
       "gap": 24,
       "padding": [
@@ -39702,7 +39846,7 @@
                   "type": "text",
                   "id": "OHqwc",
                   "name": "Back to Settings",
-                  "fill": "$home-muted",
+                  "fill": "#314861",
                   "content": "← Settings",
                   "lineHeight": 1.5,
                   "fontFamily": "Geist",
@@ -39728,10 +39872,31 @@
               "id": "a5YHbN",
               "name": "Account identity card",
               "width": "fill_container",
-              "fill": "$home-bg",
-              "cornerRadius": 16,
-              "stroke": "$home-line",
+              "fill": "#F8FBFF99",
+              "cornerRadius": [
+                18,
+                18,
+                18,
+                6
+              ],
+              "stroke": "#A9C3E480",
               "strokeWidth": 1,
+              "effect": [
+                {
+                  "type": "background_blur",
+                  "radius": 12
+                },
+                {
+                  "type": "shadow",
+                  "shadowType": "outer",
+                  "color": "#0000001A",
+                  "offset": {
+                    "x": 0,
+                    "y": 4
+                  },
+                  "blur": 6
+                }
+              ],
               "layout": "vertical",
               "children": [
                 {
@@ -39769,7 +39934,7 @@
                               "type": "text",
                               "id": "ZLuOj",
                               "name": "Setting label",
-                              "fill": "$home-muted",
+                              "fill": "#314861",
                               "content": "Email",
                               "lineHeight": 1.5,
                               "fontFamily": "Geist",
@@ -39870,7 +40035,7 @@
                               "type": "text",
                               "id": "k2yXa",
                               "name": "Setting label",
-                              "fill": "$home-muted",
+                              "fill": "#314861",
                               "content": "Google",
                               "lineHeight": 1.5,
                               "fontFamily": "Geist",
@@ -39958,7 +40123,7 @@
                               "type": "text",
                               "id": "ekSIu",
                               "name": "Setting label",
-                              "fill": "$home-muted",
+                              "fill": "#314861",
                               "content": "AIHarder password",
                               "lineHeight": 1.5,
                               "fontFamily": "Geist",
@@ -40037,7 +40202,7 @@
               "type": "text",
               "id": "br9BG",
               "name": "Independent project",
-              "fill": "$home-muted",
+              "fill": "#314861",
               "content": "AIHarder is an independent proyect. Not affiliated with AimHarder.",
               "lineHeight": 1.5,
               "fontFamily": "Geist",
@@ -40054,7 +40219,7 @@
                   "type": "text",
                   "id": "AAU6F",
                   "name": "Support",
-                  "fill": "$home-muted",
+                  "fill": "#314861",
                   "content": "Support",
                   "lineHeight": 1.5,
                   "fontFamily": "Geist",
@@ -40065,7 +40230,7 @@
                   "type": "text",
                   "id": "NJPX6",
                   "name": "Privacy",
-                  "fill": "$home-muted",
+                  "fill": "#314861",
                   "content": "Privacy",
                   "lineHeight": 1.5,
                   "fontFamily": "Geist",
@@ -40084,7 +40249,7 @@
       "x": 6160,
       "y": 21600,
       "name": "AIHarder / Account settings / English / Dark",
-      "context": "Separate account identity settings; immediate local specimen actions, no global Save changes. Fictional fields only.",
+      "context": "Page-wide hero palette gradient. Containers reuse public hero answer-bubble fill, border, 12px backdrop blur, asymmetric corners and subtle shadow. Existing local settings/account actions unchanged.",
       "theme": {
         "appearance": "dark",
         "language": "en"
@@ -40092,7 +40257,25 @@
       "clip": true,
       "width": 1440,
       "height": 1000,
-      "fill": "$home-surface",
+      "fill": {
+        "type": "gradient",
+        "gradientType": "linear",
+        "enabled": true,
+        "rotation": 180,
+        "size": {
+          "height": 1
+        },
+        "colors": [
+          {
+            "color": "#0D1521",
+            "position": 0
+          },
+          {
+            "color": "#174678",
+            "position": 1
+          }
+        ]
+      },
       "layout": "vertical",
       "gap": 24,
       "padding": [
@@ -40266,10 +40449,31 @@
               "id": "R5K37t",
               "name": "Account identity card",
               "width": "fill_container",
-              "fill": "$home-bg",
-              "cornerRadius": 16,
-              "stroke": "$home-line",
+              "fill": "#142B4599",
+              "cornerRadius": [
+                18,
+                18,
+                18,
+                6
+              ],
+              "stroke": "#48688B80",
               "strokeWidth": 1,
+              "effect": [
+                {
+                  "type": "background_blur",
+                  "radius": 12
+                },
+                {
+                  "type": "shadow",
+                  "shadowType": "outer",
+                  "color": "#0000001A",
+                  "offset": {
+                    "x": 0,
+                    "y": 4
+                  },
+                  "blur": 6
+                }
+              ],
               "layout": "vertical",
               "children": [
                 {

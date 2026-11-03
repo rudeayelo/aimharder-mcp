@@ -1,5 +1,7 @@
 # AIHarder — separate settings cards and account page
 
+**Surface update:** The composition and behavior below remain current; the latest [page gradient and translucent-container treatment](private-glass-study.md) supersedes this checkpoint’s opaque-card appearance.
+
 Date: 2026-11-03. Supersedes the single-frame layout in the [previous settings checkpoint](private-settings-study.md). The owner requested separate containers, global actions below them, a blue AimHarder card using the public hero palette, Your gym/Your gyms with a brief right-aligned default explanation, no Connected label, and account settings on a separate avatar-menu destination. The subsequent requested private-footer copy is applied literally in English: “AIHarder is an independent proyect. Not affiliated with AimHarder.” Spanish uses a natural translation.
 
 ## Reference lock
