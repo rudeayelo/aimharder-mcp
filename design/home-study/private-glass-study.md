@@ -13,3 +13,5 @@ The shared CSS applies to both Settings and Account settings, in English and Spa
 The four current English desktop native roots are updated in place: Settings `M3U1LB` / `Vqh6E`, Account `YiXOV` / `e8dyV`. Their fills, background-blur effects, corner radii, borders and shadows mirror these roles. All 36 other existing root trees compared unchanged via the editor. Placeholder flags are cleared. Selected native Light Settings and Dark Account exports were inspected; unchanged geometry remains from the preceding checkpoint. No pixel parity or resolved structural-visitor diagnostics is claimed.
 
 [Native Settings Light](previews/private-glass/pen/M3U1LB.png) · [Settings Dark](previews/private-glass/pen/Vqh6E.png) · [Account Light](previews/private-glass/pen/YiXOV.png) · [Account Dark](previews/private-glass/pen/e8dyV.png).
+
+Parallel Standards and Spec review of `7fe7758...3535f3d` returned no actionable findings on either axis; native bytes were excluded. No additional runtime tests were warranted for the appearance-only diff.
