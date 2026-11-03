@@ -231,6 +231,12 @@
       "previews/footer-kettle/pen-left/uAXkc.png",
       "previews/footer-kettle/pen-left/p7u8w.png"
     ],
-    "animation": "Neutral native still; HTML owns random playback"
+    "animation": "Neutral native still; HTML owns random playback",
+    "review": {
+      "base": "c2e7341",
+      "head": "32e00cd",
+      "standardsFindings": 0,
+      "specFindings": 0
+    }
   }
 }
