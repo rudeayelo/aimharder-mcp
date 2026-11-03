@@ -64,9 +64,20 @@
     "console": [],
     "final": {
       "active": "About this notice",
-      "hash": "",
       "overflow": false,
       "theme": "light"
+    },
+    "systemReturnHome": {
+      "actual": "dark",
+      "expected": "dark",
+      "howBottom": "rgb(45, 96, 155)",
+      "preference": "system",
+      "url": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/hero-motion-prototype.html?theme=system&reply=long&v=privacy1"
+    },
+    "systemRoundTrip": {
+      "appearance": "Appearance: system. Switch to light.",
+      "theme": "dark",
+      "url": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/privacy-study.html?theme=system"
     }
   },
   "pen": {
@@ -93,5 +104,15 @@
     "No account access, emails, operational domain migration or production deployment.",
     "Login and private pages remain subsequent work.",
     "Other six existing native device/locale variants remain unchanged."
-  ]
+  ],
+  "review": {
+    "base": "30156bc",
+    "initialHead": "449459e",
+    "standardsFindings": 0,
+    "initialSpecFindings": 1,
+    "resolvedFinding": "Home previously treated System as Light; fixed in 5c28061 and verified by actual System/Dark round trip.",
+    "followupHead": "5c28061",
+    "remainingStandardsFindings": 0,
+    "remainingSpecFindings": 0
+  }
 }
