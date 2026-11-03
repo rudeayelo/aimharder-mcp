@@ -96,5 +96,15 @@
     "overflow": false
   },
   "system": "system",
-  "errors": []
+  "errors": [],
+  "duplicateNames": [
+    "ChatGPT · #1",
+    "Hermes",
+    "ChatGPT · #3"
+  ],
+  "duplicateDialog": "Disconnect ChatGPT · #3?\n\nOnly this installation loses access. Your other connections stay in place.\n\nCancel\nDisconnect",
+  "duplicateRevocation": [
+    "client-1",
+    "client-2"
+  ]
 }

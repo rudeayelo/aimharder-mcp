@@ -27,8 +27,12 @@ function gymSettings() {
 function upstreamContent() {
   return `<div class="account-detail"><div><span class="detail-label">${t('Account')}</span><p class="detail-value">${linked?'alex@example.com':t('Not connected')}</p></div>${linked?button('Disconnect','disconnect-upstream'):button('Connect AimHarder','connect-upstream')}</div>${gymSettings()}`;
 }
+function clientName(client) {
+  const repeated=clients.filter(item=>item.name===client.name).length>1;
+  return t(client.name)+(repeated?' · #'+client.id:'');
+}
 function appContent() {
-  return `<div class="client-list">${clients.map(client=>`<div class="client-row">${clientIcon(client.name)}<strong class="client-identity">${t(client.name)}</strong>${button('Disconnect','disconnect-client','client-'+client.id,`data-client="${client.id}" aria-label="${t('Disconnect')} ${t(client.name)}"`)}</div>`).join('')||`<p class="empty-apps">${t('No apps authorized.')}</p>`}</div><div class="client-add">${button('Connect an app','add-client')}</div>`;
+  return `<div class="client-list">${clients.map(client=>`<div class="client-row">${clientIcon(client.name)}<strong class="client-identity">${clientName(client)}</strong>${button('Disconnect','disconnect-client','client-'+client.id,`data-client="${client.id}" aria-label="${t('Disconnect')} ${clientName(client)}"`)}</div>`).join('')||`<p class="empty-apps">${t('No apps authorized.')}</p>`}</div><div class="client-add">${button('Connect an app','add-client')}</div>`;
 }
 function confirmationContent() {
   return `<div class="confirmation-options">${[['booking',booking,'Ask for confirmation when making a reservation'],['publication',publication,'Ask for confirmation when posting a new workout']].map(([id,checked,label])=>`<label class="confirmation-option"><span>${t(label)}</span><input type="checkbox" role="switch" id="${id}-confirmation" ${checked?'checked':''} ${linked?'':'disabled'} aria-describedby="${linked?'policy-note':'dependency-note'}"></label>`).join('')}</div>${linked?'':`<p class="dependency-note" id="dependency-note">${t('Connect AimHarder to edit these preferences.')}</p>`}<p class="policy-note" id="policy-note">${t('Cancellations and deletions always require confirmation.')}</p><div class="settings-actions"><button class="quiet-button" type="button" id="discard-preferences" data-action="discard" ${linked&&dirty()?'':'disabled'}>${t('Cancel')}</button><button class="primary" type="button" id="save-preferences" data-action="save" ${linked&&dirty()?'':'disabled'}>${t('Save changes')}</button></div>`;
@@ -55,7 +59,7 @@ function showDialog(action,client,opener) {
   if(action==='disconnect-upstream') {
     title='Disconnect AimHarder?';content=`<p>${t('Your AI apps keep their access. Reconnect AimHarder to use your training data.')}</p>`;accept='Disconnect';
   } else if(action==='disconnect-client') {
-    title=t('Disconnect')+' '+t(client.name)+'?';content=`<p>${t('Only this installation loses access. Your other connections stay in place.')}</p>`;accept='Disconnect';
+    title=t('Disconnect')+' '+clientName(client)+'?';content=`<p>${t('Only this installation loses access. Your other connections stay in place.')}</p>`;accept='Disconnect';
   } else if(action==='connect-upstream') {
     title='Connect AimHarder';content=`<div role="img" aria-label="${t('Fictional AimHarder login fields')}">${exampleField('AimHarder username','alex@example.com')}${exampleField('AimHarder password','••••••••')}</div>`;accept='Connect';
   } else if(action==='add-client') {

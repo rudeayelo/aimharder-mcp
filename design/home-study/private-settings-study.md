@@ -11,7 +11,7 @@ Fresh bounded reference research inspected [Luma account settings](https://refer
 ## Current content
 
 - **AimHarder:** account and connection status, a secondary Disconnect action, then available gym names. Two fictional gyms demonstrate native radio selection of the default; the `Default` label moves to the selected row. A single gym is displayed without a choice control. No inferred address, timezone or membership metadata is added.
-- **AI apps:** provider mark/name and an obvious Disconnect button per authorization, followed by Connect an app. Personal/laptop installation labels were fictional fixture descriptions, not observed account data; they are removed. Grant identities remain distinct internally even when provider names match.
+- **AI apps:** provider mark/name and an obvious Disconnect button per authorization, followed by Connect an app. Personal/laptop installation labels were fictional fixture descriptions, not observed account data; they are removed. If provider names repeat, a short connection identifier appears in those row names, accessible actions and the disconnect dialog so each authorization stays identifiable. Default unique-provider rows have no subtitle or identifier. IDs here belong to fictional fixture connections; production must use verified authorization identifiers.
 - **Confirmations:** the final PR #121 two-switch contract remains independent, default on and account-wide. No shared-app subtitle. Mandatory cancellation/deletion confirmation remains explicit. Save/Cancel enable only for pending edits.
 - **Your account:** email with Change email; Google identity with Connect/Disconnect; AIHarder password with Change/Add password. These are distinct from AimHarder credentials.
 
