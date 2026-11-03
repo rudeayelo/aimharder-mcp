@@ -57,6 +57,10 @@ The standards review found an unsafe native fallback: the initial HTML had enabl
 
 A browser probe compared temporary scriptless copies before/after: enabled named fields changed from `email,password` to none, and all three controls changed from enabled to disabled. No field values or native submissions were used. The browser read-only scope did not expose a usable FormData constructor, so the probe inspected the DOM-backed enabled named controls instead. The fixtures were removed after verification. Normal English/Spanish initialization re-enables all controls, clears the loading message, and Spanish empty-submit validation still focuses email. Evidence is in `nativeSubmissionSafety` in [checks](login-checks.json). The original finding remains documented rather than retroactively described as a pass.
 
+## Final review
+
+The fixed-range Spec review (`9c8701e...e178466`) reported no actionable findings. Standards review identified the native-submission P1 above; follow-up review of `ac423dc` closed it with no remaining actionable findings. These are code/spec reviews of the design delivery, not owner visual acceptance or production-authentication validation.
+
 ## Limits and next work
 
 This is a throwaway design prototype, not production authentication or an account implementation. No API contract, custody, access, retention, Google configuration, email provider or deployment changed; existing ADRs are unaffected. Login/translation checks do not prove real provider interoperability, credential validation, recovery email delivery or private-page authorization. Recovery/verification pages and private screens remain subsequent design work. Privacy copy still needs owner/legal review before publication. Earlier unresolved nested Privacy bounds-visitor warnings remain; complete native renders/content audits are not a clean structural-visitor or pixel-identical browser/native claim. Do not repeat those diagnostics as a new pass. Source syntax, local links and existing asset hashes are verified separately from owner visual acceptance.
