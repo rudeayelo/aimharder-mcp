@@ -1,29 +1,117 @@
-// Configured settings specimen. All accounts, grants and changes are fictional/local.
+// Settings design specimen. All identities, gyms and changes are fictional/local.
 import {t,localize} from './public-copy.js';
 import {mountPublicNavigation} from './public-navigation.js?v=recovery1';
-mountPublicNavigation();localize(document.querySelector('.compact-identity'));localize(document.querySelector('.compact-review'));localize(document.querySelector('.frame-heading'));localize(document.querySelector('#dialog-cancel'));
+mountPublicNavigation();
+for (const selector of ['.compact-identity','.compact-review','.frame-heading','#dialog-cancel']) localize(document.querySelector(selector));
 document.title=t('Settings')+' — AIHarder';
-const params=new URLSearchParams(location.search),sections=['AimHarder','AI apps','Confirmations'];
-let linked=params.get('state')!=='missing-connection',expanded=new Set([0,1,2]),booking=true,publication=true,savedBooking=true,savedPublication=true,serial=3;
-const initialClients=()=>[{id:1,name:'ChatGPT',label:'Personal installation'},{id:2,name:'Hermes',label:'Laptop installation'}];let clients=initialClients();
-const icon=(name,extra='')=>`<i class="icon ${extra}" aria-hidden="true" style="--icon:url('./assets/lucide/${name}.svg')"></i>`;
-function clientIcon(name){const pair=name==='ChatGPT'?['chatgpt-light.png','chatgpt-dark.png']:name==='Hermes'?['hermes-selfhst-light.svg','hermes-selfhst-dark.svg']:null;return pair?`<img class="provider-mark-light" alt="" src="assets/apps/${pair[0]}"><img class="provider-mark-dark" alt="" src="assets/apps/${pair[1]}">`:icon('message-circle');}
-const dirty=()=>booking!==savedBooking||publication!==savedPublication;
-function summary(i){return i===0?t(linked?'Connected':'Not connected'):i===1?clients.length+' '+t('authorized'):t('Shared across apps');}
-function body(i){if(i===0)return linked?`<div class="account-detail"><div><span class="detail-label">${t('Account')}</span><p class="detail-value">alex@example.com</p></div><button class="quiet-button" id="disconnect-upstream" type="button" data-action="disconnect-upstream">${t('Disconnect')}</button></div>`:`<div class="account-detail"><span class="detail-value">${t('Not connected')}</span><button class="secondary" id="connect-upstream" type="button" data-action="connect-upstream">${t('Connect AimHarder')}</button></div>`;
- if(i===1)return `<div class="client-list">${clients.map(client=>`<div class="client-row">${clientIcon(client.name)}<div class="client-identity"><strong>${t(client.name)}</strong><span>${t(client.label)}</span></div><span class="client-status">${t('Authorized')}</span><button class="quiet-button" id="client-${client.id}" type="button" data-action="disconnect-client" data-client="${client.id}" aria-label="${t('Disconnect')} ${t(client.name)} · ${t(client.label)}">${t('Disconnect')}</button></div>`).join('')||`<p class="empty-apps">${t('No apps authorized.')}</p>`}</div><button class="secondary client-add" id="add-client" type="button" data-action="add-client">${icon('plus')}${t('Connect an app')}</button>`;
- return `<div class="confirmation-options"><label class="confirmation-option"><span>${t('Ask for confirmation when making a reservation')}</span><input type="checkbox" role="switch" id="booking-confirmation" ${booking?'checked':''} ${linked?'':'disabled'} aria-describedby="${linked?'policy-note':'dependency-note'}"></label><label class="confirmation-option"><span>${t('Ask for confirmation when posting a new workout')}</span><input type="checkbox" role="switch" id="publication-confirmation" ${publication?'checked':''} ${linked?'':'disabled'} aria-describedby="${linked?'policy-note':'dependency-note'}"></label></div>${linked?'':`<p class="dependency-note" id="dependency-note">${t('Connect AimHarder to edit these preferences.')}</p>`}<p class="policy-note" id="policy-note">${t('Cancellations and deletions always require confirmation.')}</p><div class="settings-actions"><button class="quiet-button" type="button" id="discard-preferences" data-action="discard" ${linked&&dirty()?'':'disabled'}>${t('Cancel')}</button><button class="primary" type="button" id="save-preferences" data-action="save" ${linked&&dirty()?'':'disabled'}>${t('Save changes')}</button></div>`;
+const params=new URLSearchParams(location.search);
+let linked=params.get('state')!=='missing-connection';
+let booking=true, publication=true, savedBooking=true, savedPublication=true;
+let googleLinked=true, hasPassword=params.get('auth')!=='google-only', serial=3;
+const gyms=[{id:'central',name:'Example Gym · Central'},{id:'north',name:'Example Gym · North'}];
+let defaultGym='central';
+const initialClients=()=>[{id:1,name:'ChatGPT'},{id:2,name:'Hermes'}];
+let clients=initialClients();
+const icon=name=>`<i class="icon" aria-hidden="true" style="--icon:url('./assets/lucide/${name}.svg')"></i>`;
+function clientIcon(name) {
+  const pair=name==='ChatGPT'?['chatgpt-light.png','chatgpt-dark.png']:name==='Hermes'?['hermes-selfhst-light.svg','hermes-selfhst-dark.svg']:null;
+  return pair?`<img class="provider-mark-light" alt="" src="assets/apps/${pair[0]}"><img class="provider-mark-dark" alt="" src="assets/apps/${pair[1]}">`:icon('message-circle');
 }
-function syncUrl(){const url=new URL(location.href);url.searchParams.delete('layout');url.searchParams.delete('step');url.searchParams.set('state',linked?'configured':'missing-connection');history.replaceState(null,'',url);}
-function render(){syncUrl();document.querySelector('#account-sections').innerHTML=sections.map((label,i)=>`<section class="account-section"><h2 style="margin:0"><button id="section-${i}" class="section-toggle" type="button" data-open="${i}" aria-expanded="${expanded.has(i)}" aria-controls="content-${i}"><span class="section-label">${t(label)}</span><span class="section-summary ${i===0&&linked?'status-connected':''}">${summary(i)}</span>${icon('chevron-down','section-chevron')}</button></h2><div id="content-${i}" class="section-content" ${expanded.has(i)?'':'hidden'}>${body(i)}</div></section>`).join('');for(const button of document.querySelectorAll('[data-fixture]'))button.setAttribute('aria-pressed',String(button.dataset.fixture===(linked?'configured':'missing-connection')));}
+const dirty=()=>booking!==savedBooking||publication!==savedPublication;
 const feedback=text=>document.querySelector('#frame-feedback').textContent=t(text);
-const dialog=document.querySelector('#settings-dialog');let dialogAction='',dialogClient=null,returnFocus='';
-function showDialog(action,client,opener){dialogAction=action;dialogClient=client;returnFocus=opener.id;let title='',content='',accept='';if(action==='disconnect-upstream'){title=t('Disconnect AimHarder?');content=`<p>${t('Your AI apps keep their access. Reconnect AimHarder to use your training data.')}</p>`;accept=t('Disconnect');}else if(action==='disconnect-client'){title=t('Disconnect')+' '+t(client.name)+'?';content=`<p>${t('Only this installation loses access. Your other connections stay in place.')}</p>`;accept=t('Disconnect');}else if(action==='connect-upstream'){title=t('Connect AimHarder');content=`<div role="img" aria-label="${t('Fictional AimHarder login fields')}"><span class="example-field-label">${t('AimHarder username')}</span><div class="example-field">alex@example.com</div><span class="example-field-label">${t('AimHarder password')}</span><div class="example-field password" aria-hidden="true">••••••••</div></div>`;accept=t('Connect');}else{title=t('Connect an app');content=`<div class="provider-list" role="group" aria-label="${t('Choose your AI app')}">${['ChatGPT','Hermes','Other clients'].map((name,i)=>`<label class="provider-option">${clientIcon(name)}<span>${t(name)}</span><input type="radio" name="example-provider" value="${name}" ${i===0?'checked':''}></label>`).join('')}</div>`;accept=t('Connect app');}document.querySelector('#dialog-title').textContent=title;document.querySelector('#dialog-content').innerHTML=content;document.querySelector('#dialog-accept').textContent=accept;dialog.showModal();}
+const button=(label,action,id='',extra='')=>`<button class="secondary" type="button" data-action="${action}" id="${id||action}" ${extra}>${t(label)}</button>`;
+function gymSettings() {
+  const available=params.get('gyms')==='single'?gyms.slice(0,1):gyms;
+  return `<fieldset class="gym-settings" ${linked?'':'disabled'}><legend>${t('Available gyms')}</legend>${available.map(gym=>`<label class="gym-option">${available.length>1?`<input type="radio" name="default-gym" value="${gym.id}" ${defaultGym===gym.id?'checked':''} aria-label="${t('Use as default')}: ${t(gym.name)}">`:''}<span>${t(gym.name)}</span>${defaultGym===gym.id?`<small>${t('Default')}</small>`:''}</label>`).join('')}</fieldset>${linked?'':`<p class="dependency-note">${t('Connect AimHarder to choose a gym.')}</p>`}`;
+}
+function upstreamContent() {
+  return `<div class="account-detail"><div><span class="detail-label">${t('Account')}</span><p class="detail-value">${linked?'alex@example.com':t('Not connected')}</p></div>${linked?button('Disconnect','disconnect-upstream'):button('Connect AimHarder','connect-upstream')}</div>${gymSettings()}`;
+}
+function appContent() {
+  return `<div class="client-list">${clients.map(client=>`<div class="client-row">${clientIcon(client.name)}<strong class="client-identity">${t(client.name)}</strong>${button('Disconnect','disconnect-client','client-'+client.id,`data-client="${client.id}" aria-label="${t('Disconnect')} ${t(client.name)}"`)}</div>`).join('')||`<p class="empty-apps">${t('No apps authorized.')}</p>`}</div><div class="client-add">${button('Connect an app','add-client')}</div>`;
+}
+function confirmationContent() {
+  return `<div class="confirmation-options">${[['booking',booking,'Ask for confirmation when making a reservation'],['publication',publication,'Ask for confirmation when posting a new workout']].map(([id,checked,label])=>`<label class="confirmation-option"><span>${t(label)}</span><input type="checkbox" role="switch" id="${id}-confirmation" ${checked?'checked':''} ${linked?'':'disabled'} aria-describedby="${linked?'policy-note':'dependency-note'}"></label>`).join('')}</div>${linked?'':`<p class="dependency-note" id="dependency-note">${t('Connect AimHarder to edit these preferences.')}</p>`}<p class="policy-note" id="policy-note">${t('Cancellations and deletions always require confirmation.')}</p><div class="settings-actions"><button class="quiet-button" type="button" id="discard-preferences" data-action="discard" ${linked&&dirty()?'':'disabled'}>${t('Cancel')}</button><button class="primary" type="button" id="save-preferences" data-action="save" ${linked&&dirty()?'':'disabled'}>${t('Save changes')}</button></div>`;
+}
+function accountContent() {
+  return `<div class="user-setting"><div><span class="detail-label">${t('Email')}</span><p class="detail-value">alex@example.com</p></div>${button('Change email','change-email')}</div><div class="user-setting"><div class="google-identity"><img src="assets/google-g.png" alt=""><div><span class="detail-value">Google</span><p class="detail-label">${googleLinked?'alex@example.com':t('Not connected')}</p></div></div>${googleLinked?button('Disconnect','disconnect-google','disconnect-google',`${hasPassword?'':'disabled aria-describedby="google-dependency"'} aria-label="${t('Disconnect Google')}"`):button('Connect Google','connect-google')}</div>${googleLinked&&!hasPassword?`<p class="dependency-note" id="google-dependency">${t('Add a password before disconnecting Google.')}</p>`:''}<div class="user-setting"><div><span class="detail-label">${t('AIHarder password')}</span><p class="detail-value">${hasPassword?'••••••••':t('Not set')}</p></div>${button(hasPassword?'Change password':'Add password','change-password')}</div>`;
+}
+function syncUrl() {
+  const url=new URL(location.href);url.searchParams.delete('layout');url.searchParams.delete('step');
+  url.searchParams.set('state',linked?'configured':'missing-connection');history.replaceState(null,'',url);
+}
+function render() {
+  syncUrl();
+  const sections=[['AimHarder',upstreamContent(),linked?'Connected':'Not connected'],['AI apps',appContent(),''],['Confirmations',confirmationContent(),''],['Your account',accountContent(),'']];
+  document.querySelector('#account-sections').innerHTML=sections.map(([label,content,status],i)=>`<section class="account-section" aria-labelledby="section-${i}"><div class="section-heading"><h2 id="section-${i}" tabindex="-1">${t(label)}</h2>${status?`<span class="section-summary ${linked?'status-connected':''}">${t(status)}</span>`:''}</div><div class="section-content">${content}</div></section>`).join('');
+  for(const control of document.querySelectorAll('[data-fixture]'))control.setAttribute('aria-pressed',String(control.dataset.fixture===(linked?'configured':'missing-connection')));
+}
+const dialog=document.querySelector('#settings-dialog');
+let dialogAction='',dialogClient=null,returnFocus='';
+const exampleField=(label,value)=>`<span class="example-field-label">${t(label)}</span><div class="example-field">${value}</div>`;
+function showDialog(action,client,opener) {
+  dialogAction=action;dialogClient=client;returnFocus=opener.id;
+  let title='',content='',accept='';
+  if(action==='disconnect-upstream') {
+    title='Disconnect AimHarder?';content=`<p>${t('Your AI apps keep their access. Reconnect AimHarder to use your training data.')}</p>`;accept='Disconnect';
+  } else if(action==='disconnect-client') {
+    title=t('Disconnect')+' '+t(client.name)+'?';content=`<p>${t('Only this installation loses access. Your other connections stay in place.')}</p>`;accept='Disconnect';
+  } else if(action==='connect-upstream') {
+    title='Connect AimHarder';content=`<div role="img" aria-label="${t('Fictional AimHarder login fields')}">${exampleField('AimHarder username','alex@example.com')}${exampleField('AimHarder password','••••••••')}</div>`;accept='Connect';
+  } else if(action==='add-client') {
+    title='Connect an app';content=`<div class="provider-list" role="group" aria-label="${t('Choose your AI app')}">${['ChatGPT','Hermes','Other clients'].map((name,i)=>`<label class="provider-option">${clientIcon(name)}<span>${t(name)}</span><input type="radio" name="example-provider" value="${name}" ${i===0?'checked':''}></label>`).join('')}</div>`;accept='Connect app';
+  } else if(action==='change-email') {
+    title='Change email';content=`<p>${t('Verify your new email before it replaces your current one.')}</p><div role="img" aria-label="${t('Fictional email example')}">${exampleField('New email','alex.new@example.com')}</div>`;accept='Send verification';
+  } else if(action==='change-password') {
+    title=hasPassword?'Change password':'Add password';content=`<div role="img" aria-label="${t('Fictional password examples')}">${hasPassword?exampleField('Current password','••••••••'):''}${exampleField('New password','••••••••••••')}${exampleField('Confirm new password','••••••••••••')}</div>`;accept=title;
+  } else if(action==='disconnect-google') {
+    title='Disconnect Google?';content=`<p>${t('You can still sign in with your AIHarder password.')}</p>`;accept='Disconnect';
+  } else if(action==='connect-google') {
+    title='Connect Google';content=`<div class="google-identity"><img src="assets/google-g.png" alt=""><span>alex@example.com</span></div><p class="dialog-note">${t('Use the Google account with the same verified email.')}</p>`;accept='Continue with Google';
+  } else return;
+  document.querySelector('#dialog-title').textContent=t(title);document.querySelector('#dialog-content').innerHTML=content;
+  document.querySelector('#dialog-accept').textContent=t(accept);dialog.showModal();
+}
 function resetPreferences(){booking=publication=savedBooking=savedPublication=true;}
-document.querySelector('#account-sections').addEventListener('click',event=>{const button=event.target.closest('button');if(!button||button.disabled)return;if(button.dataset.open!==undefined){const i=Number(button.dataset.open);expanded.has(i)?expanded.delete(i):expanded.add(i);render();document.querySelector('#section-'+i).focus();return;}switch(button.dataset.action){case'save':if(linked){savedBooking=booking;savedPublication=publication;render();feedback('Saved');document.querySelector('#section-2').focus();}break;case'discard':booking=savedBooking;publication=savedPublication;render();feedback('');document.querySelector('#section-2').focus();break;case'disconnect-client':{const client=clients.find(c=>c.id===Number(button.dataset.client));if(client)showDialog('disconnect-client',client,button);break;}default:showDialog(button.dataset.action,null,button);}});
-document.querySelector('#account-sections').addEventListener('change',event=>{if(!linked)return;if(event.target.id==='booking-confirmation')booking=event.target.checked;if(event.target.id==='publication-confirmation')publication=event.target.checked;document.querySelector('#save-preferences').disabled=!dirty();document.querySelector('#discard-preferences').disabled=!dirty();feedback('');});
+document.querySelector('#account-sections').addEventListener('click',event=>{
+  const control=event.target.closest('button');if(!control||control.disabled)return;
+  if(control.dataset.action==='save'||control.dataset.action==='discard') {
+    if(control.dataset.action==='save'&&linked){savedBooking=booking;savedPublication=publication;feedback('Saved');}
+    else {booking=savedBooking;publication=savedPublication;feedback('');}
+    render();document.querySelector('#section-2').focus();return;
+  }
+  const client=clients.find(item=>item.id===Number(control.dataset.client));
+  showDialog(control.dataset.action,client,control);
+});
+document.querySelector('#account-sections').addEventListener('change',event=>{
+  if(event.target.name==='default-gym'&&linked&&gyms.some(gym=>gym.id===event.target.value)) {
+    defaultGym=event.target.value;render();document.querySelector(`input[name="default-gym"][value="${defaultGym}"]`).focus();feedback('Default gym updated');return;
+  }
+  if(!linked)return;
+  if(event.target.id==='booking-confirmation')booking=event.target.checked;
+  if(event.target.id==='publication-confirmation')publication=event.target.checked;
+  document.querySelector('#save-preferences').disabled=!dirty();document.querySelector('#discard-preferences').disabled=!dirty();feedback('');
+});
 document.querySelector('#dialog-cancel').addEventListener('click',()=>dialog.close());
-document.querySelector('#dialog-accept').addEventListener('click',()=>{if(dialogAction==='disconnect-upstream'){linked=false;resetPreferences();}else if(dialogAction==='connect-upstream'){linked=true;resetPreferences();}else if(dialogAction==='disconnect-client'){clients=clients.filter(c=>c.id!==dialogClient.id);}else if(dialogAction==='add-client'){const chosen=dialog.querySelector('input[name=example-provider]:checked')?.value;if(['ChatGPT','Hermes','Other clients'].includes(chosen))clients.push({id:serial++,name:chosen,label:'Example installation'});}feedback('');render();dialog.close();});
-dialog.addEventListener('close',()=>{const target=document.getElementById(returnFocus)||document.querySelector(dialogAction==='disconnect-upstream'||dialogAction==='connect-upstream'?'#section-0':'#section-1');target.focus();});
-for(const button of document.querySelectorAll('[data-fixture]'))button.addEventListener('click',()=>{linked=button.dataset.fixture==='configured';if(linked)clients=initialClients();resetPreferences();expanded=new Set([0,1,2]);feedback('');render();});
+document.querySelector('#dialog-accept').addEventListener('click',()=>{
+  let message='';
+  if(dialogAction==='disconnect-upstream'){linked=false;resetPreferences();}
+  else if(dialogAction==='connect-upstream'){linked=true;resetPreferences();}
+  else if(dialogAction==='disconnect-client'){clients=clients.filter(client=>client.id!==dialogClient.id);}
+  else if(dialogAction==='add-client') {
+    const chosen=dialog.querySelector('input[name=example-provider]:checked')?.value;
+    if(['ChatGPT','Hermes','Other clients'].includes(chosen))clients.push({id:serial++,name:chosen});
+  } else if(dialogAction==='disconnect-google'&&hasPassword)googleLinked=false;
+  else if(dialogAction==='connect-google')googleLinked=true;
+  else if(dialogAction==='change-email')message='Email verification preview · No email sent';
+  else if(dialogAction==='change-password'){hasPassword=true;message='Password update preview · No password changed';}
+  render();feedback(message);dialog.close();
+});
+dialog.addEventListener('close',()=>{
+  const section=dialogAction.includes('google')||['change-email','change-password'].includes(dialogAction)?3:dialogAction.includes('upstream')?0:1;
+  (document.getElementById(returnFocus)||document.querySelector('#section-'+section)).focus();
+});
+for(const control of document.querySelectorAll('[data-fixture]'))control.addEventListener('click',()=>{
+  linked=control.dataset.fixture==='configured';if(linked)clients=initialClients();resetPreferences();feedback('');render();
+});
 document.querySelector('#appearance').addEventListener('click',syncUrl);render();

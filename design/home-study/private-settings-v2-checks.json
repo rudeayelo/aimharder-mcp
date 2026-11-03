@@ -1,0 +1,100 @@
+{
+  "initial": {
+    "collapseControls": 0,
+    "disconnectButtons": [
+      {
+        "action": "disconnect-upstream",
+        "background": "linear-gradient(rgb(255, 255, 255), rgb(244, 247, 250))",
+        "border": "1px"
+      },
+      {
+        "action": "disconnect-client",
+        "background": "linear-gradient(rgb(255, 255, 255), rgb(244, 247, 250))",
+        "border": "1px"
+      },
+      {
+        "action": "disconnect-client",
+        "background": "linear-gradient(rgb(255, 255, 255), rgb(244, 247, 250))",
+        "border": "1px"
+      },
+      {
+        "action": "disconnect-google",
+        "background": "linear-gradient(rgb(255, 255, 255), rgb(244, 247, 250))",
+        "border": "1px"
+      }
+    ],
+    "headings": [
+      [
+        "AimHarder",
+        "20px"
+      ],
+      [
+        "AI apps",
+        "20px"
+      ],
+      [
+        "Confirmations",
+        "20px"
+      ],
+      [
+        "Your account",
+        "20px"
+      ]
+    ],
+    "overflow": false,
+    "rejectedLabels": false,
+    "titleSize": "32px"
+  },
+  "defaultGym": {
+    "focus": "north",
+    "notice": "Default gym updated",
+    "selected": "north"
+  },
+  "email": "Change email\n\nVerify your new email before it replaces your current one.\n\nNew email\nalex.new@example.com\nCancel\nSend verification",
+  "emailUnchanged": {
+    "email": "alex@example.com",
+    "notice": "Email verification preview · No email sent"
+  },
+  "googleDisconnected": true,
+  "googleReconnected": true,
+  "password": {
+    "text": "Change password\nCurrent password\n••••••••\nNew password\n••••••••••••\nConfirm new password\n••••••••••••\nCancel\nChange password",
+    "inputs": 0
+  },
+  "preference": {
+    "booking": false,
+    "publication": true,
+    "saveEnabled": true
+  },
+  "dependencies": {
+    "accountEnabled": true,
+    "addAppEnabled": true,
+    "apps": 2,
+    "gymsDisabled": true,
+    "preferencesDisabled": true
+  },
+  "singleGymGoogleOnly": {
+    "disconnectGoogleDisabled": true,
+    "gymChoices": 0,
+    "gymNames": [
+      "Example Gym · Central"
+    ],
+    "passwordAction": "Add password"
+  },
+  "addPasswordUnlocksGoogle": true,
+  "spanish": {
+    "account": "Tu cuenta\nCorreo electrónico\n\nalex@example.com\n\nCambiar email\nGoogle\n\nalex@example.com\n\nDesconectar\nContraseña de AIHarder\n\n••••••••\n\nCambiar contraseña",
+    "credentialInputs": 0,
+    "headings": [
+      "Ajustes",
+      "AimHarder",
+      "Apps de IA",
+      "Confirmaciones",
+      "Tu cuenta",
+      ""
+    ],
+    "overflow": false
+  },
+  "system": "system",
+  "errors": []
+}
