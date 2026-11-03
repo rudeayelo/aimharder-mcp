@@ -30904,7 +30904,7 @@
       "x": 1360,
       "y": 12430,
       "name": "AIHarder / Login / Desktop / English / Light",
-      "context": "Separate authentication design shell. Local preview only: no authentication, Google request or email. Password is the AIHarder service password. Recovery/private pages are later work.",
+      "context": "Focused authentication shell with centered AIHarder identity, no public navigation, and quiet support/privacy footer. Google and email/password local previews only. Verification resend removed by owner.",
       "theme": {
         "appearance": "light",
         "language": "en"
@@ -31008,6 +31008,39 @@
               "layout": "vertical",
               "children": [
                 {
+                  "type": "frame",
+                  "id": "g62et",
+                  "name": "AIHarder identity / centered above sign in",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    32,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "bzbif",
+                      "type": "ref",
+                      "ref": "GqxcO",
+                      "name": "AIHarder / return home",
+                      "height": 50,
+                      "descendants": {
+                        "OMijO": {
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "home-study/assets/pen/kettle-flat-light.png",
+                            "mode": "contain"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
                   "type": "text",
                   "id": "WUBsu",
                   "name": "Welcome heading",
@@ -31057,13 +31090,55 @@
                   "name": "Continue with Google / preview",
                   "width": "fill_container",
                   "height": 48,
-                  "fill": "$home-bg",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#FFFFFF",
+                        "position": 0
+                      },
+                      {
+                        "color": "#F4F7FA",
+                        "position": 1
+                      }
+                    ]
+                  },
                   "cornerRadius": 8,
                   "stroke": "$home-line",
                   "strokeWidth": 1,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000001A",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 6
+                  },
+                  "gap": 10,
                   "justifyContent": "center",
                   "alignItems": "center",
                   "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "fUu6T",
+                      "name": "Google G / official gradient asset",
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "home-study/assets/google-g.png",
+                        "mode": "contain"
+                      },
+                      "width": 20,
+                      "height": 20
+                    },
                     {
                       "type": "text",
                       "id": "nNiKl",
@@ -31314,32 +31389,6 @@
                   "width": "fill_container",
                   "height": 52,
                   "layout": "vertical"
-                },
-                {
-                  "type": "frame",
-                  "id": "uydKA",
-                  "name": "Verification recovery affordance",
-                  "width": "fill_container",
-                  "padding": [
-                    8,
-                    0,
-                    0,
-                    0
-                  ],
-                  "justifyContent": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "Crcja",
-                      "name": "Resend verification email link",
-                      "fill": "#1765B0",
-                      "content": "Resend verification email",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Geist",
-                      "fontSize": 14,
-                      "fontWeight": "normal"
-                    }
-                  ]
                 }
               ]
             }
@@ -31411,7 +31460,7 @@
       "x": 2960,
       "y": 12430,
       "name": "AIHarder / Login / Desktop / English / Dark",
-      "context": "Separate authentication design shell. Local preview only: no authentication, Google request or email. Password is the AIHarder service password. Recovery/private pages are later work.",
+      "context": "Focused authentication shell with centered AIHarder identity, no public navigation, and quiet support/privacy footer. Google and email/password local previews only. Verification resend removed by owner.",
       "theme": {
         "appearance": "dark",
         "language": "en"
@@ -31515,6 +31564,39 @@
               "layout": "vertical",
               "children": [
                 {
+                  "type": "frame",
+                  "id": "UAs4U",
+                  "name": "AIHarder identity / centered above sign in",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    32,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "BDNwQ",
+                      "type": "ref",
+                      "ref": "GqxcO",
+                      "name": "AIHarder / return home",
+                      "height": 50,
+                      "descendants": {
+                        "OMijO": {
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "home-study/assets/pen/kettle-flat-dark.png",
+                            "mode": "contain"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
                   "type": "text",
                   "id": "X9gepi",
                   "name": "Welcome heading",
@@ -31564,13 +31646,55 @@
                   "name": "Continue with Google / preview",
                   "width": "fill_container",
                   "height": 48,
-                  "fill": "$home-bg",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#1A2738",
+                        "position": 0
+                      },
+                      {
+                        "color": "#142033",
+                        "position": 1
+                      }
+                    ]
+                  },
                   "cornerRadius": 8,
                   "stroke": "$home-line",
                   "strokeWidth": 1,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000001A",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 6
+                  },
+                  "gap": 10,
                   "justifyContent": "center",
                   "alignItems": "center",
                   "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "tsddm",
+                      "name": "Google G / official gradient asset",
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "home-study/assets/google-g.png",
+                        "mode": "contain"
+                      },
+                      "width": 20,
+                      "height": 20
+                    },
                     {
                       "type": "text",
                       "id": "SmGVu",
@@ -31821,32 +31945,6 @@
                   "width": "fill_container",
                   "height": 52,
                   "layout": "vertical"
-                },
-                {
-                  "type": "frame",
-                  "id": "NUT77",
-                  "name": "Verification recovery affordance",
-                  "width": "fill_container",
-                  "padding": [
-                    8,
-                    0,
-                    0,
-                    0
-                  ],
-                  "justifyContent": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "MzW2P",
-                      "name": "Resend verification email link",
-                      "fill": "#61A9EB",
-                      "content": "Resend verification email",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Geist",
-                      "fontSize": 14,
-                      "fontWeight": "normal"
-                    }
-                  ]
                 }
               ]
             }
@@ -31918,7 +32016,7 @@
       "x": 1360,
       "y": 13570,
       "name": "AIHarder / Login / Desktop / Español / Light",
-      "context": "Separate authentication design shell. Local preview only: no authentication, Google request or email. Password is the AIHarder service password. Recovery/private pages are later work.",
+      "context": "Focused authentication shell with centered AIHarder identity, no public navigation, and quiet support/privacy footer. Google and email/password local previews only. Verification resend removed by owner.",
       "theme": {
         "appearance": "light",
         "language": "es"
@@ -32022,6 +32120,39 @@
               "layout": "vertical",
               "children": [
                 {
+                  "type": "frame",
+                  "id": "j4NK8",
+                  "name": "AIHarder identity / centered above sign in",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    32,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "ZTo8K",
+                      "type": "ref",
+                      "ref": "GqxcO",
+                      "name": "AIHarder / return home",
+                      "height": 50,
+                      "descendants": {
+                        "OMijO": {
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "home-study/assets/pen/kettle-flat-light.png",
+                            "mode": "contain"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
                   "type": "text",
                   "id": "F4ptt",
                   "name": "Welcome heading",
@@ -32071,13 +32202,55 @@
                   "name": "Continue with Google / preview",
                   "width": "fill_container",
                   "height": 48,
-                  "fill": "$home-bg",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#FFFFFF",
+                        "position": 0
+                      },
+                      {
+                        "color": "#F4F7FA",
+                        "position": 1
+                      }
+                    ]
+                  },
                   "cornerRadius": 8,
                   "stroke": "$home-line",
                   "strokeWidth": 1,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000001A",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 6
+                  },
+                  "gap": 10,
                   "justifyContent": "center",
                   "alignItems": "center",
                   "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "LAHop",
+                      "name": "Google G / official gradient asset",
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "home-study/assets/google-g.png",
+                        "mode": "contain"
+                      },
+                      "width": 20,
+                      "height": 20
+                    },
                     {
                       "type": "text",
                       "id": "Hhpsc",
@@ -32328,32 +32501,6 @@
                   "width": "fill_container",
                   "height": 52,
                   "layout": "vertical"
-                },
-                {
-                  "type": "frame",
-                  "id": "nFp2K",
-                  "name": "Verification recovery affordance",
-                  "width": "fill_container",
-                  "padding": [
-                    8,
-                    0,
-                    0,
-                    0
-                  ],
-                  "justifyContent": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "faBN6",
-                      "name": "Resend verification email link",
-                      "fill": "#1765B0",
-                      "content": "Reenviar correo de verificación",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Geist",
-                      "fontSize": 14,
-                      "fontWeight": "normal"
-                    }
-                  ]
                 }
               ]
             }
@@ -32425,7 +32572,7 @@
       "x": 2960,
       "y": 13570,
       "name": "AIHarder / Login / Desktop / Español / Dark",
-      "context": "Separate authentication design shell. Local preview only: no authentication, Google request or email. Password is the AIHarder service password. Recovery/private pages are later work.",
+      "context": "Focused authentication shell with centered AIHarder identity, no public navigation, and quiet support/privacy footer. Google and email/password local previews only. Verification resend removed by owner.",
       "theme": {
         "appearance": "dark",
         "language": "es"
@@ -32529,6 +32676,39 @@
               "layout": "vertical",
               "children": [
                 {
+                  "type": "frame",
+                  "id": "ILz6R",
+                  "name": "AIHarder identity / centered above sign in",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    32,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "twE3G",
+                      "type": "ref",
+                      "ref": "GqxcO",
+                      "name": "AIHarder / return home",
+                      "height": 50,
+                      "descendants": {
+                        "OMijO": {
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "home-study/assets/pen/kettle-flat-dark.png",
+                            "mode": "contain"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
                   "type": "text",
                   "id": "dBQLw",
                   "name": "Welcome heading",
@@ -32578,13 +32758,55 @@
                   "name": "Continue with Google / preview",
                   "width": "fill_container",
                   "height": 48,
-                  "fill": "$home-bg",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#1A2738",
+                        "position": 0
+                      },
+                      {
+                        "color": "#142033",
+                        "position": 1
+                      }
+                    ]
+                  },
                   "cornerRadius": 8,
                   "stroke": "$home-line",
                   "strokeWidth": 1,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000001A",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 6
+                  },
+                  "gap": 10,
                   "justifyContent": "center",
                   "alignItems": "center",
                   "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "Lqppo",
+                      "name": "Google G / official gradient asset",
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "home-study/assets/google-g.png",
+                        "mode": "contain"
+                      },
+                      "width": 20,
+                      "height": 20
+                    },
                     {
                       "type": "text",
                       "id": "Z7pRD",
@@ -32835,32 +33057,6 @@
                   "width": "fill_container",
                   "height": 52,
                   "layout": "vertical"
-                },
-                {
-                  "type": "frame",
-                  "id": "RSc9a",
-                  "name": "Verification recovery affordance",
-                  "width": "fill_container",
-                  "padding": [
-                    8,
-                    0,
-                    0,
-                    0
-                  ],
-                  "justifyContent": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "se4fI",
-                      "name": "Resend verification email link",
-                      "fill": "#61A9EB",
-                      "content": "Reenviar correo de verificación",
-                      "lineHeight": 1.5,
-                      "fontFamily": "Geist",
-                      "fontSize": 14,
-                      "fontWeight": "normal"
-                    }
-                  ]
                 }
               ]
             }

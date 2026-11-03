@@ -175,3 +175,7 @@ The proposed primary test boundary is the existing public Worker HTTP interface,
 ### Login preview readiness correction — 2026-11-03
 
 The design prototype now disables credential fields and submit in its initial HTML, removes credential field names, and enables the form only after local submit handlers are installed. A scriptless before/after browser probe verified the previous unsafe native GET fallback and the corrected disabled state without entering or submitting credentials. This enforces the existing design-only boundary; production authentication and ADR decisions are unchanged. See [Login study](../design/home-study/login-study.md#review-correction-fail-closed-form-readiness).
+
+### Login identity and provider-action refinement — 2026-11-03
+
+The current Login design now places the existing AIHarder identity above the centered form, omits verification resend, and includes an official gradient Google G in the secondary sign-in action. That action gains a subtle neutral gradient and the previously selected shadow. English/Spanish Light/Dark HTML and native pages are updated. This is prototype presentation only; backend verification, authentication, API behavior and ADR decisions remain unchanged. See [current refinement and evidence](../design/home-study/login-study.md#identity-and-google-action-refinement--2026-11-03).

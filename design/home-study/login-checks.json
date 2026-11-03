@@ -321,5 +321,45 @@
       "message": "Introduce tu correo electrónico."
     },
     "scope": "DOM-backed read-only inspection of temporary scriptless fixtures and real UI validation. No credentials entered or native submission performed. FormData constructor unavailable in CUA read-only scope; inspected enabled named controls directly."
+  },
+  "brandRefinement": {
+    "date": "2026-11-03",
+    "enLight": {
+      "brand": "AIHARDER",
+      "brandHref": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/hero-motion-prototype.html?lang=en&theme=light&reply=long",
+      "brandImages": [
+        {
+          "display": "block",
+          "loaded": true
+        },
+        {
+          "display": "none",
+          "loaded": true
+        }
+      ],
+      "formEnabled": true,
+      "googleLoaded": true,
+      "overflow": false,
+      "resendCount": 0
+    },
+    "esDark": {
+      "brand": "AIHARDER",
+      "brandImages": [
+        {
+          "display": "none",
+          "loaded": true
+        },
+        {
+          "display": "block",
+          "loaded": true
+        }
+      ],
+      "formEnabled": true,
+      "googleLabel": "Continuar con Google",
+      "lang": "es",
+      "overflow": false,
+      "resendCount": 0,
+      "theme": "dark"
+    }
   }
 }

@@ -461,5 +461,13 @@
     "file": "lucide/mail.svg",
     "source": "https://unpkg.com/lucide-static@0.468.0/icons/mail.svg",
     "sha256": "8a4e4461fb1db38072eb90fa532c6b17bcd4d774951f65b6fc02c63aab547dee"
+  },
+  {
+    "file": "google-g.png",
+    "source": "https://developers.google.com/static/identity/images/g-logo.png",
+    "sha256": "d1ce9c2af0b10a7333abc99bc706f9a6a199e5b65bf3e3009624f076b8638e6a",
+    "retrieved": "2026-11-03",
+    "guidelines": "https://developers.google.com/identity/branding-guidelines",
+    "treatment": "Untouched official gradient G asset. Aspect ratio preserved using contain in a 20px box; no tint or filter."
   }
 ]

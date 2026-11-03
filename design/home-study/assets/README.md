@@ -70,3 +70,7 @@ The three animated interface demos reuse the existing original AimHarder and app
 How to owner refinement (2026-11-02): the two How to background PNGs now capture the current hero palette/wash inverted vertically, replacing the first navy field. The demo uses locally authored `cursor-macos-style.svg` (black arrow/white outline, not an Apple system-asset extraction). The previous Lucide pointer remains archived; loading/check/chat UI icons still use Lucide. `Other clients` reuses the existing `message-circle.svg`.
 
 FAQ support icon (2026-11-02): `lucide/mail.svg` is the unmodified mail icon from the same Lucide static 0.468.0 package, covered by the retained ISC notice. It renders at 18px beside the support email and inherits the link color in each theme. Source and hash are in the manifest.
+
+## Google sign-in mark — 2026-11-03
+
+`google-g.png` is the untouched gradient G linked by the [official Google Identity branding guidelines](https://developers.google.com/identity/branding-guidelines). It is a provider brand asset, not a second UI icon family. It is served locally with no SDK or external image request; source and SHA-256 are in `sources.json`. HTML and the four Login Pen pages preserve its color and aspect ratio in a 20px box. No sign-in integration or branding-compliance certification is implied.

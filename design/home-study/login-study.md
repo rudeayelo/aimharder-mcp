@@ -4,7 +4,7 @@ Date: 2026-11-03. After the Privacy refinements, the owner requested the login p
 
 ## Reference lock and decisions
 
-Primary target: the accepted AIHarder public shell, Geist/Krona, navy and blue, 112 × 40px header action, selected button gradient/border/shadow and independent-project footer. Login is a focused 400px centered form without a surrounding card or new mascot illustration. The owner subsequently requested a distinct authentication shell: no public header/logo/navigation, a flat canvas, discreet language/appearance controls, and a quiet text-only footer with the independent-project disclosure, Support and Privacy. There is no GitHub link, footer rule or public-site CTA. No WebGL is used.
+Primary target: the accepted AIHarder public shell, Geist/Krona, navy and blue, 112 × 40px header action, selected button gradient/border/shadow and independent-project footer. Login is a focused 400px centered form without a surrounding card or new mascot illustration. The owner subsequently requested a distinct authentication shell: no public header/navigation, a flat canvas, discreet language/appearance controls, and a quiet text-only footer with the independent-project disclosure, Support and Privacy. There is no GitHub link, footer rule or public-site CTA. No WebGL is used.
 
 Full Refero sources reviewed before implementation:
 
@@ -17,7 +17,7 @@ Full Refero sources reviewed before implementation:
 | --- | --- | --- |
 | Google plus email/password | `hosted/src/portal.ts`, `hosted/src/auth.ts` | Reflect the actual supported methods; no new identity method. |
 | Explicit AIHarder password helper | Hosted custody/identity distinction | Prevent confusion with the later AimHarder connection. |
-| Forgot password and verification resend | Existing `/recover` and `/resend-verification` entry points | Preserve recovery affordances without designing those pages yet. |
+| Forgot password | Existing `/recover` entry point | Preserve recovery without designing that page yet; the owner later removed the verification-resend entry from Login. |
 | No open sign-up or invitation banner | Existing invited admission + owner's home copy direction | Do not introduce open enrollment or repeat pilot copy. |
 | Separate authentication shell | Owner correction | Remove the complete public header; retain only discreet language/theme settings and a small text footer. |
 | Real language selector and preserved appearance | Owner's explicit bilingual requirement | Keep language/theme through all three public design routes. |
@@ -64,3 +64,11 @@ The fixed-range Spec review (`9c8701e...e178466`) reported no actionable finding
 ## Limits and next work
 
 This is a throwaway design prototype, not production authentication or an account implementation. No API contract, custody, access, retention, Google configuration, email provider or deployment changed; existing ADRs are unaffected. Login/translation checks do not prove real provider interoperability, credential validation, recovery email delivery or private-page authorization. Recovery/verification pages and private screens remain subsequent design work. Privacy copy still needs owner/legal review before publication. Earlier unresolved nested Privacy bounds-visitor warnings remain; complete native renders/content audits are not a clean structural-visitor or pixel-identical browser/native claim. Do not repeat those diagnostics as a new pass. Source syntax, local links and existing asset hashes are verified separately from owner visual acceptance.
+
+## Identity and Google action refinement — 2026-11-03
+
+The owner requested a Google logo, then a centered AIHarder identity above the welcome heading, removal of verification resend, and subtle volume on the Google action. The focused shell still has no public navigation. The existing flat AIHarder logo links home with locale/theme preserved; its silhouette reverses in Dark. Verification resend is removed from both HTML and all four native Login pages, including its local event handler. This is a visual entry-point change, not removal of backend verification capability.
+
+The untouched [official Google gradient G](https://developers.google.com/static/identity/images/g-logo.png) is placed before the localized label, in a 20px contain box with 10px gap. It is decorative in the accessible button name. Source context is the [Google Identity brand guide](https://developers.google.com/identity/branding-guidelines); the prototype keeps its existing typography and uses a restrained white-to-`#F4F7FA` gradient in Light and `#1A2738`-to-`#142033` in Dark. The requested shadow is exactly `rgba(0,0,0,0.1) 0px 4px 6px 0px`. No Google SDK or network authentication is introduced.
+
+Browser checks observed the loaded Google mark, intact 400×48px button and unchanged localized label; the final EN Light and ES Dark checks verify the AIHarder mark variant, absent resend entry, enabled local form and no horizontal overflow. Computed gradients and shadow match the values above. [Light proof](previews/login/branded-en-light.jpg) · [Dark proof](previews/login/branded-es-dark.jpg). All four Login native pages were exported again; complete renders were inspected. The nested bounds visitor still reports clipping on visibly rendered nested content, including the new mark; this is unresolved diagnostics, not a clean visitor pass. HTML/Pen visuals and source syntax are verified; production authentication, API behavior and ADR decisions are unaffected.
