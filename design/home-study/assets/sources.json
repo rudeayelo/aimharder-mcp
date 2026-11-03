@@ -469,5 +469,15 @@
     "retrieved": "2026-11-03",
     "guidelines": "https://developers.google.com/identity/branding-guidelines",
     "treatment": "Untouched official gradient G asset. Aspect ratio preserved using contain in a 20px box; no tint or filter."
+  },
+  {
+    "file": "lucide/copy.svg",
+    "source": "https://unpkg.com/lucide-static@0.468.0/icons/copy.svg",
+    "sha256": "6828c476979a7e4d5ae3ac726f8fadbcab066ec53299b7f8422cda321a60a841"
+  },
+  {
+    "file": "lucide/chevron-right.svg",
+    "source": "https://unpkg.com/lucide-static@0.468.0/icons/chevron-right.svg",
+    "sha256": "fea488a3b60fd7738bbbf8ca98826ef5c0381347c5fd1048d45ee70a75a51cfe"
   }
 ]

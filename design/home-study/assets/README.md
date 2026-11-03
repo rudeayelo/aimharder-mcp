@@ -74,3 +74,7 @@ FAQ support icon (2026-11-02): `lucide/mail.svg` is the unmodified mail icon fro
 ## Google sign-in mark — 2026-11-03
 
 `google-g.png` is the untouched gradient G linked by the [official Google Identity branding guidelines](https://developers.google.com/identity/branding-guidelines). It is a provider brand asset, not a second UI icon family. It is served locally with no SDK or external image request; source and SHA-256 are in `sources.json`. HTML and the four Login Pen pages preserve its color and aspect ratio in a 20px box. No sign-in integration or branding-compliance certification is implied.
+
+## Participant Home icons — 2026-11-03
+
+Added `lucide/copy.svg` and `lucide/chevron-right.svg` from the same pinned Lucide Static 0.468.0 source and existing ISC license. No additional UI icon family, font or brand artwork is introduced. URLs and hashes are in `sources.json`.

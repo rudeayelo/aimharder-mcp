@@ -1,0 +1,68 @@
+{
+  "date": "2026-11-03",
+  "scope": "Participant Home only; fictional Alex Rivera and installations. No session, password collection, account lookup or connection mutations.",
+  "connected": {
+    "authorizationLabels": [
+      "Authorized",
+      "Authorized"
+    ],
+    "clientRows": 2,
+    "connectionLabel": "Connected",
+    "heading": "Welcome back, Alex.",
+    "liveInputs": 0,
+    "overflow": false,
+    "state": "connected"
+  },
+  "copyQuestion": {
+    "status": "Copied"
+  },
+  "notice": {
+    "open": true,
+    "text": "The next design step is choosing an AI app and following its setup guide. This study does not create an authorization."
+  },
+  "menu": {
+    "actions": [
+      "Account settings",
+      "Support",
+      "Sign out"
+    ],
+    "open": true
+  },
+  "menuFocus": {
+    "menuOpen": false,
+    "tag": "SUMMARY"
+  },
+  "languageSwitch": {
+    "heading": "Hola de nuevo, Alex.",
+    "lang": "es",
+    "state": "connected",
+    "url": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/private-home-study.html?lang=es&theme=light&state=connected"
+  },
+  "system": {
+    "mode": "system",
+    "privacy": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/privacy-study.html?lang=es&theme=system",
+    "state": "connected",
+    "theme": "dark",
+    "url": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/private-home-study.html?lang=es&theme=system&state=connected"
+  },
+  "responsive1030": {
+    "header": 89,
+    "lang": "es",
+    "logoBackground": "rgb(255, 255, 255)",
+    "mainWidth": 950,
+    "overflow": false,
+    "theme": "dark",
+    "width": 1030
+  },
+  "firstVisitSpanish": {
+    "currentSteps": 1,
+    "heading": "Vamos a conectarte.",
+    "overflow": false,
+    "queryCompletionClaim": 0
+  },
+  "consoleErrors": [],
+  "pen": {
+    "updated": false,
+    "reason": "The in-chat editor did not remain open/respond after three open attempts and follow-up state checks. No .pen filesystem access or fallback desktop edit was performed."
+  }
+}
