@@ -6,14 +6,14 @@
   isolation: isolate;
   overflow: hidden;
   padding: 80px 0;
-  border-top: 1px solid #79a4dc;
+  border-block: 1px solid #79a4dc;
   background: #fff;
 }
 [data-theme=dark] .how-band {
   --how-heading: #fff;
   --how-caption: #fff;
   background: #0d1521;
-  border-top-color: #2d609b;
+  border-block-color: #2d609b;
   --how-description: #c8d8ec;
 }
 .how-backdrop { position: absolute; inset: 0; z-index: -2; opacity: .72; transform: scaleY(-1); background: linear-gradient(180deg, #e8f2ff, #87b8f1); }

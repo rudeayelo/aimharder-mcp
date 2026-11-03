@@ -58,3 +58,5 @@ Top-edge refinement (2026-11-02): How to now has a 1px upper border matching the
 Step-number refinement (2026-11-02): numbers use the same type size and line height as their block titles: 20px / 1.4 at desktop, 18px / 1.4 at the existing ≤1100px breakpoint. They use the existing light brand blue `#2490f4` in both appearances. Native desktop numbers match at 20px. No other content, animation, scope or ADR decisions changed.
 
 2026-11-03 border refinement: removed the question wall’s preceding bottom rule in HTML and Pen, leaving only this section’s existing 1px top stroke, with the hero’s Light/Dark blue colors. See [home polish](footer-study.md#home-polish--2026-11-03). How to content, background and motion remain unchanged.
+
+2026-11-03 lower-border refinement: the owner requested a matching rule below How to. HTML now uses `border-block: 1px solid #79a4dc` (Dark `#2d609b`), and native How to frames use top/bottom 1px strokes. The question wall remains borderless at the join. See [Privacy continuation](privacy-study.md).

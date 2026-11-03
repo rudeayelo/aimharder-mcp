@@ -1,0 +1,43 @@
+{
+  "title": "Privacy",
+  "intro": "What AIHarder needs to connect your training, how that information is used, and the choices you have.",
+  "summary": "Your AI chat does not receive your AimHarder password. The service stores encrypted credentials so it can authenticate to AimHarder on your behalf.",
+  "sections": [
+    {
+      "id": "about",
+      "title": "About this notice",
+      "paragraphs": ["This notice covers the hosted AIHarder service that connects your AimHarder account to AI apps. AIHarder is an independent project and is not affiliated with AimHarder.", "AimHarder and the AI apps you use have their own privacy policies. Those policies cover information they handle through their own services."]
+    },
+    {
+      "id": "information",
+      "title": "Information we use",
+      "paragraphs": ["Your AIHarder account uses your email address and sign-in information to identify you and secure access. If you choose Google sign-in, information from Google is used to identify that account.", "Connecting AimHarder requires your AimHarder credentials and connection settings, including your selected gym. The service retrieves the classes, workouts, bookings and activity information needed to answer requests made through your connection."]
+    },
+    {
+      "id": "credentials",
+      "title": "Your AimHarder credentials",
+      "paragraphs": ["Your AIHarder sign-in and your AimHarder connection are separate. The service stores your AimHarder credentials encrypted and can decrypt them when it needs to authenticate to AimHarder. This is recoverable encryption, not end-to-end encryption.", "Your AimHarder password is not included in the information returned to your AI app. Enter it only in the account connection form, not in a chat message."]
+    },
+    {
+      "id": "ai-apps",
+      "title": "What your AI app receives",
+      "paragraphs": ["An AI app you authorize can send requests through your connection and receive the resulting information. Depending on what you ask, that can include your bookings, workouts or recorded activity.", "The AI app handles your conversation under its own terms and privacy policy. Revoking its access to AIHarder stops that connection; it does not remove information already returned to that app."]
+    },
+    {
+      "id": "security",
+      "title": "Sign-in and security",
+      "paragraphs": ["The service uses a browser session to keep you signed in. Access granted to an AI app is separate from that browser session, so signing out of the website does not disconnect your AI apps.", "Use the connected-app controls to revoke an app’s access. Keep your account details private and contact support if you believe someone else has accessed your account."]
+    },
+    {
+      "id": "deletion",
+      "title": "Disconnecting and deleting",
+      "paragraphs": ["You can revoke an AI app’s access, disconnect AimHarder, or delete your AIHarder account. These are separate choices.", "Deleting your AIHarder account removes its active sign-in data, connection credentials and client authorizations. It does not delete your AimHarder account, cancel your bookings or remove conversations held by an AI provider.", "Active-data removal and backup expiry are separate. Recovery records used to keep deleted accounts blocked are also separate from active account data."]
+    },
+    {
+      "id": "contact",
+      "title": "Questions about your data",
+      "paragraphs": ["Contact us if you have a question about this notice, need help with your information, or want to report a privacy concern. Do not include passwords or other credentials in your message."],
+      "email": "support@aiharder.link"
+    }
+  ]
+}

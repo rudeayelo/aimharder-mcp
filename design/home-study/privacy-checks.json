@@ -1,0 +1,97 @@
+{
+  "date": "2026-11-03",
+  "scope": "Privacy design and How to lower border; English desktop Light/Dark",
+  "runtime": {
+    "home": {
+      "bottom": "1px",
+      "bottomColor": "rgb(121, 164, 220)",
+      "privacyHref": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/privacy-study.html?theme=light",
+      "top": "1px",
+      "topColor": "rgb(121, 164, 220)"
+    },
+    "light": {
+      "active": "About this notice",
+      "articleWidth": 760,
+      "draft": "AIHarder · Privacy design study · Draft copy for review · Content sources and review notes",
+      "home": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/hero-motion-prototype.html?theme=light&reply=long&v=privacy1",
+      "indexPosition": "sticky",
+      "overflow": false,
+      "sections": 7,
+      "width": 1200
+    },
+    "dark": {
+      "appearance": "Appearance: dark. Switch to system.",
+      "home": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/hero-motion-prototype.html?theme=dark&reply=long&v=privacy1",
+      "overflow": false,
+      "theme": "dark",
+      "url": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/privacy-study.html?theme=dark"
+    },
+    "anchor": {
+      "active": "Your AimHarder credentials",
+      "hash": "#credentials",
+      "indexTop": 32,
+      "sectionTop": 32.109375
+    },
+    "contact": {
+      "active": "Questions about your data",
+      "email": "mailto:support@aiharder.link",
+      "hash": "#contact"
+    },
+    "system": {
+      "expected": "dark",
+      "query": "system",
+      "resolved": "dark"
+    },
+    "notice": {
+      "open": true,
+      "text": "Real sign-in will be connected during implementation. This view is for reviewing the Privacy page."
+    },
+    "noticeReturn": {
+      "focused": "privacy-signin",
+      "open": false
+    },
+    "panel": {
+      "active": "Your AimHarder credentials",
+      "articleWidth": 720,
+      "overflow": false,
+      "width": 1030
+    },
+    "narrow": {
+      "indexPosition": "static",
+      "overflow": false,
+      "width": 390
+    },
+    "console": [],
+    "final": {
+      "active": "About this notice",
+      "hash": "",
+      "overflow": false,
+      "theme": "light"
+    }
+  },
+  "pen": {
+    "pages": [
+      "U3l0MJ",
+      "g8DEOq"
+    ],
+    "width": 1440,
+    "height": 2324,
+    "copyParity": "All canonical title, introduction, summary, section headings/paragraphs and email found in both pages",
+    "existingSubtreesUnchanged": 26,
+    "existingSubtreesCompared": 28,
+    "expectedChangedSubtrees": [
+      "yZ4bJ",
+      "oNuGF"
+    ],
+    "otherHomeChange": "How to top and bottom 1px strokes on ZLrrd/I95ri7",
+    "placeholdersCleared": true,
+    "layoutDiagnostics": "27 nested clipping warnings per page despite complete visual render; attempted origin normalization did not resolve visitor bounds, and ignored x/y properties were removed. Structural visitor is not a clean pass."
+  },
+  "limits": [
+    "Draft privacy copy, not a published or legally approved policy.",
+    "No controller, legal basis, jurisdiction, exact retention or backup expiry invented.",
+    "No account access, emails, operational domain migration or production deployment.",
+    "Login and private pages remain subsequent work.",
+    "Other six existing native device/locale variants remain unchanged."
+  ]
+}

@@ -2179,7 +2179,8 @@
           },
           "stroke": "#79A4DC",
           "strokeWidth": {
-            "top": 1
+            "top": 1,
+            "bottom": 1
           },
           "layout": "vertical",
           "gap": 48,
@@ -3904,6 +3905,7 @@
                   "type": "text",
                   "id": "I9Rjpk",
                   "name": "privacy link",
+                  "context": "Opens the Privacy design page at home-study/privacy-study.html. Draft copy for review; no published legal policy.",
                   "metadata": {
                     "type": "home-copy",
                     "key": "home-privacy"
@@ -5433,7 +5435,8 @@
           },
           "stroke": "#2D609B",
           "strokeWidth": {
-            "top": 1
+            "top": 1,
+            "bottom": 1
           },
           "layout": "vertical",
           "gap": 48,
@@ -7158,6 +7161,7 @@
                   "type": "text",
                   "id": "Q31be",
                   "name": "privacy link",
+                  "context": "Opens the Privacy design page at home-study/privacy-study.html. Draft copy for review; no published legal policy.",
                   "metadata": {
                     "type": "home-copy",
                     "key": "home-privacy"
@@ -24697,6 +24701,2258 @@
           "fontFamily": "Geist",
           "fontSize": 14,
           "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "U3l0MJ",
+      "x": 1360,
+      "y": 7250,
+      "name": "AIHarder / Privacy / Desktop / English / Light",
+      "context": "Privacy reading design. Draft copy from privacy-copy.json; owner/legal review pending. HTML owns anchors, scroll position, theme cycling and navigation. No login/private screens in this checkpoint.",
+      "theme": {
+        "appearance": "light",
+        "language": "en"
+      },
+      "clip": true,
+      "width": 1440,
+      "fill": "$home-bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "Ajoul",
+          "name": "Privacy header",
+          "width": "fill_container",
+          "height": 89,
+          "fill": "$home-bg",
+          "stroke": "$home-line",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "padding": [
+            12.75,
+            120,
+            13.75,
+            120
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "VCpOH",
+              "type": "ref",
+              "ref": "GqxcO",
+              "name": "Brand / AIHarder",
+              "width": "fill_container",
+              "x": 120,
+              "y": 12.75
+            },
+            {
+              "type": "frame",
+              "id": "syCKY",
+              "name": "Primary section navigation",
+              "width": "fill_container",
+              "gap": 32,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Eprae",
+                  "name": "How it works anchor",
+                  "fill": "$home-ink",
+                  "content": "How it works",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "eGgMX",
+                  "name": "FAQ anchor",
+                  "fill": "$home-ink",
+                  "content": "FAQ",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Tv0Or",
+              "name": "Preferences and sign-in",
+              "width": "fill_container",
+              "gap": 24,
+              "justifyContent": "end",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "EP1BJ",
+                  "name": "Language and appearance",
+                  "gap": 24,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Imznj",
+                      "name": "Language selector",
+                      "height": 44,
+                      "gap": 7,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "N3iRUG",
+                          "name": "Language current value",
+                          "fill": "$home-ink",
+                          "content": "English",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "Sbzwn",
+                          "name": "Language chevron",
+                          "width": 12,
+                          "height": 12,
+                          "icon": "chevron-down",
+                          "library": "lucide",
+                          "fill": "$home-ink"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "G4D55",
+                      "name": "Appearance / cycle System Light Dark",
+                      "context": "Appearance cycle: Light, Dark, System. Native still shows light.",
+                      "width": 22,
+                      "height": 44,
+                      "cornerRadius": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "j2WWiZ",
+                          "name": "light appearance",
+                          "width": 22,
+                          "height": 22,
+                          "icon": "sun",
+                          "library": "lucide",
+                          "fill": "$home-ink"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "RMQKa",
+                  "type": "ref",
+                  "ref": "UEEFt",
+                  "name": "Sign in / header",
+                  "width": 112,
+                  "height": 40,
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#2174B9",
+                        "position": 0
+                      },
+                      {
+                        "color": "#1765B0",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "stroke": "#12528F",
+                  "strokeWidth": 1,
+                  "cornerRadius": 8,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000001A",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 6
+                  },
+                  "x": 288,
+                  "y": 2,
+                  "descendants": {
+                    "ugUJO": {
+                      "content": "Sign in",
+                      "fontSize": 14,
+                      "textAlign": "center",
+                      "fill": "$home-on-action",
+                      "lineHeight": 1.5
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "h6TG77",
+          "name": "Privacy document and contents",
+          "width": "fill_container",
+          "gap": 64,
+          "padding": [
+            64,
+            120,
+            88,
+            120
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "qcnUl",
+              "name": "On this page / sticky contents in HTML",
+              "width": 208,
+              "layout": "vertical",
+              "gap": 20,
+              "padding": [
+                8,
+                0,
+                0,
+                0
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "M2IRkA",
+                  "name": "Contents heading",
+                  "fill": "$home-muted",
+                  "content": "ON THIS PAGE",
+                  "lineHeight": 1.2,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "600",
+                  "letterSpacing": 0.6
+                },
+                {
+                  "type": "frame",
+                  "id": "QoGkk",
+                  "name": "Section anchors",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "xirZk",
+                      "name": "Anchor / About this notice",
+                      "context": "Link target #about. Native first-section active still; HTML scroll tracking updates selection.",
+                      "width": "fill_container",
+                      "stroke": "#1765B0",
+                      "strokeWidth": {
+                        "left": 2
+                      },
+                      "layout": "vertical",
+                      "padding": [
+                        6,
+                        0,
+                        6,
+                        18
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "cz8Jc",
+                          "name": "Contents label / About this notice",
+                          "fill": "#1765B0",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "About this notice",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "cyzdG",
+                      "name": "Anchor / Information we use",
+                      "context": "Link target #information. Native first-section active still; HTML scroll tracking updates selection.",
+                      "width": "fill_container",
+                      "stroke": "#00000000",
+                      "strokeWidth": {
+                        "left": 2
+                      },
+                      "layout": "vertical",
+                      "padding": [
+                        6,
+                        0,
+                        6,
+                        18
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qFtKs",
+                          "name": "Contents label / Information we use",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Information we use",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "QtAn5",
+                      "name": "Anchor / Your AimHarder credentials",
+                      "context": "Link target #credentials. Native first-section active still; HTML scroll tracking updates selection.",
+                      "width": "fill_container",
+                      "stroke": "#00000000",
+                      "strokeWidth": {
+                        "left": 2
+                      },
+                      "layout": "vertical",
+                      "padding": [
+                        6,
+                        0,
+                        6,
+                        18
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "B1Ju8",
+                          "name": "Contents label / Your AimHarder credentials",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Your AimHarder credentials",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "V4jng",
+                      "name": "Anchor / What your AI app receives",
+                      "context": "Link target #ai-apps. Native first-section active still; HTML scroll tracking updates selection.",
+                      "width": "fill_container",
+                      "stroke": "#00000000",
+                      "strokeWidth": {
+                        "left": 2
+                      },
+                      "layout": "vertical",
+                      "padding": [
+                        6,
+                        0,
+                        6,
+                        18
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "M1YcNV",
+                          "name": "Contents label / What your AI app receives",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "What your AI app receives",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "xmfCC",
+                      "name": "Anchor / Sign-in and security",
+                      "context": "Link target #security. Native first-section active still; HTML scroll tracking updates selection.",
+                      "width": "fill_container",
+                      "stroke": "#00000000",
+                      "strokeWidth": {
+                        "left": 2
+                      },
+                      "layout": "vertical",
+                      "padding": [
+                        6,
+                        0,
+                        6,
+                        18
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Cvc8f",
+                          "name": "Contents label / Sign-in and security",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Sign-in and security",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ERJE9",
+                      "name": "Anchor / Disconnecting and deleting",
+                      "context": "Link target #deletion. Native first-section active still; HTML scroll tracking updates selection.",
+                      "width": "fill_container",
+                      "stroke": "#00000000",
+                      "strokeWidth": {
+                        "left": 2
+                      },
+                      "layout": "vertical",
+                      "padding": [
+                        6,
+                        0,
+                        6,
+                        18
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "pp04r",
+                          "name": "Contents label / Disconnecting and deleting",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Disconnecting and deleting",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Plh1D",
+                      "name": "Anchor / Questions about your data",
+                      "context": "Link target #contact. Native first-section active still; HTML scroll tracking updates selection.",
+                      "width": "fill_container",
+                      "stroke": "#00000000",
+                      "strokeWidth": {
+                        "left": 2
+                      },
+                      "layout": "vertical",
+                      "padding": [
+                        6,
+                        0,
+                        6,
+                        18
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ECu0R",
+                          "name": "Contents label / Questions about your data",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Questions about your data",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "d0fTD",
+              "name": "Privacy reading column",
+              "width": 760,
+              "layout": "vertical",
+              "gap": 40,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "hgSV0",
+                  "name": "Privacy title and credential summary",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    8,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "S2gTWI",
+                      "name": "Home breadcrumb",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "padding": [
+                        0,
+                        0,
+                        24,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "o1BAF",
+                          "name": "Breadcrumb / Home",
+                          "fill": "$home-muted",
+                          "content": "Home",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "d4XJpB",
+                          "name": "Breadcrumb / /",
+                          "fill": "$home-muted",
+                          "content": "/",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "ZGmaq",
+                          "name": "Breadcrumb / Privacy",
+                          "fill": "$home-muted",
+                          "content": "Privacy",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "pDapL",
+                      "name": "Privacy heading",
+                      "fill": "$home-ink",
+                      "content": "Privacy",
+                      "lineHeight": 1.1,
+                      "fontFamily": "Geist",
+                      "fontSize": 56,
+                      "fontWeight": "700",
+                      "letterSpacing": -1.5
+                    },
+                    {
+                      "type": "frame",
+                      "id": "tqIIk",
+                      "name": "Privacy introduction",
+                      "width": 680,
+                      "layout": "vertical",
+                      "padding": [
+                        20,
+                        0,
+                        32,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "YZ7K2",
+                          "name": "Privacy introduction copy",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "What AIHarder needs to connect your training, how that information is used, and the choices you have.",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 20,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "g2jAnN",
+                      "name": "Credential handling summary",
+                      "width": "fill_container",
+                      "fill": "#EDF5FF",
+                      "stroke": "#2490F4",
+                      "strokeWidth": {
+                        "left": 3
+                      },
+                      "layout": "vertical",
+                      "padding": 24,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "B2rRPH",
+                          "name": "Credential summary copy",
+                          "fill": "$home-ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Your AI chat does not receive your AimHarder password. The service stores encrypted credentials so it can authenticate to AimHarder on your behalf.",
+                          "lineHeight": 1.65,
+                          "fontFamily": "Geist",
+                          "fontSize": 17,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "EpJLF",
+                  "name": "Privacy section / About this notice",
+                  "context": "Anchor #about",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "KsE2Q",
+                      "name": "Section heading / About this notice",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "About this notice",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 26,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "D0oc8N",
+                      "name": "About this notice / paragraph 1",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "This notice covers the hosted AIHarder service that connects your AimHarder account to AI apps. AIHarder is an independent project and is not affiliated with AimHarder.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "NnQb3",
+                      "name": "About this notice / paragraph 2",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "AimHarder and the AI apps you use have their own privacy policies. Those policies cover information they handle through their own services.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Z96qJP",
+                  "name": "Privacy section / Information we use",
+                  "context": "Anchor #information",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "L8UCLB",
+                      "name": "Section heading / Information we use",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Information we use",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 26,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "jFuRO",
+                      "name": "Information we use / paragraph 1",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Your AIHarder account uses your email address and sign-in information to identify you and secure access. If you choose Google sign-in, information from Google is used to identify that account.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "FezpJ",
+                      "name": "Information we use / paragraph 2",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Connecting AimHarder requires your AimHarder credentials and connection settings, including your selected gym. The service retrieves the classes, workouts, bookings and activity information needed to answer requests made through your connection.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "RPFfi",
+                  "name": "Privacy section / Your AimHarder credentials",
+                  "context": "Anchor #credentials",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "q3Jfqv",
+                      "name": "Section heading / Your AimHarder credentials",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Your AimHarder credentials",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 26,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "gSwIQ",
+                      "name": "Your AimHarder credentials / paragraph 1",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Your AIHarder sign-in and your AimHarder connection are separate. The service stores your AimHarder credentials encrypted and can decrypt them when it needs to authenticate to AimHarder. This is recoverable encryption, not end-to-end encryption.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "U9CRl",
+                      "name": "Your AimHarder credentials / paragraph 2",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Your AimHarder password is not included in the information returned to your AI app. Enter it only in the account connection form, not in a chat message.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "fikrm",
+                  "name": "Privacy section / What your AI app receives",
+                  "context": "Anchor #ai-apps",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "LDzFz",
+                      "name": "Section heading / What your AI app receives",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "What your AI app receives",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 26,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "rZuyn",
+                      "name": "What your AI app receives / paragraph 1",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "An AI app you authorize can send requests through your connection and receive the resulting information. Depending on what you ask, that can include your bookings, workouts or recorded activity.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "C5NYE",
+                      "name": "What your AI app receives / paragraph 2",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "The AI app handles your conversation under its own terms and privacy policy. Revoking its access to AIHarder stops that connection; it does not remove information already returned to that app.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "PEj37",
+                  "name": "Privacy section / Sign-in and security",
+                  "context": "Anchor #security",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "HSMOK",
+                      "name": "Section heading / Sign-in and security",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Sign-in and security",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 26,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "K7BENj",
+                      "name": "Sign-in and security / paragraph 1",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "The service uses a browser session to keep you signed in. Access granted to an AI app is separate from that browser session, so signing out of the website does not disconnect your AI apps.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "t6zE2b",
+                      "name": "Sign-in and security / paragraph 2",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Use the connected-app controls to revoke an app’s access. Keep your account details private and contact support if you believe someone else has accessed your account.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "GrKQ7",
+                  "name": "Privacy section / Disconnecting and deleting",
+                  "context": "Anchor #deletion",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "xHNqZ",
+                      "name": "Section heading / Disconnecting and deleting",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Disconnecting and deleting",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 26,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "XYshc",
+                      "name": "Disconnecting and deleting / paragraph 1",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "You can revoke an AI app’s access, disconnect AimHarder, or delete your AIHarder account. These are separate choices.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Q8GzvQ",
+                      "name": "Disconnecting and deleting / paragraph 2",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Deleting your AIHarder account removes its active sign-in data, connection credentials and client authorizations. It does not delete your AimHarder account, cancel your bookings or remove conversations held by an AI provider.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Y86R0",
+                      "name": "Disconnecting and deleting / paragraph 3",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Active-data removal and backup expiry are separate. Recovery records used to keep deleted accounts blocked are also separate from active account data.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "S05Dl",
+                  "name": "Privacy section / Questions about your data",
+                  "context": "Anchor #contact",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ORDHR",
+                      "name": "Section heading / Questions about your data",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Questions about your data",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 26,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "HhXpD",
+                      "name": "Questions about your data / paragraph 1",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Contact us if you have a question about this notice, need help with your information, or want to report a privacy concern. Do not include passwords or other credentials in your message.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "S7S7d",
+                      "name": "Privacy support email",
+                      "context": "Mailto support@aiharder.link. Design target, not mailbox validation.",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "MF4Pq",
+                          "name": "Mail / Lucide",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "mail",
+                          "library": "lucide",
+                          "fill": "#1765B0"
+                        },
+                        {
+                          "type": "text",
+                          "id": "LUl17",
+                          "name": "Privacy support address",
+                          "fill": "#1765B0",
+                          "content": "support@aiharder.link",
+                          "lineHeight": 1.65,
+                          "fontFamily": "Geist",
+                          "fontSize": 17,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "IIPtd",
+          "name": "Privacy footer",
+          "context": "Independent-project disclosure, GitHub, Support and current Privacy page. Static native still.",
+          "width": "fill_container",
+          "fill": "$home-bg",
+          "stroke": "$home-line",
+          "strokeWidth": {
+            "top": 1
+          },
+          "gap": 32,
+          "padding": [
+            29,
+            120,
+            28,
+            120
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "H1z95",
+              "name": "Independent-project disclosure",
+              "width": "fill_container",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "b5eBC",
+                  "name": "Independent-project disclosure",
+                  "metadata": {
+                    "type": "home-copy",
+                    "key": "home-disclosure"
+                  },
+                  "fill": "$home-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "An independent project. Not affiliated with AimHarder.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "XHJ2d",
+              "name": "Project and privacy links",
+              "gap": 24,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "fdogh",
+                  "name": "github link",
+                  "metadata": {
+                    "type": "home-copy",
+                    "key": "home-github"
+                  },
+                  "fill": "$home-ink",
+                  "content": "GitHub",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "Di67D",
+                  "name": "Support email link",
+                  "context": "Support link target: mailto:support@aiharder.link. Live mailto behavior is in the HTML prototype.",
+                  "fill": "$home-ink",
+                  "content": "Support",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "BUm8V",
+                  "name": "privacy link",
+                  "context": "Current page: Privacy. Draft copy for review.",
+                  "metadata": {
+                    "type": "home-copy",
+                    "key": "home-privacy"
+                  },
+                  "fill": "#1765B0",
+                  "content": "Privacy",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "g8DEOq",
+      "x": 2960,
+      "y": 7250,
+      "name": "AIHarder / Privacy / Desktop / English / Dark",
+      "context": "Privacy reading design. Draft copy from privacy-copy.json; owner/legal review pending. HTML owns anchors, scroll position, theme cycling and navigation. No login/private screens in this checkpoint.",
+      "theme": {
+        "appearance": "dark",
+        "language": "en"
+      },
+      "clip": true,
+      "width": 1440,
+      "fill": "$home-bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "nneBD",
+          "name": "Privacy header",
+          "width": "fill_container",
+          "height": 89,
+          "fill": "$home-bg",
+          "stroke": "$home-line",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "padding": [
+            12.75,
+            120,
+            13.75,
+            120
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "Ws99O",
+              "type": "ref",
+              "ref": "GqxcO",
+              "name": "Brand / AIHarder",
+              "width": "fill_container",
+              "x": 120,
+              "y": 12.75,
+              "descendants": {
+                "OMijO": {
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "home-study/assets/pen/kettle-flat-dark.png",
+                    "mode": "contain"
+                  }
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "jc8JE",
+              "name": "Primary section navigation",
+              "width": "fill_container",
+              "gap": 32,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "DrDPH",
+                  "name": "How it works anchor",
+                  "fill": "$home-ink",
+                  "content": "How it works",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "Ym41B",
+                  "name": "FAQ anchor",
+                  "fill": "$home-ink",
+                  "content": "FAQ",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "G86Nc",
+              "name": "Preferences and sign-in",
+              "width": "fill_container",
+              "gap": 24,
+              "justifyContent": "end",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ssXNB",
+                  "name": "Language and appearance",
+                  "gap": 24,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "XZ3xF",
+                      "name": "Language selector",
+                      "height": 44,
+                      "gap": 7,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "rwwML",
+                          "name": "Language current value",
+                          "fill": "$home-ink",
+                          "content": "English",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "usa4K",
+                          "name": "Language chevron",
+                          "width": 12,
+                          "height": 12,
+                          "icon": "chevron-down",
+                          "library": "lucide",
+                          "fill": "$home-ink"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "b7pO3",
+                      "name": "Appearance / cycle System Light Dark",
+                      "context": "Appearance cycle: Light, Dark, System. Native still shows dark.",
+                      "width": 22,
+                      "height": 44,
+                      "cornerRadius": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "o1mXc",
+                          "name": "dark appearance",
+                          "width": 22,
+                          "height": 22,
+                          "icon": "moon",
+                          "library": "lucide",
+                          "fill": "$home-ink"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "Lj2rN",
+                  "type": "ref",
+                  "ref": "UEEFt",
+                  "name": "Sign in / header",
+                  "width": 112,
+                  "height": 40,
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#47A3F6",
+                        "position": 0
+                      },
+                      {
+                        "color": "#2490F4",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "stroke": "#61A9EB",
+                  "strokeWidth": 1,
+                  "cornerRadius": 8,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#0000001A",
+                    "offset": {
+                      "x": 0,
+                      "y": 4
+                    },
+                    "blur": 6
+                  },
+                  "x": 288,
+                  "y": 2,
+                  "descendants": {
+                    "ugUJO": {
+                      "content": "Sign in",
+                      "fontSize": 14,
+                      "textAlign": "center",
+                      "fill": "$home-on-action",
+                      "lineHeight": 1.5
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "cNi6f",
+          "name": "Privacy document and contents",
+          "width": "fill_container",
+          "gap": 64,
+          "padding": [
+            64,
+            120,
+            88,
+            120
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "lJGVT",
+              "name": "On this page / sticky contents in HTML",
+              "width": 208,
+              "layout": "vertical",
+              "gap": 20,
+              "padding": [
+                8,
+                0,
+                0,
+                0
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "N8nONX",
+                  "name": "Contents heading",
+                  "fill": "$home-muted",
+                  "content": "ON THIS PAGE",
+                  "lineHeight": 1.2,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "600",
+                  "letterSpacing": 0.6
+                },
+                {
+                  "type": "frame",
+                  "id": "wottx",
+                  "name": "Section anchors",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "h2llxr",
+                      "name": "Anchor / About this notice",
+                      "context": "Link target #about. Native first-section active still; HTML scroll tracking updates selection.",
+                      "width": "fill_container",
+                      "stroke": "#61A9EB",
+                      "strokeWidth": {
+                        "left": 2
+                      },
+                      "layout": "vertical",
+                      "padding": [
+                        6,
+                        0,
+                        6,
+                        18
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "FLd19",
+                          "name": "Contents label / About this notice",
+                          "fill": "#61A9EB",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "About this notice",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "wmQhN",
+                      "name": "Anchor / Information we use",
+                      "context": "Link target #information. Native first-section active still; HTML scroll tracking updates selection.",
+                      "width": "fill_container",
+                      "stroke": "#00000000",
+                      "strokeWidth": {
+                        "left": 2
+                      },
+                      "layout": "vertical",
+                      "padding": [
+                        6,
+                        0,
+                        6,
+                        18
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "wHBMC",
+                          "name": "Contents label / Information we use",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Information we use",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "DxXxw",
+                      "name": "Anchor / Your AimHarder credentials",
+                      "context": "Link target #credentials. Native first-section active still; HTML scroll tracking updates selection.",
+                      "width": "fill_container",
+                      "stroke": "#00000000",
+                      "strokeWidth": {
+                        "left": 2
+                      },
+                      "layout": "vertical",
+                      "padding": [
+                        6,
+                        0,
+                        6,
+                        18
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "I7BK0N",
+                          "name": "Contents label / Your AimHarder credentials",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Your AimHarder credentials",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "mlX58",
+                      "name": "Anchor / What your AI app receives",
+                      "context": "Link target #ai-apps. Native first-section active still; HTML scroll tracking updates selection.",
+                      "width": "fill_container",
+                      "stroke": "#00000000",
+                      "strokeWidth": {
+                        "left": 2
+                      },
+                      "layout": "vertical",
+                      "padding": [
+                        6,
+                        0,
+                        6,
+                        18
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Lznz3",
+                          "name": "Contents label / What your AI app receives",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "What your AI app receives",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "oLYSP",
+                      "name": "Anchor / Sign-in and security",
+                      "context": "Link target #security. Native first-section active still; HTML scroll tracking updates selection.",
+                      "width": "fill_container",
+                      "stroke": "#00000000",
+                      "strokeWidth": {
+                        "left": 2
+                      },
+                      "layout": "vertical",
+                      "padding": [
+                        6,
+                        0,
+                        6,
+                        18
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Oshqc",
+                          "name": "Contents label / Sign-in and security",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Sign-in and security",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "DErin",
+                      "name": "Anchor / Disconnecting and deleting",
+                      "context": "Link target #deletion. Native first-section active still; HTML scroll tracking updates selection.",
+                      "width": "fill_container",
+                      "stroke": "#00000000",
+                      "strokeWidth": {
+                        "left": 2
+                      },
+                      "layout": "vertical",
+                      "padding": [
+                        6,
+                        0,
+                        6,
+                        18
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "wgOvr",
+                          "name": "Contents label / Disconnecting and deleting",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Disconnecting and deleting",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "edLaZ",
+                      "name": "Anchor / Questions about your data",
+                      "context": "Link target #contact. Native first-section active still; HTML scroll tracking updates selection.",
+                      "width": "fill_container",
+                      "stroke": "#00000000",
+                      "strokeWidth": {
+                        "left": 2
+                      },
+                      "layout": "vertical",
+                      "padding": [
+                        6,
+                        0,
+                        6,
+                        18
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "XJhbU",
+                          "name": "Contents label / Questions about your data",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Questions about your data",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "RniMp",
+              "name": "Privacy reading column",
+              "width": 760,
+              "layout": "vertical",
+              "gap": 40,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "eDP1k",
+                  "name": "Privacy title and credential summary",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    8,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Xlkik",
+                      "name": "Home breadcrumb",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "padding": [
+                        0,
+                        0,
+                        24,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Ib3wh",
+                          "name": "Breadcrumb / Home",
+                          "fill": "$home-muted",
+                          "content": "Home",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "BVA18",
+                          "name": "Breadcrumb / /",
+                          "fill": "$home-muted",
+                          "content": "/",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "S1aKX",
+                          "name": "Breadcrumb / Privacy",
+                          "fill": "$home-muted",
+                          "content": "Privacy",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "Y7amIP",
+                      "name": "Privacy heading",
+                      "fill": "$home-ink",
+                      "content": "Privacy",
+                      "lineHeight": 1.1,
+                      "fontFamily": "Geist",
+                      "fontSize": 56,
+                      "fontWeight": "700",
+                      "letterSpacing": -1.5
+                    },
+                    {
+                      "type": "frame",
+                      "id": "v5Ljx",
+                      "name": "Privacy introduction",
+                      "width": 680,
+                      "layout": "vertical",
+                      "padding": [
+                        20,
+                        0,
+                        32,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "PloIu",
+                          "name": "Privacy introduction copy",
+                          "fill": "$home-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "What AIHarder needs to connect your training, how that information is used, and the choices you have.",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 20,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "TlXzg",
+                      "name": "Credential handling summary",
+                      "width": "fill_container",
+                      "fill": "#142B45",
+                      "stroke": "#2490F4",
+                      "strokeWidth": {
+                        "left": 3
+                      },
+                      "layout": "vertical",
+                      "padding": 24,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "TqAt4",
+                          "name": "Credential summary copy",
+                          "fill": "$home-ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Your AI chat does not receive your AimHarder password. The service stores encrypted credentials so it can authenticate to AimHarder on your behalf.",
+                          "lineHeight": 1.65,
+                          "fontFamily": "Geist",
+                          "fontSize": 17,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "BYGEz",
+                  "name": "Privacy section / About this notice",
+                  "context": "Anchor #about",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "X4EcD",
+                      "name": "Section heading / About this notice",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "About this notice",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 26,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "fzfw5",
+                      "name": "About this notice / paragraph 1",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "This notice covers the hosted AIHarder service that connects your AimHarder account to AI apps. AIHarder is an independent project and is not affiliated with AimHarder.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "FsYsq",
+                      "name": "About this notice / paragraph 2",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "AimHarder and the AI apps you use have their own privacy policies. Those policies cover information they handle through their own services.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "kWO6j",
+                  "name": "Privacy section / Information we use",
+                  "context": "Anchor #information",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "W2Zs0W",
+                      "name": "Section heading / Information we use",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Information we use",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 26,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "S1InjF",
+                      "name": "Information we use / paragraph 1",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Your AIHarder account uses your email address and sign-in information to identify you and secure access. If you choose Google sign-in, information from Google is used to identify that account.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "CZPvz",
+                      "name": "Information we use / paragraph 2",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Connecting AimHarder requires your AimHarder credentials and connection settings, including your selected gym. The service retrieves the classes, workouts, bookings and activity information needed to answer requests made through your connection.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "bYGgd",
+                  "name": "Privacy section / Your AimHarder credentials",
+                  "context": "Anchor #credentials",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "EvTpq",
+                      "name": "Section heading / Your AimHarder credentials",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Your AimHarder credentials",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 26,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "oz7Yx",
+                      "name": "Your AimHarder credentials / paragraph 1",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Your AIHarder sign-in and your AimHarder connection are separate. The service stores your AimHarder credentials encrypted and can decrypt them when it needs to authenticate to AimHarder. This is recoverable encryption, not end-to-end encryption.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "UZ12d",
+                      "name": "Your AimHarder credentials / paragraph 2",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Your AimHarder password is not included in the information returned to your AI app. Enter it only in the account connection form, not in a chat message.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "zcCVx",
+                  "name": "Privacy section / What your AI app receives",
+                  "context": "Anchor #ai-apps",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "AinJW",
+                      "name": "Section heading / What your AI app receives",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "What your AI app receives",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 26,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "sCTFK",
+                      "name": "What your AI app receives / paragraph 1",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "An AI app you authorize can send requests through your connection and receive the resulting information. Depending on what you ask, that can include your bookings, workouts or recorded activity.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "aTX3T",
+                      "name": "What your AI app receives / paragraph 2",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "The AI app handles your conversation under its own terms and privacy policy. Revoking its access to AIHarder stops that connection; it does not remove information already returned to that app.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ozTOV",
+                  "name": "Privacy section / Sign-in and security",
+                  "context": "Anchor #security",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "UIVM4",
+                      "name": "Section heading / Sign-in and security",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Sign-in and security",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 26,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "lpqs0",
+                      "name": "Sign-in and security / paragraph 1",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "The service uses a browser session to keep you signed in. Access granted to an AI app is separate from that browser session, so signing out of the website does not disconnect your AI apps.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "j6Lpb7",
+                      "name": "Sign-in and security / paragraph 2",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Use the connected-app controls to revoke an app’s access. Keep your account details private and contact support if you believe someone else has accessed your account.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "C9P8Lg",
+                  "name": "Privacy section / Disconnecting and deleting",
+                  "context": "Anchor #deletion",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "tqNi3",
+                      "name": "Section heading / Disconnecting and deleting",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Disconnecting and deleting",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 26,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "P3YiPZ",
+                      "name": "Disconnecting and deleting / paragraph 1",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "You can revoke an AI app’s access, disconnect AimHarder, or delete your AIHarder account. These are separate choices.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "e63Yf9",
+                      "name": "Disconnecting and deleting / paragraph 2",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Deleting your AIHarder account removes its active sign-in data, connection credentials and client authorizations. It does not delete your AimHarder account, cancel your bookings or remove conversations held by an AI provider.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "O9x14",
+                      "name": "Disconnecting and deleting / paragraph 3",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Active-data removal and backup expiry are separate. Recovery records used to keep deleted accounts blocked are also separate from active account data.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "OF4ut",
+                  "name": "Privacy section / Questions about your data",
+                  "context": "Anchor #contact",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "F01DT",
+                      "name": "Section heading / Questions about your data",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Questions about your data",
+                      "lineHeight": 1.25,
+                      "fontFamily": "Geist",
+                      "fontSize": 26,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "ynNGf",
+                      "name": "Questions about your data / paragraph 1",
+                      "fill": "$home-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Contact us if you have a question about this notice, need help with your information, or want to report a privacy concern. Do not include passwords or other credentials in your message.",
+                      "lineHeight": 1.65,
+                      "fontFamily": "Geist",
+                      "fontSize": 17,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "g0jR0c",
+                      "name": "Privacy support email",
+                      "context": "Mailto support@aiharder.link. Design target, not mailbox validation.",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "ZVrqL",
+                          "name": "Mail / Lucide",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "mail",
+                          "library": "lucide",
+                          "fill": "#61A9EB"
+                        },
+                        {
+                          "type": "text",
+                          "id": "pYEiu",
+                          "name": "Privacy support address",
+                          "fill": "#61A9EB",
+                          "content": "support@aiharder.link",
+                          "lineHeight": 1.65,
+                          "fontFamily": "Geist",
+                          "fontSize": 17,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "xesbh",
+          "name": "Privacy footer",
+          "context": "Independent-project disclosure, GitHub, Support and current Privacy page. Static native still.",
+          "width": "fill_container",
+          "fill": "$home-bg",
+          "stroke": "$home-line",
+          "strokeWidth": {
+            "top": 1
+          },
+          "gap": 32,
+          "padding": [
+            29,
+            120,
+            28,
+            120
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "i45SH",
+              "name": "Independent-project disclosure",
+              "width": "fill_container",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "R59kW9",
+                  "name": "Independent-project disclosure",
+                  "metadata": {
+                    "type": "home-copy",
+                    "key": "home-disclosure"
+                  },
+                  "fill": "$home-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "An independent project. Not affiliated with AimHarder.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "n7NUt",
+              "name": "Project and privacy links",
+              "gap": 24,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "iYwvZ",
+                  "name": "github link",
+                  "metadata": {
+                    "type": "home-copy",
+                    "key": "home-github"
+                  },
+                  "fill": "$home-ink",
+                  "content": "GitHub",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "CjDGJ",
+                  "name": "Support email link",
+                  "context": "Support link target: mailto:support@aiharder.link. Live mailto behavior is in the HTML prototype.",
+                  "fill": "$home-ink",
+                  "content": "Support",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "K1VSH",
+                  "name": "privacy link",
+                  "context": "Current page: Privacy. Draft copy for review.",
+                  "metadata": {
+                    "type": "home-copy",
+                    "key": "home-privacy"
+                  },
+                  "fill": "#61A9EB",
+                  "content": "Privacy",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            }
+          ]
         }
       ]
     }

@@ -1,5 +1,7 @@
 # AIHarder — closing action and footer
 
+Privacy continuation, 2026-11-03: the motion-home footer now links to the [Privacy design draft](privacy-study.md), preserving the selected theme. This supersedes the Privacy-placeholder dialog described in earlier checkpoints below. Closing Sign in remains a review notice.
+
 Current refinement, 2026-11-03: the footer domain label has been removed and Support added beside GitHub/Privacy. The original checkpoint below records its earlier presentation; see [home polish](#home-polish--2026-11-03) for the current design.
 
 Date: 2026-11-02. Owner-directed completion of the English desktop Light/Dark home composition under #95. Activate and refine the retained closing/footer pieces after FAQ. This completes the current page inventory; it does not approve the design or implement the production website. Other six device/locale variants remain frozen.
