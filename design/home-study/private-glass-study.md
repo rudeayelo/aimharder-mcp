@@ -15,3 +15,5 @@ The four current English desktop native roots are updated in place: Settings `M3
 [Native Settings Light](previews/private-glass/pen/M3U1LB.png) · [Settings Dark](previews/private-glass/pen/Vqh6E.png) · [Account Light](previews/private-glass/pen/YiXOV.png) · [Account Dark](previews/private-glass/pen/e8dyV.png).
 
 Parallel Standards and Spec review of `7fe7758...3535f3d` returned no actionable findings on either axis; native bytes were excluded. No additional runtime tests were warranted for the appearance-only diff.
+
+Footer spelling correction, 2026-11-03: the owner corrected “proyect” to “project” in the two current private HTML pages, the Spanish translation key and all four current English desktop native frames. Earlier captures preserve the preceding checkpoint. This copy-only change does not affect ADRs or runtime behavior.
