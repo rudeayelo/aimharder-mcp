@@ -26,3 +26,7 @@ form.addEventListener('submit',event=>{
 if(new URLSearchParams(location.search).get('state')==='error')message('We couldn’t sign you in. Check your details and try again.','error');
 const updatePreviewLinks=()=>{for(const [id,state]of [['error-preview','error'],['reset-preview','']]){const url=new URL(location.href);url.searchParams.set('lang',lang);if(state)url.searchParams.set('state',state);else url.searchParams.delete('state');document.querySelector('#'+id).href=url;}};
 updatePreviewLinks();document.querySelector('#appearance').addEventListener('click',updatePreviewLinks);
+
+// Enable only after all local submit handlers are installed; HTML fails closed.
+if(new URLSearchParams(location.search).get('state')!=='error')message('');
+email.disabled=password.disabled=submit.disabled=false;

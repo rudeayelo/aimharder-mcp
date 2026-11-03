@@ -240,5 +240,86 @@
     "resolution": "Alias import to translate; serve hero module v=locale2.",
     "spanishCycle": "ready/answer with typed text, then repeated waiting phase with a different clock value",
     "freshPostFixConsoleErrors": 0
+  },
+  "nativeSubmissionSafety": {
+    "before": {
+      "controls": [
+        {
+          "disabled": false,
+          "id": "email",
+          "name": "email"
+        },
+        {
+          "disabled": false,
+          "id": "password",
+          "name": "password"
+        },
+        {
+          "disabled": false,
+          "id": "login-submit",
+          "name": null
+        }
+      ],
+      "method": "get",
+      "namedEnabledFields": [
+        "email",
+        "password"
+      ]
+    },
+    "after": {
+      "controls": [
+        {
+          "disabled": true,
+          "id": "email",
+          "name": null
+        },
+        {
+          "disabled": true,
+          "id": "password",
+          "name": null
+        },
+        {
+          "disabled": true,
+          "id": "login-submit",
+          "name": null
+        }
+      ],
+      "method": "get",
+      "namedEnabledFields": []
+    },
+    "readyEn": {
+      "disabled": [
+        false,
+        false,
+        false
+      ],
+      "feedback": "",
+      "footerBorder": "0px",
+      "headerCount": 0,
+      "lang": "en",
+      "links": [
+        "Support",
+        "Privacy"
+      ]
+    },
+    "readyEs": {
+      "disabled": [
+        false,
+        false,
+        false
+      ],
+      "feedback": "",
+      "lang": "es",
+      "links": [
+        "Soporte",
+        "Privacidad"
+      ],
+      "title": "Hola de nuevo"
+    },
+    "validationEs": {
+      "focus": "email",
+      "message": "Introduce tu correo electrónico."
+    },
+    "scope": "DOM-backed read-only inspection of temporary scriptless fixtures and real UI validation. No credentials entered or native submission performed. FormData constructor unavailable in CUA read-only scope; inspected enabled named controls directly."
   }
 }
