@@ -1,0 +1,40 @@
+{
+  "light": {
+    "gap": "0px",
+    "groupBackground": "rgb(255, 255, 255)",
+    "overflow": false,
+    "pageGradient": "linear-gradient(rgb(232, 242, 255), rgb(135, 184, 241))",
+    "sections": [
+      {
+        "background": "rgb(255, 255, 255)",
+        "blur": "none",
+        "radius": "0px"
+      },
+      {
+        "background": "rgb(255, 255, 255)",
+        "blur": "none",
+        "radius": "0px"
+      },
+      {
+        "background": "rgb(255, 255, 255)",
+        "blur": "none",
+        "radius": "0px"
+      }
+    ]
+  },
+  "dark": {
+    "blur": "none",
+    "gap": "0px",
+    "groupBackground": "rgb(13, 21, 33)",
+    "overflow": false
+  },
+  "account": {
+    "background": "rgb(13, 21, 33)",
+    "credentialInputs": 0,
+    "globalSaveControls": 0,
+    "overflow": false,
+    "path": "/aimharder-home-95/home-study/account-settings-study.html",
+    "title": "Ajustes de cuenta"
+  },
+  "errors": []
+}

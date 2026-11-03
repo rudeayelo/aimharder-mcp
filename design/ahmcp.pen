@@ -36220,7 +36220,7 @@
       "x": 1360,
       "y": 21600,
       "name": "AIHarder / Settings A / English / Light",
-      "context": "Page-wide hero palette gradient. Containers reuse public hero answer-bubble fill, border, 12px backdrop blur, asymmetric corners and subtle shadow. Existing local settings/account actions unchanged.",
+      "context": "Single opaque flat container with fixed separated sections. Page gradient retained. Settings global actions remain below; Account settings remains its separate avatar-menu page. Fictional interaction unchanged.",
       "theme": {
         "appearance": "light",
         "language": "en"
@@ -36406,270 +36406,450 @@
             },
             {
               "type": "frame",
-              "id": "EUoEC",
-              "name": "AimHarder / fixed section",
+              "id": "iu79F",
+              "name": "Joined settings sections / opaque surface",
+              "clip": true,
               "width": "fill_container",
-              "fill": "#F8FBFF99",
-              "cornerRadius": [
-                18,
-                18,
-                18,
-                6
-              ],
-              "stroke": "#A9C3E480",
+              "fill": "$home-bg",
+              "cornerRadius": 16,
+              "stroke": "$home-line",
               "strokeWidth": 1,
-              "effect": [
-                {
-                  "type": "background_blur",
-                  "radius": 12
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0000001A",
+                "offset": {
+                  "x": 0,
+                  "y": 4
                 },
-                {
-                  "type": "shadow",
-                  "shadowType": "outer",
-                  "color": "#0000001A",
-                  "offset": {
-                    "x": 0,
-                    "y": 4
-                  },
-                  "blur": 6
-                }
-              ],
+                "blur": 6
+              },
               "layout": "vertical",
               "children": [
                 {
                   "type": "frame",
-                  "id": "WE3Dh",
-                  "name": "Section heading",
+                  "id": "EUoEC",
+                  "name": "AimHarder / fixed section",
                   "width": "fill_container",
-                  "gap": 12,
-                  "padding": [
-                    24,
-                    28,
-                    18,
-                    28
-                  ],
-                  "justifyContent": "space_between",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "H47yI",
-                      "name": "Section title",
-                      "fill": "$home-ink",
-                      "content": "AimHarder",
-                      "lineHeight": 1.4,
-                      "fontFamily": "Geist",
-                      "fontSize": 20,
-                      "fontWeight": "700",
-                      "letterSpacing": -0.3
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "qIXRB",
-                  "name": "AimHarder content",
-                  "width": "fill_container",
+                  "fill": "$home-bg",
+                  "stroke": "$home-line",
                   "layout": "vertical",
-                  "padding": [
-                    0,
-                    28,
-                    24,
-                    28
-                  ],
                   "children": [
                     {
                       "type": "frame",
-                      "id": "tJ2Hp",
-                      "name": "Linked AimHarder account",
+                      "id": "WE3Dh",
+                      "name": "Section heading",
                       "width": "fill_container",
                       "gap": 12,
+                      "padding": [
+                        24,
+                        28,
+                        18,
+                        28
+                      ],
                       "justifyContent": "space_between",
                       "alignItems": "center",
                       "children": [
                         {
-                          "type": "frame",
-                          "id": "lq8Aa",
-                          "name": "Account identity",
-                          "layout": "vertical",
-                          "gap": 4,
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "lZGoZ",
-                              "name": "Account label",
-                              "fill": "#314861",
-                              "content": "Account",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 12,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "text",
-                              "id": "pcaU2",
-                              "name": "Fictional account",
-                              "fill": "$home-ink",
-                              "content": "alex@example.com",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "zWkrJ",
-                          "name": "Disconnect button",
-                          "fill": "#F7F9FB",
-                          "cornerRadius": 8,
-                          "stroke": "$home-line",
-                          "strokeWidth": 1,
-                          "effect": {
-                            "type": "shadow",
-                            "shadowType": "outer",
-                            "color": "#0000001A",
-                            "offset": {
-                              "x": 0,
-                              "y": 4
-                            },
-                            "blur": 6
-                          },
-                          "padding": [
-                            8,
-                            12
-                          ],
-                          "justifyContent": "center",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "HXb9E",
-                              "name": "Action label",
-                              "fill": "$home-ink",
-                              "content": "Disconnect",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 13,
-                              "fontWeight": "500"
-                            }
-                          ]
+                          "type": "text",
+                          "id": "H47yI",
+                          "name": "Section title",
+                          "fill": "$home-ink",
+                          "content": "AimHarder",
+                          "lineHeight": 1.4,
+                          "fontFamily": "Geist",
+                          "fontSize": 20,
+                          "fontWeight": "700",
+                          "letterSpacing": -0.3
                         }
                       ]
                     },
                     {
                       "type": "frame",
-                      "id": "EtSmZ",
-                      "name": "Available gym choices",
+                      "id": "qIXRB",
+                      "name": "AimHarder content",
                       "width": "fill_container",
                       "layout": "vertical",
                       "padding": [
+                        0,
+                        28,
                         24,
-                        0,
-                        0,
-                        0
+                        28
                       ],
                       "children": [
                         {
                           "type": "frame",
-                          "id": "e5P44A",
-                          "name": "Gym label and default explanation",
+                          "id": "tJ2Hp",
+                          "name": "Linked AimHarder account",
                           "width": "fill_container",
-                          "gap": 24,
+                          "gap": 12,
                           "justifyContent": "space_between",
+                          "alignItems": "center",
                           "children": [
                             {
-                              "type": "text",
-                              "id": "J1YmMY",
-                              "name": "Gym label",
-                              "fill": "#314861",
-                              "content": "Your gyms",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 12,
-                              "fontWeight": "normal"
+                              "type": "frame",
+                              "id": "lq8Aa",
+                              "name": "Account identity",
+                              "layout": "vertical",
+                              "gap": 4,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "lZGoZ",
+                                  "name": "Account label",
+                                  "fill": "#314861",
+                                  "content": "Account",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "pcaU2",
+                                  "name": "Fictional account",
+                                  "fill": "$home-ink",
+                                  "content": "alex@example.com",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 14,
+                                  "fontWeight": "normal"
+                                }
+                              ]
                             },
                             {
-                              "type": "text",
-                              "id": "ndWrs",
-                              "name": "Default gym explanation",
-                              "fill": "#314861",
-                              "textGrowth": "fixed-width",
-                              "width": 260,
-                              "content": "Used when you don’t specify a gym in your request.",
-                              "lineHeight": 1.5,
-                              "textAlign": "right",
-                              "fontFamily": "Geist",
-                              "fontSize": 12,
-                              "fontWeight": "normal"
+                              "type": "frame",
+                              "id": "zWkrJ",
+                              "name": "Disconnect button",
+                              "fill": "#F7F9FB",
+                              "cornerRadius": 8,
+                              "stroke": "$home-line",
+                              "strokeWidth": 1,
+                              "effect": {
+                                "type": "shadow",
+                                "shadowType": "outer",
+                                "color": "#0000001A",
+                                "offset": {
+                                  "x": 0,
+                                  "y": 4
+                                },
+                                "blur": 6
+                              },
+                              "padding": [
+                                8,
+                                12
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "HXb9E",
+                                  "name": "Action label",
+                                  "fill": "$home-ink",
+                                  "content": "Disconnect",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "500"
+                                }
+                              ]
                             }
                           ]
                         },
                         {
                           "type": "frame",
-                          "id": "NIlCD",
-                          "name": "Gym choice Example Gym · Central",
+                          "id": "EtSmZ",
+                          "name": "Available gym choices",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "padding": [
+                            24,
+                            0,
+                            0,
+                            0
+                          ],
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "e5P44A",
+                              "name": "Gym label and default explanation",
+                              "width": "fill_container",
+                              "gap": 24,
+                              "justifyContent": "space_between",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "J1YmMY",
+                                  "name": "Gym label",
+                                  "fill": "#314861",
+                                  "content": "Your gyms",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "ndWrs",
+                                  "name": "Default gym explanation",
+                                  "fill": "#314861",
+                                  "textGrowth": "fixed-width",
+                                  "width": 260,
+                                  "content": "Used when you don’t specify a gym in your request.",
+                                  "lineHeight": 1.5,
+                                  "textAlign": "right",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "NIlCD",
+                              "name": "Gym choice Example Gym · Central",
+                              "width": "fill_container",
+                              "gap": 12,
+                              "padding": [
+                                10,
+                                0
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "ag7bW",
+                                  "name": "Selected default gym",
+                                  "width": 16,
+                                  "height": 16,
+                                  "cornerRadius": 16,
+                                  "stroke": "$home-action",
+                                  "strokeWidth": 1,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "ellipse",
+                                      "id": "ad7fu",
+                                      "name": "Radio selection",
+                                      "fill": "$home-action",
+                                      "width": 8,
+                                      "height": 8
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "JVYdc",
+                                  "name": "Gym name",
+                                  "fill": "$home-ink",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Example Gym · Central",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 14,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "r2tjvv",
+                                  "name": "Default marker",
+                                  "fill": "#314861",
+                                  "content": "Default",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "y7KdM3",
+                              "name": "Gym choice Example Gym · North",
+                              "width": "fill_container",
+                              "stroke": "$home-line",
+                              "strokeWidth": {
+                                "top": 1
+                              },
+                              "gap": 12,
+                              "padding": [
+                                10,
+                                0
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "dKnvA",
+                                  "name": "Unselected gym",
+                                  "width": 16,
+                                  "height": 16,
+                                  "cornerRadius": 16,
+                                  "stroke": "$home-muted",
+                                  "strokeWidth": 1,
+                                  "justifyContent": "center",
+                                  "alignItems": "center"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "Y0xrhU",
+                                  "name": "Gym name",
+                                  "fill": "$home-ink",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Example Gym · North",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 14,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "rMzQn",
+                  "name": "AI apps / fixed section",
+                  "width": "fill_container",
+                  "fill": "$home-bg",
+                  "stroke": "$home-line",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "sZRHf",
+                      "name": "Section heading",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "padding": [
+                        24,
+                        28,
+                        18,
+                        28
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "FJIPr",
+                          "name": "Section title",
+                          "fill": "$home-ink",
+                          "content": "AI apps",
+                          "lineHeight": 1.4,
+                          "fontFamily": "Geist",
+                          "fontSize": 20,
+                          "fontWeight": "700",
+                          "letterSpacing": -0.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "TpYYC",
+                      "name": "AI apps content",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "padding": [
+                        0,
+                        28,
+                        24,
+                        28
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "G4CUa",
+                          "name": "ChatGPT authorized access",
                           "width": "fill_container",
                           "gap": 12,
                           "padding": [
-                            10,
+                            12,
                             0
                           ],
                           "alignItems": "center",
                           "children": [
                             {
+                              "type": "rectangle",
+                              "id": "SGSgG",
+                              "name": "ChatGPT official mark",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "home-study/assets/apps/chatgpt-light.png",
+                                "mode": "contain"
+                              },
+                              "width": 24,
+                              "height": 24
+                            },
+                            {
+                              "type": "text",
+                              "id": "AWWS0",
+                              "name": "Provider name",
+                              "fill": "$home-ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "ChatGPT",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 14,
+                              "fontWeight": "500"
+                            },
+                            {
                               "type": "frame",
-                              "id": "ag7bW",
-                              "name": "Selected default gym",
-                              "width": 16,
-                              "height": 16,
-                              "cornerRadius": 16,
-                              "stroke": "$home-action",
+                              "id": "qvO67",
+                              "name": "Disconnect button",
+                              "fill": "#F7F9FB",
+                              "cornerRadius": 8,
+                              "stroke": "$home-line",
                               "strokeWidth": 1,
+                              "effect": {
+                                "type": "shadow",
+                                "shadowType": "outer",
+                                "color": "#0000001A",
+                                "offset": {
+                                  "x": 0,
+                                  "y": 4
+                                },
+                                "blur": 6
+                              },
+                              "padding": [
+                                8,
+                                12
+                              ],
                               "justifyContent": "center",
                               "alignItems": "center",
                               "children": [
                                 {
-                                  "type": "ellipse",
-                                  "id": "ad7fu",
-                                  "name": "Radio selection",
-                                  "fill": "$home-action",
-                                  "width": 8,
-                                  "height": 8
+                                  "type": "text",
+                                  "id": "Hw8sK",
+                                  "name": "Action label",
+                                  "fill": "$home-ink",
+                                  "content": "Disconnect",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "500"
                                 }
                               ]
-                            },
-                            {
-                              "type": "text",
-                              "id": "JVYdc",
-                              "name": "Gym name",
-                              "fill": "$home-ink",
-                              "textGrowth": "fixed-width",
-                              "width": "fill_container",
-                              "content": "Example Gym · Central",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "text",
-                              "id": "r2tjvv",
-                              "name": "Default marker",
-                              "fill": "#314861",
-                              "content": "Default",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 12,
-                              "fontWeight": "normal"
                             }
                           ]
                         },
                         {
                           "type": "frame",
-                          "id": "y7KdM3",
-                          "name": "Gym choice Example Gym · North",
+                          "id": "W3GbC",
+                          "name": "Hermes authorized access",
                           "width": "fill_container",
                           "stroke": "$home-line",
                           "strokeWidth": {
@@ -36677,542 +36857,323 @@
                           },
                           "gap": 12,
                           "padding": [
-                            10,
+                            12,
+                            0
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "a1SbIg",
+                              "name": "Hermes official mark",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "home-study/assets/pen/hermes-selfhst-light.png",
+                                "mode": "contain"
+                              },
+                              "width": 24,
+                              "height": 24
+                            },
+                            {
+                              "type": "text",
+                              "id": "xLNdk",
+                              "name": "Provider name",
+                              "fill": "$home-ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Hermes",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 14,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "xnjNq",
+                              "name": "Disconnect button",
+                              "fill": "#F7F9FB",
+                              "cornerRadius": 8,
+                              "stroke": "$home-line",
+                              "strokeWidth": 1,
+                              "effect": {
+                                "type": "shadow",
+                                "shadowType": "outer",
+                                "color": "#0000001A",
+                                "offset": {
+                                  "x": 0,
+                                  "y": 4
+                                },
+                                "blur": 6
+                              },
+                              "padding": [
+                                8,
+                                12
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "Ox1Ya",
+                                  "name": "Action label",
+                                  "fill": "$home-ink",
+                                  "content": "Disconnect",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "kZ9m0",
+                          "name": "Add app action",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "padding": [
+                            12,
+                            0,
+                            0,
                             0
                           ],
                           "alignItems": "center",
                           "children": [
                             {
                               "type": "frame",
-                              "id": "dKnvA",
-                              "name": "Unselected gym",
-                              "width": 16,
-                              "height": 16,
-                              "cornerRadius": 16,
-                              "stroke": "$home-muted",
+                              "id": "GZptj",
+                              "name": "Connect an app button",
+                              "fill": "#F7F9FB",
+                              "cornerRadius": 8,
+                              "stroke": "$home-line",
                               "strokeWidth": 1,
+                              "effect": {
+                                "type": "shadow",
+                                "shadowType": "outer",
+                                "color": "#0000001A",
+                                "offset": {
+                                  "x": 0,
+                                  "y": 4
+                                },
+                                "blur": 6
+                              },
+                              "padding": [
+                                8,
+                                12
+                              ],
                               "justifyContent": "center",
-                              "alignItems": "center"
-                            },
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "EGbnw",
+                                  "name": "Action label",
+                                  "fill": "$home-ink",
+                                  "content": "Connect an app",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "F4HYox",
+                  "name": "Confirmations / fixed section",
+                  "width": "fill_container",
+                  "fill": "$home-bg",
+                  "stroke": "$home-line",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "VbpDE",
+                      "name": "Section heading",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "padding": [
+                        24,
+                        28,
+                        18,
+                        28
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "d1tKoj",
+                          "name": "Section title",
+                          "fill": "$home-ink",
+                          "content": "Confirmations",
+                          "lineHeight": 1.4,
+                          "fontFamily": "Geist",
+                          "fontSize": 20,
+                          "fontWeight": "700",
+                          "letterSpacing": -0.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Khkbo",
+                      "name": "Confirmations content",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "padding": [
+                        0,
+                        28,
+                        24,
+                        28
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "pfcd7",
+                          "name": "Ask for confirmation when making a reservation",
+                          "width": "fill_container",
+                          "stroke": "$home-line",
+                          "strokeWidth": {
+                            "bottom": 1
+                          },
+                          "gap": 12,
+                          "padding": [
+                            14,
+                            0
+                          ],
+                          "alignItems": "center",
+                          "children": [
                             {
                               "type": "text",
-                              "id": "Y0xrhU",
-                              "name": "Gym name",
+                              "id": "gQSTC",
+                              "name": "Preference label",
                               "fill": "$home-ink",
                               "textGrowth": "fixed-width",
                               "width": "fill_container",
-                              "content": "Example Gym · North",
+                              "content": "Ask for confirmation when making a reservation",
                               "lineHeight": 1.5,
                               "fontFamily": "Geist",
                               "fontSize": 14,
                               "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "lMhSk",
+                              "name": "Switch / on",
+                              "width": 36,
+                              "height": 22,
+                              "fill": "$home-action",
+                              "cornerRadius": 20,
+                              "padding": 3,
+                              "justifyContent": "end",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "ellipse",
+                                  "id": "D0rQb2",
+                                  "name": "Switch thumb",
+                                  "fill": "#FFFFFF",
+                                  "width": 16,
+                                  "height": 16
+                                }
+                              ]
                             }
                           ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "rMzQn",
-              "name": "AI apps / fixed section",
-              "width": "fill_container",
-              "fill": "#F8FBFF99",
-              "cornerRadius": [
-                18,
-                18,
-                18,
-                6
-              ],
-              "stroke": "#A9C3E480",
-              "strokeWidth": 1,
-              "effect": [
-                {
-                  "type": "background_blur",
-                  "radius": 12
-                },
-                {
-                  "type": "shadow",
-                  "shadowType": "outer",
-                  "color": "#0000001A",
-                  "offset": {
-                    "x": 0,
-                    "y": 4
-                  },
-                  "blur": 6
-                }
-              ],
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "sZRHf",
-                  "name": "Section heading",
-                  "width": "fill_container",
-                  "gap": 12,
-                  "padding": [
-                    24,
-                    28,
-                    18,
-                    28
-                  ],
-                  "justifyContent": "space_between",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "FJIPr",
-                      "name": "Section title",
-                      "fill": "$home-ink",
-                      "content": "AI apps",
-                      "lineHeight": 1.4,
-                      "fontFamily": "Geist",
-                      "fontSize": 20,
-                      "fontWeight": "700",
-                      "letterSpacing": -0.3
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "TpYYC",
-                  "name": "AI apps content",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "padding": [
-                    0,
-                    28,
-                    24,
-                    28
-                  ],
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "G4CUa",
-                      "name": "ChatGPT authorized access",
-                      "width": "fill_container",
-                      "gap": 12,
-                      "padding": [
-                        12,
-                        0
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "id": "SGSgG",
-                          "name": "ChatGPT official mark",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "home-study/assets/apps/chatgpt-light.png",
-                            "mode": "contain"
-                          },
-                          "width": 24,
-                          "height": 24
-                        },
-                        {
-                          "type": "text",
-                          "id": "AWWS0",
-                          "name": "Provider name",
-                          "fill": "$home-ink",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "ChatGPT",
-                          "lineHeight": 1.5,
-                          "fontFamily": "Geist",
-                          "fontSize": 14,
-                          "fontWeight": "500"
                         },
                         {
                           "type": "frame",
-                          "id": "qvO67",
-                          "name": "Disconnect button",
-                          "fill": "#F7F9FB",
-                          "cornerRadius": 8,
+                          "id": "p8Fl7",
+                          "name": "Ask for confirmation when posting a new workout",
+                          "width": "fill_container",
                           "stroke": "$home-line",
-                          "strokeWidth": 1,
-                          "effect": {
-                            "type": "shadow",
-                            "shadowType": "outer",
-                            "color": "#0000001A",
-                            "offset": {
-                              "x": 0,
-                              "y": 4
-                            },
-                            "blur": 6
+                          "strokeWidth": {
+                            "bottom": 1
                           },
+                          "gap": 12,
                           "padding": [
-                            8,
-                            12
+                            14,
+                            0
                           ],
-                          "justifyContent": "center",
                           "alignItems": "center",
                           "children": [
                             {
                               "type": "text",
-                              "id": "Hw8sK",
-                              "name": "Action label",
+                              "id": "N5Jp5j",
+                              "name": "Preference label",
                               "fill": "$home-ink",
-                              "content": "Disconnect",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Ask for confirmation when posting a new workout",
                               "lineHeight": 1.5,
                               "fontFamily": "Geist",
-                              "fontSize": 13,
-                              "fontWeight": "500"
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "Y8vEpG",
+                              "name": "Switch / on",
+                              "width": 36,
+                              "height": 22,
+                              "fill": "$home-action",
+                              "cornerRadius": 20,
+                              "padding": 3,
+                              "justifyContent": "end",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "ellipse",
+                                  "id": "CI3st",
+                                  "name": "Switch thumb",
+                                  "fill": "#FFFFFF",
+                                  "width": 16,
+                                  "height": 16
+                                }
+                              ]
                             }
                           ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "W3GbC",
-                      "name": "Hermes authorized access",
-                      "width": "fill_container",
-                      "stroke": "$home-line",
-                      "strokeWidth": {
-                        "top": 1
-                      },
-                      "gap": 12,
-                      "padding": [
-                        12,
-                        0
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "id": "a1SbIg",
-                          "name": "Hermes official mark",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "home-study/assets/pen/hermes-selfhst-light.png",
-                            "mode": "contain"
-                          },
-                          "width": 24,
-                          "height": 24
-                        },
-                        {
-                          "type": "text",
-                          "id": "xLNdk",
-                          "name": "Provider name",
-                          "fill": "$home-ink",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Hermes",
-                          "lineHeight": 1.5,
-                          "fontFamily": "Geist",
-                          "fontSize": 14,
-                          "fontWeight": "500"
                         },
                         {
                           "type": "frame",
-                          "id": "xnjNq",
-                          "name": "Disconnect button",
-                          "fill": "#F7F9FB",
-                          "cornerRadius": 8,
-                          "stroke": "$home-line",
-                          "strokeWidth": 1,
-                          "effect": {
-                            "type": "shadow",
-                            "shadowType": "outer",
-                            "color": "#0000001A",
-                            "offset": {
-                              "x": 0,
-                              "y": 4
-                            },
-                            "blur": 6
-                          },
+                          "id": "aukrd",
+                          "name": "Mandatory confirmation",
+                          "width": "fill_container",
+                          "gap": 12,
                           "padding": [
-                            8,
-                            12
+                            14,
+                            0,
+                            0,
+                            0
                           ],
-                          "justifyContent": "center",
                           "alignItems": "center",
                           "children": [
                             {
                               "type": "text",
-                              "id": "Ox1Ya",
-                              "name": "Action label",
-                              "fill": "$home-ink",
-                              "content": "Disconnect",
+                              "id": "YL08v",
+                              "name": "Policy reminder",
+                              "fill": "#314861",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Cancellations and deletions always require confirmation.",
                               "lineHeight": 1.5,
                               "fontFamily": "Geist",
-                              "fontSize": 13,
-                              "fontWeight": "500"
+                              "fontSize": 12,
+                              "fontWeight": "normal"
                             }
                           ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "kZ9m0",
-                      "name": "Add app action",
-                      "width": "fill_container",
-                      "gap": 12,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "GZptj",
-                          "name": "Connect an app button",
-                          "fill": "#F7F9FB",
-                          "cornerRadius": 8,
-                          "stroke": "$home-line",
-                          "strokeWidth": 1,
-                          "effect": {
-                            "type": "shadow",
-                            "shadowType": "outer",
-                            "color": "#0000001A",
-                            "offset": {
-                              "x": 0,
-                              "y": 4
-                            },
-                            "blur": 6
-                          },
-                          "padding": [
-                            8,
-                            12
-                          ],
-                          "justifyContent": "center",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "EGbnw",
-                              "name": "Action label",
-                              "fill": "$home-ink",
-                              "content": "Connect an app",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 13,
-                              "fontWeight": "500"
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "F4HYox",
-              "name": "Confirmations / fixed section",
-              "width": "fill_container",
-              "fill": "#F8FBFF99",
-              "cornerRadius": [
-                18,
-                18,
-                18,
-                6
-              ],
-              "stroke": "#A9C3E480",
-              "strokeWidth": 1,
-              "effect": [
-                {
-                  "type": "background_blur",
-                  "radius": 12
-                },
-                {
-                  "type": "shadow",
-                  "shadowType": "outer",
-                  "color": "#0000001A",
-                  "offset": {
-                    "x": 0,
-                    "y": 4
-                  },
-                  "blur": 6
-                }
-              ],
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "VbpDE",
-                  "name": "Section heading",
-                  "width": "fill_container",
-                  "gap": 12,
-                  "padding": [
-                    24,
-                    28,
-                    18,
-                    28
-                  ],
-                  "justifyContent": "space_between",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "d1tKoj",
-                      "name": "Section title",
-                      "fill": "$home-ink",
-                      "content": "Confirmations",
-                      "lineHeight": 1.4,
-                      "fontFamily": "Geist",
-                      "fontSize": 20,
-                      "fontWeight": "700",
-                      "letterSpacing": -0.3
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "Khkbo",
-                  "name": "Confirmations content",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "padding": [
-                    0,
-                    28,
-                    24,
-                    28
-                  ],
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "pfcd7",
-                      "name": "Ask for confirmation when making a reservation",
-                      "width": "fill_container",
-                      "stroke": "$home-line",
-                      "strokeWidth": {
-                        "bottom": 1
-                      },
-                      "gap": 12,
-                      "padding": [
-                        14,
-                        0
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "gQSTC",
-                          "name": "Preference label",
-                          "fill": "$home-ink",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Ask for confirmation when making a reservation",
-                          "lineHeight": 1.5,
-                          "fontFamily": "Geist",
-                          "fontSize": 14,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "frame",
-                          "id": "lMhSk",
-                          "name": "Switch / on",
-                          "width": 36,
-                          "height": 22,
-                          "fill": "$home-action",
-                          "cornerRadius": 20,
-                          "padding": 3,
-                          "justifyContent": "end",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "ellipse",
-                              "id": "D0rQb2",
-                              "name": "Switch thumb",
-                              "fill": "#FFFFFF",
-                              "width": 16,
-                              "height": 16
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "p8Fl7",
-                      "name": "Ask for confirmation when posting a new workout",
-                      "width": "fill_container",
-                      "stroke": "$home-line",
-                      "strokeWidth": {
-                        "bottom": 1
-                      },
-                      "gap": 12,
-                      "padding": [
-                        14,
-                        0
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "N5Jp5j",
-                          "name": "Preference label",
-                          "fill": "$home-ink",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Ask for confirmation when posting a new workout",
-                          "lineHeight": 1.5,
-                          "fontFamily": "Geist",
-                          "fontSize": 14,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "frame",
-                          "id": "Y8vEpG",
-                          "name": "Switch / on",
-                          "width": 36,
-                          "height": 22,
-                          "fill": "$home-action",
-                          "cornerRadius": 20,
-                          "padding": 3,
-                          "justifyContent": "end",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "ellipse",
-                              "id": "CI3st",
-                              "name": "Switch thumb",
-                              "fill": "#FFFFFF",
-                              "width": 16,
-                              "height": 16
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "aukrd",
-                      "name": "Mandatory confirmation",
-                      "width": "fill_container",
-                      "gap": 12,
-                      "padding": [
-                        14,
-                        0,
-                        0,
-                        0
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "YL08v",
-                          "name": "Policy reminder",
-                          "fill": "#314861",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Cancellations and deletions always require confirmation.",
-                          "lineHeight": 1.5,
-                          "fontFamily": "Geist",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
                         }
                       ]
                     }
@@ -37333,7 +37294,7 @@
       "x": 2960,
       "y": 21600,
       "name": "AIHarder / Settings A / English / Dark",
-      "context": "Page-wide hero palette gradient. Containers reuse public hero answer-bubble fill, border, 12px backdrop blur, asymmetric corners and subtle shadow. Existing local settings/account actions unchanged.",
+      "context": "Single opaque flat container with fixed separated sections. Page gradient retained. Settings global actions remain below; Account settings remains its separate avatar-menu page. Fictional interaction unchanged.",
       "theme": {
         "appearance": "dark",
         "language": "en"
@@ -37519,270 +37480,450 @@
             },
             {
               "type": "frame",
-              "id": "OOkUH",
-              "name": "AimHarder / fixed section",
+              "id": "HOUDp",
+              "name": "Joined settings sections / opaque surface",
+              "clip": true,
               "width": "fill_container",
-              "fill": "#142B4599",
-              "cornerRadius": [
-                18,
-                18,
-                18,
-                6
-              ],
-              "stroke": "#48688B80",
+              "fill": "$home-bg",
+              "cornerRadius": 16,
+              "stroke": "$home-line",
               "strokeWidth": 1,
-              "effect": [
-                {
-                  "type": "background_blur",
-                  "radius": 12
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0000001A",
+                "offset": {
+                  "x": 0,
+                  "y": 4
                 },
-                {
-                  "type": "shadow",
-                  "shadowType": "outer",
-                  "color": "#0000001A",
-                  "offset": {
-                    "x": 0,
-                    "y": 4
-                  },
-                  "blur": 6
-                }
-              ],
+                "blur": 6
+              },
               "layout": "vertical",
               "children": [
                 {
                   "type": "frame",
-                  "id": "r3DPbZ",
-                  "name": "Section heading",
+                  "id": "OOkUH",
+                  "name": "AimHarder / fixed section",
                   "width": "fill_container",
-                  "gap": 12,
-                  "padding": [
-                    24,
-                    28,
-                    18,
-                    28
-                  ],
-                  "justifyContent": "space_between",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "TQ6fb",
-                      "name": "Section title",
-                      "fill": "$home-ink",
-                      "content": "AimHarder",
-                      "lineHeight": 1.4,
-                      "fontFamily": "Geist",
-                      "fontSize": 20,
-                      "fontWeight": "700",
-                      "letterSpacing": -0.3
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "H60pic",
-                  "name": "AimHarder content",
-                  "width": "fill_container",
+                  "fill": "$home-bg",
+                  "stroke": "$home-line",
                   "layout": "vertical",
-                  "padding": [
-                    0,
-                    28,
-                    24,
-                    28
-                  ],
                   "children": [
                     {
                       "type": "frame",
-                      "id": "Ywgkn",
-                      "name": "Linked AimHarder account",
+                      "id": "r3DPbZ",
+                      "name": "Section heading",
                       "width": "fill_container",
                       "gap": 12,
+                      "padding": [
+                        24,
+                        28,
+                        18,
+                        28
+                      ],
                       "justifyContent": "space_between",
                       "alignItems": "center",
                       "children": [
                         {
-                          "type": "frame",
-                          "id": "F4tDJ",
-                          "name": "Account identity",
-                          "layout": "vertical",
-                          "gap": 4,
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "j782l2",
-                              "name": "Account label",
-                              "fill": "$home-muted",
-                              "content": "Account",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 12,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "text",
-                              "id": "Dtxah",
-                              "name": "Fictional account",
-                              "fill": "$home-ink",
-                              "content": "alex@example.com",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "eCuSL",
-                          "name": "Disconnect button",
-                          "fill": "#172438",
-                          "cornerRadius": 8,
-                          "stroke": "$home-line",
-                          "strokeWidth": 1,
-                          "effect": {
-                            "type": "shadow",
-                            "shadowType": "outer",
-                            "color": "#0000001A",
-                            "offset": {
-                              "x": 0,
-                              "y": 4
-                            },
-                            "blur": 6
-                          },
-                          "padding": [
-                            8,
-                            12
-                          ],
-                          "justifyContent": "center",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "V1TGqd",
-                              "name": "Action label",
-                              "fill": "$home-ink",
-                              "content": "Disconnect",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 13,
-                              "fontWeight": "500"
-                            }
-                          ]
+                          "type": "text",
+                          "id": "TQ6fb",
+                          "name": "Section title",
+                          "fill": "$home-ink",
+                          "content": "AimHarder",
+                          "lineHeight": 1.4,
+                          "fontFamily": "Geist",
+                          "fontSize": 20,
+                          "fontWeight": "700",
+                          "letterSpacing": -0.3
                         }
                       ]
                     },
                     {
                       "type": "frame",
-                      "id": "K2UBO",
-                      "name": "Available gym choices",
+                      "id": "H60pic",
+                      "name": "AimHarder content",
                       "width": "fill_container",
                       "layout": "vertical",
                       "padding": [
+                        0,
+                        28,
                         24,
-                        0,
-                        0,
-                        0
+                        28
                       ],
                       "children": [
                         {
                           "type": "frame",
-                          "id": "puwMi",
-                          "name": "Gym label and default explanation",
+                          "id": "Ywgkn",
+                          "name": "Linked AimHarder account",
                           "width": "fill_container",
-                          "gap": 24,
+                          "gap": 12,
                           "justifyContent": "space_between",
+                          "alignItems": "center",
                           "children": [
                             {
-                              "type": "text",
-                              "id": "NEN0A",
-                              "name": "Gym label",
-                              "fill": "$home-muted",
-                              "content": "Your gyms",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 12,
-                              "fontWeight": "normal"
+                              "type": "frame",
+                              "id": "F4tDJ",
+                              "name": "Account identity",
+                              "layout": "vertical",
+                              "gap": 4,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "j782l2",
+                                  "name": "Account label",
+                                  "fill": "$home-muted",
+                                  "content": "Account",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "Dtxah",
+                                  "name": "Fictional account",
+                                  "fill": "$home-ink",
+                                  "content": "alex@example.com",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 14,
+                                  "fontWeight": "normal"
+                                }
+                              ]
                             },
                             {
-                              "type": "text",
-                              "id": "aV35j",
-                              "name": "Default gym explanation",
-                              "fill": "$home-muted",
-                              "textGrowth": "fixed-width",
-                              "width": 260,
-                              "content": "Used when you don’t specify a gym in your request.",
-                              "lineHeight": 1.5,
-                              "textAlign": "right",
-                              "fontFamily": "Geist",
-                              "fontSize": 12,
-                              "fontWeight": "normal"
+                              "type": "frame",
+                              "id": "eCuSL",
+                              "name": "Disconnect button",
+                              "fill": "#172438",
+                              "cornerRadius": 8,
+                              "stroke": "$home-line",
+                              "strokeWidth": 1,
+                              "effect": {
+                                "type": "shadow",
+                                "shadowType": "outer",
+                                "color": "#0000001A",
+                                "offset": {
+                                  "x": 0,
+                                  "y": 4
+                                },
+                                "blur": 6
+                              },
+                              "padding": [
+                                8,
+                                12
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "V1TGqd",
+                                  "name": "Action label",
+                                  "fill": "$home-ink",
+                                  "content": "Disconnect",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "500"
+                                }
+                              ]
                             }
                           ]
                         },
                         {
                           "type": "frame",
-                          "id": "NT6jo",
-                          "name": "Gym choice Example Gym · Central",
+                          "id": "K2UBO",
+                          "name": "Available gym choices",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "padding": [
+                            24,
+                            0,
+                            0,
+                            0
+                          ],
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "puwMi",
+                              "name": "Gym label and default explanation",
+                              "width": "fill_container",
+                              "gap": 24,
+                              "justifyContent": "space_between",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "NEN0A",
+                                  "name": "Gym label",
+                                  "fill": "$home-muted",
+                                  "content": "Your gyms",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "aV35j",
+                                  "name": "Default gym explanation",
+                                  "fill": "$home-muted",
+                                  "textGrowth": "fixed-width",
+                                  "width": 260,
+                                  "content": "Used when you don’t specify a gym in your request.",
+                                  "lineHeight": 1.5,
+                                  "textAlign": "right",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "NT6jo",
+                              "name": "Gym choice Example Gym · Central",
+                              "width": "fill_container",
+                              "gap": 12,
+                              "padding": [
+                                10,
+                                0
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "xhcWT",
+                                  "name": "Selected default gym",
+                                  "width": 16,
+                                  "height": 16,
+                                  "cornerRadius": 16,
+                                  "stroke": "$home-action",
+                                  "strokeWidth": 1,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "ellipse",
+                                      "id": "R3jU40",
+                                      "name": "Radio selection",
+                                      "fill": "$home-action",
+                                      "width": 8,
+                                      "height": 8
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "mvnko",
+                                  "name": "Gym name",
+                                  "fill": "$home-ink",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Example Gym · Central",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 14,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "M0nltp",
+                                  "name": "Default marker",
+                                  "fill": "$home-muted",
+                                  "content": "Default",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "Kcc7Q",
+                              "name": "Gym choice Example Gym · North",
+                              "width": "fill_container",
+                              "stroke": "$home-line",
+                              "strokeWidth": {
+                                "top": 1
+                              },
+                              "gap": 12,
+                              "padding": [
+                                10,
+                                0
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "Jxnu0",
+                                  "name": "Unselected gym",
+                                  "width": 16,
+                                  "height": 16,
+                                  "cornerRadius": 16,
+                                  "stroke": "$home-muted",
+                                  "strokeWidth": 1,
+                                  "justifyContent": "center",
+                                  "alignItems": "center"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "h1Ss5",
+                                  "name": "Gym name",
+                                  "fill": "$home-ink",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Example Gym · North",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 14,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "CA82m",
+                  "name": "AI apps / fixed section",
+                  "width": "fill_container",
+                  "fill": "$home-bg",
+                  "stroke": "$home-line",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "ObFSD",
+                      "name": "Section heading",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "padding": [
+                        24,
+                        28,
+                        18,
+                        28
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "jTsSD",
+                          "name": "Section title",
+                          "fill": "$home-ink",
+                          "content": "AI apps",
+                          "lineHeight": 1.4,
+                          "fontFamily": "Geist",
+                          "fontSize": 20,
+                          "fontWeight": "700",
+                          "letterSpacing": -0.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "lM7WQ",
+                      "name": "AI apps content",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "padding": [
+                        0,
+                        28,
+                        24,
+                        28
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "qN4JK",
+                          "name": "ChatGPT authorized access",
                           "width": "fill_container",
                           "gap": 12,
                           "padding": [
-                            10,
+                            12,
                             0
                           ],
                           "alignItems": "center",
                           "children": [
                             {
+                              "type": "rectangle",
+                              "id": "JRMpH",
+                              "name": "ChatGPT official mark",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "home-study/assets/apps/chatgpt-dark.png",
+                                "mode": "contain"
+                              },
+                              "width": 24,
+                              "height": 24
+                            },
+                            {
+                              "type": "text",
+                              "id": "FTVfo",
+                              "name": "Provider name",
+                              "fill": "$home-ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "ChatGPT",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 14,
+                              "fontWeight": "500"
+                            },
+                            {
                               "type": "frame",
-                              "id": "xhcWT",
-                              "name": "Selected default gym",
-                              "width": 16,
-                              "height": 16,
-                              "cornerRadius": 16,
-                              "stroke": "$home-action",
+                              "id": "DE8TZ",
+                              "name": "Disconnect button",
+                              "fill": "#172438",
+                              "cornerRadius": 8,
+                              "stroke": "$home-line",
                               "strokeWidth": 1,
+                              "effect": {
+                                "type": "shadow",
+                                "shadowType": "outer",
+                                "color": "#0000001A",
+                                "offset": {
+                                  "x": 0,
+                                  "y": 4
+                                },
+                                "blur": 6
+                              },
+                              "padding": [
+                                8,
+                                12
+                              ],
                               "justifyContent": "center",
                               "alignItems": "center",
                               "children": [
                                 {
-                                  "type": "ellipse",
-                                  "id": "R3jU40",
-                                  "name": "Radio selection",
-                                  "fill": "$home-action",
-                                  "width": 8,
-                                  "height": 8
+                                  "type": "text",
+                                  "id": "vQAql",
+                                  "name": "Action label",
+                                  "fill": "$home-ink",
+                                  "content": "Disconnect",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "500"
                                 }
                               ]
-                            },
-                            {
-                              "type": "text",
-                              "id": "mvnko",
-                              "name": "Gym name",
-                              "fill": "$home-ink",
-                              "textGrowth": "fixed-width",
-                              "width": "fill_container",
-                              "content": "Example Gym · Central",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 14,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "text",
-                              "id": "M0nltp",
-                              "name": "Default marker",
-                              "fill": "$home-muted",
-                              "content": "Default",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 12,
-                              "fontWeight": "normal"
                             }
                           ]
                         },
                         {
                           "type": "frame",
-                          "id": "Kcc7Q",
-                          "name": "Gym choice Example Gym · North",
+                          "id": "N75t6c",
+                          "name": "Hermes authorized access",
                           "width": "fill_container",
                           "stroke": "$home-line",
                           "strokeWidth": {
@@ -37790,542 +37931,323 @@
                           },
                           "gap": 12,
                           "padding": [
-                            10,
+                            12,
+                            0
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "vBJnh",
+                              "name": "Hermes official mark",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "home-study/assets/pen/hermes-selfhst-dark.png",
+                                "mode": "contain"
+                              },
+                              "width": 24,
+                              "height": 24
+                            },
+                            {
+                              "type": "text",
+                              "id": "iIlpz",
+                              "name": "Provider name",
+                              "fill": "$home-ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Hermes",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 14,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "hjFTu",
+                              "name": "Disconnect button",
+                              "fill": "#172438",
+                              "cornerRadius": 8,
+                              "stroke": "$home-line",
+                              "strokeWidth": 1,
+                              "effect": {
+                                "type": "shadow",
+                                "shadowType": "outer",
+                                "color": "#0000001A",
+                                "offset": {
+                                  "x": 0,
+                                  "y": 4
+                                },
+                                "blur": 6
+                              },
+                              "padding": [
+                                8,
+                                12
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "AkE8k",
+                                  "name": "Action label",
+                                  "fill": "$home-ink",
+                                  "content": "Disconnect",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "ITLVd",
+                          "name": "Add app action",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "padding": [
+                            12,
+                            0,
+                            0,
                             0
                           ],
                           "alignItems": "center",
                           "children": [
                             {
                               "type": "frame",
-                              "id": "Jxnu0",
-                              "name": "Unselected gym",
-                              "width": 16,
-                              "height": 16,
-                              "cornerRadius": 16,
-                              "stroke": "$home-muted",
+                              "id": "D9fjd",
+                              "name": "Connect an app button",
+                              "fill": "#172438",
+                              "cornerRadius": 8,
+                              "stroke": "$home-line",
                               "strokeWidth": 1,
+                              "effect": {
+                                "type": "shadow",
+                                "shadowType": "outer",
+                                "color": "#0000001A",
+                                "offset": {
+                                  "x": 0,
+                                  "y": 4
+                                },
+                                "blur": 6
+                              },
+                              "padding": [
+                                8,
+                                12
+                              ],
                               "justifyContent": "center",
-                              "alignItems": "center"
-                            },
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "c7vnt",
+                                  "name": "Action label",
+                                  "fill": "$home-ink",
+                                  "content": "Connect an app",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "VljVB",
+                  "name": "Confirmations / fixed section",
+                  "width": "fill_container",
+                  "fill": "$home-bg",
+                  "stroke": "$home-line",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "CG8hi",
+                      "name": "Section heading",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "padding": [
+                        24,
+                        28,
+                        18,
+                        28
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "iYcTA",
+                          "name": "Section title",
+                          "fill": "$home-ink",
+                          "content": "Confirmations",
+                          "lineHeight": 1.4,
+                          "fontFamily": "Geist",
+                          "fontSize": 20,
+                          "fontWeight": "700",
+                          "letterSpacing": -0.3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "XXAdF",
+                      "name": "Confirmations content",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "padding": [
+                        0,
+                        28,
+                        24,
+                        28
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "nP1Jp",
+                          "name": "Ask for confirmation when making a reservation",
+                          "width": "fill_container",
+                          "stroke": "$home-line",
+                          "strokeWidth": {
+                            "bottom": 1
+                          },
+                          "gap": 12,
+                          "padding": [
+                            14,
+                            0
+                          ],
+                          "alignItems": "center",
+                          "children": [
                             {
                               "type": "text",
-                              "id": "h1Ss5",
-                              "name": "Gym name",
+                              "id": "i9wLMw",
+                              "name": "Preference label",
                               "fill": "$home-ink",
                               "textGrowth": "fixed-width",
                               "width": "fill_container",
-                              "content": "Example Gym · North",
+                              "content": "Ask for confirmation when making a reservation",
                               "lineHeight": 1.5,
                               "fontFamily": "Geist",
                               "fontSize": 14,
                               "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "I1Spsn",
+                              "name": "Switch / on",
+                              "width": 36,
+                              "height": 22,
+                              "fill": "$home-action",
+                              "cornerRadius": 20,
+                              "padding": 3,
+                              "justifyContent": "end",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "ellipse",
+                                  "id": "RqfsA",
+                                  "name": "Switch thumb",
+                                  "fill": "#FFFFFF",
+                                  "width": 16,
+                                  "height": 16
+                                }
+                              ]
                             }
                           ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "CA82m",
-              "name": "AI apps / fixed section",
-              "width": "fill_container",
-              "fill": "#142B4599",
-              "cornerRadius": [
-                18,
-                18,
-                18,
-                6
-              ],
-              "stroke": "#48688B80",
-              "strokeWidth": 1,
-              "effect": [
-                {
-                  "type": "background_blur",
-                  "radius": 12
-                },
-                {
-                  "type": "shadow",
-                  "shadowType": "outer",
-                  "color": "#0000001A",
-                  "offset": {
-                    "x": 0,
-                    "y": 4
-                  },
-                  "blur": 6
-                }
-              ],
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "ObFSD",
-                  "name": "Section heading",
-                  "width": "fill_container",
-                  "gap": 12,
-                  "padding": [
-                    24,
-                    28,
-                    18,
-                    28
-                  ],
-                  "justifyContent": "space_between",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "jTsSD",
-                      "name": "Section title",
-                      "fill": "$home-ink",
-                      "content": "AI apps",
-                      "lineHeight": 1.4,
-                      "fontFamily": "Geist",
-                      "fontSize": 20,
-                      "fontWeight": "700",
-                      "letterSpacing": -0.3
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "lM7WQ",
-                  "name": "AI apps content",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "padding": [
-                    0,
-                    28,
-                    24,
-                    28
-                  ],
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "qN4JK",
-                      "name": "ChatGPT authorized access",
-                      "width": "fill_container",
-                      "gap": 12,
-                      "padding": [
-                        12,
-                        0
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "id": "JRMpH",
-                          "name": "ChatGPT official mark",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "home-study/assets/apps/chatgpt-dark.png",
-                            "mode": "contain"
-                          },
-                          "width": 24,
-                          "height": 24
-                        },
-                        {
-                          "type": "text",
-                          "id": "FTVfo",
-                          "name": "Provider name",
-                          "fill": "$home-ink",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "ChatGPT",
-                          "lineHeight": 1.5,
-                          "fontFamily": "Geist",
-                          "fontSize": 14,
-                          "fontWeight": "500"
                         },
                         {
                           "type": "frame",
-                          "id": "DE8TZ",
-                          "name": "Disconnect button",
-                          "fill": "#172438",
-                          "cornerRadius": 8,
+                          "id": "a5nTOC",
+                          "name": "Ask for confirmation when posting a new workout",
+                          "width": "fill_container",
                           "stroke": "$home-line",
-                          "strokeWidth": 1,
-                          "effect": {
-                            "type": "shadow",
-                            "shadowType": "outer",
-                            "color": "#0000001A",
-                            "offset": {
-                              "x": 0,
-                              "y": 4
-                            },
-                            "blur": 6
+                          "strokeWidth": {
+                            "bottom": 1
                           },
+                          "gap": 12,
                           "padding": [
-                            8,
-                            12
+                            14,
+                            0
                           ],
-                          "justifyContent": "center",
                           "alignItems": "center",
                           "children": [
                             {
                               "type": "text",
-                              "id": "vQAql",
-                              "name": "Action label",
+                              "id": "d0mhFJ",
+                              "name": "Preference label",
                               "fill": "$home-ink",
-                              "content": "Disconnect",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Ask for confirmation when posting a new workout",
                               "lineHeight": 1.5,
                               "fontFamily": "Geist",
-                              "fontSize": 13,
-                              "fontWeight": "500"
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "M8inNO",
+                              "name": "Switch / on",
+                              "width": 36,
+                              "height": 22,
+                              "fill": "$home-action",
+                              "cornerRadius": 20,
+                              "padding": 3,
+                              "justifyContent": "end",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "ellipse",
+                                  "id": "lEZkr",
+                                  "name": "Switch thumb",
+                                  "fill": "#FFFFFF",
+                                  "width": 16,
+                                  "height": 16
+                                }
+                              ]
                             }
                           ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "N75t6c",
-                      "name": "Hermes authorized access",
-                      "width": "fill_container",
-                      "stroke": "$home-line",
-                      "strokeWidth": {
-                        "top": 1
-                      },
-                      "gap": 12,
-                      "padding": [
-                        12,
-                        0
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "id": "vBJnh",
-                          "name": "Hermes official mark",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "home-study/assets/pen/hermes-selfhst-dark.png",
-                            "mode": "contain"
-                          },
-                          "width": 24,
-                          "height": 24
-                        },
-                        {
-                          "type": "text",
-                          "id": "iIlpz",
-                          "name": "Provider name",
-                          "fill": "$home-ink",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Hermes",
-                          "lineHeight": 1.5,
-                          "fontFamily": "Geist",
-                          "fontSize": 14,
-                          "fontWeight": "500"
                         },
                         {
                           "type": "frame",
-                          "id": "hjFTu",
-                          "name": "Disconnect button",
-                          "fill": "#172438",
-                          "cornerRadius": 8,
-                          "stroke": "$home-line",
-                          "strokeWidth": 1,
-                          "effect": {
-                            "type": "shadow",
-                            "shadowType": "outer",
-                            "color": "#0000001A",
-                            "offset": {
-                              "x": 0,
-                              "y": 4
-                            },
-                            "blur": 6
-                          },
+                          "id": "zGUFj",
+                          "name": "Mandatory confirmation",
+                          "width": "fill_container",
+                          "gap": 12,
                           "padding": [
-                            8,
-                            12
+                            14,
+                            0,
+                            0,
+                            0
                           ],
-                          "justifyContent": "center",
                           "alignItems": "center",
                           "children": [
                             {
                               "type": "text",
-                              "id": "AkE8k",
-                              "name": "Action label",
-                              "fill": "$home-ink",
-                              "content": "Disconnect",
+                              "id": "QEFHI",
+                              "name": "Policy reminder",
+                              "fill": "$home-muted",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Cancellations and deletions always require confirmation.",
                               "lineHeight": 1.5,
                               "fontFamily": "Geist",
-                              "fontSize": 13,
-                              "fontWeight": "500"
+                              "fontSize": 12,
+                              "fontWeight": "normal"
                             }
                           ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "ITLVd",
-                      "name": "Add app action",
-                      "width": "fill_container",
-                      "gap": 12,
-                      "padding": [
-                        12,
-                        0,
-                        0,
-                        0
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "D9fjd",
-                          "name": "Connect an app button",
-                          "fill": "#172438",
-                          "cornerRadius": 8,
-                          "stroke": "$home-line",
-                          "strokeWidth": 1,
-                          "effect": {
-                            "type": "shadow",
-                            "shadowType": "outer",
-                            "color": "#0000001A",
-                            "offset": {
-                              "x": 0,
-                              "y": 4
-                            },
-                            "blur": 6
-                          },
-                          "padding": [
-                            8,
-                            12
-                          ],
-                          "justifyContent": "center",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "c7vnt",
-                              "name": "Action label",
-                              "fill": "$home-ink",
-                              "content": "Connect an app",
-                              "lineHeight": 1.5,
-                              "fontFamily": "Geist",
-                              "fontSize": 13,
-                              "fontWeight": "500"
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "VljVB",
-              "name": "Confirmations / fixed section",
-              "width": "fill_container",
-              "fill": "#142B4599",
-              "cornerRadius": [
-                18,
-                18,
-                18,
-                6
-              ],
-              "stroke": "#48688B80",
-              "strokeWidth": 1,
-              "effect": [
-                {
-                  "type": "background_blur",
-                  "radius": 12
-                },
-                {
-                  "type": "shadow",
-                  "shadowType": "outer",
-                  "color": "#0000001A",
-                  "offset": {
-                    "x": 0,
-                    "y": 4
-                  },
-                  "blur": 6
-                }
-              ],
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "CG8hi",
-                  "name": "Section heading",
-                  "width": "fill_container",
-                  "gap": 12,
-                  "padding": [
-                    24,
-                    28,
-                    18,
-                    28
-                  ],
-                  "justifyContent": "space_between",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "iYcTA",
-                      "name": "Section title",
-                      "fill": "$home-ink",
-                      "content": "Confirmations",
-                      "lineHeight": 1.4,
-                      "fontFamily": "Geist",
-                      "fontSize": 20,
-                      "fontWeight": "700",
-                      "letterSpacing": -0.3
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "XXAdF",
-                  "name": "Confirmations content",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "padding": [
-                    0,
-                    28,
-                    24,
-                    28
-                  ],
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "nP1Jp",
-                      "name": "Ask for confirmation when making a reservation",
-                      "width": "fill_container",
-                      "stroke": "$home-line",
-                      "strokeWidth": {
-                        "bottom": 1
-                      },
-                      "gap": 12,
-                      "padding": [
-                        14,
-                        0
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "i9wLMw",
-                          "name": "Preference label",
-                          "fill": "$home-ink",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Ask for confirmation when making a reservation",
-                          "lineHeight": 1.5,
-                          "fontFamily": "Geist",
-                          "fontSize": 14,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "frame",
-                          "id": "I1Spsn",
-                          "name": "Switch / on",
-                          "width": 36,
-                          "height": 22,
-                          "fill": "$home-action",
-                          "cornerRadius": 20,
-                          "padding": 3,
-                          "justifyContent": "end",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "ellipse",
-                              "id": "RqfsA",
-                              "name": "Switch thumb",
-                              "fill": "#FFFFFF",
-                              "width": 16,
-                              "height": 16
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "a5nTOC",
-                      "name": "Ask for confirmation when posting a new workout",
-                      "width": "fill_container",
-                      "stroke": "$home-line",
-                      "strokeWidth": {
-                        "bottom": 1
-                      },
-                      "gap": 12,
-                      "padding": [
-                        14,
-                        0
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "d0mhFJ",
-                          "name": "Preference label",
-                          "fill": "$home-ink",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Ask for confirmation when posting a new workout",
-                          "lineHeight": 1.5,
-                          "fontFamily": "Geist",
-                          "fontSize": 14,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "frame",
-                          "id": "M8inNO",
-                          "name": "Switch / on",
-                          "width": 36,
-                          "height": 22,
-                          "fill": "$home-action",
-                          "cornerRadius": 20,
-                          "padding": 3,
-                          "justifyContent": "end",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "ellipse",
-                              "id": "lEZkr",
-                              "name": "Switch thumb",
-                              "fill": "#FFFFFF",
-                              "width": 16,
-                              "height": 16
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "zGUFj",
-                      "name": "Mandatory confirmation",
-                      "width": "fill_container",
-                      "gap": 12,
-                      "padding": [
-                        14,
-                        0,
-                        0,
-                        0
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "QEFHI",
-                          "name": "Policy reminder",
-                          "fill": "$home-muted",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Cancellations and deletions always require confirmation.",
-                          "lineHeight": 1.5,
-                          "fontFamily": "Geist",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
                         }
                       ]
                     }
@@ -39672,7 +39594,7 @@
       "x": 4560,
       "y": 21600,
       "name": "AIHarder / Account settings / English / Light",
-      "context": "Page-wide hero palette gradient. Containers reuse public hero answer-bubble fill, border, 12px backdrop blur, asymmetric corners and subtle shadow. Existing local settings/account actions unchanged.",
+      "context": "Single opaque flat container with fixed separated sections. Page gradient retained. Settings global actions remain below; Account settings remains its separate avatar-menu page. Fictional interaction unchanged.",
       "theme": {
         "appearance": "light",
         "language": "en"
@@ -39872,31 +39794,20 @@
               "id": "a5YHbN",
               "name": "Account identity card",
               "width": "fill_container",
-              "fill": "#F8FBFF99",
-              "cornerRadius": [
-                18,
-                18,
-                18,
-                6
-              ],
-              "stroke": "#A9C3E480",
+              "fill": "$home-bg",
+              "cornerRadius": 16,
+              "stroke": "$home-line",
               "strokeWidth": 1,
-              "effect": [
-                {
-                  "type": "background_blur",
-                  "radius": 12
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0000001A",
+                "offset": {
+                  "x": 0,
+                  "y": 4
                 },
-                {
-                  "type": "shadow",
-                  "shadowType": "outer",
-                  "color": "#0000001A",
-                  "offset": {
-                    "x": 0,
-                    "y": 4
-                  },
-                  "blur": 6
-                }
-              ],
+                "blur": 6
+              },
               "layout": "vertical",
               "children": [
                 {
@@ -40249,7 +40160,7 @@
       "x": 6160,
       "y": 21600,
       "name": "AIHarder / Account settings / English / Dark",
-      "context": "Page-wide hero palette gradient. Containers reuse public hero answer-bubble fill, border, 12px backdrop blur, asymmetric corners and subtle shadow. Existing local settings/account actions unchanged.",
+      "context": "Single opaque flat container with fixed separated sections. Page gradient retained. Settings global actions remain below; Account settings remains its separate avatar-menu page. Fictional interaction unchanged.",
       "theme": {
         "appearance": "dark",
         "language": "en"
@@ -40449,31 +40360,20 @@
               "id": "R5K37t",
               "name": "Account identity card",
               "width": "fill_container",
-              "fill": "#142B4599",
-              "cornerRadius": [
-                18,
-                18,
-                18,
-                6
-              ],
-              "stroke": "#48688B80",
+              "fill": "$home-bg",
+              "cornerRadius": 16,
+              "stroke": "$home-line",
               "strokeWidth": 1,
-              "effect": [
-                {
-                  "type": "background_blur",
-                  "radius": 12
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#0000001A",
+                "offset": {
+                  "x": 0,
+                  "y": 4
                 },
-                {
-                  "type": "shadow",
-                  "shadowType": "outer",
-                  "color": "#0000001A",
-                  "offset": {
-                    "x": 0,
-                    "y": 4
-                  },
-                  "blur": 6
-                }
-              ],
+                "blur": 6
+              },
               "layout": "vertical",
               "children": [
                 {

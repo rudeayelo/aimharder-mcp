@@ -1,5 +1,7 @@
 # AIHarder — page gradient and translucent settings containers
 
+**Superseded appearance:** the owner subsequently requested [one joined opaque container](private-solid-study.md). The gradient remains on the page and Account settings remains separate. The translucent-card details below are historical.
+
 Date: 2026-11-03. The owner requested a page-wide gradient and the public home hero answer-bubble treatment for private containers. This replaces the opaque cards and AimHarder-only gradient in the [previous layout checkpoint](private-cards-study.md). The selected private composition, global draft/save behavior, account page, avatar navigation and requested footer copy remain intact.
 
 The owner-provided reference is the existing `hero-motion-prototype.html` `.answer` and `.bubble` styling. Preserve exact surface roles: Light fill `#f8fbff99`, Dark fill `#142b4599`; border `#a9c3e480` / `#48688b80`; 12px backdrop blur; corners `18px 18px 18px 6px`; shadow `rgba(0,0,0,0.1) 0px 4px 6px 0px`. Apply the gradient to the entire private page: Light `#e8f2ff` to `#87b8f1`, Dark `#0d1521` to `#174678`. No character, motion canvas or grain workload is added. Secondary text uses `#314861` on Light so small copy remains readable over the page gradient; Dark retains `#abbacd`.

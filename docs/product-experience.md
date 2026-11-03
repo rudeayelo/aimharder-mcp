@@ -207,3 +207,7 @@ The owner requested separate containers, a blue AimHarder card matching the publ
 ### Private page surface experiment — 2026-11-03
 
 The owner requested the hero gradient across the private page and the reply-bubble treatment on all containers. The [visual checkpoint](../design/home-study/private-glass-study.md) applies the existing hero surface tokens to Settings and Account settings in bilingual HTML and the four current English desktop native frames. Existing composition and interactions remain; API/auth/security/ADR and deployed behavior are unaffected.
+
+### Joined opaque private settings — 2026-11-03
+
+The owner rejected separated translucent containers and requested the sections joined again on a flat opaque surface, retaining the separate Account settings page. The [current visual checkpoint](../design/home-study/private-solid-study.md) joins the three sections with internal dividers and uses solid semantic surfaces in both themes while retaining the page gradient, avatar navigation and global actions. This appearance-only refinement changes no runtime, API, authentication, security or ADR decision.
