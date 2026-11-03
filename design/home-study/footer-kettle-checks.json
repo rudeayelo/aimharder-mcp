@@ -173,7 +173,7 @@
       "poster": "visible"
     },
     "consoleWarningsOrErrors": [],
-    "pen": "Pending: editor reopened but did not answer; previous right-hand still unchanged.",
+    "pen": "Synchronized on retry, 2026-11-03; see penRetry20261103.",
     "previews": [
       "previews/footer-kettle/left-light.jpg",
       "previews/footer-kettle/left-dark.jpg"
@@ -184,5 +184,53 @@
       "standardsFindings": 0,
       "specFindings": 0
     }
+  },
+  "penRetry20261103": {
+    "pages": [
+      "uAXkc",
+      "p7u8w"
+    ],
+    "actors": [
+      "Q8CwD",
+      "G15vMc"
+    ],
+    "stage": {
+      "x": 120,
+      "y": -324,
+      "width": 300,
+      "height": 340,
+      "overlap": 16
+    },
+    "poster": {
+      "x": -23.53,
+      "y": 19.99,
+      "width": 346.39,
+      "height": 346.39
+    },
+    "shadow": {
+      "x": 30,
+      "y": 326,
+      "width": 240,
+      "height": 24
+    },
+    "faq": {
+      "height": 640,
+      "padding": [
+        80,
+        120,
+        80,
+        120
+      ],
+      "contactToStageGap": 87
+    },
+    "protectedSubtreesUnchanged": 26,
+    "protectedSubtreesTotal": 26,
+    "placeholdersCleared": true,
+    "screenshots": "Both complete pages visually checked through Pen MCP",
+    "exports": [
+      "previews/footer-kettle/pen-left/uAXkc.png",
+      "previews/footer-kettle/pen-left/p7u8w.png"
+    ],
+    "animation": "Neutral native still; HTML owns random playback"
   }
 }

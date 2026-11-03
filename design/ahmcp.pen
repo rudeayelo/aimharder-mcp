@@ -3142,12 +3142,11 @@
           "name": "FAQ / support and expandable answers",
           "context": "First answer expanded. All five answer texts are editable; collapsed answers are disabled layers. Runtime disclosure behavior is in faq-prototype.js. Accepted support email target; inbox activation and delivery are separate.",
           "width": "fill_container",
+          "height": 640,
           "fill": "$home-bg",
           "gap": 80,
           "padding": [
             80,
-            120,
-            200,
             120
           ],
           "children": [
@@ -3763,19 +3762,19 @@
               "type": "frame",
               "id": "Q8CwD",
               "layoutPosition": "absolute",
-              "x": 1120,
-              "y": -204,
+              "x": 120,
+              "y": -324,
               "name": "Decorative kettle / FAQ boundary",
-              "context": "Neutral static poster of existing hybrid 32k rig. HTML plays random existing emotes at ≥1200px, hidden below. Base crosses 44px into closing; most volume remains in FAQ.",
-              "width": 220,
-              "height": 248,
+              "context": "Neutral still of the existing hybrid 32k rig, left-aligned below FAQ contact. Visible body approximately 239 × 274px, 40.5% larger; base crosses 16px into closing. HTML owns random emotes at widths ≥1024px; hidden below.",
+              "width": 300,
+              "height": 340,
               "layout": "none",
               "children": [
                 {
                   "type": "ellipse",
                   "id": "S95V2D",
-                  "x": 25,
-                  "y": 238,
+                  "x": 30,
+                  "y": 326,
                   "name": "Kettle contact shadow",
                   "fill": {
                     "type": "gradient",
@@ -3797,8 +3796,8 @@
                       }
                     ]
                   },
-                  "width": 170,
-                  "height": 20,
+                  "width": 240,
+                  "height": 24,
                   "effect": {
                     "type": "blur",
                     "radius": 3
@@ -3807,8 +3806,8 @@
                 {
                   "type": "rectangle",
                   "id": "u6mhl0",
-                  "x": -13.52,
-                  "y": 20.26,
+                  "x": -23.53,
+                  "y": 19.99,
                   "name": "Existing neutral kettle / transparent poster",
                   "fill": {
                     "type": "image",
@@ -3816,8 +3815,8 @@
                     "url": "home-study/assets/kettle-neutral.png",
                     "mode": "contain"
                   },
-                  "width": 246.52,
-                  "height": 246.52
+                  "width": 346.39,
+                  "height": 346.39
                 }
               ]
             }
@@ -6400,12 +6399,11 @@
           "name": "FAQ / support and expandable answers",
           "context": "First answer expanded. All five answer texts are editable; collapsed answers are disabled layers. Runtime disclosure behavior is in faq-prototype.js. Accepted support email target; inbox activation and delivery are separate.",
           "width": "fill_container",
+          "height": 640,
           "fill": "$home-bg",
           "gap": 80,
           "padding": [
             80,
-            120,
-            200,
             120
           ],
           "children": [
@@ -7021,19 +7019,19 @@
               "type": "frame",
               "id": "G15vMc",
               "layoutPosition": "absolute",
-              "x": 1120,
-              "y": -204,
+              "x": 120,
+              "y": -324,
               "name": "Decorative kettle / FAQ boundary",
-              "context": "Neutral static poster of existing hybrid 32k rig. HTML plays random existing emotes at ≥1200px, hidden below. Base crosses 44px into closing; most volume remains in FAQ.",
-              "width": 220,
-              "height": 248,
+              "context": "Neutral still of the existing hybrid 32k rig, left-aligned below FAQ contact. Visible body approximately 239 × 274px, 40.5% larger; base crosses 16px into closing. HTML owns random emotes at widths ≥1024px; hidden below.",
+              "width": 300,
+              "height": 340,
               "layout": "none",
               "children": [
                 {
                   "type": "ellipse",
                   "id": "Hf3zb",
-                  "x": 25,
-                  "y": 238,
+                  "x": 30,
+                  "y": 326,
                   "name": "Kettle contact shadow",
                   "fill": {
                     "type": "gradient",
@@ -7055,8 +7053,8 @@
                       }
                     ]
                   },
-                  "width": 170,
-                  "height": 20,
+                  "width": 240,
+                  "height": 24,
                   "effect": {
                     "type": "blur",
                     "radius": 3
@@ -7065,8 +7063,8 @@
                 {
                   "type": "rectangle",
                   "id": "ryV4o",
-                  "x": -13.52,
-                  "y": 20.26,
+                  "x": -23.53,
+                  "y": 19.99,
                   "name": "Existing neutral kettle / transparent poster",
                   "fill": {
                     "type": "image",
@@ -7074,8 +7072,8 @@
                     "url": "home-study/assets/kettle-neutral.png",
                     "mode": "contain"
                   },
-                  "width": 246.52,
-                  "height": 246.52
+                  "width": 346.39,
+                  "height": 346.39
                 }
               ]
             }

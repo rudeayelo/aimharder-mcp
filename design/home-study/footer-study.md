@@ -34,4 +34,4 @@ All 26 protected root/section subtrees (other variants, components, header, hero
 
 The actual sign-in integration, complete privacy notice, domain/hosting/mail activation, locale/device propagation and owner visual acceptance remain separate. No operational/API/security change is made; existing ADRs are unaffected.
 
-Later owner refinement: a decorative random-emote kettle now crosses the FAQ/closing boundary. See [boundary study](footer-kettle-study.md) for responsive hiding, placement, lifecycle and the current native synchronization limitation.
+Later owner refinement: a decorative random-emote kettle now crosses the FAQ/closing boundary. See [boundary study](footer-kettle-study.md) for responsive hiding, placement, lifecycle and the completed native synchronization and animation boundary.
