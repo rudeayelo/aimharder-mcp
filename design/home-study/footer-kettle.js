@@ -1,3 +1,4 @@
+import './footer-prototype.js?v=locale1';
 // Decorative 32k kettle: existing body, curved eye rig and stop-motion clips.
 import {FPS, CLIPS, poseAt} from '../identity/idol-motion-prototype/motion-poses.js';
 import {eyePoseAt} from '../identity/idol-motion-prototype/hybrid/eye-poses.js';

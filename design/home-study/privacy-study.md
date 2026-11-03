@@ -1,5 +1,7 @@
 # AIHarder — Privacy page study
 
+Current continuation, 2026-11-03: Spanish desktop is now authorized and synchronized, with `privacy-copy.es.json` and two additional native pages. The public header's Sign in now opens the separate [Login design](login-study.md); its old review-only sign-in dialog is removed. Language and appearance are retained across Home, Privacy and Login. Earlier checkpoints below retain their original delivery-time scope.
+
 Date: 2026-11-03. Owner-directed continuation of #95: add a lower blue border to How to, then design Privacy. Login and private pages are subsequent work. Active scope remains English desktop Light/Dark; other native variants stay frozen.
 
 ## Reference lock before implementation
@@ -32,7 +34,7 @@ The credentials are recoverably encrypted for service authentication, not end-to
 
 ## Implementation and review
 
-[Privacy prototype](privacy-study.html?theme=light) uses the accepted home shell, seven anchored sections and a single 760px reading column. The contents stay visible while scrolling, track the current section and become a compact grid on narrow screens. The icon control cycles Light → Dark → System; query parameters retain the preference through reloads, self-links and Home/FAQ/How to navigation. Browser preference changes are followed in System mode. The English label remains a static language specimen while Spanish propagation is deferred. Sign in keeps a review-only native dialog; no login or private pages have been built.
+[Privacy prototype](privacy-study.html?theme=light) uses the accepted home shell, seven anchored sections and a single 760px reading column. The contents stay visible while scrolling, track the current section and become a compact grid on narrow screens. The icon control cycles Light → Dark → System; query parameters retain the preference through reloads, self-links and Home/FAQ/How to navigation. Browser preference changes are followed in System mode. At the initial Privacy-only checkpoint the language label and Sign in were specimens. The subsequent bilingual/login continuation now provides a real language selector and Login link; private pages remain deferred.
 
 The motion-home footer Privacy control is now a real link to the draft, replacing its old policy-placeholder dialog. The closing Sign in notice is unchanged. Earlier `home-prototype.html` retains its historical notice behavior. The How to section now has one blue 1px rule at each edge: `#79a4dc` in Light, `#2d609b` in Dark. No adjacent question-wall border was reintroduced.
 

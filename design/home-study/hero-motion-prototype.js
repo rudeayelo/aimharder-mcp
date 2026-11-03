@@ -1,9 +1,11 @@
+import {t as translate,localize} from './public-copy.js';
 // Throwaway motion study: one directed composition, synthetic data, no product services.
 import * as THREE from 'three';
 import {SogsLoader, SplatMesh} from '../identity/idol-motion-prototype/vendor/visus-2.5.0.js';
 import {SOURCE_BOUNDS} from '../identity/idol-motion-prototype/asset-profiles.js';
 import {createEyes} from '../identity/idol-motion-prototype/hybrid/eye-rig.js';
 
+for(const node of document.querySelectorAll('header,.pitch,.scene,.review-note')) localize(node);
 const params = new URLSearchParams(location.search);
 const root = document.documentElement;
 const stage = document.querySelector('.scene');
@@ -43,12 +45,12 @@ for (const [id, key, value] of [
   query.set(key, value);
   const link = document.querySelector('#' + id);
   link.href = '?' + query;
-  link.textContent = id === 'theme-review' ? (value === 'dark' ? 'Dark' : 'Light') : (value === 'long' ? 'Long reply' : 'Short reply');
+  link.textContent = id === 'theme-review' ? translate(value === 'dark' ? 'Dark' : 'Light') : translate(value === 'long' ? 'Long reply' : 'Short reply');
 }
 if (params.get('reply') === 'long') {
   const copy = document.createElement('p');
   copy.className = 'long-copy';
-  copy.textContent = 'You also have a booking on Thursday at 18:00. Both are WOD classes. Ask me about the published workout whenever you want to check what is coming up.';
+  copy.textContent = translate('You also have a booking on Thursday at 18:00. Both are WOD classes. Ask me about the published workout whenever you want to check what is coming up.');
   document.querySelector('.answer').append(copy);
 }
 // Retain the complete text footprint so typing never resizes the bubble.
@@ -75,7 +77,7 @@ const runs = textNodes.map(node => {
 });
 // Expose one complete answer instead of announcing each character to assistive technology.
 answer.setAttribute('role', 'img');
-answer.setAttribute('aria-label', 'Fictional answer: ' + fullAnswer);
+answer.setAttribute('aria-label', translate('Fictional answer: ') + fullAnswer);
 const typingDuration = Math.max(.7, Math.min(2.2, totalCharacters / 105));
 let lastCount = -1;
 function typeAnswer(time, complete = false) {
@@ -106,7 +108,7 @@ function phase(name) {
   placeReply();
 }
 function controls() {
-  pause.textContent = playing ? 'Pause' : 'Play';
+  pause.textContent = translate(playing ? 'Pause' : 'Play');
   stage.dataset.paused = String(!playing);
 }
 pause.addEventListener('click', () => {
@@ -130,7 +132,7 @@ replay.addEventListener('click', () => {
 controls();
 if (frozen) {
   phase('answer');
-  status.textContent = 'Static · reduced motion';
+  status.textContent = translate('Static · reduced motion');
   pause.disabled = replay.disabled = true;
 } else {
   phase('waiting');
@@ -139,7 +141,7 @@ if (frozen) {
     stage.dataset.inspection = 'true';
     phase('answer');
     typeAnswer(0, true);
-    status.textContent = 'Static fallback · 3D unavailable';
+    status.textContent = translate('Static fallback · 3D unavailable');
     pause.disabled = replay.disabled = true;
   });
 }
@@ -250,7 +252,7 @@ async function start() {
     stage.dataset.lift = lift.toFixed(4);
     stage.dataset.time = t.toFixed(3);
     stage.dataset.attention = attention.toFixed(4);
-    status.textContent = name === 'answer' ? 'Answering' : name[0].toUpperCase()+name.slice(1);
+    status.textContent = translate(name === 'answer' ? 'Answering' : name[0].toUpperCase()+name.slice(1));
     renderer.render(scene, camera);
     if (playing && !document.hidden) requestFrame();
   };

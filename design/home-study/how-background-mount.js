@@ -1,3 +1,4 @@
+import './how-to-prototype.js?v=locale1';
 // The same app-integrated Grainient as the hero, with the How to palette.
 import {mountGrainient} from './grainient-background.js';
 const container = document.querySelector('#how-grainient');

@@ -1,3 +1,4 @@
+import {localize} from './public-copy.js';
 // Decorative examples only: the emphasis is timed, not a live prompt control.
 const section = document.querySelector('#questions');
 const {topics, rows} = await fetch('./question-ticker-data.json').then(response => {
@@ -53,6 +54,7 @@ for (const [index, row] of rows.entries()) {
   tickers.append(viewport);
 }
 section.append(heading, topicList, tickers);
+localize(section);
 let step = 0;
 let paused = false;
 let timer;

@@ -1,5 +1,7 @@
 # AIHarder — closing action and footer
 
+Login continuation, 2026-11-03: all current Home Sign in actions now open the separate [Login design](login-study.md), preserving language and appearance. The old closing notice has been removed. Home/Privacy/Login are synchronized in English/Spanish desktop Light/Dark; the four mobile variants remain frozen. Earlier checkpoints below describe their original behavior.
+
 Privacy continuation, 2026-11-03: the motion-home footer now links to the [Privacy design draft](privacy-study.md), preserving the selected theme. This supersedes the Privacy-placeholder dialog described in earlier checkpoints below. Closing Sign in remains a review notice.
 
 Current refinement, 2026-11-03: the footer domain label has been removed and Support added beside GitHub/Privacy. The original checkpoint below records its earlier presentation; see [home polish](#home-polish--2026-11-03) for the current design.

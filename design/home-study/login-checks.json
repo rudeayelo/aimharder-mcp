@@ -1,0 +1,244 @@
+{
+  "date": "2026-11-03",
+  "scope": "Focused login and current public desktop EN/ES Light/Dark designs",
+  "login": {
+    "englishDark": {
+      "footerBorder": "0px",
+      "formWidth": 400,
+      "githubLinks": 0,
+      "lang": "en",
+      "overflow": false,
+      "publicHeader": 0,
+      "theme": "dark"
+    },
+    "spanishDark": {
+      "footerBorder": "0px",
+      "lang": "es",
+      "privacy": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/privacy-study.html?lang=es&theme=dark",
+      "publicHeader": 0,
+      "theme": "dark",
+      "title": "Hola de nuevo"
+    },
+    "empty": {
+      "focus": "email",
+      "invalid": "true",
+      "message": "Introduce tu correo electrónico."
+    },
+    "missingPassword": {
+      "focus": "password",
+      "message": "Introduce tu contraseña."
+    },
+    "loading": {
+      "disabled": false,
+      "label": "Entrar"
+    },
+    "previewResult": {
+      "message": "Solo es una vista previa. No se ha enviado ninguna solicitud de acceso.",
+      "passwordCleared": true
+    },
+    "loadingImmediate": {
+      "disabled": true,
+      "label": "Entrando…"
+    },
+    "googleNotice": {
+      "open": true,
+      "text": "El acceso con Google se conectará durante la implementación. Esta vista previa no contacta con Google ni conecta ninguna cuenta."
+    },
+    "googleFocus": "google-signin",
+    "panel": {
+      "form": 400,
+      "header": 0,
+      "lang": "es",
+      "overflow": false,
+      "width": 1030
+    },
+    "narrow": {
+      "form": 350,
+      "overflow": false,
+      "width": 390
+    },
+    "errorState": {
+      "kind": "error",
+      "lang": "es",
+      "message": "No hemos podido iniciar sesión. Revisa tus datos e inténtalo de nuevo."
+    },
+    "reset": {
+      "emailEmpty": true,
+      "message": "",
+      "passwordEmpty": true
+    },
+    "console": []
+  },
+  "bilingual": {
+    "homeSpanish": {
+      "answer": "Respuesta ficticia: Tu próxima clase. Mañana a las 19:00. WOD. Reserva confirmada. También tienes una reserva el jueves a las 18:00. Ambas son clases de WOD. Pregúntame por el entreno publicado cuando quieras saber qué toca",
+      "headline": "Más foco\nen entrenar,\nmenos en gestionar.",
+      "heroRenderer": "ready",
+      "how": "Cómo empezar",
+      "lang": "es",
+      "overflow": false,
+      "questions": [
+        "¿Cuál es el WOD de mañana?",
+        "¿Cuándo es mi próxima reserva?",
+        "Enséñame mi actividad de esta semana."
+      ],
+      "theme": "light"
+    },
+    "privacySpanish": {
+      "breadcrumbs": 0,
+      "indexWeights": [
+        "400"
+      ],
+      "lang": "es",
+      "overflow": false,
+      "sections": 7,
+      "signin": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/login-study.html?lang=es&theme=light",
+      "title": "Privacidad"
+    },
+    "homePrivacyLogin": {
+      "headerCount": 0,
+      "lang": "es",
+      "title": "Hola de nuevo",
+      "url": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/login-study.html?lang=es&theme=light"
+    },
+    "loginSystem": {
+      "errorPreview": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/login-study.html?lang=es&theme=system&state=error",
+      "lang": "es",
+      "preference": "system",
+      "privacy": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/privacy-study.html?lang=es&theme=system",
+      "theme": "dark"
+    },
+    "privacySystem": {
+      "lang": "es",
+      "preference": "system",
+      "theme": "dark"
+    },
+    "returnHomeSystem": {
+      "expected": "dark",
+      "lang": "es",
+      "overflow": false,
+      "preference": "system",
+      "theme": "dark"
+    },
+    "home1030": {
+      "headlineHeight": 165.1953125,
+      "lang": "es",
+      "overflow": false,
+      "theme": "dark",
+      "width": 1030
+    },
+    "homeLanguageSwitch": {
+      "headline": "Focus moreon training,less on tapping.",
+      "lang": "en",
+      "overflow": false,
+      "preference": "system",
+      "theme": "dark"
+    },
+    "footerSpanish": {
+      "count": "13",
+      "emote": "hop",
+      "howBackdrops": 1,
+      "howRenderer": "webgl2",
+      "renderer": "ready",
+      "stageCount": 1
+    },
+    "heroAfterFixFirst": {
+      "phase": "answer",
+      "renderer": "ready",
+      "status": "Respondiendo",
+      "time": "7.417",
+      "typed": "197"
+    },
+    "heroAfterFixSecond": {
+      "phase": "waiting",
+      "status": "Esperando",
+      "time": "0.883",
+      "typed": "0"
+    },
+    "postFixConsoleSpanish": [],
+    "heroEnglishAfterFix": {
+      "lang": "en",
+      "phase": "answer",
+      "renderer": "ready",
+      "status": "Answering",
+      "time": "2.335",
+      "typed": "14"
+    },
+    "postFixConsoleEnglish": [],
+    "initialConsoleErrors": [
+      {
+        "level": "error",
+        "message": "TypeError: t is not a function\n    at drawFrame (https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/hero-motion-prototype.js?v=locale1:255:26)\n    at https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/hero-motion-prototype.js?v=locale1:32:5",
+        "timestamp": "2026-11-03T09:56:09.217Z",
+        "url": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/hero-motion-prototype.js?v=locale1"
+      },
+      {
+        "level": "error",
+        "message": "TypeError: t is not a function\n    at drawFrame (https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/hero-motion-prototype.js?v=locale1:255:26)\n    at https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/hero-motion-prototype.js?v=locale1:32:5",
+        "timestamp": "2026-11-03T09:59:45.519Z",
+        "url": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/hero-motion-prototype.js?v=locale1"
+      },
+      {
+        "level": "error",
+        "message": "TypeError: t is not a function\n    at drawFrame (https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/hero-motion-prototype.js?v=locale1:255:26)\n    at https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/hero-motion-prototype.js?v=locale1:32:5",
+        "timestamp": "2026-11-03T10:01:19.556Z",
+        "url": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/hero-motion-prototype.js?v=locale1"
+      },
+      {
+        "level": "error",
+        "message": "TypeError: t is not a function\n    at drawFrame (https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/hero-motion-prototype.js?v=locale1:255:26)\n    at https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/hero-motion-prototype.js?v=locale1:32:5",
+        "timestamp": "2026-11-03T10:03:00.535Z",
+        "url": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/hero-motion-prototype.js?v=locale1"
+      }
+    ]
+  },
+  "native": {
+    "home": [
+      "uAXkc",
+      "p7u8w",
+      "uzAUz",
+      "Qg3nb"
+    ],
+    "privacy": [
+      "U3l0MJ",
+      "g8DEOq",
+      "dlTr0",
+      "vGnGn"
+    ],
+    "login": [
+      "kHs1c",
+      "B3kekr",
+      "FLliZ",
+      "TDh9Q"
+    ],
+    "pages": 12,
+    "frozenCompared": 14,
+    "frozenUnchanged": 14,
+    "untranslatedKnownCopy": [],
+    "placeholdersCleared": true,
+    "structuralStatus": "Visual read-back and content audits passed. Previous nested Privacy bounds-visitor diagnostics remain unresolved; no clean structural-visitor claim."
+  },
+  "testingNotes": [
+    "Only synthetic input used; no managed credential or actual account was used.",
+    "First synthetic password paste was intercepted by a password-manager prompt, canceled, then repeated with keyboard input.",
+    "The early loading read observed disabled/Entrando; the later snapshot observed the completed idle button.",
+    "390px HTML checks are defensive; native mobile variants were not updated."
+  ],
+  "limits": [
+    "No authentication, Google calls, recovery/verification emails, private account screens or production deployment.",
+    "Privacy remains a draft; no legal policy approval, mailbox activation or retention guarantee."
+  ],
+  "verification": {
+    "javascriptFilesSyntaxChecked": 11,
+    "changedDocLinkChecks": 5,
+    "missingLocalFiles": 0,
+    "existingAssetHashes": 76,
+    "assetMismatches": 0
+  },
+  "regression": {
+    "initialFailure": "Translation t() collided with numeric frame timeline t in the hero.",
+    "resolution": "Alias import to translate; serve hero module v=locale2.",
+    "spanishCycle": "ready/answer with typed text, then repeated waiting phase with a different clock value",
+    "freshPostFixConsoleErrors": 0
+  }
+}

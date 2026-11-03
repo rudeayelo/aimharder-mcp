@@ -1,3 +1,4 @@
+import {t,localize} from './public-copy.js';
 // Throwaway UI demos. Synthetic data, no form submission, installation or AI call.
 const section = document.querySelector('#how-it-works');
 const params = new URLSearchParams(location.search);
@@ -40,6 +41,7 @@ section.innerHTML = `
     </div>
   </div>`;
 section.dataset.still = String(still);
+localize(section);
 const connect = section.querySelector('#connect-preview');
 const connectContent = connect.querySelector('.connect-demo');
 const user = connect.querySelector('[data-user]');
@@ -63,7 +65,7 @@ const conversations = [
   {key:'chatgpt', name:'ChatGPT', question:'When is my next booking?', answer:'Tomorrow at 19:00 — WOD. You also have a booking on Thursday at 18:00.'},
   {key:'claude', name:'Claude', question:'What’s tomorrow’s WOD?', answer:'Strength: back squat, 5 × 5.\nConditioning: a 12-minute AMRAP.'},
   {key:'hermes', name:'Hermes', question:'Show my activity this week.', answer:'You’ve logged 3 activity entries this week. Your latest entry was Monday’s WOD.'},
-];
+].map(item=>({...item,question:t(item.question),answer:t(item.answer)}));
 const smooth = n => { n = Math.max(0, Math.min(1, n)); return n * n * (3 - 2 * n); };
 const progress = (t, start, duration) => Math.max(0, Math.min(1, (t - start) / duration));
 const fade = (t, end) => smooth(t / .45) * (1 - smooth((t - end) / .65));
@@ -71,7 +73,7 @@ const text = (node, value) => { if (node.textContent !== value) node.textContent
 function action(node, phase, labels) {
   if (node.dataset.action === phase) return;
   node.dataset.action = phase;
-  node.innerHTML = (phase === 'loading' ? icon('loader-circle') : phase === 'success' ? icon('check') : '') + `<span>${labels[phase]}</span>`;
+  node.innerHTML = (phase === 'loading' ? icon('loader-circle') : phase === 'success' ? icon('check') : '') + `<span>${t(labels[phase])}</span>`;
 }
 let geometry;
 function measure() {
@@ -137,8 +139,8 @@ function render(time) {
   section.dataset.time = time.toFixed(3);
 }
 const review = document.querySelector('.review-controls');
-const replaySteps = document.createElement('button'); replaySteps.textContent = 'Replay steps'; replaySteps.type = 'button'; replaySteps.id = 'how-replay';
-const pauseSteps = document.createElement('button'); pauseSteps.textContent = 'Pause steps'; pauseSteps.type = 'button'; pauseSteps.id = 'how-pause';
+const replaySteps = document.createElement('button'); replaySteps.textContent = t('Replay steps'); replaySteps.type = 'button'; replaySteps.id = 'how-replay';
+const pauseSteps = document.createElement('button'); pauseSteps.textContent = t('Pause steps'); pauseSteps.type = 'button'; pauseSteps.id = 'how-pause';
 review.append(replaySteps, pauseSteps);
 let elapsed = inspect ?? (still ? 6.2 : 0), previous = null, request = null, visible = false, paused = false;
 function canPlay() { return !still && !paused && visible && !document.hidden; }
@@ -156,7 +158,7 @@ function frame(now) {
   render(elapsed);
   schedule();
 }
-function controls() { pauseSteps.textContent = paused ? 'Play steps' : 'Pause steps'; schedule(); }
+function controls() { pauseSteps.textContent = t(paused ? 'Play steps' : 'Pause steps'); schedule(); }
 pauseSteps.addEventListener('click', () => { paused = !paused; previous = null; controls(); });
 replaySteps.addEventListener('click', () => { elapsed = 0; paused = false; previous = null; render(elapsed); controls(); });
 document.querySelector('#pause')?.addEventListener('click', () => { paused = document.querySelector('.scene')?.dataset.paused === 'true'; previous = null; controls(); });

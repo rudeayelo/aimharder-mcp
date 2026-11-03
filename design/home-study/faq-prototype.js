@@ -1,3 +1,4 @@
+import {localize} from './public-copy.js';
 // Isolated home-study FAQ. Mailto opens a draft; this page sends no email.
 const section = document.querySelector('#faq');
 const copy = await fetch('./faq-study-copy.json?v=aiharder-domain').then(response => response.json());
@@ -15,5 +16,6 @@ section.innerHTML = `
       </details>`).join('')}
     </div>
   </div>`;
+localize(section);
 await document.fonts.ready;
 if (location.hash === '#faq') section.scrollIntoView();

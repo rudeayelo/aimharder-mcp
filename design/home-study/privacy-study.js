@@ -1,35 +1,14 @@
 // Privacy reading prototype. The copy remains a review draft, not a published policy.
-const params = new URLSearchParams(location.search);
-const modes = ['light', 'dark', 'system'];
-let mode = modes.includes(params.get('theme')) ? params.get('theme') : 'system';
-const system = matchMedia('(prefers-color-scheme: dark)');
-function applyAppearance() {
-  const theme = mode === 'system' ? (system.matches ? 'dark' : 'light') : mode;
-  document.documentElement.dataset.theme = theme;
-  const icon = mode === 'system' ? 'monitor' : mode === 'dark' ? 'moon' : 'sun';
-  document.querySelector('#appearance-icon').style.setProperty('--icon', `url('./assets/lucide/${icon}.svg')`);
-  const next = modes[(modes.indexOf(mode) + 1) % modes.length];
-  document.querySelector('#appearance').setAttribute('aria-label', `Appearance: ${mode}. Switch to ${next}.`);
-  for (const link of document.querySelectorAll('[data-home],[data-home-anchor]')) {
-    const target = new URL('hero-motion-prototype.html', location.href);
-    target.search = new URLSearchParams({theme: mode, reply: 'long', v: 'privacy1'});
-    if (link.dataset.homeAnchor) target.hash = link.dataset.homeAnchor;
-    link.href = target;
-  }
-  document.querySelector('#privacy-self').href = `privacy-study.html?theme=${mode}`;
-}
-applyAppearance();
-document.querySelector('#appearance').addEventListener('click', () => {
-  mode = modes[(modes.indexOf(mode) + 1) % modes.length];
-  const url = new URL(location.href); url.searchParams.set('theme', mode);
-  history.replaceState(null, '', url); applyAppearance();
-});
-system.addEventListener('change', () => { if (mode === 'system') applyAppearance(); });
-document.querySelector('#privacy-signin').addEventListener('click', () => document.querySelector('#signin-notice').showModal());
+import {lang,t,localize} from './public-copy.js';
+import {mountPublicNavigation} from './public-navigation.js';
+mountPublicNavigation();
+localize(document.querySelector('.privacy-layout'));
+document.title=t('Privacy')+' — AIHarder';
 try {
-  const response = await fetch('./privacy-copy.json');
+  const response = await fetch(lang==='es'?'./privacy-copy.es.json':'./privacy-copy.json');
   if (!response.ok) throw new Error('Privacy copy unavailable');
   const copy = await response.json();
+  document.querySelector('#privacy-title').textContent = copy.title;
   document.querySelector('#privacy-intro').textContent = copy.intro;
   document.querySelector('#privacy-summary').textContent = copy.summary;
   for (const item of copy.sections) {
@@ -66,6 +45,6 @@ try {
   if (anchor) anchor.scrollIntoView();
   selectSection();
 } catch {
-  document.querySelector('#privacy-intro').textContent = 'Privacy content could not be loaded. Please reload this page or contact support@aiharder.link.';
+  document.querySelector('#privacy-intro').textContent = t('Privacy content could not be loaded. Please reload this page or contact support@aiharder.link.');
   document.querySelector('#privacy-summary').hidden = true;
 }
