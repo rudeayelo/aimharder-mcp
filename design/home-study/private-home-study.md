@@ -1,5 +1,7 @@
 # AIHarder — participant home design
 
+**Historical proposal — rejected by the owner on 2026-11-03.** The header/menu and spacious Home compositions below are superseded by the [compact frame and wizard comparison](private-frame-study.md). The HTML route is reused for that current comparison. Prior screenshots/checks below remain historical; the earlier Pen blocker has since cleared for the new frame study.
+
 Date: 2026-11-03. The owner clarified that “admin” means the **signed-in participant area**, not administrator management of invitations/participants. This checkpoint designs only its shared header and Home in two fictional states: first entry and returning with connections. AI app setup, account settings and privileged administration remain later screens. Desktop English/Spanish Light/Dark follow the existing design delivery; existing mobile pages stay unchanged.
 
 ## Reference lock and decision ledger

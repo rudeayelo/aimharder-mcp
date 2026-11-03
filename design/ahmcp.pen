@@ -36213,6 +36213,2530 @@
           ]
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "M3U1LB",
+      "x": 1360,
+      "y": 19270,
+      "name": "AIHarder / Compact frame A Sections / English / Light",
+      "context": "Provisional frame comparison, not a chosen layout. First of two simulated connection steps, followed by confirmation preferences. HTML owns interactive progression and post-setup reuse. Existing public/auth screens unchanged.",
+      "theme": {
+        "appearance": "light",
+        "language": "en"
+      },
+      "clip": true,
+      "width": 1440,
+      "height": 1000,
+      "fill": "$home-surface",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": [
+        56,
+        400,
+        40,
+        400
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "VhTSd",
+          "name": "Compact identity and appearance / no site menu",
+          "width": "fill_container",
+          "height": 40,
+          "padding": [
+            0,
+            4
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "l1EMz3",
+              "type": "ref",
+              "ref": "GqxcO",
+              "name": "AIHarder identity",
+              "height": 40,
+              "gap": 8,
+              "descendants": {
+                "OMijO": {
+                  "width": 35,
+                  "height": 40,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "home-study/assets/pen/kettle-flat-light.png",
+                    "mode": "contain"
+                  }
+                },
+                "q4b4CU": {
+                  "fontSize": 19,
+                  "letterSpacing": -0.45
+                },
+                "NE7qo": {
+                  "fontSize": 19,
+                  "letterSpacing": -0.45
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "aCPHp",
+              "name": "Language and appearance",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "KHJvO",
+                  "name": "Language selector",
+                  "gap": 5,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "yRzb7",
+                      "name": "Language",
+                      "fill": "$home-ink",
+                      "content": "English",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "ynSHp",
+                      "name": "Select language / Lucide",
+                      "width": 12,
+                      "height": 12,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$home-ink"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon",
+                  "id": "p72uk",
+                  "name": "Appearance / Lucide",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "sun",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Z6mXe",
+          "name": "Reusable participant frame / 640px",
+          "clip": true,
+          "width": "fill_container",
+          "fill": "$home-bg",
+          "cornerRadius": 16,
+          "stroke": "$home-line",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "CW4JJ",
+              "name": "Setup heading and current step",
+              "width": "fill_container",
+              "padding": [
+                24,
+                28
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "y4xzp8",
+                  "name": "Frame title",
+                  "fill": "$home-ink",
+                  "content": "Set up your account",
+                  "lineHeight": 1.3,
+                  "fontFamily": "Geist",
+                  "fontSize": 22,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.4
+                },
+                {
+                  "type": "text",
+                  "id": "hUceI",
+                  "name": "Current step",
+                  "fill": "$home-muted",
+                  "content": "Step 1 / 3",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "kWbm4",
+              "name": "AimHarder / expanded",
+              "width": "fill_container",
+              "stroke": "$home-line",
+              "strokeWidth": {
+                "top": 1
+              },
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "sS8gf",
+                  "name": "Current section heading",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "padding": [
+                    18,
+                    28
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "lFMEu",
+                      "name": "Step 1 indicator",
+                      "width": 24,
+                      "height": 24,
+                      "fill": "$home-action",
+                      "cornerRadius": 50,
+                      "stroke": "$home-action",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Ajix5",
+                          "name": "Step number",
+                          "fill": "$home-on-action",
+                          "content": "1",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "m9nUr",
+                      "name": "Section label",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "AimHarder",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "cvjNd",
+                      "name": "Collapse / Lucide",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "chevron-up",
+                      "library": "lucide",
+                      "fill": "$home-muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "WZMbK",
+                  "name": "Current section content",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    8,
+                    28,
+                    28,
+                    64
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "vRq18",
+                      "name": "Fictional AimHarder login examples / not editable",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "aNTMM",
+                          "name": "Example / AimHarder username",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "aq2G1",
+                              "name": "Field label",
+                              "fill": "$home-ink",
+                              "content": "AimHarder username",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "H4yMGJ",
+                              "name": "Static example field",
+                              "width": "fill_container",
+                              "height": 44,
+                              "cornerRadius": 8,
+                              "stroke": "$home-line",
+                              "strokeWidth": 1,
+                              "padding": [
+                                10,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "j7A5yz",
+                                  "name": "Fictional field content",
+                                  "fill": "$home-ink",
+                                  "content": "alex@example.com",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 14,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "d93J8",
+                          "name": "Example / AimHarder password",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "M4CSUT",
+                              "name": "Field label",
+                              "fill": "$home-ink",
+                              "content": "AimHarder password",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "dKTKD",
+                              "name": "Static example field",
+                              "width": "fill_container",
+                              "height": 44,
+                              "cornerRadius": 8,
+                              "stroke": "$home-line",
+                              "strokeWidth": 1,
+                              "padding": [
+                                10,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "Hwrse",
+                                  "name": "Fictional field content",
+                                  "fill": "$home-ink",
+                                  "content": "••••••••",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 14,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "aH3NI",
+                      "name": "Credential distinction",
+                      "width": "fill_container",
+                      "padding": [
+                        16,
+                        0,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "P69yZi",
+                          "name": "Account distinction",
+                          "fill": "$home-muted",
+                          "content": "Use your AimHarder login, not your AIHarder password.",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bBZG8",
+                      "name": "Current task action",
+                      "width": "fill_container",
+                      "padding": [
+                        24,
+                        0,
+                        0,
+                        0
+                      ],
+                      "justifyContent": "end",
+                      "children": [
+                        {
+                          "id": "tBh05",
+                          "type": "ref",
+                          "ref": "UEEFt",
+                          "name": "Connect / simulated in HTML",
+                          "height": 40,
+                          "width": 98,
+                          "padding": [
+                            8,
+                            20
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "cornerRadius": 8,
+                          "stroke": "#12528F",
+                          "strokeWidth": 1,
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "linear",
+                            "enabled": true,
+                            "rotation": 180,
+                            "size": {
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#2174B9",
+                                "position": 0
+                              },
+                              {
+                                "color": "#1765B0",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "effect": {
+                            "type": "shadow",
+                            "shadowType": "outer",
+                            "color": "#0000001A",
+                            "offset": {
+                              "x": 0,
+                              "y": 4
+                            },
+                            "blur": 6
+                          },
+                          "descendants": {
+                            "ugUJO": {
+                              "content": "Connect",
+                              "fontSize": 14,
+                              "fill": "$home-on-action",
+                              "textAlign": "center"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "NeBDZ",
+              "name": "Future step / AI app",
+              "width": "fill_container",
+              "stroke": "$home-line",
+              "strokeWidth": {
+                "top": 1
+              },
+              "gap": 12,
+              "padding": [
+                18,
+                28
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "GM4va",
+                  "name": "Step 2 indicator",
+                  "width": 24,
+                  "height": 24,
+                  "fill": "$home-bg",
+                  "cornerRadius": 50,
+                  "stroke": "$home-line",
+                  "strokeWidth": 1,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "LmONm",
+                      "name": "Step number",
+                      "fill": "$home-muted",
+                      "content": "2",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "MFrAW",
+                  "name": "Section label",
+                  "fill": "$home-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "AI app",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "icon",
+                  "id": "LDli2",
+                  "name": "Future section / Lucide",
+                  "width": 14,
+                  "height": 14,
+                  "icon": "chevron-down",
+                  "library": "lucide",
+                  "fill": "$home-muted"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "rjP1J",
+              "name": "Future step / Confirmations",
+              "width": "fill_container",
+              "stroke": "$home-line",
+              "strokeWidth": {
+                "top": 1
+              },
+              "gap": 12,
+              "padding": [
+                18,
+                28
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "y0w5W",
+                  "name": "Step 3 indicator",
+                  "width": 24,
+                  "height": 24,
+                  "fill": "$home-bg",
+                  "cornerRadius": 50,
+                  "stroke": "$home-line",
+                  "strokeWidth": 1,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "torPB",
+                      "name": "Step number",
+                      "fill": "$home-muted",
+                      "content": "3",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "zvQxe",
+                  "name": "Section label",
+                  "fill": "$home-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Confirmations",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "icon",
+                  "id": "dhx2f",
+                  "name": "Future section / Lucide",
+                  "width": 14,
+                  "height": 14,
+                  "icon": "chevron-down",
+                  "library": "lucide",
+                  "fill": "$home-muted"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "TTdrI",
+          "name": "Quiet support and privacy footer",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "JZfcO",
+              "name": "Independent project",
+              "fill": "$home-muted",
+              "content": "An independent project. Not affiliated with AimHarder.",
+              "lineHeight": 1.5,
+              "fontFamily": "Geist",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "SOv3d",
+              "name": "Support and Privacy",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "VUT72",
+                  "name": "Support",
+                  "fill": "$home-muted",
+                  "content": "Support",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "nPO3r",
+                  "name": "Privacy",
+                  "fill": "$home-muted",
+                  "content": "Privacy",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Vqh6E",
+      "x": 2960,
+      "y": 19270,
+      "name": "AIHarder / Compact frame A Sections / English / Dark",
+      "context": "Provisional frame comparison, not a chosen layout. First of two simulated connection steps, followed by confirmation preferences. HTML owns interactive progression and post-setup reuse. Existing public/auth screens unchanged.",
+      "theme": {
+        "appearance": "dark",
+        "language": "en"
+      },
+      "clip": true,
+      "width": 1440,
+      "height": 1000,
+      "fill": "$home-surface",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": [
+        56,
+        400,
+        40,
+        400
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "rqxg7",
+          "name": "Compact identity and appearance / no site menu",
+          "width": "fill_container",
+          "height": 40,
+          "padding": [
+            0,
+            4
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "GBcDd",
+              "type": "ref",
+              "ref": "GqxcO",
+              "name": "AIHarder identity",
+              "height": 40,
+              "gap": 8,
+              "descendants": {
+                "OMijO": {
+                  "width": 35,
+                  "height": 40,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "home-study/assets/pen/kettle-flat-dark.png",
+                    "mode": "contain"
+                  }
+                },
+                "q4b4CU": {
+                  "fontSize": 19,
+                  "letterSpacing": -0.45
+                },
+                "NE7qo": {
+                  "fontSize": 19,
+                  "letterSpacing": -0.45
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "i86E3d",
+              "name": "Language and appearance",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "IUSJs",
+                  "name": "Language selector",
+                  "gap": 5,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "wCXXM",
+                      "name": "Language",
+                      "fill": "$home-ink",
+                      "content": "English",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "s7NmM",
+                      "name": "Select language / Lucide",
+                      "width": 12,
+                      "height": 12,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$home-ink"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon",
+                  "id": "bSqpw",
+                  "name": "Appearance / Lucide",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "moon",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "P11PB",
+          "name": "Reusable participant frame / 640px",
+          "clip": true,
+          "width": "fill_container",
+          "fill": "$home-bg",
+          "cornerRadius": 16,
+          "stroke": "$home-line",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "kClnk",
+              "name": "Setup heading and current step",
+              "width": "fill_container",
+              "padding": [
+                24,
+                28
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Z57gtJ",
+                  "name": "Frame title",
+                  "fill": "$home-ink",
+                  "content": "Set up your account",
+                  "lineHeight": 1.3,
+                  "fontFamily": "Geist",
+                  "fontSize": 22,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.4
+                },
+                {
+                  "type": "text",
+                  "id": "IUNNQ",
+                  "name": "Current step",
+                  "fill": "$home-muted",
+                  "content": "Step 1 / 3",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Bj5cm",
+              "name": "AimHarder / expanded",
+              "width": "fill_container",
+              "stroke": "$home-line",
+              "strokeWidth": {
+                "top": 1
+              },
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "XyJbe",
+                  "name": "Current section heading",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "padding": [
+                    18,
+                    28
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "xLsdy",
+                      "name": "Step 1 indicator",
+                      "width": 24,
+                      "height": 24,
+                      "fill": "$home-action",
+                      "cornerRadius": 50,
+                      "stroke": "$home-action",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "dBlGj",
+                          "name": "Step number",
+                          "fill": "$home-on-action",
+                          "content": "1",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "ik9ni",
+                      "name": "Section label",
+                      "fill": "$home-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "AimHarder",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "zTK1s",
+                      "name": "Collapse / Lucide",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "chevron-up",
+                      "library": "lucide",
+                      "fill": "$home-muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "mRGKl",
+                  "name": "Current section content",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "padding": [
+                    8,
+                    28,
+                    28,
+                    64
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "iEJOv",
+                      "name": "Fictional AimHarder login examples / not editable",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "MpoLc",
+                          "name": "Example / AimHarder username",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "knpO0",
+                              "name": "Field label",
+                              "fill": "$home-ink",
+                              "content": "AimHarder username",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "H3sma",
+                              "name": "Static example field",
+                              "width": "fill_container",
+                              "height": 44,
+                              "cornerRadius": 8,
+                              "stroke": "$home-line",
+                              "strokeWidth": 1,
+                              "padding": [
+                                10,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "T55B6x",
+                                  "name": "Fictional field content",
+                                  "fill": "$home-ink",
+                                  "content": "alex@example.com",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 14,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "z3968l",
+                          "name": "Example / AimHarder password",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "xC8Nl",
+                              "name": "Field label",
+                              "fill": "$home-ink",
+                              "content": "AimHarder password",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "o6r2bx",
+                              "name": "Static example field",
+                              "width": "fill_container",
+                              "height": 44,
+                              "cornerRadius": 8,
+                              "stroke": "$home-line",
+                              "strokeWidth": 1,
+                              "padding": [
+                                10,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "NGHJU",
+                                  "name": "Fictional field content",
+                                  "fill": "$home-ink",
+                                  "content": "••••••••",
+                                  "lineHeight": 1.5,
+                                  "fontFamily": "Geist",
+                                  "fontSize": 14,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "sf9AR",
+                      "name": "Credential distinction",
+                      "width": "fill_container",
+                      "padding": [
+                        16,
+                        0,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "r24DlZ",
+                          "name": "Account distinction",
+                          "fill": "$home-muted",
+                          "content": "Use your AimHarder login, not your AIHarder password.",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "SbfhY",
+                      "name": "Current task action",
+                      "width": "fill_container",
+                      "padding": [
+                        24,
+                        0,
+                        0,
+                        0
+                      ],
+                      "justifyContent": "end",
+                      "children": [
+                        {
+                          "id": "M5rwBO",
+                          "type": "ref",
+                          "ref": "UEEFt",
+                          "name": "Connect / simulated in HTML",
+                          "height": 40,
+                          "width": 98,
+                          "padding": [
+                            8,
+                            20
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "cornerRadius": 8,
+                          "stroke": "#61A9EB",
+                          "strokeWidth": 1,
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "linear",
+                            "enabled": true,
+                            "rotation": 180,
+                            "size": {
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#47A3F6",
+                                "position": 0
+                              },
+                              {
+                                "color": "#2490F4",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "effect": {
+                            "type": "shadow",
+                            "shadowType": "outer",
+                            "color": "#0000001A",
+                            "offset": {
+                              "x": 0,
+                              "y": 4
+                            },
+                            "blur": 6
+                          },
+                          "descendants": {
+                            "ugUJO": {
+                              "content": "Connect",
+                              "fontSize": 14,
+                              "fill": "$home-on-action",
+                              "textAlign": "center"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "A467Rk",
+              "name": "Future step / AI app",
+              "width": "fill_container",
+              "stroke": "$home-line",
+              "strokeWidth": {
+                "top": 1
+              },
+              "gap": 12,
+              "padding": [
+                18,
+                28
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "XKBlm",
+                  "name": "Step 2 indicator",
+                  "width": 24,
+                  "height": 24,
+                  "fill": "$home-bg",
+                  "cornerRadius": 50,
+                  "stroke": "$home-line",
+                  "strokeWidth": 1,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "RWskp",
+                      "name": "Step number",
+                      "fill": "$home-muted",
+                      "content": "2",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "tKYEz",
+                  "name": "Section label",
+                  "fill": "$home-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "AI app",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "icon",
+                  "id": "B4ghd",
+                  "name": "Future section / Lucide",
+                  "width": 14,
+                  "height": 14,
+                  "icon": "chevron-down",
+                  "library": "lucide",
+                  "fill": "$home-muted"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "iInhW",
+              "name": "Future step / Confirmations",
+              "width": "fill_container",
+              "stroke": "$home-line",
+              "strokeWidth": {
+                "top": 1
+              },
+              "gap": 12,
+              "padding": [
+                18,
+                28
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "tqcQy",
+                  "name": "Step 3 indicator",
+                  "width": 24,
+                  "height": 24,
+                  "fill": "$home-bg",
+                  "cornerRadius": 50,
+                  "stroke": "$home-line",
+                  "strokeWidth": 1,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "B78o0",
+                      "name": "Step number",
+                      "fill": "$home-muted",
+                      "content": "3",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "IRol7",
+                  "name": "Section label",
+                  "fill": "$home-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Confirmations",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "icon",
+                  "id": "wEbBt",
+                  "name": "Future section / Lucide",
+                  "width": 14,
+                  "height": 14,
+                  "icon": "chevron-down",
+                  "library": "lucide",
+                  "fill": "$home-muted"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "okCPV",
+          "name": "Quiet support and privacy footer",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "J6Fh0y",
+              "name": "Independent project",
+              "fill": "$home-muted",
+              "content": "An independent project. Not affiliated with AimHarder.",
+              "lineHeight": 1.5,
+              "fontFamily": "Geist",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "aFiBY",
+              "name": "Support and Privacy",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "iXJ5i",
+                  "name": "Support",
+                  "fill": "$home-muted",
+                  "content": "Support",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "fPQK8",
+                  "name": "Privacy",
+                  "fill": "$home-muted",
+                  "content": "Privacy",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "fUXQE",
+      "x": 1360,
+      "y": 20410,
+      "name": "AIHarder / Compact frame B Tabs / English / Light",
+      "context": "Provisional frame comparison, not a chosen layout. First of two simulated connection steps, followed by confirmation preferences. HTML owns interactive progression and post-setup reuse. Existing public/auth screens unchanged.",
+      "theme": {
+        "appearance": "light",
+        "language": "en"
+      },
+      "clip": true,
+      "width": 1440,
+      "height": 1000,
+      "fill": "$home-surface",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": [
+        56,
+        400,
+        40,
+        400
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "x4W04U",
+          "name": "Compact identity and appearance / no site menu",
+          "width": "fill_container",
+          "height": 40,
+          "padding": [
+            0,
+            4
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "wovav",
+              "type": "ref",
+              "ref": "GqxcO",
+              "name": "AIHarder identity",
+              "height": 40,
+              "gap": 8,
+              "descendants": {
+                "OMijO": {
+                  "width": 35,
+                  "height": 40,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "home-study/assets/pen/kettle-flat-light.png",
+                    "mode": "contain"
+                  }
+                },
+                "q4b4CU": {
+                  "fontSize": 19,
+                  "letterSpacing": -0.45
+                },
+                "NE7qo": {
+                  "fontSize": 19,
+                  "letterSpacing": -0.45
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "h0qsCU",
+              "name": "Language and appearance",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ieI5U",
+                  "name": "Language selector",
+                  "gap": 5,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "wpVg4",
+                      "name": "Language",
+                      "fill": "$home-ink",
+                      "content": "English",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "kSpZh",
+                      "name": "Select language / Lucide",
+                      "width": 12,
+                      "height": 12,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$home-ink"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon",
+                  "id": "MHvxy",
+                  "name": "Appearance / Lucide",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "sun",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "e4uqK",
+          "name": "Reusable participant frame / 640px",
+          "clip": true,
+          "width": "fill_container",
+          "fill": "$home-bg",
+          "cornerRadius": 16,
+          "stroke": "$home-line",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "fIPTl",
+              "name": "Setup heading and current step",
+              "width": "fill_container",
+              "padding": [
+                24,
+                28
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "z7KPX",
+                  "name": "Frame title",
+                  "fill": "$home-ink",
+                  "content": "Set up your account",
+                  "lineHeight": 1.3,
+                  "fontFamily": "Geist",
+                  "fontSize": 22,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.4
+                },
+                {
+                  "type": "text",
+                  "id": "sFf9y",
+                  "name": "Current step",
+                  "fill": "$home-muted",
+                  "content": "Step 1 / 3",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "hzUSP",
+              "name": "Account sections / tabs",
+              "width": "fill_container",
+              "gap": 4,
+              "padding": [
+                0,
+                20,
+                20,
+                20
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ZKsbS",
+                  "name": "Tab / AimHarder",
+                  "width": "fill_container",
+                  "height": 40,
+                  "fill": "#E4F0FF",
+                  "cornerRadius": 6,
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "s57Yv",
+                      "name": "Step 1 indicator",
+                      "width": 20,
+                      "height": 20,
+                      "fill": "#E4F0FF",
+                      "cornerRadius": 50,
+                      "stroke": "$home-line",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "U8kIdC",
+                          "name": "Step number",
+                          "fill": "$home-muted",
+                          "content": "1",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 10,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "w5twp",
+                      "name": "Tab label",
+                      "fill": "#125B9D",
+                      "content": "AimHarder",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "RXxCX",
+                  "name": "Tab / AI app / future step",
+                  "opacity": 0.6,
+                  "width": "fill_container",
+                  "height": 40,
+                  "fill": "$home-surface",
+                  "cornerRadius": 6,
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "k5PSi",
+                      "name": "Step 2 indicator",
+                      "width": 20,
+                      "height": 20,
+                      "fill": "$home-bg",
+                      "cornerRadius": 50,
+                      "stroke": "$home-line",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "YnjlS",
+                          "name": "Step number",
+                          "fill": "$home-muted",
+                          "content": "2",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 10,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "pW3gJ",
+                      "name": "Tab label",
+                      "fill": "$home-muted",
+                      "content": "AI app",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "oy1bs",
+                  "name": "Tab / Confirmations / future step",
+                  "opacity": 0.6,
+                  "width": "fill_container",
+                  "height": 40,
+                  "fill": "$home-surface",
+                  "cornerRadius": 6,
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "GtT7b",
+                      "name": "Step 3 indicator",
+                      "width": 20,
+                      "height": 20,
+                      "fill": "$home-bg",
+                      "cornerRadius": 50,
+                      "stroke": "$home-line",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "pr2BB",
+                          "name": "Step number",
+                          "fill": "$home-muted",
+                          "content": "3",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 10,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "obaO4",
+                      "name": "Tab label",
+                      "fill": "$home-muted",
+                      "content": "Confirmations",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "GMNAa",
+              "name": "Current tab content",
+              "width": "fill_container",
+              "stroke": "$home-line",
+              "strokeWidth": {
+                "top": 1
+              },
+              "layout": "vertical",
+              "padding": [
+                8,
+                28,
+                28,
+                28
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ciL7k",
+                  "name": "Fictional AimHarder login examples / not editable",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Ro7na",
+                      "name": "Example / AimHarder username",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "RfFkk",
+                          "name": "Field label",
+                          "fill": "$home-ink",
+                          "content": "AimHarder username",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "AGn3v",
+                          "name": "Static example field",
+                          "width": "fill_container",
+                          "height": 44,
+                          "cornerRadius": 8,
+                          "stroke": "$home-line",
+                          "strokeWidth": 1,
+                          "padding": [
+                            10,
+                            12
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Yr07c",
+                              "name": "Fictional field content",
+                              "fill": "$home-ink",
+                              "content": "alex@example.com",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "v8Q5uX",
+                      "name": "Example / AimHarder password",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "zRJrx",
+                          "name": "Field label",
+                          "fill": "$home-ink",
+                          "content": "AimHarder password",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Euqk5",
+                          "name": "Static example field",
+                          "width": "fill_container",
+                          "height": 44,
+                          "cornerRadius": 8,
+                          "stroke": "$home-line",
+                          "strokeWidth": 1,
+                          "padding": [
+                            10,
+                            12
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Mw4z5",
+                              "name": "Fictional field content",
+                              "fill": "$home-ink",
+                              "content": "••••••••",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "CqIdU",
+                  "name": "Credential distinction",
+                  "width": "fill_container",
+                  "padding": [
+                    16,
+                    0,
+                    0,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "oF8Vp",
+                      "name": "Account distinction",
+                      "fill": "$home-muted",
+                      "content": "Use your AimHarder login, not your AIHarder password.",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "z5AWR",
+                  "name": "Current task action",
+                  "width": "fill_container",
+                  "padding": [
+                    24,
+                    0,
+                    0,
+                    0
+                  ],
+                  "justifyContent": "end",
+                  "children": [
+                    {
+                      "id": "E5GJBv",
+                      "type": "ref",
+                      "ref": "UEEFt",
+                      "name": "Connect / simulated in HTML",
+                      "height": 40,
+                      "width": 98,
+                      "padding": [
+                        8,
+                        20
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "cornerRadius": 8,
+                      "stroke": "#12528F",
+                      "strokeWidth": 1,
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 180,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#2174B9",
+                            "position": 0
+                          },
+                          {
+                            "color": "#1765B0",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#0000001A",
+                        "offset": {
+                          "x": 0,
+                          "y": 4
+                        },
+                        "blur": 6
+                      },
+                      "descendants": {
+                        "ugUJO": {
+                          "content": "Connect",
+                          "fontSize": 14,
+                          "fill": "$home-on-action",
+                          "textAlign": "center"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "NAV6n",
+          "name": "Quiet support and privacy footer",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "F6MzVY",
+              "name": "Independent project",
+              "fill": "$home-muted",
+              "content": "An independent project. Not affiliated with AimHarder.",
+              "lineHeight": 1.5,
+              "fontFamily": "Geist",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "pgGXo",
+              "name": "Support and Privacy",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ARAzc",
+                  "name": "Support",
+                  "fill": "$home-muted",
+                  "content": "Support",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "u9JjBI",
+                  "name": "Privacy",
+                  "fill": "$home-muted",
+                  "content": "Privacy",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "RrsWw",
+      "x": 2960,
+      "y": 20410,
+      "name": "AIHarder / Compact frame B Tabs / English / Dark",
+      "context": "Provisional frame comparison, not a chosen layout. First of two simulated connection steps, followed by confirmation preferences. HTML owns interactive progression and post-setup reuse. Existing public/auth screens unchanged.",
+      "theme": {
+        "appearance": "dark",
+        "language": "en"
+      },
+      "clip": true,
+      "width": 1440,
+      "height": 1000,
+      "fill": "$home-surface",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": [
+        56,
+        400,
+        40,
+        400
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "M3RLuQ",
+          "name": "Compact identity and appearance / no site menu",
+          "width": "fill_container",
+          "height": 40,
+          "padding": [
+            0,
+            4
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "bQMmh",
+              "type": "ref",
+              "ref": "GqxcO",
+              "name": "AIHarder identity",
+              "height": 40,
+              "gap": 8,
+              "descendants": {
+                "OMijO": {
+                  "width": 35,
+                  "height": 40,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "home-study/assets/pen/kettle-flat-dark.png",
+                    "mode": "contain"
+                  }
+                },
+                "q4b4CU": {
+                  "fontSize": 19,
+                  "letterSpacing": -0.45
+                },
+                "NE7qo": {
+                  "fontSize": 19,
+                  "letterSpacing": -0.45
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "Juhx8",
+              "name": "Language and appearance",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "JArhl",
+                  "name": "Language selector",
+                  "gap": 5,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "bDsoa",
+                      "name": "Language",
+                      "fill": "$home-ink",
+                      "content": "English",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "FR3mQ",
+                      "name": "Select language / Lucide",
+                      "width": 12,
+                      "height": 12,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$home-ink"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon",
+                  "id": "lnQs4",
+                  "name": "Appearance / Lucide",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "moon",
+                  "library": "lucide",
+                  "fill": "$home-ink"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "u6g8ge",
+          "name": "Reusable participant frame / 640px",
+          "clip": true,
+          "width": "fill_container",
+          "fill": "$home-bg",
+          "cornerRadius": 16,
+          "stroke": "$home-line",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "FlrnU",
+              "name": "Setup heading and current step",
+              "width": "fill_container",
+              "padding": [
+                24,
+                28
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "NpQXy",
+                  "name": "Frame title",
+                  "fill": "$home-ink",
+                  "content": "Set up your account",
+                  "lineHeight": 1.3,
+                  "fontFamily": "Geist",
+                  "fontSize": 22,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.4
+                },
+                {
+                  "type": "text",
+                  "id": "Bwtoe",
+                  "name": "Current step",
+                  "fill": "$home-muted",
+                  "content": "Step 1 / 3",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "H6ofdz",
+              "name": "Account sections / tabs",
+              "width": "fill_container",
+              "gap": 4,
+              "padding": [
+                0,
+                20,
+                20,
+                20
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "FPr8k",
+                  "name": "Tab / AimHarder",
+                  "width": "fill_container",
+                  "height": 40,
+                  "fill": "#1B3D63",
+                  "cornerRadius": 6,
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "PkYe6",
+                      "name": "Step 1 indicator",
+                      "width": 20,
+                      "height": 20,
+                      "fill": "#1B3D63",
+                      "cornerRadius": 50,
+                      "stroke": "$home-line",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "gvVjL",
+                          "name": "Step number",
+                          "fill": "$home-muted",
+                          "content": "1",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 10,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "a3cGu",
+                      "name": "Tab label",
+                      "fill": "#C2E1FF",
+                      "content": "AimHarder",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "mijrp",
+                  "name": "Tab / AI app / future step",
+                  "opacity": 0.6,
+                  "width": "fill_container",
+                  "height": 40,
+                  "fill": "$home-surface",
+                  "cornerRadius": 6,
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "yYKM5",
+                      "name": "Step 2 indicator",
+                      "width": 20,
+                      "height": 20,
+                      "fill": "$home-bg",
+                      "cornerRadius": 50,
+                      "stroke": "$home-line",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "I1gPQ",
+                          "name": "Step number",
+                          "fill": "$home-muted",
+                          "content": "2",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 10,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "D9KEO3",
+                      "name": "Tab label",
+                      "fill": "$home-muted",
+                      "content": "AI app",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "k0pqy4",
+                  "name": "Tab / Confirmations / future step",
+                  "opacity": 0.6,
+                  "width": "fill_container",
+                  "height": 40,
+                  "fill": "$home-surface",
+                  "cornerRadius": 6,
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "A5yHfF",
+                      "name": "Step 3 indicator",
+                      "width": 20,
+                      "height": 20,
+                      "fill": "$home-bg",
+                      "cornerRadius": 50,
+                      "stroke": "$home-line",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "dh5i4",
+                          "name": "Step number",
+                          "fill": "$home-muted",
+                          "content": "3",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 10,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "O1pUjr",
+                      "name": "Tab label",
+                      "fill": "$home-muted",
+                      "content": "Confirmations",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "xwYxe",
+              "name": "Current tab content",
+              "width": "fill_container",
+              "stroke": "$home-line",
+              "strokeWidth": {
+                "top": 1
+              },
+              "layout": "vertical",
+              "padding": [
+                8,
+                28,
+                28,
+                28
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Vfqhb",
+                  "name": "Fictional AimHarder login examples / not editable",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "jrYJI",
+                      "name": "Example / AimHarder username",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "vEh9E",
+                          "name": "Field label",
+                          "fill": "$home-ink",
+                          "content": "AimHarder username",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "ef90t",
+                          "name": "Static example field",
+                          "width": "fill_container",
+                          "height": 44,
+                          "cornerRadius": 8,
+                          "stroke": "$home-line",
+                          "strokeWidth": 1,
+                          "padding": [
+                            10,
+                            12
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "bYeDM",
+                              "name": "Fictional field content",
+                              "fill": "$home-ink",
+                              "content": "alex@example.com",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "F5IjcF",
+                      "name": "Example / AimHarder password",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "znukr",
+                          "name": "Field label",
+                          "fill": "$home-ink",
+                          "content": "AimHarder password",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "C7gZDD",
+                          "name": "Static example field",
+                          "width": "fill_container",
+                          "height": 44,
+                          "cornerRadius": 8,
+                          "stroke": "$home-line",
+                          "strokeWidth": 1,
+                          "padding": [
+                            10,
+                            12
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "i4TblD",
+                              "name": "Fictional field content",
+                              "fill": "$home-ink",
+                              "content": "••••••••",
+                              "lineHeight": 1.5,
+                              "fontFamily": "Geist",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "xfOSt",
+                  "name": "Credential distinction",
+                  "width": "fill_container",
+                  "padding": [
+                    16,
+                    0,
+                    0,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "seweL",
+                      "name": "Account distinction",
+                      "fill": "$home-muted",
+                      "content": "Use your AimHarder login, not your AIHarder password.",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "NSAWv",
+                  "name": "Current task action",
+                  "width": "fill_container",
+                  "padding": [
+                    24,
+                    0,
+                    0,
+                    0
+                  ],
+                  "justifyContent": "end",
+                  "children": [
+                    {
+                      "id": "F3PXJ4",
+                      "type": "ref",
+                      "ref": "UEEFt",
+                      "name": "Connect / simulated in HTML",
+                      "height": 40,
+                      "width": 98,
+                      "padding": [
+                        8,
+                        20
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "cornerRadius": 8,
+                      "stroke": "#61A9EB",
+                      "strokeWidth": 1,
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 180,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#47A3F6",
+                            "position": 0
+                          },
+                          {
+                            "color": "#2490F4",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#0000001A",
+                        "offset": {
+                          "x": 0,
+                          "y": 4
+                        },
+                        "blur": 6
+                      },
+                      "descendants": {
+                        "ugUJO": {
+                          "content": "Connect",
+                          "fontSize": 14,
+                          "fill": "$home-on-action",
+                          "textAlign": "center"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "VlSQL",
+          "name": "Quiet support and privacy footer",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "kP9Q8",
+              "name": "Independent project",
+              "fill": "$home-muted",
+              "content": "An independent project. Not affiliated with AimHarder.",
+              "lineHeight": 1.5,
+              "fontFamily": "Geist",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "YqkPJ",
+              "name": "Support and Privacy",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Xfi0s",
+                  "name": "Support",
+                  "fill": "$home-muted",
+                  "content": "Support",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "RlSTZ",
+                  "name": "Privacy",
+                  "fill": "$home-muted",
+                  "content": "Privacy",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "themes": {

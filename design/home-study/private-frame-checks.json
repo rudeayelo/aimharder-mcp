@@ -1,0 +1,96 @@
+{
+  "date": "2026-11-03",
+  "scope": "Compact frame comparison; static fictional credential fields, simulated connection steps and local-only preference controls. No account or policy mutation.",
+  "initial": {
+    "credentialInputs": 0,
+    "headers": 0,
+    "layout": "tabs",
+    "missingControls": 0,
+    "steps": 3,
+    "width": 640,
+    "containsRejectedCopy": false
+  },
+  "loading": {
+    "disabled": true,
+    "label": "Connecting…"
+  },
+  "defaults": {
+    "booking": true,
+    "labels": [
+      "Ask for confirmation when making a reservation",
+      "Ask for confirmation when posting a new workout"
+    ],
+    "note": "For all your AI apps. Cancellations and deletions always require confirmation.",
+    "publication": true
+  },
+  "independentSwitches": {
+    "booking": false,
+    "publication": true
+  },
+  "localSave": {
+    "booking": false,
+    "message": "Preview settings saved locally for this page.",
+    "publication": true
+  },
+  "reuse": {
+    "expanded": 0,
+    "summary": [
+      "Connected",
+      "Hermes",
+      "Preferences set"
+    ]
+  },
+  "keyboard": {
+    "focus": "section-2",
+    "selected": "Confirmations",
+    "targetsValid": true
+  },
+  "spanish": {
+    "labels": [
+      "Pedir confirmación al hacer una reserva",
+      "Pedir confirmación al publicar un nuevo entrenamiento"
+    ],
+    "lang": "es",
+    "overflow": false,
+    "switches": [
+      true,
+      true
+    ],
+    "theme": "dark"
+  },
+  "finishSections": {
+    "focus": "frame-title",
+    "openSections": 0,
+    "title": "Tu cuenta"
+  },
+  "system": {
+    "layout": "sections",
+    "privacy": "https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/privacy-study.html?lang=es&theme=system",
+    "state": "connected",
+    "themeQuery": "system"
+  },
+  "responsive1030": {
+    "frameWidth": 640,
+    "overflow": false,
+    "viewport": 1030
+  },
+  "consoleErrors": [],
+  "native": {
+    "pages": [
+      "M3U1LB",
+      "Vqh6E",
+      "fUXQE",
+      "RrsWw"
+    ],
+    "scope": "English desktop Light/Dark initial frame comparisons only. Dynamic steps/post-setup and Spanish remain in HTML during this exploration.",
+    "protectedRootCount": 34,
+    "protectedUnchanged": true,
+    "placeholderFlagsCleared": true,
+    "nestedBoundsVisitor": "No new clean nested-bounds claim; older diagnostics remain unresolved."
+  },
+  "afterSetupClean": {
+    "expanded": 0,
+    "feedback": "",
+    "rows": 3
+  }
+}
