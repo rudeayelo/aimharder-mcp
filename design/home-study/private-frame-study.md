@@ -61,3 +61,7 @@ English Light and Spanish Dark were inspected. At the supplied 1030px desktop re
 [Browser A](previews/private-frame/sections-first-en-light.jpg) · [Browser B](previews/private-frame/tabs-first-en-light.jpg) · [After setup](previews/private-frame/sections-after-en-light.jpg) · [Confirmations ES Dark](previews/private-frame/confirmations-es-dark.jpg).
 
 Relevant JavaScript syntax and local links are checked. Runtime/package/hosted test suites are not rerun for this static design checkpoint. Backend/API/authentication/security/role and deployment decisions remain unchanged; no new ADR is needed for provisional visual alternatives within #95. Actual account linking, OAuth authorization, configuration persistence, per-installation management, physical-device acceptance and owner layout approval remain separate. This prototype does not claim a finished post-onboarding settings implementation.
+
+## Review outcome
+
+Spec review of `545016e...eb5b10b` reported no actionable findings. Standards review identified keyboard focus loss when collapsing a completed section after its DOM was replaced. The correction renders first and explicitly refocuses the clicked section header, including when all panels are closed; browser read-back confirmed `section-0` retained focus with `aria-expanded=false`. Standards review recognized the correction as closing the finding and reported no further material issues. These reviews do not select either layout for the owner or establish real connection/preference behavior.

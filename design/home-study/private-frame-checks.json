@@ -92,5 +92,9 @@
     "expanded": 0,
     "feedback": "",
     "rows": 3
+  },
+  "collapseFocus": {
+    "expanded": "false",
+    "focus": "section-0"
   }
 }
