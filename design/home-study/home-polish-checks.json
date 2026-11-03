@@ -61,5 +61,18 @@
   "limits": [
     "Support target is design copy; no inbox or delivery validation performed.",
     "No production integration or device/locale variant propagation."
-  ]
+  ],
+  "review": {
+    "base": "77ea2b1",
+    "head": "9310cfb",
+    "standardsFindings": 0,
+    "specFindings": 0
+  },
+  "verification": {
+    "javascriptSyntax": "passed",
+    "changedDocumentLocalLinks": 5,
+    "brokenLocalLinks": 0,
+    "existingAssetHashesPassed": 76,
+    "diffWhitespace": "passed"
+  }
 }
