@@ -897,8 +897,8 @@
                   "type": "ref",
                   "ref": "UEEFt",
                   "name": "Sign in / header",
-                  "width": 142,
-                  "height": 48,
+                  "width": 112,
+                  "height": 40,
                   "fill": {
                     "type": "gradient",
                     "gradientType": "linear",
@@ -1603,10 +1603,7 @@
           "context": "Unboxed question typography, 26px/500. Four alternating ticker rows; one question and matching topic emphasized every 3 seconds in HTML. Static native snapshot; HTML cycles 100/118/109/123 seconds for about 30% faster drift than the prior trial.",
           "width": "fill_container",
           "fill": "$home-bg",
-          "stroke": "$home-line",
-          "strokeWidth": {
-            "bottom": 1
-          },
+          "stroke": "#00000000",
           "layout": "vertical",
           "gap": 32,
           "padding": [
@@ -3826,7 +3823,7 @@
           "type": "frame",
           "id": "yZ4bJ",
           "name": "Footer",
-          "context": "Design domain, independent-project disclosure and GitHub/Privacy links. Privacy is a review-only placeholder until the actual notice is supplied.",
+          "context": "Independent-project disclosure, GitHub, Support email and Privacy. Privacy is a review-only placeholder until the actual notice is supplied.",
           "width": "fill_container",
           "fill": "$home-bg",
           "stroke": "$home-line",
@@ -3846,22 +3843,10 @@
             {
               "type": "frame",
               "id": "f0P6f",
-              "name": "Project domain and independence",
+              "name": "Independent-project disclosure",
               "width": "fill_container",
               "layout": "vertical",
-              "gap": 6,
               "children": [
-                {
-                  "type": "text",
-                  "id": "WcCWu",
-                  "name": "Design domain",
-                  "fill": "$home-ink",
-                  "content": "aiharder.link",
-                  "lineHeight": 1.5,
-                  "fontFamily": "Geist",
-                  "fontSize": 14,
-                  "fontWeight": "500"
-                },
                 {
                   "type": "text",
                   "id": "Z4vAMM",
@@ -3898,6 +3883,18 @@
                   },
                   "fill": "$home-ink",
                   "content": "GitHub",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "M1fYqH",
+                  "name": "Support email link",
+                  "context": "Support link target: mailto:support@aiharder.link. Live mailto behavior is in the HTML prototype.",
+                  "fill": "$home-ink",
+                  "content": "Support",
                   "lineHeight": 1.5,
                   "fontFamily": "Geist",
                   "fontSize": 14,
@@ -4154,8 +4151,8 @@
                   "type": "ref",
                   "ref": "UEEFt",
                   "name": "Sign in / header",
-                  "width": 142,
-                  "height": 48,
+                  "width": 112,
+                  "height": 40,
                   "fill": {
                     "type": "gradient",
                     "gradientType": "linear",
@@ -4860,10 +4857,7 @@
           "context": "Unboxed question typography, 26px/500. Four alternating ticker rows; one question and matching topic emphasized every 3 seconds in HTML. Static native snapshot; HTML cycles 100/118/109/123 seconds for about 30% faster drift than the prior trial.",
           "width": "fill_container",
           "fill": "$home-bg",
-          "stroke": "$home-line",
-          "strokeWidth": {
-            "bottom": 1
-          },
+          "stroke": "#00000000",
           "layout": "vertical",
           "gap": 32,
           "padding": [
@@ -7083,7 +7077,7 @@
           "type": "frame",
           "id": "oNuGF",
           "name": "Footer",
-          "context": "Design domain, independent-project disclosure and GitHub/Privacy links. Privacy is a review-only placeholder until the actual notice is supplied.",
+          "context": "Independent-project disclosure, GitHub, Support email and Privacy. Privacy is a review-only placeholder until the actual notice is supplied.",
           "width": "fill_container",
           "fill": "$home-bg",
           "stroke": "$home-line",
@@ -7103,22 +7097,10 @@
             {
               "type": "frame",
               "id": "bNj8s",
-              "name": "Project domain and independence",
+              "name": "Independent-project disclosure",
               "width": "fill_container",
               "layout": "vertical",
-              "gap": 6,
               "children": [
-                {
-                  "type": "text",
-                  "id": "rSoky",
-                  "name": "Design domain",
-                  "fill": "$home-ink",
-                  "content": "aiharder.link",
-                  "lineHeight": 1.5,
-                  "fontFamily": "Geist",
-                  "fontSize": 14,
-                  "fontWeight": "500"
-                },
                 {
                   "type": "text",
                   "id": "v2KIpn",
@@ -7155,6 +7137,18 @@
                   },
                   "fill": "$home-ink",
                   "content": "GitHub",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "AkBuV",
+                  "name": "Support email link",
+                  "context": "Support link target: mailto:support@aiharder.link. Live mailto behavior is in the HTML prototype.",
+                  "fill": "$home-ink",
+                  "content": "Support",
                   "lineHeight": 1.5,
                   "fontFamily": "Geist",
                   "fontSize": 14,

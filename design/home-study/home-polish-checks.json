@@ -1,0 +1,65 @@
+{
+  "date": "2026-11-03",
+  "scope": "Four owner-directed home refinements; English desktop Light/Dark",
+  "runtime": {
+    "light": {
+      "domainCount": 0,
+      "footerLinks": "GitHubSupportPrivacy",
+      "gap": 0,
+      "headerButton": {
+        "fontSize": "14px",
+        "height": 40,
+        "width": 112
+      },
+      "heroColor": "rgb(121, 164, 220)",
+      "howColor": "rgb(121, 164, 220)",
+      "howTop": "1px",
+      "overflow": false,
+      "questionsBottom": "0px",
+      "support": "mailto:support@aiharder.link",
+      "width": 1200
+    },
+    "dark": {
+      "domainCount": 0,
+      "headerButton": {
+        "height": 40,
+        "width": 112
+      },
+      "heroColor": "rgb(45, 96, 155)",
+      "howColor": "rgb(45, 96, 155)",
+      "howTop": "1px",
+      "overflow": false,
+      "questionsBottom": "0px",
+      "support": "mailto:support@aiharder.link",
+      "width": 1200
+    },
+    "panel": {
+      "headerButton": {
+        "height": 40,
+        "width": 112
+      },
+      "overflow": false,
+      "width": 1030
+    }
+  },
+  "pen": {
+    "pages": [
+      "uAXkc",
+      "p7u8w"
+    ],
+    "protectedSubtreesUnchanged": 24,
+    "protectedSubtreesTotal": 24,
+    "headerButton": [
+      112,
+      40
+    ],
+    "questionBorder": "transparent, 0px",
+    "howBorder": "Existing 1px blue stroke retained",
+    "footer": "Disclosure only at left; GitHub, Support, Privacy at right",
+    "motion": "Static native stills; HTML owns playback"
+  },
+  "limits": [
+    "Support target is design copy; no inbox or delivery validation performed.",
+    "No production integration or device/locale variant propagation."
+  ]
+}

@@ -5,7 +5,6 @@
 .site-footer { background: var(--bg); color: var(--ink); border-top: 1px solid var(--line); }
 .footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 32px; padding: 28px 0; font-size: 14px; line-height: 1.5; }
 .footer-project { display: flex; flex-direction: column; gap: 6px; }
-.footer-domain { font-weight: 500; }
 .footer-disclosure { color: var(--muted); }
 .footer-links { display: flex; align-items: center; gap: 24px; }
 .footer-links a, .footer-privacy { font: inherit; font-weight: 500; color: var(--ink); }

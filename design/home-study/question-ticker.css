@@ -6,7 +6,6 @@
   --featured-bg: #1765b0;
   padding: 72px 0;
   background: var(--bg);
-  border-bottom: 1px solid var(--line);
   overflow: hidden;
 }
 [data-theme=dark] .questions-section {

@@ -1,5 +1,7 @@
 # AIHarder — closing action and footer
 
+Current refinement, 2026-11-03: the footer domain label has been removed and Support added beside GitHub/Privacy. The original checkpoint below records its earlier presentation; see [home polish](#home-polish--2026-11-03) for the current design.
+
 Date: 2026-11-02. Owner-directed completion of the English desktop Light/Dark home composition under #95. Activate and refine the retained closing/footer pieces after FAQ. This completes the current page inventory; it does not approve the design or implement the production website. Other six device/locale variants remain frozen.
 
 ## Reference lock and decisions
@@ -35,3 +37,18 @@ All 26 protected root/section subtrees (other variants, components, header, hero
 The actual sign-in integration, complete privacy notice, domain/hosting/mail activation, locale/device propagation and owner visual acceptance remain separate. No operational/API/security change is made; existing ADRs are unaffected.
 
 Later owner refinement: a decorative random-emote kettle now crosses the FAQ/closing boundary. See [boundary study](footer-kettle-study.md) for responsive hiding, placement, lifecycle and the completed native synchronization and animation boundary.
+
+## Home polish — 2026-11-03
+
+The owner's four browser annotations and the accepted home are the reference lock for this directed adjustment; no new visual direction or assets were needed.
+
+- One separator between the question wall and How to: remove the question wall's grey bottom border and retain the existing How to blue 1px top border, `#79a4dc` in Light and `#2d609b` in Dark, exactly matching the hero's bottom rule. The same correction applies in Pen.
+- Remove the standalone `aiharder.link` footer label. Keep the independent-project disclosure; the selected design domain and support address remain unchanged.
+- Add **Support** between **GitHub** and **Privacy**, using the existing 14px/500 navigation styling. HTML uses `mailto:support@aiharder.link`; the native static text records that destination in its context. This does not validate or activate the mailbox or send email.
+- Reduce only the header Sign in from 142 × 48px to 112 × 40px. HTML explicitly uses 14px text and 8px/20px padding; the smaller responsive rule keeps 8px/16px padding and a 100px minimum width. Native header instances match 112 × 40px. Existing gradients, borders and shadows remain; hero/closing actions are unchanged.
+
+English desktop Light/Dark were updated in HTML and Pen. Native screenshots and read-back verified complete layouts, 24 protected subtrees outside the edited header/question-wall/footer remained unchanged, and placeholder flags were cleared. Other six native variants remain frozen. [Updated Pen Light](previews/polish-20261103/pen/uAXkc.png) · [Updated Pen Dark](previews/polish-20261103/pen/p7u8w.png).
+
+[Browser/native checks](home-polish-checks.json) verified 0px question bottom border, one 1px How to border with the hero's exact color, no gap at the boundary, absent footer domain, Support mailto target, compact header dimensions and no horizontal overflow in Light/Dark at 1200px and Light at the owner's 1030px width. Browser warnings/errors were absent in the inspected Dark run. Mailto destination was read without opening an email client or sending a message. [Header Light](previews/polish-20261103/header-light.jpg) · [Footer Light](previews/polish-20261103/footer-light.jpg) · [Border Light](previews/polish-20261103/border-light.jpg) · [Header Dark](previews/polish-20261103/header-dark.jpg) · [Footer Dark](previews/polish-20261103/footer-dark.jpg).
+
+This is a reversible visual prototype refinement. No API behavior, authentication, production deployment or architectural decision changes; existing ADRs are unaffected. Actual integration, mailbox validation, locale/device propagation and owner visual acceptance remain separate.
