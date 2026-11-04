@@ -211,3 +211,7 @@ The owner requested the hero gradient across the private page and the reply-bubb
 ### Joined opaque private settings — 2026-11-03
 
 The owner rejected separated translucent containers and requested the sections joined again on a flat opaque surface, retaining the separate Account settings page. The [current visual checkpoint](../design/home-study/private-solid-study.md) joins the three sections with internal dividers and uses solid semantic surfaces in both themes while retaining the page gradient, avatar navigation and global actions. This appearance-only refinement changes no runtime, API, authentication, security or ADR decision.
+
+### Settings action placement — 2026-11-04
+
+The owner moved global Cancel/Save changes inside the joined settings container. HTML now encloses the sections, actions and feedback in one opaque panel; the separate Account settings page retains independent actions. Both English native Settings frames are updated and local save behavior is browser checked. This layout change affects no runtime, API, authentication, security or ADR decision. See the [current checkpoint](../design/home-study/private-solid-study.md#actions-inside-the-panel--2026-11-04).

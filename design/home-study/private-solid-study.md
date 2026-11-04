@@ -15,3 +15,11 @@ The four current English desktop native roots are updated in place: Settings `M3
 [Native Settings Light](previews/private-solid/pen/M3U1LB.png) · [Settings Dark](previews/private-solid/pen/Vqh6E.png) · [Account Light](previews/private-solid/pen/YiXOV.png) · [Account Dark](previews/private-solid/pen/e8dyV.png).
 
 Parallel Standards and Spec review of `4b1af16...6ec5d8c` returned no actionable findings. Native document bytes were excluded; editor comparisons and render inspection cover the native artifact separately.
+
+## Actions inside the panel — 2026-11-04
+
+The owner requested Cancel and Save changes inside the container. A shared `settings-panel` wrapper now encloses the sections, action row and save feedback; actions remain right aligned in a separated bottom row with 28px horizontal padding (20px below 550px). The dynamic sections node remains distinct, so rerendering does not remove the global actions target. Account settings keeps its separate route and hidden global actions. The two current English Settings native roots reparent the existing actions into the joined panel; all 38 other native root trees compare unchanged. No runtime/API/auth/ADR decision changes.
+
+Browser read-back verifies action containment, local save feedback, clean disabled save state and no horizontal overflow after a successful preference edit/save. Whitespace is checked. No new runtime tests are needed for this low-impact layout refinement.
+
+[Current browser](previews/private-actions-inside/settings-en-light.png) · [Native Light](previews/private-actions-inside/pen/M3U1LB.png) · [Native Dark](previews/private-actions-inside/pen/Vqh6E.png). Earlier captures above show the preceding external action row.

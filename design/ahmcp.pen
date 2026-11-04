@@ -37178,57 +37178,59 @@
                       ]
                     }
                   ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "yHsof",
-              "name": "Global Cancel and Save changes",
-              "width": "fill_container",
-              "gap": 16,
-              "padding": [
-                4,
-                0,
-                0,
-                0
-              ],
-              "justifyContent": "end",
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "text",
-                  "id": "taMLQ",
-                  "name": "Cancel / disabled",
-                  "opacity": 0.45,
-                  "fill": "#314861",
-                  "content": "Cancel",
-                  "lineHeight": 1.5,
-                  "fontFamily": "Geist",
-                  "fontSize": 13,
-                  "fontWeight": "500"
                 },
                 {
-                  "id": "qXZzo",
-                  "type": "ref",
-                  "ref": "UEEFt",
-                  "name": "Save changes / disabled",
-                  "width": 120,
-                  "height": 36,
+                  "type": "frame",
+                  "id": "yHsof",
+                  "name": "Global Cancel and Save changes / inside panel",
+                  "width": "fill_container",
+                  "stroke": "$home-line",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "gap": 16,
                   "padding": [
-                    6,
-                    16
+                    20,
+                    28
                   ],
-                  "opacity": 0.45,
-                  "fill": "#1765B0",
-                  "descendants": {
-                    "ugUJO": {
-                      "content": "Save changes",
+                  "justifyContent": "end",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "taMLQ",
+                      "name": "Cancel / disabled",
+                      "opacity": 0.45,
+                      "fill": "#314861",
+                      "content": "Cancel",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
                       "fontSize": 13,
-                      "textAlign": "center",
-                      "fill": "#FFFFFF"
+                      "fontWeight": "500"
+                    },
+                    {
+                      "id": "qXZzo",
+                      "type": "ref",
+                      "ref": "UEEFt",
+                      "name": "Save changes / disabled",
+                      "width": 120,
+                      "height": 36,
+                      "padding": [
+                        6,
+                        16
+                      ],
+                      "opacity": 0.45,
+                      "fill": "#1765B0",
+                      "descendants": {
+                        "ugUJO": {
+                          "content": "Save changes",
+                          "fontSize": 13,
+                          "textAlign": "center",
+                          "fill": "#FFFFFF"
+                        }
+                      }
                     }
-                  }
+                  ]
                 }
               ]
             }
@@ -38252,57 +38254,59 @@
                       ]
                     }
                   ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "yQINR",
-              "name": "Global Cancel and Save changes",
-              "width": "fill_container",
-              "gap": 16,
-              "padding": [
-                4,
-                0,
-                0,
-                0
-              ],
-              "justifyContent": "end",
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "text",
-                  "id": "S5zEv1",
-                  "name": "Cancel / disabled",
-                  "opacity": 0.45,
-                  "fill": "$home-muted",
-                  "content": "Cancel",
-                  "lineHeight": 1.5,
-                  "fontFamily": "Geist",
-                  "fontSize": 13,
-                  "fontWeight": "500"
                 },
                 {
-                  "id": "yZqXa",
-                  "type": "ref",
-                  "ref": "UEEFt",
-                  "name": "Save changes / disabled",
-                  "width": 120,
-                  "height": 36,
+                  "type": "frame",
+                  "id": "yQINR",
+                  "name": "Global Cancel and Save changes / inside panel",
+                  "width": "fill_container",
+                  "stroke": "$home-line",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "gap": 16,
                   "padding": [
-                    6,
-                    16
+                    20,
+                    28
                   ],
-                  "opacity": 0.45,
-                  "fill": "#2490F4",
-                  "descendants": {
-                    "ugUJO": {
-                      "content": "Save changes",
+                  "justifyContent": "end",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "S5zEv1",
+                      "name": "Cancel / disabled",
+                      "opacity": 0.45,
+                      "fill": "$home-muted",
+                      "content": "Cancel",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Geist",
                       "fontSize": 13,
-                      "textAlign": "center",
-                      "fill": "#FFFFFF"
+                      "fontWeight": "500"
+                    },
+                    {
+                      "id": "yZqXa",
+                      "type": "ref",
+                      "ref": "UEEFt",
+                      "name": "Save changes / disabled",
+                      "width": 120,
+                      "height": 36,
+                      "padding": [
+                        6,
+                        16
+                      ],
+                      "opacity": 0.45,
+                      "fill": "#2490F4",
+                      "descendants": {
+                        "ugUJO": {
+                          "content": "Save changes",
+                          "fontSize": 13,
+                          "textAlign": "center",
+                          "fill": "#FFFFFF"
+                        }
+                      }
                     }
-                  }
+                  ]
                 }
               ]
             }

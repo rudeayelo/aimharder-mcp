@@ -1,5 +1,7 @@
 # AIHarder — public home study
 
+**Settings actions inside — 2026-11-04:** Cancel and Save changes now sit inside the joined opaque panel, with feedback below the actions. [Current checkpoint](private-solid-study.md#actions-inside-the-panel--2026-11-04) · [Preview](https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/private-home-study.html?lang=en&theme=light&state=configured&v=actions1). Both English native Settings frames are updated.
+
 **Joined opaque settings — 2026-11-03:** Three fixed sections share one flat opaque surface with internal dividers; the page gradient remains. Account settings stays on its separate avatar-menu page and also uses an opaque surface. [Current checkpoint](private-solid-study.md) · [Preview](https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/private-home-study.html?lang=en&theme=light&state=configured&v=solid1). Bilingual HTML and four current English desktop native frames are updated. Earlier appearance notes below are historical.
 
 **Private surface experiment — 2026-11-03:** The gradient now spans both private pages, and containers adopt the public hero reply surface: translucency, 12px backdrop blur, asymmetric corners and the accepted subtle shadow. [Current visual checkpoint](private-glass-study.md) · [Open preview](https://mini.taild6f227.ts.net:8443/aimharder-home-95/home-study/private-home-study.html?lang=en&theme=light&state=configured&v=glass1). HTML and the four current English desktop native frames are updated. Earlier surface captures below are historical.
