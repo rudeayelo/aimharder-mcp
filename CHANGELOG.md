@@ -1,5 +1,11 @@
 # aimharder-mcp
 
+## 0.5.5
+
+### Patch Changes
+
+- b495c89: Correct RFT completed-round and unfinished-round repetition fields. Keep publication in draft until elapsed time and completed rounds are explicitly supplied, and reject rounds above the prescribed target.
+
 ## 0.5.4
 
 ### Patch Changes
