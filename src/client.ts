@@ -11,7 +11,7 @@ import { exercise1RMQuerySchema, parseExercise1RM, parseExerciseProgression, par
 import { exerciseSearchQuerySchema, parseExerciseSearch, type ExerciseSearchQuery } from './exercise-search.js';
 import { calculatePersonalLoad, gymLocalToday, percentageExercise, type PersonalRM, type Workout } from './calculated-loads.js';
 import { parseUpcomingBookings, parseBookingHistory } from './bookings.js';
-import { parsePublicationAudience, publicationExecutionSchema, publicationPreview, publicationQuerySchema, PublicationPreparationStore, verifyCopySource, withHistoricalSuggestions, type CopySource, type PublicationAudience, type PublicationPreview, type PublicationQuery } from './activity-publication.js';
+import { parsePublicationAudience, publicationExecutionSchema, publicationPreview, publicationQuerySchema, PublicationPreparationStore, requiredPublicationBlockResults, verifyCopySource, withHistoricalSuggestions, type CopySource, type PublicationAudience, type PublicationPreview, type PublicationQuery } from './activity-publication.js';
 import { buildActivityForm, matchesPublication, publicationResponse } from './activity-publication-write.js';
 import { activityDeletionQuerySchema, activityDeletionExecutionSchema, deletionPreview, sameDeletionTarget, ActivityDeletionPreparationStore, type ActivityDeletionQuery, type ActivityDeletionExecution, type DeletionPreview } from './activity-deletion.js';
 import { atPublishedCancellationBoundary, bookingCandidates, bookingCreationQuerySchema, bookingCancellationQuerySchema, bookingExecutionSchema, lateCancellationExecutionSchema, cancellationCandidates, BookingPreparationStore, nearReportedBookingCutoff, type BookingCreationQuery, type BookingCreationPreview, type BookingCancellationQuery, type BookingCancellationPreview, type BookingExecution, type LateCancellationExecution } from './booking-preparation.js';
@@ -838,13 +838,10 @@ export class AimHarderClient {
       try { formSnapshot = JSON.stringify([...buildActivityForm(source.copy, preview)]); }
       catch { return { status: 'unsupported' as const, gym,
         notices: ['The Copy source has unsupported transport fields. No activity write was prepared.'] }; }
-      const requiredBlockResults = preview.prescription.blocks.flatMap((block, blockIndex) =>
-        Number(block.prescription.type) === 3
-          && !query.blockResults.some(result => result.blockIndex === blockIndex && result.kind === 'rounds')
-          ? [{ blockIndex, kind: 'rounds' as const }] : []);
+      const requiredBlockResults = requiredPublicationBlockResults(preview);
       if (requiredBlockResults.length)
         return { status: 'draft' as const, ...preview, requiredBlockResults,
-          notices: [...preview.notices, 'Enter completed rounds for each EMOM block before preparing a write. Source round counts are prescriptions, not achieved results. No action reference was issued.'] };
+          notices: [...preview.notices, 'Enter each required block result: completed rounds for EMOM; elapsed time and completed rounds for RFT. Source rounds and time-cap notes are prescriptions, not achieved results. No action reference was issued.'] };
       if (!query.blockResults.length && !query.actualLoads.length)
         return { status: 'draft' as const, ...preview,
           notices: [...preview.notices, 'Choose a supported block result or explicitly confirm an actual kilogram load before preparing a write. No action reference was issued.'] };
