@@ -413,6 +413,24 @@ test('publication draft and non-executable preparation results have explicit tel
  expect(publicationWrites).toBe(0);
 });
 
+test('RFT missing elapsed time stays draft through the hosted MCP until explicitly supplied',async()=>{
+ resetPublication();
+ const rft={notes:'Synthetic cap: seven minutes',deleted:false,type:'10',timecap:'4',time:null,res:null,reps:null};
+ synthetic=request=>{
+  const url=new URL(request.url);
+  if(url.pathname==='/api/activity/workout'&&url.host==='shared-gym.aimharder.es')return Response.json(detail({TIPOWODs:[rft]}));
+  if(url.pathname===`/api/activity/samewod/${sourceId}`)return Response.json({box:[{boxID:200,userId:300,date:'2026-09-28T00:00:00',rates:[sourceExercise],TIPOWODs:[rft]}]});
+  return publicationSource(request);
+ };
+ const rounds={blockIndex:0,kind:'rounds',value:2};
+ const missing=await preparePublication(a(),{blockResults:[rounds]});
+ expect(missing.structuredContent).toMatchObject({status:'draft',requiredBlockResults:[{blockIndex:0,kind:'time-seconds'}]});
+ expect(missing.structuredContent).not.toHaveProperty('actionReference');
+ const ready=await preparePublication(a(),{blockResults:[rounds,{blockIndex:0,kind:'time-seconds',value:400}]});
+ expect(ready.structuredContent).toMatchObject({status:'ready',actionReference:expect.any(String)});
+ expect(publicationWrites).toBe(0);
+});
+
  test('account preference permits publication without confirmation while role policy and single use remain enforced',async()=>{
   resetPublication();
   expect((await post('/api/portal/aimharder/settings',{defaultGym:'shared-gym',gymTimeZones:{'shared-gym':'Europe/Madrid'},requirePublicationConfirmation:false},a())).status).toBe(200);

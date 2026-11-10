@@ -227,12 +227,25 @@ export function blockResultField(block: Workout['blocks'][number], kind: Publica
   const type = Number(block.prescription.type);
   const textResultType = Number(block.prescription.timecap);
   if (kind === 'time-seconds' && ([1, 10].includes(type) || (type === 11 && textResultType === 1))) return 'time';
-  if (kind === 'rounds' && ([2, 3, 10].includes(type) || (type === 11 && textResultType === 2))) return 'res';
-  if (kind === 'repetitions' && ([2, 10].includes(type) || (type === 11 && textResultType === 2))) return 'reps';
+  // RFT reverses the AMRAP field names in the official result editor.
+  if (type === 10 && kind === 'rounds') return 'reps';
+  if (type === 10 && kind === 'repetitions') return 'res';
+  if (kind === 'rounds' && ([2, 3].includes(type) || (type === 11 && textResultType === 2))) return 'res';
+  if (kind === 'repetitions' && (type === 2 || (type === 11 && textResultType === 2))) return 'reps';
   if (kind === 'repetitions' && (type === 1 || (type === 11 && [1, 5].includes(textResultType)))) return 'res';
   if (kind === 'kilograms' && type === 11 && textResultType === 3) return 'res';
   if (kind === 'pounds' && type === 11 && textResultType === 4) return 'res';
   return null;
+}
+
+export function requiredPublicationBlockResults(preview: PublicationPreview) {
+  return preview.prescription.blocks.flatMap((block, blockIndex) => {
+    const type = Number(block.prescription.type);
+    const kinds: Array<'rounds' | 'time-seconds'> = type === 3 ? ['rounds']
+      : type === 10 && Number(block.prescription.sstipo) !== 2 ? ['time-seconds', 'rounds'] : [];
+    return kinds.filter(kind => !preview.blockResults.some(result => result.blockIndex === blockIndex && result.kind === kind))
+      .map(kind => ({ blockIndex, kind }));
+  });
 }
 
 export function publicationPreview(workout: Workout, copy: CopySource, query: PublicationQuery,
@@ -254,6 +267,12 @@ export function publicationPreview(workout: Workout, copy: CopySource, query: Pu
     const field = block && blockResultField(block, result.kind);
     if (!field || (field === 'time' && result.value === 0)
       || !Number.isSafeInteger(result.value * (['time-seconds', 'rounds', 'repetitions'].includes(result.kind) ? 1 : 1000))) return null;
+    if (Number(block.prescription.type) === 10 && result.kind === 'rounds') {
+      const rawTarget = block.prescription.timecap;
+      const target = typeof rawTarget === 'number' || (typeof rawTarget === 'string' && /^[1-9]\d*$/.test(rawTarget))
+        ? Number(rawTarget) : NaN;
+      if (!Number.isSafeInteger(target) || target <= 0 || result.value > target) return null;
+    }
     const target = `${result.blockIndex}:${field}`;
     if (fields.has(target)) return null;
     fields.add(target);

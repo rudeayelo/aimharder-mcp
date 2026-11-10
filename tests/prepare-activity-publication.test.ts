@@ -63,6 +63,137 @@ const prepare = (client: Client, extra: Record<string, unknown> = {}) => client.
 });
 const activityWrites = () => requests.filter(r => r.method === 'POST' && r.path === '/api/activity');
 
+function rftSource(type: number | string = 10, variants = false) {
+  const rft = { deleted: false, notes: 'Synthetic cap: seven minutes', type, timecap: '4',
+    time: null, res: null, reps: null, sstipo: 0 };
+  const blocks = [
+    { deleted: false, notes: 'Synthetic warm-up', type: 11, timecap: 0 },
+    { deleted: false, notes: '', type: 6 }, { deleted: false, notes: '', type: 6 },
+    variants ? { ...rft, scaledops: ['EASY', 'HARD'], scaledver: [{ ...rft }, { ...rft }] } : rft,
+  ];
+  const exercises = blocks.map((_, tipoWOD) => {
+    const row = { ...sourceExercise, tipoWOD, tipoud: 0, valor2: '12' };
+    return variants && tipoWOD === 3 ? { ...row, scaledver: [row, row] } : row;
+  });
+  upstream.use(
+    http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ TIPOWODs: blocks, ejerRate: exercises }))),
+    http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ TIPOWODs: blocks, rates: exercises }))),
+  );
+  return { blocks, exercises };
+}
+
+test.each([true, false])('RFT contract: rounds without an explicit time stay draft with confirmation policy %s', async requireConfirmation => {
+  rftSource('10', true);
+  const result = await prepare(await connect({ AIMHARDER_REQUIRE_PUBLICATION_CONFIRMATION: String(requireConfirmation) }), {
+    variantLabel: 'HARD', blockResults: [{ blockIndex: 3, kind: 'rounds', value: 2 }],
+    actualLoads: [{ exerciseIndex: 3, actualKilograms: '14', confirmedActual: true }],
+  });
+  expect(result.structuredContent).toMatchObject({ status: 'draft',
+    requiredBlockResults: [{ blockIndex: 3, kind: 'time-seconds' }] });
+  expect(result.structuredContent).not.toHaveProperty('actionReference');
+  expect(activityWrites()).toHaveLength(0);
+});
+
+test('RFT contract: time alone still requires explicitly entered completed rounds', async () => {
+  rftSource();
+  const result = await prepare(await connect(), { blockResults: [{ blockIndex: 3, kind: 'time-seconds', value: 400 }] });
+  expect(result.structuredContent).toMatchObject({ status: 'draft', requiredBlockResults: [{ blockIndex: 3, kind: 'rounds' }] });
+  expect(result.structuredContent).not.toHaveProperty('actionReference');
+  expect(activityWrites()).toHaveLength(0);
+});
+
+test('RFT contract: copied results and a cap note never replace explicit achieved values', async () => {
+  const { blocks } = rftSource();
+  Object.assign(blocks[3]!, { time: '07:00', reps: '4', res: '0' });
+  const result = await prepare(await connect(), { blockResults: [], actualLoads: [
+    { exerciseIndex: 0, actualKilograms: '14', confirmedActual: true },
+  ] });
+  expect(result.structuredContent).toMatchObject({ status: 'draft', requiredBlockResults: [
+    { blockIndex: 3, kind: 'time-seconds' }, { blockIndex: 3, kind: 'rounds' },
+  ] });
+  expect(result.structuredContent).not.toHaveProperty('actionReference');
+  expect(activityWrites()).toHaveLength(0);
+});
+
+test('RFT contract: requirements use the selected variant and skip deleted or non-scoring blocks', async () => {
+  const { blocks } = rftSource(10, true);
+  const block = blocks[3]!;
+  const variants = 'scaledver' in block ? block.scaledver : [];
+  Object.assign(variants[0]!, { type: 2 });
+  const client = await connect();
+  const query = { blockResults: [{ blockIndex: 3, kind: 'rounds', value: 2 }] };
+  expect((await prepare(client, { ...query, variantLabel: 'EASY' })).structuredContent).toMatchObject({ status: 'ready' });
+  expect((await prepare(client, { ...query, variantLabel: 'HARD' })).structuredContent).toMatchObject({ status: 'draft',
+    requiredBlockResults: [{ blockIndex: 3, kind: 'time-seconds' }] });
+  Object.assign(variants[1]!, { sstipo: 2 });
+  const loadOnly = { variantLabel: 'HARD', blockResults: [], actualLoads: [
+    { exerciseIndex: 0, actualKilograms: '14', confirmedActual: true },
+  ] };
+  expect((await prepare(client, loadOnly)).structuredContent).toMatchObject({ status: 'ready' });
+  Object.assign(variants[1]!, { sstipo: 0, deleted: true });
+  expect((await prepare(client, loadOnly)).structuredContent).toMatchObject({ status: 'ready' });
+  expect(activityWrites()).toHaveLength(0);
+});
+
+test.each([10, '10'])('RFT contract: type %s sends editor field semantics and confirms only matching own results', async type => {
+  const { blocks, exercises } = rftSource(type, true);
+  const client = await connect();
+  const query = { variantLabel: 'HARD', blockResults: [
+    { blockIndex: 3, kind: 'time-seconds', value: 400 },
+    { blockIndex: 3, kind: 'rounds', value: 2 },
+    { blockIndex: 3, kind: 'repetitions', value: 7 },
+  ] };
+  let swapped = false;
+  acceptedReadback();
+  upstream.use(
+    http.post('https://sample-gym.aimharder.es/api/activity', async ({ request }) => {
+      const form = await request.formData();
+      const sent = JSON.parse(String(form.get('TIPOWODs')));
+      // The official RFT editor labels twodReps as rounds and twodRes as last-round repetitions.
+      expect(sent[3]).toMatchObject({ timecap: '4', time: '06:40', reps: '2', res: '7', selectedscaling: 1 });
+      expect(sent[3].scaledver[1]).toMatchObject({ time: '06:40', reps: '2', res: '7' });
+      expect(sent[3].scaledver[0]).toMatchObject({ time: null, reps: null, res: null });
+      return HttpResponse.json({ errors: [], errorWODsID: [], errorWODsType: [], errorEjerID: [], id: '9001' });
+    }),
+    http.get('https://aimharder.es/api/activity/workout', () => HttpResponse.json({ userId: 42, boxId: 200,
+      ...detail({ TIPOWODs: blocks.map((block, index) => index === 3
+        ? { ...block, scaledops: undefined, scaledver: undefined, time: 400, reps: swapped ? 7 : 2, res: swapped ? 2 : 7 } : block),
+      ejerRate: exercises.map(row => ({ ...row, scaledver: undefined })) }),
+    })),
+  );
+  const prepared = await prepare(client, query);
+  expect(prepared.structuredContent).toMatchObject({ status: 'ready' });
+  expect((await execute(client, (prepared.structuredContent as { actionReference: string }).actionReference)).structuredContent)
+    .toMatchObject({ status: 'confirmed', observedEntry: 'matched' });
+  expect(activityWrites()).toHaveLength(1);
+  swapped = true;
+  const second = await prepare(client, query);
+  expect((await execute(client, (second.structuredContent as { actionReference: string }).actionReference)).structuredContent)
+    .toMatchObject({ status: 'uncertain', observedEntry: 'conflicting' });
+  expect(activityWrites()).toHaveLength(2);
+});
+
+test('RFT contract: completed rounds cannot exceed the prescribed target', async () => {
+  rftSource();
+  const result = await prepare(await connect(), { blockResults: [
+    { blockIndex: 3, kind: 'time-seconds', value: 400 }, { blockIndex: 3, kind: 'rounds', value: 5 },
+  ] });
+  expect(result.structuredContent).toMatchObject({ status: 'unsupported' });
+  expect(result.structuredContent).not.toHaveProperty('actionReference');
+  expect(activityWrites()).toHaveLength(0);
+});
+
+test.each([true, false, null, '', '0x4', '4.5', 0, -1])('RFT contract: unsupported target %j cannot authorize completed rounds', async timecap => {
+  const { blocks } = rftSource();
+  Object.assign(blocks[3]!, { timecap });
+  const result = await prepare(await connect(), { blockResults: [
+    { blockIndex: 3, kind: 'time-seconds', value: 400 }, { blockIndex: 3, kind: 'rounds', value: 2 },
+  ] });
+  expect(result.structuredContent).toMatchObject({ status: 'unsupported' });
+  expect(result.structuredContent).not.toHaveProperty('actionReference');
+  expect(activityWrites()).toHaveLength(0);
+});
+
 test('ready preview uses independent account audience, exact source and structured time without writing', async () => {
   const result = await prepare(await connect());
   expect(result.isError).not.toBe(true);
