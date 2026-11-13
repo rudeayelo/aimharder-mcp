@@ -405,7 +405,7 @@ test.each([{ valor2: null, tipoud: 0 }, { valor2: '', tipoud: '0' }, { valor2: u
   },
 );
 
-test.each([{ formaReg: 3, tipoud: 0 }, { formaReg: 4, tipoud: null }, { formaReg: 4, tipoud: 1 },
+test.each([{ formaReg: 3, tipoud: 0 }, { formaReg: 4, tipoud: null },
   { formaReg: 4, tipoud: 99 }, { formaReg: 6, tipoud: 0 }])(
   'an empty load still rejects an unsupported kilogram destination (%j)', async fields => {
     const exercise = { ...sourceExercise, ...fields, valor2: null };
@@ -421,6 +421,37 @@ test.each([{ formaReg: 3, tipoud: 0 }, { formaReg: 4, tipoud: null }, { formaReg
     expect(activityWrites()).toHaveLength(0);
   },
 );
+
+test('Copy editor preserves a strength complex while recording explicit kilograms in a pounds field', async () => {
+  const published = { ...sourceBlock, notes: 'Warm-up<br />\n<br />\nLift<br />' };
+  const copied = { ...published, notes: 'Warm-up\n\nLift\n' };
+  const row = { ...sourceExercise, tipoud: 1, valor2: null, valor1: ['12', '12', '12'], complex: 1, complexrep: '2' };
+  const sibling = { ...row, ejerId: 102, ejerName: 'Second lift', complex: '1' };
+  const rows = [row, sibling];
+  upstream.use(
+    http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail({ TIPOWODs: [published], ejerRate: rows }))),
+    http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ TIPOWODs: [copied], rates: rows }))),
+  );
+  const client = await connect();
+  const prepared = await prepare(client, { actualLoads: [{ exerciseIndex: 0, actualKilograms: '12.5', confirmedActual: true }] });
+  expect(prepared.structuredContent).toMatchObject({ status: 'ready', actualLoads: [
+    { actualKilograms: '12.5', originalPrescription: { tipoud: 1, complex: 1, complexrep: '2' } },
+  ] });
+  expect(activityWrites()).toHaveLength(0);
+
+  const actual = { ...row, tipoud: 0, valor2: '12.5' };
+  acceptedReadback({ detail: { userId: 42, boxId: 200, ...detail({
+    TIPOWODs: [{ ...copied, time: 275 }], ejerRate: [actual, sibling],
+  }) } });
+  upstream.use(http.post('https://sample-gym.aimharder.es/api/activity', async ({ request }) => {
+    const form = await request.formData();
+    expect(JSON.parse(String(form.get('ejerRate')))).toEqual([actual, sibling]);
+    return HttpResponse.json({ errors: [], errorWODsID: [], errorWODsType: [], errorEjerID: [], id: '9001' });
+  }));
+  expect((await execute(client, (prepared.structuredContent as { actionReference: string }).actionReference)).structuredContent)
+    .toMatchObject({ status: 'confirmed', observedEntry: 'matched' });
+  expect(activityWrites()).toHaveLength(1);
+});
 
 test('nested Copy variants and decimal-string exercise IDs permit a read-only preview', async () => {
   const labels = ['SCALED', 'INTERMEDIATE', 'RX'];
