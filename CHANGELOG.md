@@ -1,5 +1,11 @@
 # aimharder-mcp
 
+## 0.5.6
+
+### Patch Changes
+
+- 1bf7090: Fix activity preparation for Copy notes with a trailing line break, strength complexes, and confirmed kilogram loads entered in pound-configured fields.
+
 ## 0.5.5
 
 ### Patch Changes
