@@ -2,13 +2,14 @@ import { z } from 'zod';
 import { AimHarderError } from './errors.js';
 import type { ActivityEntry } from './activity.js';
 import { validatedExerciseId } from './workouts.js';
-import { blockResultField, sameCopyLoad, sameCopyLoadAlternatives, sameCopyNotes, type CopySource, type PublicationPreview } from './activity-publication.js';
+import { blockResultField, complexInteger, sameComplexField, supportsActualKilograms, sameCopyLoad, sameCopyLoadAlternatives, sameCopyNotes, type CopySource, type PublicationPreview } from './activity-publication.js';
 
 const scalar = z.union([z.string().max(100_000), z.number().finite(), z.boolean(), z.null()]);
+const complexField = z.union([z.number(), z.string().max(16)]).refine(value => complexInteger(value) !== null);
 const sourceExercise = z.object({
   ejerId: z.union([z.number().int().positive().safe(), z.string().regex(/^[1-9]\d*$/).refine(value => Number.isSafeInteger(Number(value)))]).nullish(), ejerName: z.string().max(100_000),
   tipoWOD: z.union([z.number().int().nonnegative().safe(), z.string().regex(/^(?:0|[1-9]\d*)$/).refine(value => Number.isSafeInteger(Number(value)))]).nullish(), formaReg: scalar,
-  complex: z.union([z.literal(0), z.literal('0')]).nullish(),
+  complex: complexField.nullish(), complexrep: complexField.nullish(),
   tipoud: scalar.nullish(), tipoud2: scalar.nullish(),
   valor1: z.array(scalar).max(100).nullish(), valor2: scalar.nullish(), valor2h: scalar.nullish(), valor2m: scalar.nullish(),
   round: scalar.nullish(), roundrepeat: scalar.nullish(), wodId: scalar.nullish(),
@@ -76,8 +77,7 @@ export function buildActivityForm(copy: CopySource, preview: PublicationPreview)
     const target = effectiveExercises[load.exerciseIndex];
     const prescribed = preview.prescription.exercises[load.exerciseIndex];
     if (!target || !prescribed || target.ejerName !== prescribed.name || validatedExerciseId(target.ejerId) !== prescribed.sourceExerciseId
-      || ![4, '4'].includes(target.formaReg as string | number)
-      || ![0, '0', 4, '4'].includes(target.tipoud as string | number))
+      || !supportsActualKilograms(target.formaReg, target.tipoud))
       throw new AimHarderError('INVALID_ACTIVITY_SOURCE');
     // saveCRW uses valor2 as the personal actual-load input and tipoud=0 for kg.
     // Split source alternatives remain in the Copy payload, as in the observed editor.
@@ -231,6 +231,8 @@ function matchesStructuredPublication(entry: ActivityEntry, preview: Publication
     return ['formaReg', 'tipoud', 'tipoud2', 'round', 'roundrepeat']
       .filter(field => !changedLoad || field !== 'tipoud')
       .some(field => !sameRecordedScalar(rawField(observed, field), expected.prescription[field]))
+      || !sameComplexField(observed.complex, expected.prescription.complex)
+      || !sameComplexField(observed.complexrep, expected.prescription.complexrep)
       || !sameRecordedValues(observed.valor1, expected)
       || (changedLoad ? !(sameCopyLoadAlternatives(observed, expected.prescription)
         || (observed.valor2h == null && observed.valor2m == null))

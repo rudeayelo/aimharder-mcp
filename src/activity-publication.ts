@@ -61,6 +61,7 @@ export type CopySource = z.infer<typeof copySchema>['box'][number];
 function sameExercise(copyRow: unknown, projected: Workout['exercises'][number]) {
   const row = z.object({ ejerName: z.string(), ejerId: z.unknown().optional(),
     formaReg: z.unknown().optional(), tipoud: z.unknown().optional(),
+    complex: z.unknown().optional(), complexrep: z.unknown().optional(),
     valor2: z.unknown().optional(), valor2h: z.unknown().optional(), valor2m: z.unknown().optional(),
   }).safeParse(copyRow);
   if (!row.success || row.data.ejerName !== projected.name) return false;
@@ -69,8 +70,22 @@ function sameExercise(copyRow: unknown, projected: Workout['exercises'][number])
   for (const field of ['formaReg', 'tipoud'] as const) {
     if (JSON.stringify(row.data[field] ?? null) !== JSON.stringify(projected.prescription[field] ?? null)) return false;
   }
-  return sameCopyLoad(row.data, projected.prescription);
+  return (['complex', 'complexrep'] as const).every(field =>
+    sameComplexField(row.data[field], projected.prescription[field]))
+    && sameCopyLoad(row.data, projected.prescription);
 }
+export function complexInteger(value: unknown): number | null {
+  const number = typeof value === 'number' ? value
+    : typeof value === 'string' && /^(?:0|[1-9]\d*)$/.test(value) ? Number(value) : NaN;
+  return Number.isSafeInteger(number) && number >= 0 ? number : null;
+}
+
+export function sameComplexField(copy: unknown, source: unknown): boolean {
+  if (copy == null || source == null) return copy == null && source == null;
+  const number = complexInteger(copy);
+  return number !== null && number === complexInteger(source);
+}
+
 type SourceLoad = { valor2?: unknown; valor2h?: unknown; valor2m?: unknown };
 function splitSourceLoad(source: SourceLoad) {
   if (typeof source.valor2 !== 'string') return null;
@@ -96,8 +111,10 @@ export function sameCopyLoad(copy: SourceLoad, source: SourceLoad) {
 }
 export function sameCopyNotes(copyNotes: unknown, sourceNotes: unknown) {
   if ((copyNotes ?? null) === (sourceNotes ?? null)) return true;
-  return typeof copyNotes === 'string' && typeof sourceNotes === 'string'
-    && copyNotes === sourceNotes.replace(/<[^>]*>/g, '');
+  if (typeof copyNotes !== 'string' || typeof sourceNotes !== 'string') return false;
+  const plain = sourceNotes.replace(/<[^>]*>/g, '');
+  // Copy can retain a terminal HTML break as a literal newline.
+  return copyNotes === plain || (/<br\s*\/?>$/i.test(sourceNotes) && copyNotes === plain + '\n');
 }
 function sameBlock(copyBlock: unknown, projected: Workout['blocks'][number]) {
   const block = z.object({ deleted: z.boolean(), notes: z.unknown().optional(), type: z.unknown().optional(),
@@ -223,6 +240,10 @@ export async function withHistoricalSuggestions(preview: PublicationPreview, rea
     : preview.notices };
 }
 
+export function supportsActualKilograms(format: unknown, unit: unknown): boolean {
+  return (format === 4 || format === '4') && [0, '0', 1, '1', 4, '4'].includes(unit as string | number);
+}
+
 export function blockResultField(block: Workout['blocks'][number], kind: PublicationQuery['blockResults'][number]['kind']): 'time' | 'res' | 'reps' | null {
   const type = Number(block.prescription.type);
   const textResultType = Number(block.prescription.timecap);
@@ -282,9 +303,8 @@ export function publicationPreview(workout: Workout, copy: CopySource, query: Pu
     const exercise = exercises[load.exerciseIndex];
     // An empty prescription has no projected loadUnit, but its Copy input may
     // still be a verified repetition/load field configured for kilograms.
-    if (!exercise || ![4, '4'].includes(exercise.prescription.formaReg as string | number)
-      || !((exercise.prescription.loadUnit === '%RM' && [4, '4'].includes(exercise.prescription.tipoud as string | number))
-        || [0, '0'].includes(exercise.prescription.tipoud as string | number))) return null;
+    if (!exercise || !supportsActualKilograms(exercise.prescription.formaReg, exercise.prescription.tipoud)
+      || ([4, '4'].includes(exercise.prescription.tipoud as string | number) && exercise.prescription.loadUnit !== '%RM')) return null;
     const split = exercise.prescription.valor2h != null || exercise.prescription.valor2m != null;
     if (load.sourceAlternative && (split ? load.sourceAlternative === 'single' : load.sourceAlternative !== 'single')) return null;
     if (load.sourceAlternative === 'male' && exercise.prescription.valor2h == null) return null;
