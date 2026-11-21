@@ -285,6 +285,16 @@
   "Your gym": "Tu gimnasio",
   "Used when you don’t specify a gym in your request.": "Se usa cuando no indicas un gimnasio en tu petición.",
   "Account menu": "Menú de cuenta",
+  "Choose a default gym once you’re connected.": "Podrás elegir tu gimnasio predeterminado al conectar la cuenta.",
+  "Default gym": "Gimnasio predeterminado",
+  "No AI apps connected yet": "Aún no hay apps de IA conectadas",
+  "Confirm your AimHarder account": "Confirma tu cuenta de AimHarder",
+  "Save connection": "Guardar conexión",
+  "First, connect your AimHarder account!": "¡Primero, conecta tu cuenta de AimHarder!",
+  "Now connect your AI app!": "¡Ahora, conecta tu app de IA!",
+  "You’re ready to use AIHarder in your app!": "¡Ya puedes usar AIHarder en tu app!",
+  "Skip guide": "Saltar guía",
+  "Done": "Listo",
   "← Settings": "← Ajustes",
   "AIHarder is an independent project. Not affiliated with AimHarder.": "AIHarder es un proyecto independiente. No está afiliado a AimHarder."
 }

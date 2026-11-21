@@ -1,12 +1,18 @@
 # Visual foundations — work in progress
 
-**Current review scope:** AIHarder is the working consumer name. Refine only desktop English Light/Dark in [ahmcp.pen](ahmcp.pen); other locale/device frames stay at the preceding checkpoint until agreement. [Desktop refinement notes](home-study/desktop-refinement.md) contain the compact hero logos, Hermes portrait, three-part header and two candidate button finishes. The paragraph below records the preceding full-canvas checkpoint.
+**Editable design, 2026-11-05.** Continue editing in [AIHarder — Design](https://www.figma.com/design/9jDoWpeUEGTbtMoENvbzAB). The Figma file carries over all 40 top-level boards and components from [the Pen archive](ahmcp.pen), including the historical mobile and private layout studies. The main canvas retains the source positions. The Component styles page holds the local components that preserve Pen instance overrides.
+
+The migration audit matched all 2,901 source layers, 102 linked instances, 81 variables and 24 image assets. Visual comparison covered representative desktop and mobile Home, Privacy, Login, Recovery, Settings and Account settings frames. The migration corrected stroke spacing and gradient direction differences. Some text wraps differently in Figma. The [HTML studies](home-study/README.md) remain the reference for motion and interactive behavior. The implementation and ADRs are unaffected by this design-tool migration.
+
+Subsequent Figma refinements cover Home styling, primary-action colors, Settings connection states and a six-moment Kettle onboarding storyboard in both themes. The [current handoff](home-study/README.md) links these views, the animated 3D onboarding preview and the archived landing critique. The critique recommendations are proposals awaiting selection.
+
+**Earlier desktop review scope:** AIHarder was the working consumer name. Only the English desktop Light/Dark frames were being refined at that checkpoint. [Desktop refinement notes](home-study/desktop-refinement.md) contain the compact hero logos, Hermes portrait, three-part header and two candidate button finishes. The paragraph below records the preceding full-canvas checkpoint.
 
 Current stage, 2026-10-31: the owner selected **AimHarder Connect** and **Krona One**, requested English/Spanish, Light/Dark/System and Lucide icons, and authorized the first home design in pen.dev. [design/ahmcp.pen](ahmcp.pen) now contains eight editable home-page representations (desktop/mobile × English/Spanish × Light/Dark), a shared wordmark and a preference/FAQ/focus state board. The [home handoff and previews](home-study/README.md) record source references, copy, contrast checks and remaining acceptance. This is a first visual candidate, not a functional website or a complete #95 delivery. Confirmation configuration stays in later settings work aligned with PR #121; the home does not emphasize it. The original provisional foundations are retained. `aimharder-mcp` remains the technical npm package.
 
 Latest revision: the owner requested aligned header/body containers, a 25% larger logo, invitation-only wording in FAQ only, four animated hero conversations, an MCP-app logo strip and graphical setup steps. The [home prototype and handoff](home-study/README.md#latest-owner-directed-revision) make this reviewable in English/Spanish and light/dark/system modes, with a cycling Lucide theme button. The 2026-10-31 retry succeeded: all eight `.pen` pages and their exports now contain the revision, the appearance-state board uses cycling icons, and a new motion-state board contains the typing/send/answer sequence and four bilingual examples. Live pen.dev bounds checks are clean for all ten frames. The functional prototype is isolated from production and uses fictional data.
 
-Design source: [ahmcp.pen](ahmcp.pen). Issue [#95](https://github.com/rudeayelo/aimharder-mcp/issues/95), under [#103](https://github.com/rudeayelo/aimharder-mcp/issues/103).
+Design issue [#95](https://github.com/rudeayelo/aimharder-mcp/issues/95), under [#103](https://github.com/rudeayelo/aimharder-mcp/issues/103).
 
 ## Review sequence — historical foundation checkpoint
 
