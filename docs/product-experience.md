@@ -1,151 +1,186 @@
 # Product experience design
 
-Status: accepted product brief recorded on 2026-10-28; remaining visual and navigation decisions delegated to [design ticket #95](https://github.com/rudeayelo/aimharder-mcp/issues/95). This document separates accepted requirements, historical proposals and pending engineering. No final screen design, implementation or deployment is approved by this record alone.
+This is the single decision record for the AIHarder user experience: what the hosted service must feel like for an invited gym member, what is kept from design iteration 1 and what the redesign in [#95](https://github.com/rudeayelo/aimharder-mcp/issues/95) has to produce. It describes the current state. History lives in the issues and at tag [`archive/95-iteration-1`](https://github.com/rudeayelo/aimharder-mcp/tree/archive/95-iteration-1).
 
-Parent specification: [#103 — Deliver the remote MCP UX/UI and GitHub documentation](https://github.com/rudeayelo/aimharder-mcp/issues/103), published on 2026-10-29 with `ready-for-agent` and `wayfinder:map`. It is the canonical tracker specification, including 72 user stories, implementation/testing decisions, scope boundaries and an ordered delivery map. Existing #95 and #92 are linked as native sub-issues, with #95 first. The parent does not implement or complete its deliveries.
+- Spec: [#95 — Redesign AIHarder in Figma](https://github.com/rudeayelo/aimharder-mcp/issues/95). Its Decisions section is binding; this document restates it and does not override it.
+- Parent: [#103 — Deliver the remote MCP UX/UI and GitHub documentation](https://github.com/rudeayelo/aimharder-mcp/issues/103), which owns implementation tickets #106–#117.
+- Design source: the new Figma file «AIHarder», per the [Figma decision](adr/2026-11-24-figma-design-source-of-truth.md). Pointer and asset locations: [design/README.md](../design/README.md).
+- Name and domain: [provisional product name and domain](adr/2026-11-24-provisional-product-name-and-domain.md).
 
-## Accepted direction
+Nothing here is implemented or deployed by being written down. Implementation is #106–#117; the brand change in code is [#141](https://github.com/rudeayelo/aimharder-mcp/issues/141).
 
-The owner accepted the following recommendations on 2026-10-28:
+## Who it is for and the journey
 
-- Design primarily for a member of the owner's gym who wants to use AimHarder through an AI chat. Keep invitation-only admission for the initial pilot. Explain capabilities, setup and recovery without requiring knowledge of MCP.
-- Cover the whole remote-service experience: the public website, invitations and sign-in, AimHarder connection, AI-client authorization, settings, administration, errors and transactional email. Review instructions visible in the AI chat as well. Changes to tool behavior require a specific decision.
-- Keep `ahmcp.link` as the intended public domain. The owner's earlier mention of `ahmcp.com` was a mistake, not a migration request.
-- Make the GitHub README a product entry point with immediately discoverable hosted remote and local npm usage paths, shared capabilities, and separate setup guides. Link technical details and validation evidence from the relevant sections.
-- Keep the website design in a pen.dev `.pen` file. The later design handoff fixes the path as `design/ahmcp.pen`; #95 resolves the concrete screen/state inventory within its required coverage.
+The primary user is a member of the maintainer's gym who wants to use their AimHarder account from an AI chat, without learning what MCP is and without asking an operator for help. The pilot is invitation-only.
 
-The owner also accepted the following recommendations in the second round:
+The journey to the first useful answer:
 
-- Retain **AimHarder MCP** as the product name, paired with a plain-language explanation of its benefit. Keep the independent-project disclosure visible. “Your AimHarder training, in your AI chat” was an illustrative line, not final copy.
-- Explain the product and invitation-only pilot on the public page, with **Sign in** as its primary access action. Invited participants start from their invitation link. Do not add open registration or a waiting list.
-- Use the portal to configure and manage the service. Sporting queries and actions happen in the AI chat; do not add a sporting calendar, training-history view or booking forms to the portal.
-- Guide initial setup through connecting AimHarder, connecting an AI client and trying a first query. The returning-participant home shows connection status and links to settings.
-- Use a restrained, approachable visual direction with readable typography, generous spacing, one accent color and clearly labeled fictional conversation examples.
-- Prioritize invitation acceptance, sign-in and AimHarder connection on mobile, with desktop layouts as well. Adapt help to the selected AI client. Mobile website design does not establish mobile setup capability in every client.
+**Invitation → sign in → connect AimHarder → connect the AI client → first question.**
 
-The owner emphasized that onboarding for the different clients must be **very clear and concise**. Client selection, prerequisites, step wording, expected results and recovery instructions must serve that requirement. Later decisions fix the initial guide coverage as ChatGPT, Hermes and Other clients with concrete requirements; #95 resolves the guide presentation.
+The first question is **What classes can I book tomorrow?** (Spanish: «¿A qué clases me puedo apuntar mañana?»). The portal suggests it but never claims it worked: an OAuth grant is not evidence that a sporting query succeeded, and the answer must tell published classes and occupancy apart from verified booking eligibility.
 
-In the third round, the owner accepted client-specific instructions and corrected the remaining proposals:
+## Decisions
 
-- Each guide must have a concrete scope for its client, using [Mamitsu's connection page](https://usemamitsu.com/connect) as an interaction reference. The fourth round accepts an **Other clients** option, within the compatibility limits below.
-- Onboarding must be self-service after invitation. Do not make routine client setup depend on asking the administrator to register callbacks or deliver configuration. The present operator-only preparation is an implementation gap, not the intended experience. See the [self-service onboarding decision](adr/2026-10-28-self-service-invited-onboarding.md).
-- Do not mention time zones or expose time-zone controls in the hosted frontend. Use `Europe/Madrid` for the current frontend experience, retaining manual backend configuration for future needs. The fourth round extends this presentation rule to AI-chat answers and confirmations while preserving backend metadata. See the [hosted frontend time-zone decision](adr/2026-10-28-hosted-frontend-madrid-time-zone.md) for the implementation/provenance implications.
-- Use a useful first-query prompt: “What classes can I book tomorrow?” The owner's original Spanish example was “¿A qué clases me puedo apuntar mañana?”. Do not require a time-zone check to finish onboarding. A response must still distinguish published classes/occupancy from verified booking eligibility.
-- The website is focused on remote MCP. A simple link to the GitHub project is sufficient; do not require participants to visit technical GitHub documentation to finish routine onboarding. GitHub is the technical entry point and links to both local and remote usage paths.
-- No private support channel had been established in the third round. The earlier reference to a “usual private channel” was an unsupported assumption, and Q14 was not accepted. In the fourth round, the owner accepted a dedicated project support address as described below.
+These come from the #95 spec, approved by the maintainer.
 
-In the fourth round, the owner accepted these recommendations:
+1. **Scope: invitation-only pilot, designed to be opened later.** No open registration, waiting list or sign-up flow is designed. Access-mode copy and the entry actions are isolated as a component variant, so opening the service later is a variant change, not a redesign.
+2. **Order: participant journey first**, then the landing (see [Screen inventory](#screen-inventory-by-phase)).
+3. **Name: AIHarder** in everything a user sees: web, emails, the hosted MCP server display name and service-authored text shown to users, OAuth consent and user documentation. `aimharder-mcp` is only the npm package and repository name. Domain `aiharder.link`, support address `support@aiharder.link`.
+4. **Figma: a new file «AIHarder».** The iteration-1 file [AIHarder — Design](https://www.figma.com/design/9jDoWpeUEGTbtMoENvbzAB) is read-only.
+5. **The brand is provisional and cheap to change.** The plan is to run the pilot with real users and, with good feedback, propose an agreement to AimHarder (collaboration, partnership or acquisition). If they decline, the project closes; if they accept the product but not the name, the name and domain change and the product continues separately on their API. The full rationale and reopening triggers are in the [name and domain ADR](adr/2026-11-24-provisional-product-name-and-domain.md).
+6. **Logo: no new investment** beyond adapting the existing logo to the new tokens. Iterating the logo is a separate, lower-priority enhancement.
+7. **Phases and reviews.** Each phase is a sub-issue of #95 with native blockers, approved by the maintainer. Landing: one approval per section plus one for the whole page. Access, portal and administration/emails: one grouped approval per block with a screenshot sheet. Where a point is open, present two variants.
 
-- Participants may copy required configuration between the portal and their chosen client, including an exact callback address when the client requires it. The portal prepares the configuration without operator intervention. Preserve independent disconnection of each installation.
-- Add **Other clients**, with a copyable remote URL, required OAuth configuration and concise steps for compatible clients. State concrete requirements rather than claiming every MCP client works.
-- Keep time-zone details out of AI-chat answers and confirmations as well as the website. Backend configuration and truthful tool metadata remain available.
-- Use a dedicated project support email, proposed as `support@ahmcp.link`, alongside FAQs and GitHub Issues for reproducible bugs. The address is accepted as the design target but has not been configured or tested. The fifth round accepts Resend Inboxes as the handling service, with activation pending.
+### Brand seam rule
 
-In the fifth round, the owner generally accepted the recommendations, while asking to clarify the content of **Help** before settling that navigation entry:
+The product name, domain, support address and brand colors are defined **once**:
 
-- Use Resend Inboxes for human-operated support at `support@ahmcp.link`, accessed through its dashboard. The website's **Contact support** action opens an email to that address. Provider/account activation is pending and no automatic support agent is part of this decision.
-- Structure the public page around capabilities, sample questions, three setup steps and short access/privacy FAQs. **Sign in** is primary; GitHub is a secondary project link. Examples cover queries and actions requiring confirmation.
-- The proposed participant navigation is **Home**, **Connect your client**, **Settings** and **Help**, with **Administration** restricted to administrators. Home shows the next setup step or current connection state. Settings groups portal account, AimHarder connection and authorized-client management. The content and navigation prominence of Help remain under discussion.
+- **In Figma:** a brand variable collection with string variables (product name, domain, support email) and color variables (brand primary, accent). Every text layer that contains the name, domain or support email is bound to the string variables. Components reference semantic color roles, never raw hex values.
+- **In code:** one brand module in the hosted service that every user-facing string reads from, with a test that fails when a user-facing surface hard-codes the name or domain ([#141](https://github.com/rudeayelo/aimharder-mcp/issues/141)).
 
-The intent is to help a participant understand the product, start using it and recover from problems. The documentation must also help local users choose and maintain their distinct setup path. [Issue #92](https://github.com/rudeayelo/aimharder-mcp/issues/92) already defines the local/remote documentation review; its scope remains relevant to this design work.
+A screen, email or document that types the name, domain, support address or a brand hex value by hand is a defect. Phase 1 proves the seam: changing the brand variables in a scratch duplicate updates every component and the logo lockup.
 
-## Current implementation baseline
+## Product requirements
 
-These are source and tracker observations, not UX decisions:
+These are accepted requirements that every screen has to respect.
 
-- The root [README](../README.md) leads with local stdio installation and includes historical hosted pending statements that need reconciliation with the latest scoped closeout.
-- The portal currently renders server-generated HTML in [portal.ts](../hosted/src/portal.ts), using a single column and a minimal home page linking to account settings, AimHarder connection and MCP client management.
-- [connections.ts](../hosted/src/connections.ts) supplies client setup instructions, OAuth consent and independent client revocation. Setup currently includes operator-provided client configuration and distinct ChatGPT and Hermes instructions.
-- [aimharder-settings.ts](../hosted/src/aimharder-settings.ts) supplies upstream connection, gym/time-zone settings, password updates, account replacement and disconnection.
-- [mail.ts](../hosted/src/mail.ts) sends plain-text invitation, verification and password-recovery email.
-- The current remote setup and [client preparation script](../hosted/scripts/prepare-mcp-client.ts) target ChatGPT and Hermes. The [Codex guide](clients/codex.md) documents local stdio; actual remote Pilot connector evidence does not supply a participant-facing remote Codex setup guide.
-- Remote setup still requires operator provisioning of a public client ID and exact approved callback. These are configuration parameters, not participant passwords or OAuth tokens. The UI must not imply that copying only a server URL completes every client setup.
-- That operator-only setup is the existing baseline, superseded as a product experience by the accepted self-service requirement. Its replacement mechanism is not yet selected or implemented.
-- The portal can list currently authorized MCP clients. It has no implemented first-successful-query indicator; an OAuth grant alone is not evidence that a sporting query succeeded.
-- The Mamitsu reference was inspected on 2026-10-28, including its **Other agents** state. It switches the instructions with the client selection; the generic state supplies a copyable server URL and brief Streamable HTTP/OAuth steps. Its installation commands, skills, client support and authentication are not requirements or compatibility evidence for this project.
-- No existing `.pen` or branding asset was found in this checkout during the initial audit.
-- The [acceptance ledger](hosted-pilot-acceptance.md) identifies the isolated test environment separately from the intended production origin. Choosing `ahmcp.link` for the design does not establish production availability.
+### Portal scope
+
+- The portal configures and manages the service. Sporting queries and actions happen in the AI chat: no sporting calendar, training history or booking forms in the portal.
+- The portal account, the AimHarder connection and each MCP client connection (an AI client's authorization) are always shown as separate things, each with its own lifecycle (see [CONTEXT.md](../CONTEXT.md)). Disconnecting an AI client, disconnecting AimHarder and deleting the portal account are distinct actions, and each confirmation says exactly what it removes.
+- A new participant sees one current task at a time with visible progress. A returning participant's Home shows the current connection state and links to settings.
+- Settings group the portal account, the AimHarder connection (including the default gym when the account has several) and authorized-client management, plus the two independent confirmation preferences from the [confirmation-preference decision](adr/2026-10-30-account-write-confirmation-preference.md): **Ask for confirmation when making a reservation** and **Ask for confirmation when posting a new workout**, both on by default and shared across clients. There is no global confirmation-off switch; cancellations and deletions keep mandatory confirmation.
+- Administration (invitations, participants, role availability, suspension) is visibly distinct from the participant portal but built from the same components.
+
+### Onboarding and clients
+
+- Onboarding is self-service after the invitation, per the [self-service onboarding decision](adr/2026-10-28-self-service-invited-onboarding.md). Routine setup never depends on an administrator registering callbacks or sending configuration.
+- Client guides must be **very clear and concise**. The participant picks a client and sees only that client's instructions: prerequisites, step wording, expected outcome of each step and recovery. Initial guides: **ChatGPT**, **Hermes** and **Other clients**, the last with a copyable remote URL, the required OAuth configuration and concrete compatibility requirements, never a claim that every MCP client works. [Mamitsu's connection page](https://usemamitsu.com/connect) is the interaction reference.
+- Participants may copy required public configuration between the portal and their client, including an exact callback address when the client needs one. Passwords, tokens and live authorization URLs never appear in copyable examples.
+- Returning from client consent lands the participant back in the context of that connection.
+- Do not mention time zones or show time-zone controls on the website, in AI-chat answers or in confirmations. The frontend uses `Europe/Madrid`; backend configuration and truthful tool metadata stay available ([hosted Madrid decision](adr/2026-10-28-hosted-frontend-madrid-time-zone.md)).
+- Mobile priority: invitation acceptance, sign-in and AimHarder connection must be fully usable on a phone. A mobile-ready website does not mean every AI client can be set up from a phone.
+
+### Support and help
+
+- Support is a dedicated human-operated address, `support@aiharder.link`, intended to be handled in Resend Inboxes. The address is a design target: it is not configured or tested. Before activation, check the account's inbox availability and the domain's receiving setup, preserve existing mail routing, and test one inbound message and one reply ([Resend decision](adr/2026-10-18-resend-transactional-delivery.md)).
+- Provider capabilities, from Resend's public documentation: the [Inboxes dashboard](https://resend.com/docs/dashboard/inboxes/introduction) receives, organizes and replies to threads, so a human-operated inbox needs no custom UI or receiving webhook here. [Creating an inbox](https://resend.com/docs/dashboard/inboxes/create-inboxes) requires a verified sending domain and either MX records or forwarding to a Resend receiving address; sending-domain verification alone does not make the address receive mail. [Pricing](https://resend.com/pricing) lists three inboxes on the free plan, counted against the transactional quota; these are published allowances, not this account's quota. No account, inbox, DNS or mail change has been made for this.
+- **Contact support** opens a plain `mailto:` with no prefilled user data, configuration, credentials or diagnostic logs.
+- Help is a short FAQ with concise expandable answers, each resolving one question with a next action when needed. Setup instructions stay in the client guides; recovery instructions stay next to the state they recover from. No search, ticketing or custom inbox in the portal.
+- GitHub is the technical entry point for local and remote usage. The website links to it once; finishing routine onboarding never requires reading GitHub documentation.
+
+### Language and appearance
+
+- English and Spanish UI copy, including navigation, actions, examples, FAQ, alternative text and accessible names. A simple text selector, **English** / **Español**, with no flags or country choice. Brand names, technical identifiers, workout prescriptions and user data are not translated. Project documentation stays in English.
+- **Light**, **Dark** and **System** appearance, default System, as one icon button that cycles the three. Language and appearance are secondary header utilities, never a gate before reading or signing in.
+- Proposed behavior, not yet built: a saved explicit choice wins; otherwise the browser language with English fallback; preferences persist across public pages and into the portal; no flash of the wrong theme on load.
+
+## Kept from iteration 1
+
+The redesign is a visual redesign on a real design system, not a restart. Three things are kept.
+
+### Landing structure and content
+
+| # | Section | Content |
+| --- | --- | --- |
+| 1 | Header | Logo, section anchors, language selector, appearance button, **Sign in** (primary, compact). GitHub stays in the footer. |
+| 2 | Hero | Three-line benefit headline (working copy: **Focus more on training, less on tapping.**, with the last phrase in blue), supporting line (owner-supplied: **Book classes, see your workouts and review the activity in your AimHarder account.**), **Sign in** as the primary action, and a **Works with** row of compatible-app marks (ChatGPT, Claude, Hermes, OpenClaw, Pi) at reduced emphasis. The Kettle sits beside an animated fictional conversation: a question arrives, the Kettle thinks, an answer appears. |
+| 3 | Question wall | Centered title **Your classes, workouts and records, one question away**, three topic pills (Classes & bookings, Workouts & weights, Activity & records) and four rows of fictional questions drifting in alternating directions with faded edges; one question and its topic are emphasized at a time. |
+| 4 | How you get started | Three steps, each with a small animated UI illustration: **Connect AimHarder → Connect your AI chat → Ask your first question.** Client-specific instructions belong after sign-in, not on the landing. |
+| 5 | FAQ | Support invitation beside the heading (“Can’t find the answer you need? Drop us a line.” plus the support address) and five expandable answers: how to get access (invitation-only; the only place the landing states the access policy), which AI chats can connect, what happens to AimHarder details, disconnecting access, and whether this is an official AimHarder product. |
+| 6 | Closing and footer | Repeated **Sign in**; footer with the independent-project disclosure, GitHub, Support and Privacy. |
+
+Content constraints that carry over:
+
+- All conversations, questions and results are fictional and labeled as a demonstration; no real availability, bookings or records are fetched.
+- Credential handling copy says the service stores AimHarder credentials encrypted and can decrypt them to authenticate; never claim zero storage or end-to-end encryption, and credentials never enter the AI conversation.
+- App marks show ecosystem relevance, not verified partnership or full compatibility.
+- Confirmation preferences are explained in settings, not in the landing pitch; the landing promises neither universal confirmation nor universal one-step execution.
+- Privacy is a separate page with a readable document column and anchored contents. Its iteration-1 copy was a draft grounded in the custody, authorization and deletion ADRs; it is not a published policy, and legal controller and retention details are still to be written.
+
+### 3D Kettle
+
+The Kettle is a kettlebell-shaped character: blue body, dark circular face, orange recessed eyes, no mouth or limbs. It is the product's memorable asset (the critique's main strength) and is used beside the logo, in the landing and in portal onboarding, not as a general mascot system.
+
+- **Asset:** [kettle-body-32k.sog](../design/assets/kettle/README.md), a 32,768-Gaussian SOG body (414,243 bytes) with its provenance and licenses. Not the AI-generated videos and not the 17.8 MB source PLY.
+- **Eyes:** drawn by a separate procedural rig, two deformable recesses on a fitted curved face surface, so blinks and gaze move the whole recess. Production rebuilds the rig and the renderer with npm dependencies; the iteration-1 prototype code stays in the tag.
+- **Motion candidates** from iteration 1: double blink (1 s at 24 fps), curiosity (asymmetric eye heights, 2.17 s at 12 fps), look around (3.58 s), body flex (planted-base squash and stretch, 2.17 s), rock (1.17 s), little hop (1.33 s) and tilted spin (1.5 s). Body motion is stop-motion at 12 fps, and every clip starts and ends on the same neutral pose. [#134](https://github.com/rudeayelo/aimharder-mcp/issues/134) catalogs them for a keep / adjust / remove decision; kept animations get a specification here (trigger, duration, easing, reduced-motion behavior).
+- **Portal onboarding:** iteration 1 storyboarded a six-moment Kettle-guided walkthrough (spotlight the AimHarder connection, step aside during sign-in, spotlight Connect an app, celebrate the first connected app in a dialog the Kettle overlaps). Phase 5 redesigns it from the system's components.
+- **Behavior rules:** honor reduced motion with a still pose; show a static poster when WebGL is unavailable; render only while animating; hide decorative placements on small screens where they compete with content.
+
+### Logo
+
+The flat Kettle mark to the left of the **AIHARDER** wordmark in Krona One. “AI” is blue; “HARDER” is navy in Light and a light neutral in Dark. The mark is navy in Light and white in Dark, with a transparent circular face cutout. It is adapted to the new tokens only, bound to the brand variables, with no redesign.
+
+## Landing recommendations from the iteration-1 critique
+
+The [landing critique](research/2026-11-10-landing-page-critique.md) scored the iteration-1 desktop landing 14/20 (no P0 or P1). Its specific findings become these general rules for phase 3:
+
+1. **Say what the product is in the hero.** The supporting line states the relationship directly: AIHarder connects your AimHarder account to the AI chat you already use. The headline can stay a benefit; the sentence under it must not leave the visitor to infer the connection from the app strip or the setup steps.
+2. **Keep demonstrations short and evidence the promise.** One question, one concrete answer, nothing unrelated. Every capability the copy names (book classes, see workouts, review records) is shown by at least one visible request and result, including an action, not only a lookup.
+3. **Decoration must not carry information.** The question wall keeps its motion and character, but the emphasized question is readable and matches the active topic, and no capability is explained only in faded text. Prefer fewer, more readable rows to a wall taller than the hero.
+4. **Measure contrast in both themes, especially small active states.** White labels sit on the darker action blue, never on the light brand blue (white on `#47a3f6` measured 2.68:1; white on `#2490f4` is 3.30:1). Informative inactive labels need the same 4.5:1 as other text.
+5. **Instructions outrank illustrations.** Step names and descriptions in How you get started are stronger than their illustrations; miniature UI detail is simplified and bright panels do not become the loudest area in Dark.
+6. **Keep what works:** the Kettle, the logo, the blue gradients, the shared content grid and the section order, and invitation-only wording only in the FAQ.
+
+## Screen inventory by phase
+
+Every screen is designed at desktop and mobile, Light and Dark, in English, and checked with Spanish copy for fit. Empty, loading, error and disabled states are part of each screen.
+
+| Phase | Issue | Screens and components |
+| --- | --- | --- |
+| 1 — Foundations and components | [#135](https://github.com/rudeayelo/aimharder-mcp/issues/135) | Variables: brand (strings and colors), semantic color roles with Light and Dark modes (surfaces, text, actions, links, focus, selection, success, warning, error, info, disabled), typography, spacing, radius, elevation. Components in all states: buttons and links, inputs, select, checkbox, switch, segmented control, card/surface, list row, inline message/banner, dialog/confirmation, stepper/progress, code/copy block, client picker, header/navigation/footer, email layout primitives, and the entry-action / access-copy variant (invitation-only now). Logo lockup adapted to tokens. Cover page in the iteration-1 file marking it read-only. Blocks every screen phase. |
+| 4 — Access | [#136](https://github.com/rudeayelo/aimharder-mcp/issues/136) | Accept invitation (which email must match; expired, revoked and already-used invitations), sign in (Google and verified email/password), email verification sent / confirmed / failed, password recovery request and sent, set new password, email-mismatch and account-linking states. Mobile first. |
+| 5 — Portal | [#137](https://github.com/rudeayelo/aimharder-mcp/issues/137) | Kettle-guided onboarding (connect AimHarder → choose AI client → first question, without claiming success), returning-participant Home, client picker with one guide at a time (ChatGPT, Hermes, Other clients), consent and return-from-authorization states, Settings (portal account, AimHarder connection, authorized clients, the two confirmation preferences), Account, and distinct disconnect / delete confirmations. |
+| 6 — Administration and emails | [#138](https://github.com/rudeayelo/aimharder-mcp/issues/138) | Administration: invitations, participants, role availability, suspension. Transactional emails: invitation, verification, recovery, with name, domain and support address bound to the brand variables. |
+| 3 — Landing and Privacy | [#139](https://github.com/rudeayelo/aimharder-mcp/issues/139) | The landing sections above, section by section with the critique rules applied and only the Kettle animations kept in #134; then Privacy. |
+| Handover | [#140](https://github.com/rudeayelo/aimharder-mcp/issues/140) | Update map #103 and implementation tickets #106–#117 to the new Figma file, components and name. |
+
+Phase numbers follow the spec; delivery order is 1, 4, 5, 6, 3, then handover.
+
+## Visual direction starting points
+
+These are inputs to phase 1, not final values. Final values live only in the Figma variables.
+
+- **Brand blue:** AimHarder's `#2490f4`, observed in their [public stylesheet](https://aimharder.com/new-web/assets/main-CbA3Gj31.css) as `--color-ah-blue` (implementation evidence, not a brand guide). It is an identity color, not a background for small white text; actions use a darker derived blue (iteration 1 used `#1765B0`, 5.96:1 with white).
+- **Accent:** the Kettle's orange (`#FFAB62`) was the iteration-1 counterpoint, with dark text on it. Phase 1 measures and chooses the complementary accent. The accent never stands in for warning or success.
+- **Type:** Krona One for the wordmark only; Geist was the provisional UI family.
+- **Tone:** restrained and approachable: readable type, generous spacing, one accent, quiet separators, 48px touch targets. [Reference research](research/2026-10-28-product-experience-references.md) inspires; the AIHarder design system decides.
+
+### Checks every phase posts
+
+- A screenshot sheet of every screen and state: desktop and mobile, Light and Dark, the Spanish fit check and a 200% text check on mobile.
+- Measured contrast for every text/background and interactive-state pair: at least 4.5:1 for normal text, 3:1 for large text and non-text UI.
+- The components and variables each screen uses. A detached instance or a raw color is a defect.
+- Accessibility: every control reachable by keyboard, labeled, with a visible focus ring, and unclipped at 200% text.
+
+## Implementation baseline
+
+The current hosted service predates this design. Its gaps against the requirements above are known, not decided:
+
+- The portal ([portal.ts](../hosted/src/portal.ts)) renders single-column server HTML; [connections.ts](../hosted/src/connections.ts) supplies client setup, consent and per-client revocation; [aimharder-settings.ts](../hosted/src/aimharder-settings.ts) supplies the AimHarder connection and gym settings; [mail.ts](../hosted/src/mail.ts) sends plain-text invitation, verification and recovery email.
+- Remote client setup still needs an operator to provision a public client ID and exact callback. That is the runtime baseline until the self-service replacement is designed, implemented and verified; the design must not imply that copying a server URL alone completes setup.
+- There is no first-successful-query indicator, and none is planned: consent is not evidence of a working query, and no telemetry is added for it.
+- Code and some documents still use AimHarder MCP and `ahmcp.link` until [#141](https://github.com/rudeayelo/aimharder-mcp/issues/141).
 
 ## Vocabulary and existing decisions
 
-Use the established terms in [CONTEXT.md](../CONTEXT.md), especially portal account, AimHarder connection and MCP client connection. Their lifecycle actions remain distinct even if the visible labels are simplified during design.
+Use the terms in [CONTEXT.md](../CONTEXT.md), especially portal account, AimHarder connection and MCP client connection; visible labels may be simpler, but the lifecycles stay distinct. The design must not imply behavior these decisions do not establish:
 
-Reviewed decisions:
+- [Invited hosted pilot](adr/2026-10-15-invited-hosted-mcp-pilot.md): audience, feature scope and role availability.
+- [Hosted identity and credential custody](adr/2026-10-15-hosted-identity-and-credential-custody.md): separate identities, credential custody, administration limits.
+- [Invited password admission](adr/2026-10-18-invited-password-admission.md) and [Google sign-in and explicit linking](adr/2026-10-18-google-sign-in-and-explicit-linking.md): sign-in, verification and linking.
+- [Hosted MCP client authorization](adr/2026-10-18-hosted-mcp-client-authorization.md) and [self-service onboarding](adr/2026-10-28-self-service-invited-onboarding.md): OAuth/PKCE, consent, registration.
+- [Participant suspension](adr/2026-10-19-hosted-participant-suspension.md) and [independent deletion and controlled restoration](adr/2026-10-19-independent-deletion-and-controlled-restoration.md): administration and account lifecycle.
+- [Confirmation preferences](adr/2026-10-30-account-write-confirmation-preference.md) and [confirmed hosted action coordination](adr/2026-10-19-confirmed-hosted-action-coordination.md): what confirmations exist.
+- [Scoped hosted-pilot acceptance](adr/2026-10-28-scoped-hosted-pilot-acceptance.md): do not present the pilot as launched or fully accepted.
 
-- [Invited hosted pilot](adr/2026-10-15-invited-hosted-mcp-pilot.md): audience, full existing feature scope and role availability remain unchanged.
-- [Hosted identity and credential custody](adr/2026-10-15-hosted-identity-and-credential-custody.md): separate identities, credential custody, administration limits and distinct lifecycle actions remain unchanged.
-- [Scoped hosted-pilot acceptance](adr/2026-10-28-scoped-hosted-pilot-acceptance.md): preserve accepted closeout, deferred checks and uncertainty rather than claiming all original criteria passed or production launched.
-- [Hosted MCP client authorization](adr/2026-10-18-hosted-mcp-client-authorization.md): the trusted operator-only registration workflow needs a successor for self-service; existing runtime safeguards remain in force until that successor is designed, implemented and verified.
-- [Default gym time zone](adr/2026-09-24-default-gym-time-zone.md): the hosted frontend policy changes presentation and setup, while backend overrides, source provenance and local setup remain separate concerns.
+## Open questions
 
-The third round requires the two linked ADRs because self-service changes the registration responsibility and hiding time-zone configuration intersects with existing action prerequisites. They record accepted product requirements with pending engineering and validation. Keep project artifacts and copy in English.
-
-## Support inbox assessment
-
-Resend Inboxes is a suitable candidate for the accepted support address, based on official documentation checked on 2026-10-28:
-
-- [Inboxes introduction](https://resend.com/docs/dashboard/inboxes/introduction): the dashboard can receive, organize and reply to email threads. A basic human-operated support inbox does not require a custom inbox UI or receiving webhook implementation in this project.
-- [Creating inboxes](https://resend.com/docs/dashboard/inboxes/create-inboxes): the address must use a verified sending domain. Receiving requires the appropriate MX setup or forwarding an existing address to a Resend-provisioned receiving address. A forwarding address does not by itself make an unconfigured public address receive mail.
-- [Pricing](https://resend.com/pricing): Free lists three included inboxes; inbox email uses the transactional quota. The [product page](https://resend.com/products/inboxes) advertises a free entry plan with 3,000 sent/received emails. These are published allowances, not verification of this account's remaining quota or an account-specific billing offer.
-
-The [existing Resend decision](adr/2026-10-18-resend-transactional-delivery.md) originally covered transactional sending only and preserves existing root receiving-mail configuration. Its later product amendment records the accepted Inboxes direction. Sending-domain verification alone does not prove that `support@ahmcp.link` can receive. Before activation, inspect the actual account availability/price and domain receiving setup, preserve unrelated mail routing, and test one inbound message and one human reply. No account access, inbox creation, DNS change, message send, agent connection or purchase was performed for this assessment. Provider selection and human-operated handling are accepted; configuration and verification remain pending.
-
-## FAQ presentation
-
-The owner proposed an FAQ format for the help content. Use a short participant-facing FAQ with grouped questions and concise, expandable answers. Put support contact at the end and link to the relevant client guide when a question concerns setup. This is the current presentation direction; final placement is still proposed below.
-
-Suggested question groups and coverage:
-
-- **Access:** How do I join? What if my invitation did not arrive or has expired? How do I recover access?
-- **Connections:** Which clients can I use? How do I connect one? What if I change my AimHarder password? How do I disconnect a client?
-- **Using the service and privacy:** What can I ask? Why do sporting actions need confirmation? Who can access my AimHarder credentials?
-
-Each answer should resolve one question and provide a relevant next action when needed. Keep setup instructions in the client guides and recovery instructions contextual to the actual state. Do not add search, ticket tracking or a custom support inbox to the portal for this small FAQ.
-
-Recommend making **FAQ** a persistent secondary link rather than a primary navigation item. Its final placement is delegated to #95, rather than awaiting another owner preference round. Do not add private configuration, sporting data, credentials or diagnostic logs to contact links automatically.
-
-## Design-reference research
-
-The owner authorized Refero research for product UX, panel design and UI inspiration on 2026-10-28. The [reference research](research/2026-10-28-product-experience-references.md) covers three full styles, six selected screens and one complete flow; seven raw screen images were inspected. Reference screenshots document archived examples, not current compatibility or user research for this product.
-
-The initial light/teal, white/orange and dark/orange directions were research proposals and were not selected. The owner's later direction is to adopt AimHarder's blue as the starting point and investigate a complementary accent, potentially orange. The [official homepage](https://aimharder.com/) links a [public stylesheet](https://aimharder.com/new-web/assets/main-CbA3Gj31.css) declaring `--color-ah-blue: #2490f4`. This is observed implementation evidence, not a certified brand guide. Exact shades, roles and contrast must be resolved in the design ticket.
-
-## Design delegation and delivery
-
-The owner proposed delegating the remaining design and navigation decisions to a first ticket. [Issue #95: Define AimHarder MCP visual identity and navigation in pen.dev](https://github.com/rudeayelo/aimharder-mcp/issues/95) now contains the self-contained brief, research references, deliverables and acceptance criteria. It is labeled `enhancement` and `ready-for-agent`.
-
-The assignee should resolve palette, typography, navigation, FAQ placement and screen/state presentation within this accepted brief, then present a concrete design for review. The owner does not need another interview about each color or menu label before the ticket can start. The target artifact is `design/ahmcp.pen`, with supporting design rationale, desktop/mobile views, component/state inventory and documentation updates.
-
-[Issue #92](https://github.com/rudeayelo/aimharder-mcp/issues/92) remains the local/remote technical-documentation review. Coordinate its terminology and information hierarchy with the design; this does not block correcting its independently verified outdated usage/status material. Engineering for self-service provisioning, the Madrid policy, support inbox activation and eventual frontend implementation remains separate work to identify in the handoff.
-
-The ticket is open; its creation does not complete the `.pen` design or validate the intended runtime behavior. Existing identity, role, confirmation and deployment decisions remain in force except for the explicitly accepted product amendments linked above. This delegation requires no new ADR: it assigns reversible visual/navigation decisions without selecting another architecture, distribution model or security policy.
-
-## Decisions and follow-ups assigned to the design handoff
-
-- Final public-page copy within the accepted structure.
-- Self-service provisioning design, first-query verification and support inbox activation.
-- Final FAQ wording and navigation prominence.
-- Detailed onboarding and returning-participant states.
-- Visual palette, responsive layouts and accessibility acceptance.
-- Settings, administration and transactional-email presentation.
-- GitHub information architecture for participants, local users, contributors and operators.
-- Final screen inventory, `.pen` location and design-review criteria.
-
-Resolve the visual/navigation branches in #95 and record implementation/operational follow-ups separately. Do not treat an unresolved branch, reference screenshot or intended UI as implemented or live-validated behavior.
-
-## Specification completeness review (2026-10-29)
-
-Review of this brief, #95, #92 and the two October 28 product-amendment ADRs found no additional essential owner decision needed before starting the design ticket. The product brief is sufficient for that work. The full implementation specification remains incomplete until the delegated design and technical follow-ups produce their concrete contracts and acceptance evidence.
-
-The remaining work falls into these areas:
-
-- **Design:** #95 resolves the visual system, navigation, copy, screen/state inventory and responsive presentation and supplies the reviewable `.pen` artifact.
-- **Self-service client setup:** specify and verify controlled registration/configuration delivery, exact callbacks, independently managed installations, conditional generic-client compatibility and the completion criterion for the suggested first query. Do not infer successful use from consent or introduce unrequested telemetry.
-- **Hosted Madrid policy:** reconcile service-selected configuration with action prerequisites and truthful provenance; preserve manually configured backend overrides and specify their effective behavior.
-- **Interface and wording:** implement the selected web/email designs and assign the accepted review of instructions, errors and confirmations visible in the AI chat to explicit implementation/verification work. The design ticket alone does not change MCP behavior.
-- **Support activation:** configure and verify receiving/reply handling for the accepted address and provider, preserving existing mail routing and checking account-specific conditions.
-- **Documentation and acceptance:** #92 covers both usage paths. Add a final integrated journey in which an invited participant completes setup without operator intervention and makes a useful query in each initially supported remote client. Keep local-path checks, conditional generic support and actual-client evidence distinct.
-
-These are follow-up specification/delivery areas, not additional accepted features. At the owner's explicit `to-spec` request, they are now consolidated in parent #103. The design handoff and technical deliveries resolve the remaining concrete contracts within that specification. Apart from existing #95/#92, further implementation packages have not yet been published as separate child tickets. Existing verified documentation corrections in #92 can proceed independently of final visual decisions.
-
-The proposed primary test boundary is the existing public Worker HTTP interface, consumed by browser journeys and an actual MCP SDK, with external AimHarder/Google/mail responses simulated in automated tests. The specification records existing portal/auth/connection/lifecycle test prior art, visual/accessibility review, separate actual-client/provider evidence and local-package/document checks. The skill's test-boundary check was presented to the owner asynchronously; an unanswered check is not treated as approval or execution evidence. Incorporate any subsequent correction before implementation.
+- Which Kettle animations to keep ([#134](https://github.com/rudeayelo/aimharder-mcp/issues/134)), and their final specification.
+- Final landing copy, including the hero headline and supporting line, within the structure above.
+- The complementary accent and final color values (phase 1).
+- Help: whether it is a navigation entry or a persistent secondary FAQ link, and its exact content.
+- Privacy policy content beyond the design draft.
+- Licenses of the models behind the Kettle's source reconstruction, for public use (see the [asset notes](../design/assets/kettle/README.md#licenses)).
+- Support inbox activation and `aiharder.link` activation in DNS, OAuth, Resend and the Worker, coordinated with the maintainer.

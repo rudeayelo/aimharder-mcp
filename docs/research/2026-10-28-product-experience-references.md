@@ -2,6 +2,8 @@
 
 Research date: 2026-10-28. Status: research and design proposals; no final visual direction, screen design, implementation or deployment approval.
 
+Superseded in part, 2026-11-24: the pen.dev file named below as the design deliverable is replaced by Figma ([decision](../adr/2026-11-24-figma-design-source-of-truth.md)), and the product name is AIHarder ([decision](../adr/2026-11-24-provisional-product-name-and-domain.md)).
+
 Later owner steering on the same date: [design ticket #95](https://github.com/rudeayelo/aimharder-mcp/issues/95) delegates the final palette and navigation. Adopt AimHarder's blue as the starting direction and evaluate a complementary accent such as orange. The earlier teal/orange alternatives below remain historical research inputs, not an approved palette or a prerequisite for another owner-choice round.
 
 ## Brief and evidence boundary
@@ -32,7 +34,7 @@ Source: [Refero screen 3e718e1d-c288-47f9-a8dd-d9325cb8774d](https://refero.desi
 
 **Observed:** one focused column with a heading, a short purpose statement, a compact step indicator and provider rows. Each row pairs a recognizable provider name/icon with its own Connect action. A work/school-account prerequisite is attached to the Microsoft row, where it matters. A separate Next Step button sits below the list and appears disabled in the captured state.
 
-**Proposed adaptation:** make client choice easy to scan, then reveal only the chosen client's concise instructions. Put plan/workspace/version prerequisites beside that client. Include the accepted Other clients option with concrete requirements. The previously accepted [Mamitsu reference](../product-experience.md#current-implementation-baseline) remains the direct precedent for switching the instructions when the client selection changes; this Cal capture supports the choice list, not an observed instruction switch.
+**Proposed adaptation:** make client choice easy to scan, then reveal only the chosen client's concise instructions. Put plan/workspace/version prerequisites beside that client. Include the accepted Other clients option with concrete requirements. The previously accepted [Mamitsu reference](../product-experience.md#implementation-baseline) remains the direct precedent for switching the instructions when the client selection changes; this Cal capture supports the choice list, not an observed instruction switch.
 
 **Reject:** a large integration marketplace and unsupported parity claims. A uniform-looking Connect button must not conceal materially different manual steps. Do not infer the reason for the disabled button from the screenshot.
 
