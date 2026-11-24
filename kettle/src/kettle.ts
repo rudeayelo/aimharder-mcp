@@ -154,6 +154,8 @@ const SURFACE_INTERACTIONS: Record<Surface, Interactions> = {
 const FACE_POINT = new Vector3(0.42, 0.4, 0);
 const DRAG_THRESHOLD = 6;
 const DRAG_DEGREES_PER_PIXEL = 0.6;
+/** Release speed is measured over this many ms before the release. */
+const RELEASE_WINDOW = 250;
 const ECHO_OPACITY = [0.45, 0.25];
 
 function shadowTexture(): DataTexture {
@@ -268,7 +270,8 @@ export function createKettle(options: KettleOptions): Kettle {
   let dragTurn = 0;
   let dragTarget = 0;
   let pointer: { id: number; x: number; y: number; startTurn: number; dragging: boolean; samples: Array<[number, number]> } | null = null;
-  let spring: { start: number; values: number[] } | null = null;
+  /** `start` is the exposure of its first value, or null while it waits for the Kettle to be seen. */
+  let spring: { start: number | null; values: number[] } | null = null;
 
   const matrix = new Matrix4();
   const setRotation = (group: Group, rotation: Matrix3, position: [number, number, number]) => {
@@ -397,7 +400,9 @@ export function createKettle(options: KettleOptions): Kettle {
   function unsuspend(): void {
     if (destroyed || suspended()) return;
     const now = performance.now();
-    if (spring && suspendedAt !== null) spring.start += exposureAt(now) - exposureAt(suspendedAt);
+    // A spring that ran before the suspension resumes where it stopped; one created
+    // during it (start null) starts from its first value on the next frame.
+    if (spring && spring.start !== null && suspendedAt !== null) spring.start += exposureAt(now) - exposureAt(suspendedAt);
     if (suspendedPlayback) player.resume(now);
     suspendedPlayback = false;
     suspendedAt = null;
@@ -432,7 +437,8 @@ export function createKettle(options: KettleOptions): Kettle {
     if (pointer?.dragging) {
       if (timing.drag === 'smooth' || newExposure) dragTurn = dragTarget;
     } else if (spring) {
-      const index = exposure - spring.start;
+      spring.start ??= exposure;
+      const index = Math.max(0, exposure - spring.start);
       dragTurn = index < spring.values.length ? spring.values[index]! : 0;
       if (index >= spring.values.length) spring = null;
     }
@@ -557,16 +563,16 @@ export function createKettle(options: KettleOptions): Kettle {
     wake();
   };
 
-  const startSpring = (from: number, speed: number) => {
+  /** Springs the drag turn back to the front; only a real release (`fling`) may play the reaction. */
+  const startSpring = (from: number, speed: number, fling: boolean) => {
     const reaction = resolveTuning('drag-release', tuning['drag-release']);
     const turn = ((((from + 180) % 360) + 360) % 360) - 180;
     // Under reduced motion the turn eases straight back, never past the front.
     const values = springBack(turn, reaction.timing.springBack!, reduced() ? 0 : reaction.amount.springOvershoot!);
     dragTurn = turn;
-    spring = { start: exposureAt(performance.now()), values };
+    spring = { start: suspended() ? null : exposureAt(performance.now()), values };
     const { minSpeed, fullSpeed } = reaction.amount;
-
-    if (!reduced() && Math.abs(speed) >= minSpeed!) {
+    if (fling && !reduced() && Math.abs(speed) >= minSpeed!) {
       const intensity = Math.max(0.35, Math.min(1, (Math.abs(speed) - minSpeed!) / Math.max(1, fullSpeed! - minSpeed!)));
       void play('drag-release', { intensity, mirror: speed < 0 });
     }
@@ -591,23 +597,24 @@ export function createKettle(options: KettleOptions): Kettle {
     dragTarget = pointer.startTurn + dx * DRAG_DEGREES_PER_PIXEL;
     const now = event.timeStamp;
     pointer.samples.push([now, dragTarget]);
-    while (pointer.samples.length > 2 && now - pointer.samples[0]![0] > 200) pointer.samples.shift();
+    // Keep the newest sample older than the release window: it is the turn at the window's start.
+    while (pointer.samples.length > 2 && now - pointer.samples[1]![0] > RELEASE_WINDOW + 200) pointer.samples.shift();
     wake();
   };
   /**
-   * Turn speed (degrees per second) at the release itself. A pointer that stood
-   * still before letting go has speed 0: "still" means no move for 100 ms, or
-   * for 1.5 × the recent gap between moves when input arrives more slowly.
+   * Turn speed (degrees per second) over the last RELEASE_WINDOW ms before the
+   * release, counting time the pointer stood still: the turn at the window's
+   * start is the last sample at or before it. A pointer held still for the
+   * whole window has speed 0, however sparse its input was.
    */
   const releaseSpeed = (samples: Array<[number, number]>, at: number): number => {
     const before = samples.filter(([t]) => t <= at);
-    const last = before.at(-1), previous = before.at(-2);
-    if (!last || !previous) return 0;
-    const gap = last[0] - previous[0];
-    if (at - last[0] > Math.max(100, 1.5 * gap)) return 0;
-    const recent = before.filter(([t]) => at - t <= Math.max(120, 1.5 * gap));
-    const from = recent.length >= 2 ? recent[0]! : previous;
-    return last[0] > from[0] ? ((last[1] - from[1]) * 1000) / (last[0] - from[0]) : 0;
+    const last = before.at(-1);
+    if (!last) return 0;
+    const from = at - RELEASE_WINDOW;
+    const start = before.filter(([t]) => t <= from).at(-1) ?? before[0]!;
+    const span = at - Math.max(from, start[0]);
+    return span > 0 ? ((last[1] - start[1]) * 1000) / span : 0;
   };
   /** Ends the active pointer: `release` may fling or poke; `cancel` only springs back. */
   const endPointer = (event: PointerEvent, kind: 'release' | 'cancel') => {
@@ -616,7 +623,7 @@ export function createKettle(options: KettleOptions): Kettle {
     pointer = null;
     if (canvas?.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
     if (ended.dragging) {
-      startSpring(dragTarget, kind === 'release' ? releaseSpeed(ended.samples, event.timeStamp) : 0);
+      startSpring(dragTarget, kind === 'release' ? releaseSpeed(ended.samples, event.timeStamp) : 0, kind === 'release');
     } else if (kind === 'release' && interactions.poke && canvas) {
       // Captured pointers report their release anywhere; only a release over the Kettle pokes.
       const rect = canvas.getBoundingClientRect();
@@ -740,6 +747,11 @@ export function createKettle(options: KettleOptions): Kettle {
     setReducedMotion(value) {
       reducedSetting = value;
       shown = null;
+      // A running spring may overshoot; under reduced motion it becomes a plain return from where it is.
+      if (spring && reduced()) {
+        const reaction = resolveTuning('drag-release', tuning['drag-release']);
+        spring = { start: suspended() ? null : exposureAt(performance.now()), values: springBack(dragTurn, reaction.timing.springBack!, 0) };
+      }
       // Re-pose at once so no frame shows the previous setting's motion.
       if (canRun()) {
         applyPose(composeAt(null));

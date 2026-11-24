@@ -3,10 +3,14 @@
 // and the module's public state.
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { chromium, type Browser, type BrowserContextOptions, type Page } from 'playwright-core';
-import { STRICT_CSP, startLabServer, type LabServer } from '../lab/server.ts';
+import { startLabServer, type LabServer } from '../lab/server.ts';
 import { CHROMIUM_ARGS, chromiumPath } from '../lab/chromium.ts';
 import { parseTuning, type KettleState } from '../src/index.ts';
 import { kettleBlueShare, readPng } from './png.ts';
+
+/** The policy the module must run under, written out here rather than read from the server. */
+const EXPECTED_CSP =
+  "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'";
 
 let lab: LabServer;
 let browser: Browser;
@@ -93,7 +97,9 @@ describe('Kettle lab in Chromium', () => {
   it('serves every section under the strict CSP, draws the body and logs no errors', async () => {
     for (const [hash, name] of [['viewer', 'kettle'], ['playground', 'kettle'], ['compositions', 'heroKettle']] as const) {
       const { page, errors, response } = await open(`/#${hash}`);
-      expect(response?.headers()['content-security-policy'], hash).toBe(STRICT_CSP);
+      const policy = response?.headers()['content-security-policy'];
+      expect(policy, hash).toBe(EXPECTED_CSP);
+      expect(policy, hash).not.toMatch(/unsafe-inline|unsafe-eval/);
       await ready(page, name);
       await until(page, 's.renders > 0', name);
       const shot = await page.evaluate((n) => (window as any)[n].canvas.getBoundingClientRect().toJSON(), name);
@@ -373,6 +379,105 @@ describe('Kettle interaction in Chromium', () => {
     await page.mouse.down();
     await page.mouse.move(centre.x + 100, centre.y, { steps: 5 });
     await page.evaluate(() => ((window as any).turns = []));
+    await page.mouse.up();
+    await until(page, 's.dragTurn === 0');
+    const turns = (await page.evaluate(() => (window as any).turns)) as number[];
+    expect(turns.length).toBeGreaterThan(2);
+    expect(turns.every((turn) => turn >= 0)).toBe(true);
+    for (let i = 1; i < turns.length; i++) expect(turns[i]!).toBeLessThanOrEqual(turns[i - 1]!);
+    await page.context().close();
+  });
+
+  it('starts a spring created while the Kettle is off-screen from its first exposure, with a finite turn', async () => {
+    const { page } = await open('/#playground');
+    await ready(page);
+    await page.evaluate(() => (window as any).kettle.setTuning({ 'drag-release': { timing: { springBack: 10 }, amount: { minSpeed: 4000, springOvershoot: 0 } } }));
+    const centre = await body(page);
+    await page.mouse.move(centre.x, centre.y);
+    await page.mouse.down();
+    await page.mouse.move(centre.x + 150, centre.y, { steps: 3 });
+    await until(page, 's.dragging && s.dragTurn > 60');
+    // Move the stage out of view, release there, wait, bring it back.
+    await page.evaluate(() => ((document.querySelector('.stage') as HTMLElement).style.transform = 'translateY(-5000px)'));
+    await until(page, '!s.visible');
+    await page.mouse.up();
+    const released = (await state(page)).dragTurn;
+    await page.waitForTimeout(1500); // longer than the whole spring: it must not run unseen
+    await page.evaluate(() => {
+      (window as any).turns = [];
+      (window as any).kettle.subscribe((s: KettleState) => s.visible && (window as any).turns.push(s.dragTurn));
+      (document.querySelector('.stage') as HTMLElement).style.transform = '';
+    });
+    await until(page, 's.visible && s.dragTurn === 0');
+    const turns = (await page.evaluate(() => (window as any).turns)) as number[];
+    expect(turns.every(Number.isFinite)).toBe(true);
+    const moving = turns.filter((turn) => turn !== released);
+    expect(moving[0]!).toBeGreaterThan(released * 0.6);
+    await page.context().close();
+  });
+
+  it('never plays the drag-release reaction on a cancel or a lost capture, even with minSpeed 0', async () => {
+    const { page } = await open('/#playground', { hasTouch: true, isMobile: true });
+    await ready(page);
+    await page.evaluate(() => (window as any).kettle.setTuning({ 'drag-release': { amount: { minSpeed: 0 } } }));
+    const centre = await body(page);
+    const cdp = await page.context().newCDPSession(page);
+    const touch = (type: 'touchStart' | 'touchMove' | 'touchCancel', x: number) =>
+      cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchCancel' ? [] : [{ x, y: centre.y }] });
+    await touch('touchStart', centre.x - 150);
+    for (let x = centre.x - 80; x <= centre.x + 180; x += 70) await touch('touchMove', x);
+    await until(page, 's.dragging');
+    await touch('touchCancel', 0);
+    await until(page, '!s.dragging && s.dragTurn === 0');
+    expect((await state(page)).clip).toBeNull();
+
+    await page.mouse.move(centre.x, centre.y);
+    await page.mouse.down();
+    await page.mouse.move(centre.x + 150, centre.y, { steps: 3 });
+    await until(page, 's.dragging');
+    await page.evaluate(() => (window as any).kettle.canvas.releasePointerCapture(1));
+    await page.mouse.move(centre.x + 160, centre.y);
+    await until(page, '!s.dragging && s.dragTurn === 0');
+    await page.mouse.up();
+    expect((await state(page)).clip).toBeNull();
+    await page.context().close();
+  });
+
+  it('reads a sparse drag as still: one big move, 800 ms still, release plays no wobble', async () => {
+    const { page } = await open('/#playground');
+    await ready(page);
+    await lowFlingThreshold(page);
+    const centre = await body(page);
+    await page.mouse.move(centre.x - 150, centre.y);
+    await page.mouse.down();
+    await page.waitForTimeout(1000); // a slow start, so the only sample gap is long
+    await page.mouse.move(centre.x + 150, centre.y);
+    await until(page, 's.dragging');
+    await page.waitForTimeout(800); // held still
+    await page.mouse.up();
+    await until(page, '!s.dragging && s.dragTurn === 0');
+    expect((await state(page)).clip).toBeNull();
+    await page.context().close();
+  });
+
+  it('replaces a running spring with a monotonic return when reduced motion switches on', async () => {
+    const { page } = await open('/#playground');
+    await ready(page);
+    await page.evaluate(() => (window as any).kettle.setTuning({ 'drag-release': { timing: { springBack: 10 }, amount: { minSpeed: 4000 } } }));
+    const centre = await body(page);
+    await page.mouse.move(centre.x, centre.y);
+    await page.mouse.down();
+    await page.mouse.move(centre.x + 150, centre.y, { steps: 3 });
+    await until(page, 's.dragging');
+    // Reduced motion switches on right as the drag is released.
+    await page.evaluate(() => {
+      (window as any).turns = [];
+      window.addEventListener('pointerup', () => {
+        const kettle = (window as any).kettle;
+        kettle.setReducedMotion(true);
+        kettle.subscribe((s: KettleState) => (window as any).turns.push(s.dragTurn));
+      }, { once: true });
+    });
     await page.mouse.up();
     await until(page, 's.dragTurn === 0');
     const turns = (await page.evaluate(() => (window as any).turns)) as number[];
