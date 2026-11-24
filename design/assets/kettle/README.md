@@ -24,6 +24,8 @@ The scripts (`prepare-body.py`, `rebuild.py`), the fit data (`face-surface.json`
 
 ## Licenses
 
+The licenses below were checked on 2026-11-24 from the public IDOL SDK repository, its README and the Hugging Face model cards; they are not recorded in the iteration-1 tag.
+
 | Component | Role | License |
 | --- | --- | --- |
 | [IDOL SDK](https://github.com/speridlabs/idol-sdk) and [IDOL weights](https://huggingface.co/speridlabs/idol) | Produced the source PLY | Apache-2.0 ([copy](licenses/idol-Apache-2.0.txt), from `speridlabs/idol-sdk` at `8db7003`; the Hugging Face model card also declares `apache-2.0`) |
