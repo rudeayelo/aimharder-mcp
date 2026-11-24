@@ -103,7 +103,12 @@ const logDecode = (value: number) => Math.sign(value) * (Math.exp(Math.abs(value
 /** Decodes attribute pixels into centres, 3D covariances and colours. */
 export function decodeSog(meta: SogMeta, textures: SogTextures): SourceSplats {
   const count = meta.count;
+  const { width, height } = textures.means_l;
   for (const [name, texture] of Object.entries(textures)) {
+    // Every attribute texture indexes the same splat grid, so they share one size.
+    if (texture.width !== width || texture.height !== height) {
+      throw new Error(`SOG: ${name} texture is ${texture.width} × ${texture.height}; means_l is ${width} × ${height}`);
+    }
     if (texture.width * texture.height < count || texture.data.length < texture.width * texture.height * 4) {
       throw new Error(`SOG: ${name} texture (${texture.width} × ${texture.height}) is too small for ${count} splats`);
     }

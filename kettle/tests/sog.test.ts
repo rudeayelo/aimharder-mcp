@@ -15,8 +15,10 @@ describe('SOG reader', () => {
     expect(() => readStoredZip(asset.subarray(0, asset.length - 100))).toThrow(/SOG: .*(truncated|end record)/);
     expect(() => readStoredZip(asset.subarray(0, 200_000))).toThrow(/SOG: /);
 
-    const small = { means_l: pixels(184, 180), means_u: pixels(184, 180), quats: pixels(184, 180), scales: pixels(184, 180), sh0: pixels(100, 100) };
-    expect(() => decodeSog(parseSogMeta(JSON.stringify(meta())), small)).toThrow(/SOG: sh0 texture .* 32768/);
+    const small = { means_l: pixels(100, 100), means_u: pixels(100, 100), quats: pixels(100, 100), scales: pixels(100, 100), sh0: pixels(100, 100) };
+    expect(() => decodeSog(parseSogMeta(JSON.stringify(meta())), small)).toThrow(/SOG: means_l texture .* too small for 32768/);
+    const swapped = { means_l: pixels(184, 180), means_u: pixels(184, 180), quats: pixels(180, 184), scales: pixels(184, 180), sh0: pixels(184, 180) };
+    expect(() => decodeSog(parseSogMeta(JSON.stringify(meta())), swapped)).toThrow(/SOG: quats texture is 180 × 184; means_l is 184 × 180/);
 
     const shortBook = meta();
     shortBook.scales.codebook = shortBook.scales.codebook.slice(0, 10);
