@@ -62,6 +62,8 @@ Defaults by surface, from `SURFACES` in [`src/kettle.ts`](src/kettle.ts). `surfa
 | `portal` | No; the page drives `setGaze` and `play` | Off | Off | None |
 | `none` | Off | Off | Off | None |
 
+The entrance is decided the first time the Kettle can be seen (loaded, on screen, tab visible), not when the body finishes loading: a clip the page plays before then replaces it, and reduced motion is read at that moment.
+
 The Kettle draws only when something changes (an exposure, the gaze, a drag, the camera), and pauses while the container is off-screen, the tab is hidden or the body is still loading. Clip time and the drag spring stand still meanwhile, so a clip started out of view plays from its first exposure once it is seen. Without WebGL2, or after a lost context, it shows the poster. `play()` always settles: at once in poster mode, and when the context is lost or the Kettle is destroyed.
 
 Pointer rules: one pointer at a time (a second finger during a drag is ignored); a cancelled pointer or lost capture springs the turn back with no reaction; the fling speed is measured at the release, so dragging fast and then holding still before letting go plays no reaction; a release outside the canvas never pokes. Under reduced motion the turn returns without passing the front, and the gaze stays within ±0.35 whatever the tuning or `setGaze` asks for.

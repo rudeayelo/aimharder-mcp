@@ -78,7 +78,10 @@ export interface KettleOptions {
   camera?: CameraPreset | Partial<CameraView>;
   /** Clips a click or tap plays, in turn. Defaults to the surface's. */
   pokeClips?: string[];
-  /** Emote played once, the first time the Kettle is seen (then it stays still); null for none. Defaults to the surface's. */
+  /**
+   * Emote played once, the first time the Kettle is seen (then it stays still); null for none. Defaults to the surface's.
+   * A clip the page plays before that replaces it; reduced motion is read when the Kettle is first seen.
+   */
   entrance?: string | null;
   /** Ground shadow under the body. */
   shadow?: boolean;
@@ -218,6 +221,8 @@ export function createKettle(options: KettleOptions): Kettle {
   const timing: MotionTiming = { ...surface.timing, ...options.timing };
   const pokeClips = options.pokeClips?.length ? options.pokeClips : surface.pokeClips;
   const entrance = options.entrance === undefined ? surface.entrance : options.entrance;
+  /** The entrance waits for the first time the Kettle can be seen; a page `play()` before that cancels it. */
+  let entrancePending = entrance !== null;
   let pokeIndex = 0;
   const player = new ClipPlayer();
   const follow = new FollowLayer(resolveTuning(GAZE_FOLLOW.id, tuning[GAZE_FOLLOW.id]));
@@ -403,6 +408,10 @@ export function createKettle(options: KettleOptions): Kettle {
     suspendedPlayback = false;
     suspendedAt = null;
     dirty = true;
+    if (entrancePending) {
+      entrancePending = false;
+      if (entrance) void startClip(entrance);
+    }
     wake();
   }
   /** Ends the clip (settling its promise) when the Kettle can no longer animate. */
@@ -484,8 +493,6 @@ export function createKettle(options: KettleOptions): Kettle {
       resize();
       applyPose(composeAt(null));
       bindPointer();
-      // Queued like any clip started out of view: it plays from its first exposure once seen.
-      if (entrance && !player.clip) void play(entrance);
       if (suspended()) suspend();
       else {
         unsuspend();
@@ -658,6 +665,10 @@ export function createKettle(options: KettleOptions): Kettle {
 
   // ---- Public API ----
   function play(id: string, playOptions: PlayOptions = {}): Promise<void> {
+    entrancePending = false;
+    return startClip(id, playOptions);
+  }
+  function startClip(id: string, playOptions: PlayOptions = {}): Promise<void> {
     const definition = definitionOf(id);
     // Without WebGL (or after teardown) nothing animates: settle at once.
     if (destroyed || state.status === 'poster') return Promise.resolve();

@@ -602,6 +602,47 @@ describe('Kettle interaction in Chromium', () => {
     await ctx.close();
   });
 
+  it('decides the entrance when the Kettle is first seen, not when it loads', async () => {
+    const reveal = (page: Page) => page.evaluate(() => ((document.querySelector('#stage') as HTMLElement).style.transform = ''));
+    const watch = (page: Page) => page.evaluate(() => {
+      (window as any).seen = [];
+      (window as any).kettle.subscribe((s: KettleState) => s.visible && (window as any).seen.push([s.clip, s.frame]));
+    });
+    const seen = (page: Page) => page.evaluate(() => (window as any).seen) as Promise<Array<[string | null, number]>>;
+
+    // Loaded out of view: nothing is queued until it is seen, then the entrance plays from its first exposure.
+    let { page } = await open('/harness.html?surface=footer&offscreen');
+    await ready(page);
+    expect((await state(page)).clip).toBeNull();
+    await watch(page);
+    await reveal(page);
+    await until(page, "s.clip === 'double-blink' && !s.playing");
+    expect((await seen(page)).find(([clip]) => clip === 'double-blink')).toEqual(['double-blink', 0]);
+    await page.context().close();
+
+    // A clip the page plays while the Kettle loads takes precedence: no entrance.
+    ({ page } = await open('/harness.html?surface=footer&offscreen'));
+    expect((await state(page)).status).toBe('loading');
+    await page.evaluate(() => void (window as any).kettle.play('rock'));
+    await ready(page);
+    await watch(page);
+    await reveal(page);
+    await until(page, "s.clip === 'rock' && !s.playing");
+    await frames(page, 6);
+    expect(new Set((await seen(page)).map(([clip]) => clip))).toEqual(new Set(['rock']));
+    await page.context().close();
+
+    // Reduced motion is read when the Kettle is first seen: on at load, off before the reveal, the hop plays.
+    ({ page } = await open('/harness.html?surface=footer&offscreen&entrance=little-hop'));
+    await page.evaluate(() => (window as any).kettle.setReducedMotion(true));
+    await ready(page);
+    await page.evaluate(() => (window as any).kettle.setReducedMotion(false));
+    await reveal(page);
+    await until(page, "s.clip === 'little-hop' && s.playing");
+    expect((await state(page)).skipped).toBeNull();
+    await page.context().close();
+  });
+
   it('keeps the portal guide looking where the page points while curiosity plays', async () => {
     const { page } = await open('/harness.html?surface=portal');
     await ready(page);
