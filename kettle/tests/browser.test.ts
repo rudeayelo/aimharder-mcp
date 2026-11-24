@@ -233,6 +233,27 @@ describe('Kettle lab in Chromium', () => {
     await page.context().close();
   });
 
+  it('opens on saved lab state that names a removed clip, keeping the other saved values', async () => {
+    const { page, errors } = await open('/#viewer');
+    await ready(page);
+    const rockFrames = async () => {
+      await page.evaluate(() => { const k = (window as any).kettle; void k.play('rock'); k.pause(); });
+      return (await state(page)).frames;
+    };
+    const shipped = await rockFrames();
+    // Saved before body-flex was removed (#134): selected, and tuned next to another clip.
+    await page.evaluate(() => {
+      localStorage.setItem('kettle-lab:selected', JSON.stringify('body-flex'));
+      localStorage.setItem('kettle-lab:tuning', JSON.stringify({ 'body-flex': { timing: {}, amount: {} }, rock: { timing: { settle: 8 }, amount: {} } }));
+    });
+    await page.reload();
+    await ready(page);
+    expect(await page.getAttribute('[data-clip="double-blink"]', 'aria-pressed')).toBe('true');
+    expect(await rockFrames()).toBe(shipped + 6);
+    expect(errors).toEqual([]);
+    await page.context().close();
+  });
+
   it('keeps the free orbit on the pointer that started it', async () => {
     const { page } = await open('/#viewer', { hasTouch: true });
     await ready(page);

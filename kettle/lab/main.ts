@@ -6,6 +6,7 @@ import {
   DEFAULT_TUNING,
   GAZE_FOLLOW,
   SURFACES,
+  TUNABLE_IDS,
   createKettle,
   parseTuning,
   resolveTuning,
@@ -70,9 +71,11 @@ async function copyText(text: string, fallback: HTMLTextAreaElement): Promise<st
 }
 
 // ---------- shared state ----------
-let tuning: Tuning = storage.get<Tuning>('tuning', {});
+// Saved values for clips that no longer exist (e.g. a removed clip) are dropped, not the whole set.
+const saved = storage.get<Record<string, unknown>>('tuning', {});
+let tuning: Tuning = {};
 try {
-  tuning = parseTuning(tuning);
+  tuning = parseTuning(Object.fromEntries(Object.entries(saved).filter(([id]) => TUNABLE_IDS.includes(id))));
 } catch {
   tuning = {};
 }
@@ -123,7 +126,8 @@ function decisionsMarkdown(): string {
 
 // ---------- viewer ----------
 function viewer(): HTMLElement {
-  let selected = storage.get('selected', 'double-blink');
+  const stored = storage.get('selected', 'double-blink');
+  let selected = TUNABLE_IDS.includes(stored) ? stored : 'double-blink';
   const stage = h('div', { class: 'stage', 'data-stage': 'viewer' });
   const orbitLayer = h('div', { class: 'orbit-layer', hidden: true });
   stage.append(orbitLayer);

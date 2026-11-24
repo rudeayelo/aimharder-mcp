@@ -53,7 +53,7 @@ kettle.setGaze({ x: 0.8, y: 0.3 }); // look at something (portal guide); null re
 | `setReducedMotion('auto' \| boolean)` | `auto` follows `prefers-reduced-motion`. |
 | `setTuning(tuning)`, `setCamera(preset \| view)`, `subscribe(listener)`, `state`, `destroy()` | Live tuning, camera, observation and teardown. |
 
-Defaults by surface, from `SURFACES` in [`src/kettle.ts`](src/kettle.ts). `surface` sets them; the `interactions`, `timing`, `pokeClips` and `entrance` options override them. They are **provisional**: proposed in [#134](https://github.com/rudeayelo/aimharder-mcp/issues/134) and not yet confirmed by the maintainer.
+Defaults by surface, from `SURFACES` in [`src/kettle.ts`](src/kettle.ts). `surface` sets them; the `interactions`, `timing`, `pokeClips` and `entrance` options override them. They are **provisional** ([motion spec](../docs/product-experience.md#kettle-motion-spec)).
 
 | Surface | Gaze follows the cursor | Click or tap | Drag to turn | Entrance |
 | --- | --- | --- | --- | --- |
@@ -90,7 +90,7 @@ Clips are data: keyed poses on a 12 fps exposure grid (stop-motion on twos), bui
 | `drag-release` | Reaction to releasing a fast drag (dizzy wobble) | Still pose; the turn returns without overshoot |
 | Gaze following (`gaze-follow` tuning) | Continuous layer | Eyes only, small amplitude |
 
-Every clip follows the motion rules of the [motion spec](../docs/product-experience.md#3d-kettle): one body per exposure (no echo or multiple-image frames; speed comes from stretch and twist), no snap into a pose right before the return to neutral, and eye shapes that stay readable (the happy arc lifts the recess without folding it). The clip tests check the first and third rules over every clip and exposure, and the second on curiosity. Deformation is computed on the CPU once per exposure; see the [renderer ADR](../docs/adr/2026-11-24-kettle-own-splat-renderer.md).
+Clips follow the motion rules of the [motion spec](../docs/product-experience.md#kettle-motion-spec): one body per exposure (no echo or multiple-image frames; speed comes from stretch and twist), no snap into a pose right before the return to neutral, and eye shapes that stay readable (the happy arc lifts the recess without folding it). Deformation is computed on the CPU once per exposure; see the [renderer ADR](../docs/adr/2026-11-24-kettle-own-splat-renderer.md).
 
 ## What the splat body cannot do
 
