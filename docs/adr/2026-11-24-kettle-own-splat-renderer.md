@@ -32,3 +32,4 @@ Both libraries loaded and rendered the asset without a policy. Sort and frame ti
 - Deformation is limited by CPU time per exposure (6.4 ms on the spike machine for 32k splats); a much larger body, or deformation at display rate, would need a GPU path.
 - Gaussian splats have no skeleton: deformations are space warps (squash, bulge, bend, twist, handle flop). The handle bends as a soft region of the same body, not as a jointed part.
 - Iteration 1's vendored Visus and `affine-sort.js` stay only at the archive tag.
+- The multiple-image frames named in the context were later rejected ([#134](https://github.com/rudeayelo/aimharder-mcp/issues/134)) and removed with their extra splat layers ([#148](https://github.com/rudeayelo/aimharder-mcp/issues/148)); the module draws one body. The decision is unchanged: squash, stretch, bends and twist still need per-splat deformation.

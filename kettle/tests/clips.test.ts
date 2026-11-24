@@ -1,19 +1,28 @@
 // Clip data through the module's public API (the grid, the neutral endpoints,
-// the copy-as-JSON round trip), plus the two stepping state machines, which a
-// browser cannot time reliably. Reduced motion is checked in browser.test.ts.
+// the copy-as-JSON round trip, the motion rules of #134), plus the two stepping
+// state machines, which a browser cannot time reliably. Reduced motion is
+// checked in browser.test.ts.
 import { describe, expect, it } from 'vitest';
+import { hexToLinear, linearToOklch } from '../src/color.ts';
+import { createEyeRig, eyeShape, recessRings, type EyeShape } from '../src/eyes.ts';
 import { FollowLayer } from '../src/follow.ts';
+import type { BufferGeometry, Mesh } from 'three';
 import {
+  BODY_CHANNELS,
+  BRAND_COLORS,
+  DEFAULT_EYE_LOOK,
   CLIP_DEFINITIONS,
   DEFAULT_TUNING,
   GAZE_FOLLOW,
   createClip,
   isNeutral,
+  neutralPose,
   parseTuning,
   resolveTuning,
   serializeTuning,
   type ClipTuning,
   type ParamRange,
+  type Pose,
 } from '../src/index.ts';
 import { ClipPlayer } from '../src/player.ts';
 import { springBack } from '../src/spring.ts';
@@ -29,10 +38,12 @@ function randomTuning(id: string, seed: number): ClipTuning {
 }
 
 describe('clips', () => {
-  it('covers the seven base clips and the poke and drag-release reactions', () => {
+  it('covers the six kept emotes and the poke and drag-release reactions', () => {
     expect(CLIP_DEFINITIONS.map((d) => d.id)).toEqual([
-      'double-blink', 'curiosity', 'look-around', 'body-flex', 'rock', 'little-hop', 'tilted-spin', 'poke', 'drag-release',
+      'double-blink', 'curiosity', 'look-around', 'rock', 'little-hop', 'tilted-spin', 'poke', 'drag-release',
     ]);
+    // body-flex was removed (#134): its tuning is rejected like any unknown clip.
+    expect(() => parseTuning('{"body-flex": {}}')).toThrow(/Unknown Kettle clip/);
   });
 
   it('play on the 12 fps grid and start and end on the neutral pose, at default and tuned values', () => {
@@ -45,6 +56,8 @@ describe('clips', () => {
         expect(isNeutral(clip.frames.at(-1)!), `${definition.id} last exposure`).toBe(true);
         // Every clip actually moves.
         expect(clip.frames.some((frame) => !isNeutral(frame, 1e-3)), definition.id).toBe(true);
+        // One body per exposure: no echo (multiple-image) channel in any pose, whatever the channel list says.
+        for (const frame of clip.frames) expect(Object.keys(frame).filter((key) => /echo/i.test(key)), definition.id).toEqual([]);
       }
     }
   });
@@ -59,6 +72,110 @@ describe('clips', () => {
     // The module's own tuning.json is in that same format, unchanged by parsing.
     expect(parseTuning(JSON.parse(JSON.stringify(DEFAULT_TUNING)))).toEqual(DEFAULT_TUNING);
     expect(() => parseTuning('{"little-hops": {}}')).toThrow(/Unknown Kettle clip/);
+  });
+});
+
+/** The tuned values the maintainer approved in "Decisions, round 2" on #134, verbatim. */
+const DECIDED = `{
+  "double-blink": { "timing": { "lead": 1, "shut": 2, "gap": 2, "shut2": 2, "pop": 1, "settle": 1 }, "amount": { "pop": 0.1, "squash": 0.01 } },
+  "rock": { "timing": { "lead": 2, "swing": 2, "back": 3, "decay": 2, "settle": 2 }, "amount": { "swing": 20, "bend": 0.07, "lag": 0.04, "decay": 0.6 } },
+  "look-around": { "timing": { "lead": 1, "follow": 2, "hold": 7, "settle": 8 }, "amount": { "gaze": 0.9, "turn": 24, "lean": 4, "stretch": 0.12, "lag": 0.02 } },
+  "tilted-spin": { "timing": { "windup": 3, "spin": 5, "land": 2, "proud": 1, "settle": 8 }, "amount": { "counter": 35, "tilt": 11, "height": 0.4, "twist": 28, "squash": 0.22, "overshoot": 7 } },
+  "curiosity": { "timing": { "dip": 3, "pop": 2, "hold": 6, "lean": 4, "hold2": 7, "back": 3, "settle": 4 }, "amount": { "tilt": 17, "bend": 0.07, "turn": 10, "bigEye": 0, "squint": 0.3, "leanIn": 11 } },
+  "poke": { "timing": { "hit": 2, "surprise": 4, "shake": 1, "settle": 2 }, "amount": { "squash": 0.1, "recoil": 15, "surprise": 0.38, "hop": 0.25 } }
+}`;
+
+/** Each exposure's largest body change, as a share of that channel's travel over the whole clip. */
+function bodySteps(frames: Pose[]): number[] {
+  const travel = (channel: (typeof BODY_CHANNELS)[number]) =>
+    Math.max(...frames.map((f) => f[channel])) - Math.min(...frames.map((f) => f[channel]));
+  const moving = BODY_CHANNELS.filter((channel) => travel(channel) > 1e-9);
+  return frames.map((frame, i) =>
+    i === 0 ? 0 : Math.max(...moving.map((channel) => Math.abs(frame[channel] - frames[i - 1]![channel]) / travel(channel))),
+  );
+}
+
+/** Twice the signed area of each triangle of an eye recess (centre fan and ring strips). */
+function recessAreas(shape: EyeShape, side: -1 | 1): number[] {
+  const { center, rings } = recessRings(shape, side);
+  const cross = (a: [number, number], b: [number, number], c: [number, number]) =>
+    (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+  const areas: number[] = [];
+  const n = rings[0]!.pts.length;
+  for (let j = 0; j < n; j++) areas.push(cross(center, rings[0]!.pts[j]!, rings[0]!.pts[(j + 1) % n]!));
+  for (let r = 1; r < rings.length; r++) {
+    const inner = rings[r - 1]!.pts, outer = rings[r]!.pts;
+    for (let j = 0; j < n; j++) {
+      const k = (j + 1) % n;
+      areas.push(cross(inner[j]!, outer[j]!, outer[k]!), cross(inner[j]!, outer[k]!, inner[k]!));
+    }
+  }
+  return areas;
+}
+
+/** Triangles that are inverted, collapsed (zero area) or not a number, against the rest orientation. */
+function badTriangles(shape: EyeShape, side: -1 | 1): number {
+  const sign = Math.sign(recessAreas(eyeShape(neutralPose(), 0), -1)[0]!);
+  // Smaller than any real triangle: the thinnest blink still makes areas above 1e-12.
+  return recessAreas(shape, side).filter((area) => !(area * sign > 1e-15)).length;
+}
+
+/** Every eye of every exposure of a clip, as `[label, shape, side]`. */
+function clipEyes(id: string, tuning?: Partial<ClipTuning>): Array<[string, EyeShape, -1 | 1]> {
+  return createClip(id, tuning).frames.flatMap((pose, frame) =>
+    ([0, 1] as const).map((eye): [string, EyeShape, -1 | 1] => [`exposure ${frame} eye ${eye}`, eyeShape(pose, eye), eye === 0 ? -1 : 1]),
+  );
+}
+
+describe('motion rules (#134)', () => {
+  it('ship the tuned values the maintainer approved', () => {
+    const decided = JSON.parse(DECIDED) as Record<string, ClipTuning>;
+    for (const [id, values] of Object.entries(decided)) {
+      expect(DEFAULT_TUNING[id], id).toEqual(values);
+      // Inside the declared ranges: parsing does not clamp them.
+      expect(parseTuning({ [id]: values })[id], id).toEqual(values);
+    }
+  });
+
+  it('ease curiosity out of its held pose: no return step larger than its lead-in', () => {
+    const frames = createClip('curiosity').frames;
+    const steps = bodySteps(frames);
+    const same = (a: Pose, b: Pose) => BODY_CHANNELS.every((channel) => a[channel] === b[channel]);
+    // The first held pose ends the lead-in; everything after it is the return.
+    const holdStart = frames.findIndex((frame, i) => i > 0 && !isNeutral(frame) && same(frame, frames[i + 1]!));
+    let holdEnd = holdStart;
+    while (same(frames[holdEnd]!, frames[holdEnd + 1]!)) holdEnd++;
+    const leadIn = Math.max(...steps.slice(1, holdStart + 1));
+    const back = Math.max(...steps.slice(holdEnd + 1));
+    expect(holdStart).toBeGreaterThan(0);
+    expect(back).toBeLessThan(leadIn);
+  });
+
+  it('keep every eye recess unfolded in every exposure of every clip, at default and extreme tuning', () => {
+    for (const definition of CLIP_DEFINITIONS) {
+      const tunings: Array<[string, Partial<ClipTuning> | undefined]> = [['default', undefined]];
+      for (const [name, range] of Object.entries(definition.amount)) {
+        tunings.push([`${name} = ${range.min}`, { amount: { [name]: range.min } }], [`${name} = ${range.max}`, { amount: { [name]: range.max } }]);
+      }
+      for (const [label, tuning] of tunings) {
+        for (const [where, shape, side] of clipEyes(definition.id, tuning)) {
+          expect(badTriangles(shape, side), `${definition.id} (${label}) ${where}`).toBe(0);
+        }
+      }
+    }
+  });
+
+  it('keep every eye recess unfolded at the extremes of every eye-shape parameter', () => {
+    // Each parameter at its clamp or largest reachable value, in every combination.
+    const extremes = {
+      open: [0.028, 1, 1.5], size: [-0.6, 0, 1.1], squeeze: [-0.6, 0, 0.6], tilt: [-30, 0, 30],
+      lid: [0, 0.5, 1], slant: [-45, 0, 45], smile: [0, 0.6, 1.2],
+    };
+    let shapes: EyeShape[] = [{ open: 1, size: 0, squeeze: 0, tilt: 0, lid: 0, slant: 0, smile: 0, gx: 0, gy: 0 }];
+    for (const [name, values] of Object.entries(extremes)) shapes = shapes.flatMap((shape) => values.map((value) => ({ ...shape, [name]: value })));
+    expect(shapes).toHaveLength(3 ** 7);
+    const bad = shapes.flatMap((shape) => ([-1, 1] as const).filter((side) => badTriangles(shape, side) > 0).map((side) => ({ ...shape, side })));
+    expect(bad.slice(0, 3)).toEqual([]);
   });
 });
 
@@ -111,5 +228,43 @@ describe('drag spring', () => {
     const lively = springBack(90, 10, resolveTuning('drag-release').amount.springOvershoot!);
     expect(Math.min(...lively)).toBeLessThan(0);
     expect(lively.at(-1)).toBe(0);
+  });
+});
+
+describe('eye colour', () => {
+  /** OKLCH of the darkest floor point the rig draws over every exposure of a few clips. */
+  function darkestFloor(look?: { color: string; minLight: number }) {
+    const rig = createEyeRig(look);
+    let darkest = { l: Infinity, c: 0, h: 0 };
+    for (const id of ['curiosity', 'tilted-spin', 'look-around']) {
+      for (const pose of createClip(id).frames) {
+        rig.apply(pose);
+        for (const mesh of rig.group.children as Array<Mesh<BufferGeometry>>) {
+          const colors = mesh.geometry.attributes.color!;
+          // The floor is the centre and the first four rings of 96 points.
+          for (let i = 0; i <= 4 * 96; i++) {
+            const point = linearToOklch([colors.getX(i), colors.getY(i), colors.getZ(i)]);
+            if (point.l < darkest.l) darkest = point;
+          }
+        }
+      }
+    }
+    rig.dispose();
+    return darkest;
+  }
+
+  it('shades the eye floor in lightness only: its darkest point keeps the configured hue and chroma', () => {
+    expect(DEFAULT_EYE_LOOK.color).toBe(BRAND_COLORS.accent);
+    // Colours sRGB can hold at that lightness (very saturated colours shaded far darker must lose chroma).
+    for (const look of [DEFAULT_EYE_LOOK, { color: '#e0405a', minLight: 0.8 }, { color: '#ffd166', minLight: 0.8 }]) {
+      const target = linearToOklch(hexToLinear(look.color));
+      const darkest = darkestFloor(look);
+      const hue = Math.abs(((darkest.h - target.h + 3 * Math.PI) % (2 * Math.PI)) - Math.PI) * (180 / Math.PI);
+      expect(hue, `${look.color} hue shift (degrees)`).toBeLessThan(1);
+      expect(Math.abs(darkest.c - target.c) / target.c, `${look.color} chroma change`).toBeLessThan(0.03);
+      // Darker than the colour itself, never below the configured minimum light.
+      expect(darkest.l).toBeLessThan(target.l);
+      expect(darkest.l).toBeGreaterThanOrEqual(target.l * look.minLight - 1e-6);
+    }
   });
 });

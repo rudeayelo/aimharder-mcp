@@ -17,15 +17,16 @@ import {
   WebGLRenderer,
 } from 'three';
 import { KETTLE_FPS, type Clip, type ClipTuning } from './clip.ts';
+import { hexToLinear } from './color.ts';
 import { composePose } from './compose.ts';
 import { bakeSplats, placeBody, supportSamples, type Matrix3 } from './deform.ts';
-import { createEyeRig, type EyeRig } from './eyes.ts';
+import { DEFAULT_EYE_LOOK, createEyeRig, type EyeLook, type EyeRig } from './eyes.ts';
 import { FollowLayer, type Motion } from './follow.ts';
 import { GAZE_FOLLOW, definitionOf } from './library.ts';
 import { loadKettleBody } from './load.ts';
 import type { ModelSplats } from './model.ts';
 import { ClipPlayer, type PlayOptions } from './player.ts';
-import { BODY_CHANNELS, CHANNELS, EYE_CHANNELS, lerpPose, neutralPose, type Pose } from './pose.ts';
+import { BODY_CHANNELS, CHANNELS, EYE_CHANNELS, neutralPose, type Pose } from './pose.ts';
 import { SplatLayer, colorTexture } from './splat-mesh.ts';
 import { springBack } from './spring.ts';
 import { DEFAULT_TUNING, createClip, parseTuning, resolveTuning, type Tuning } from './tuning.ts';
@@ -57,7 +58,7 @@ export interface Interactions {
 export interface MotionTiming {
   /** Gaze following on the 12 fps grid, or at display rate. */
   gaze: Motion;
-  /** Drag rotation on the 12 fps grid, or at display rate (the default: direct manipulation never lags). */
+  /** Drag rotation on the 12 fps grid (the default), or at display rate. */
   drag: Motion;
 }
 
@@ -67,7 +68,7 @@ export interface KettleOptions {
   asset: string | URL;
   /** Static image shown while loading and when WebGL is unavailable. */
   poster?: string;
-  /** Sets the default interactions for a product surface. */
+  /** Sets the defaults of a product surface (`SURFACES`): interactions, timing, poke clips and entrance. */
   surface?: Surface;
   interactions?: Partial<Interactions>;
   timing?: Partial<MotionTiming>;
@@ -76,8 +77,15 @@ export interface KettleOptions {
   /** Overrides of `tuning.json`, in the same format. */
   tuning?: Tuning;
   camera?: CameraPreset | Partial<CameraView>;
-  /** Clips a click or tap plays, in turn. Defaults to the poke reaction. */
+  /** Clips a click or tap plays, in turn. Defaults to the surface's. */
   pokeClips?: string[];
+  /**
+   * Emote played once, the first time the Kettle is seen (then it stays still); null for none. Defaults to the surface's.
+   * A clip the page plays before that replaces it; reduced motion is read when the Kettle is first seen.
+   */
+  entrance?: string | null;
+  /** Eye floor colour and its minimum light; defaults to the brand accent (`DEFAULT_EYE_LOOK`). */
+  eyes?: Partial<EyeLook>;
   /** Ground shadow under the body. */
   shadow?: boolean;
   /** Maximum device pixel ratio. */
@@ -131,6 +139,8 @@ export interface Kettle {
   /** Replaces tuned values (same format as `tuning.json`); a playing clip is rebuilt in place. */
   setTuning(tuning: Tuning): void;
   setCamera(view: CameraPreset | Partial<CameraView>): void;
+  /** Changes the eye floor colour or its minimum light. */
+  setEyes(look: Partial<EyeLook>): void;
   subscribe(listener: (state: KettleState) => void): () => void;
   destroy(): void;
 }
@@ -143,11 +153,30 @@ export const CAMERA_PRESETS: Record<CameraPreset, CameraView> = {
   stage: { azimuth: 14, elevation: 5, distance: 4.2, targetY: 0.7, fov: 32 },
 };
 
-const SURFACE_INTERACTIONS: Record<Surface, Interactions> = {
-  landing: { gaze: true, poke: true, drag: false },
-  footer: { gaze: true, poke: true, drag: false },
-  portal: { gaze: false, poke: false, drag: false },
-  none: { gaze: false, poke: false, drag: false },
+export interface SurfaceDefaults {
+  interactions: Interactions;
+  timing: MotionTiming;
+  /** Clips a click or tap plays, in turn. */
+  pokeClips: readonly string[];
+  /** Emote played once, the first time the Kettle is seen; then it stays still. */
+  entrance: string | null;
+}
+
+/** Gaze following and dragging step on the 12 fps grid, like character motion. */
+const TIMING: MotionTiming = { gaze: 'stepped', drag: 'stepped' };
+
+/**
+ * Defaults per product surface. Provisional (#134): proposed, not yet confirmed
+ * by the maintainer, and kept here as configuration so they are cheap to change.
+ */
+export const SURFACES: Readonly<Record<Surface, Readonly<SurfaceDefaults>>> = {
+  // Landing hero: the only surface that drags to turn.
+  landing: { interactions: { gaze: true, poke: true, drag: true }, timing: TIMING, pokeClips: ['poke', 'little-hop'], entrance: null },
+  // Footer: one emote when it comes into view, then still (no idle scheduler).
+  footer: { interactions: { gaze: true, poke: true, drag: false }, timing: TIMING, pokeClips: ['poke', 'little-hop'], entrance: 'double-blink' },
+  // Portal: no free interaction; the page drives `setGaze` and `play`.
+  portal: { interactions: { gaze: false, poke: false, drag: false }, timing: TIMING, pokeClips: ['poke'], entrance: null },
+  none: { interactions: { gaze: false, poke: false, drag: false }, timing: TIMING, pokeClips: ['poke'], entrance: null },
 };
 
 /** Model-space point between the eyes, used to aim the gaze at the pointer. */
@@ -156,7 +185,6 @@ const DRAG_THRESHOLD = 6;
 const DRAG_DEGREES_PER_PIXEL = 0.6;
 /** Release speed is measured over this many ms before the release. */
 const RELEASE_WINDOW = 250;
-const ECHO_OPACITY = [0.45, 0.25];
 
 function shadowTexture(): DataTexture {
   const size = 64, data = new Uint8Array(size * size * 4);
@@ -193,13 +221,18 @@ export function createKettle(options: KettleOptions): Kettle {
   const reducedQuery = matchMedia('(prefers-reduced-motion: reduce)');
   let reducedSetting = options.reducedMotion ?? 'auto';
   let tuning: Tuning = { ...DEFAULT_TUNING, ...(options.tuning ? parseTuning(options.tuning) : {}) };
-  const interactions: Interactions = { ...SURFACE_INTERACTIONS[options.surface ?? 'none'], ...options.interactions };
-  const timing: MotionTiming = { gaze: 'stepped', drag: 'smooth', ...options.timing };
-  const pokeClips = options.pokeClips?.length ? options.pokeClips : ['poke'];
+  const surface = SURFACES[options.surface ?? 'none'];
+  const interactions: Interactions = { ...surface.interactions, ...options.interactions };
+  const timing: MotionTiming = { ...surface.timing, ...options.timing };
+  const pokeClips = options.pokeClips?.length ? options.pokeClips : surface.pokeClips;
+  const entrance = options.entrance === undefined ? surface.entrance : options.entrance;
+  /** The entrance waits for the first time the Kettle can be seen; a page `play()` before that cancels it. */
+  let entrancePending = entrance !== null;
   let pokeIndex = 0;
   const player = new ClipPlayer();
   const follow = new FollowLayer(resolveTuning(GAZE_FOLLOW.id, tuning[GAZE_FOLLOW.id]));
   const clipCache = new Map<string, Clip>();
+  let eyeLook: EyeLook = { ...DEFAULT_EYE_LOOK, ...options.eyes };
   const clipFor = (id: string): Clip => {
     let clip = clipCache.get(id);
     if (!clip) clipCache.set(id, (clip = createClip(id, tuning[id])));
@@ -236,8 +269,6 @@ export function createKettle(options: KettleOptions): Kettle {
   const body = new Group(); // rigid part of the pose
   scene.add(spin);
   spin.add(body);
-  const echoGroups = [new Group(), new Group()];
-  for (const group of echoGroups) spin.add(group);
   let shadow: Mesh<CircleGeometry, MeshBasicMaterial> | null = null;
   if (options.shadow !== false) {
     shadow = new Mesh(new CircleGeometry(0.42, 48), new MeshBasicMaterial({ map: shadowTexture(), transparent: true, depthWrite: false, opacity: 0.3 }));
@@ -252,11 +283,9 @@ export function createKettle(options: KettleOptions): Kettle {
   let model: ModelSplats | null = null;
   let support: Float32Array = new Float32Array();
   let main: SplatLayer | null = null;
-  const echoes: SplatLayer[] = [];
   let eyes: EyeRig | null = null;
   let bakedCenters = new Float32Array(), bakedCov = new Float32Array();
   let shown: Pose | null = null;
-  const echoShown: Array<string> = ['', ''];
   let raf = 0;
   let dirty = true;
   let suspendedPlayback = false;
@@ -343,27 +372,6 @@ export function createKettle(options: KettleOptions): Kettle {
         shadow.material.opacity = 0.3 * Math.max(0.25, 1 - lift * 1.2);
       }
     }
-    // Multiple-image smear: in-between images from the previous exposure to
-    // this one, drawn behind the body and fainter the further back they are.
-    const count = player.clip && !reduced() ? Math.min(2, p.echo) : 0;
-    const previous = player.frame > 0 ? player.poseAt(player.frame - 1) : null;
-    echoes.forEach((layer, index) => {
-      const group = echoGroups[index]!;
-      if (index >= count || !previous) {
-        group.visible = false;
-        echoShown[index] = '';
-        return;
-      }
-      group.visible = true;
-      const key = `${player.clip!.id}:${player.frame}:${count}:${index}`;
-      if (echoShown[index] === key) return;
-      echoShown[index] = key;
-      const ghost = lerpPose(previous, player.pose(), 1 - (index + 1) / (count + 1));
-      bakeSplats(model!, ghost, bakedCenters, bakedCov);
-      layer.setData(bakedCenters, bakedCov);
-      const placement = placeBody(ghost, support);
-      setRotation(group, placement.rotation, placement.position);
-    });
     shown = { ...p };
     state.pose = shown;
     dirty = true;
@@ -374,7 +382,6 @@ export function createKettle(options: KettleOptions): Kettle {
     spin.rotation.y = (dragTurn * Math.PI) / 180;
     scene.updateMatrixWorld();
     main.sort(camera);
-    for (const [index, layer] of echoes.entries()) if (echoGroups[index]!.visible) layer.sort(camera);
     renderer.render(scene, camera);
     state.renders++;
     dirty = false;
@@ -407,6 +414,10 @@ export function createKettle(options: KettleOptions): Kettle {
     suspendedPlayback = false;
     suspendedAt = null;
     dirty = true;
+    if (entrancePending) {
+      entrancePending = false;
+      if (entrance) void startClip(entrance);
+    }
     wake();
   }
   /** Ends the clip (settling its promise) when the Kettle can no longer animate. */
@@ -482,13 +493,7 @@ export function createKettle(options: KettleOptions): Kettle {
       colors = colorTexture(model.colors, model.count);
       main = new SplatLayer(model.count, colors);
       body.add(main.mesh);
-      for (const [index, group] of echoGroups.entries()) {
-        const layer = new SplatLayer(model.count, colors, ECHO_OPACITY[index]);
-        echoes.push(layer);
-        group.add(layer.mesh);
-        group.visible = false;
-      }
-      eyes = createEyeRig();
+      eyes = createEyeRig(eyeLook);
       body.add(eyes.group);
       state.status = 'ready';
       resize();
@@ -519,7 +524,6 @@ export function createKettle(options: KettleOptions): Kettle {
     camera.updateProjectionMatrix();
     const w = Math.max(1, Math.round(width * ratio)), h = Math.max(1, Math.round(height * ratio));
     main?.setViewport(w, h);
-    for (const layer of echoes) layer.setViewport(w, h);
     dirty = true;
     if (canRun()) render();
   }
@@ -569,14 +573,23 @@ export function createKettle(options: KettleOptions): Kettle {
     wake();
   };
 
-  /** Springs the drag turn back to the front; only a real release (`fling`) may play the reaction. */
-  const startSpring = (from: number, speed: number, fling: boolean) => {
+  /**
+   * A stepped return from `from`, the turn on screen: it stays for the rest of
+   * the exposure already drawn, then moves one value per exposure.
+   */
+  const springFrom = (from: number, steps: number, overshoot: number) => ({
+    start: suspended() || lastExposure < 0 ? null : lastExposure,
+    shown: 0,
+    values: [from, ...springBack(from, steps, overshoot)],
+  });
+
+  /** Springs the turn on screen back to the front; only a real release (`fling`) may play the reaction. */
+  const startSpring = (speed: number, fling: boolean) => {
     const reaction = resolveTuning('drag-release', tuning['drag-release']);
-    const turn = ((((from + 180) % 360) + 360) % 360) - 180;
+    // The same angle, written within ±180°.
+    dragTurn = ((((dragTurn + 180) % 360) + 360) % 360) - 180;
     // Under reduced motion the turn eases straight back, never past the front.
-    const values = springBack(turn, reaction.timing.springBack!, reduced() ? 0 : reaction.amount.springOvershoot!);
-    dragTurn = turn;
-    spring = { start: suspended() ? null : exposureAt(performance.now()), shown: -1, values };
+    spring = springFrom(dragTurn, reaction.timing.springBack!, reduced() ? 0 : reaction.amount.springOvershoot!);
     const { minSpeed, fullSpeed } = reaction.amount;
     if (fling && !reduced() && Math.abs(speed) >= minSpeed!) {
       const intensity = Math.max(0.35, Math.min(1, (Math.abs(speed) - minSpeed!) / Math.max(1, fullSpeed! - minSpeed!)));
@@ -629,7 +642,8 @@ export function createKettle(options: KettleOptions): Kettle {
     pointer = null;
     if (canvas?.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
     if (ended.dragging) {
-      startSpring(dragTarget, kind === 'release' ? releaseSpeed(ended.samples, event.timeStamp) : 0, kind === 'release');
+      // From the turn on screen: with stepped timing the latest pointer target may not have been drawn.
+      startSpring(kind === 'release' ? releaseSpeed(ended.samples, event.timeStamp) : 0, kind === 'release');
     } else if (kind === 'release' && interactions.poke && canvas) {
       // Captured pointers report their release anywhere; only a release over the Kettle pokes.
       const rect = canvas.getBoundingClientRect();
@@ -667,6 +681,10 @@ export function createKettle(options: KettleOptions): Kettle {
 
   // ---- Public API ----
   function play(id: string, playOptions: PlayOptions = {}): Promise<void> {
+    entrancePending = false;
+    return startClip(id, playOptions);
+  }
+  function startClip(id: string, playOptions: PlayOptions = {}): Promise<void> {
     const definition = definitionOf(id);
     // Without WebGL (or after teardown) nothing animates: settle at once.
     if (destroyed || state.status === 'poster') return Promise.resolve();
@@ -686,7 +704,6 @@ export function createKettle(options: KettleOptions): Kettle {
         player.pause();
         suspendedPlayback = true;
       }
-      echoShown.fill('');
       wake();
       emit();
     });
@@ -756,7 +773,7 @@ export function createKettle(options: KettleOptions): Kettle {
       // A running spring may overshoot; under reduced motion it becomes a plain return from where it is.
       if (spring && reduced()) {
         const reaction = resolveTuning('drag-release', tuning['drag-release']);
-        spring = { start: suspended() ? null : exposureAt(performance.now()), shown: -1, values: springBack(dragTurn, reaction.timing.springBack!, 0) };
+        spring = springFrom(dragTurn, reaction.timing.springBack!, 0);
       }
       // Re-pose at once so no frame shows the previous setting's motion.
       if (canRun()) {
@@ -778,13 +795,23 @@ export function createKettle(options: KettleOptions): Kettle {
         current.frames = rebuilt.frames;
         player.seek(Math.min(frame, rebuilt.frames.length - 1));
         if (state.playing) player.resume(performance.now());
-        echoShown.fill('');
       }
       shown = null;
       wake();
       emit();
     },
     setCamera,
+    setEyes(look) {
+      const next = { ...eyeLook, ...look };
+      hexToLinear(next.color); // throws on anything but #rrggbb, before changing anything
+      eyes?.setLook(next);
+      eyeLook = next;
+      shown = null;
+      if (canRun()) {
+        applyPose(composeAt(null));
+        render();
+      }
+    },
     subscribe(listener) {
       listeners.add(listener);
       return () => listeners.delete(listener);
@@ -803,7 +830,6 @@ export function createKettle(options: KettleOptions): Kettle {
       document.documentElement.removeEventListener('pointerleave', onWindowLeave);
       window.removeEventListener('blur', onWindowLeave);
       main?.dispose();
-      for (const layer of echoes) layer.dispose();
       eyes?.dispose();
       colors?.dispose();
       shadow?.geometry.dispose();

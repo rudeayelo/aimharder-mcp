@@ -38,7 +38,6 @@ uniform sampler2D covA;
 uniform sampler2D covB;
 uniform sampler2D colors;
 uniform vec2 viewport;
-uniform float opacity;
 out vec4 vColor;
 out vec2 vPosition;
 
@@ -74,7 +73,7 @@ void main() {
   vec2 pixels = position.x * major + position.y * minor;
   gl_Position = clip + vec4(pixels * 2.0 / viewport * clip.w, 0.0, 0.0);
   vPosition = position.xy;
-  vColor = vec4(color.rgb, color.a * opacity);
+  vColor = color;
 }
 `;
 
@@ -112,7 +111,7 @@ export function colorTexture(colors: Uint8Array, count: number): DataTexture {
   return texture;
 }
 
-/** One drawable copy of the body: the body itself, or a trailing echo image. */
+/** The drawable body: its splats, their data textures and their depth order. */
 export class SplatLayer {
   readonly mesh: Mesh<InstancedBufferGeometry, ShaderMaterial>;
   readonly centers: Float32Array;
@@ -132,7 +131,7 @@ export class SplatLayer {
 
   readonly count: number;
 
-  constructor(count: number, colors: DataTexture, opacity = 1) {
+  constructor(count: number, colors: DataTexture) {
     this.count = count;
     const height = Math.ceil(count / WIDTH);
     this.centers = new Float32Array(count * 3);
@@ -157,7 +156,6 @@ export class SplatLayer {
         covB: { value: this.covBTex },
         colors: { value: colors },
         viewport: { value: new Vector2(1, 1) },
-        opacity: { value: opacity },
       },
       transparent: true,
       // The (major, minor) basis can mirror the quad, so both windings must draw.
@@ -173,10 +171,6 @@ export class SplatLayer {
     this.mesh = new Mesh(geometry, material);
     this.mesh.frustumCulled = false;
     this.mesh.renderOrder = 1;
-  }
-
-  set opacity(value: number) {
-    this.mesh.material.uniforms.opacity!.value = value;
   }
 
   /** Uploads deformed centres and covariances (upper triangles). */

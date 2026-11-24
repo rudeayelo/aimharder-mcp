@@ -5,7 +5,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { chromium, type Browser, type BrowserContextOptions, type Page } from 'playwright-core';
 import { startLabServer, type LabServer } from '../lab/server.ts';
 import { CHROMIUM_ARGS, chromiumPath } from '../lab/chromium.ts';
-import { parseTuning, type KettleState } from '../src/index.ts';
+import { createClip, parseTuning, resolveTuning, type KettleState } from '../src/index.ts';
+import { springBack } from '../src/spring.ts';
 import { kettleBlueShare, readPng } from './png.ts';
 
 /** The policy the module must run under, written out here rather than read from the server. */
@@ -158,7 +159,7 @@ describe('Kettle lab in Chromium', () => {
     // The guide cue plays curiosity as soon as the portal Kettle loads, below the fold.
     await until(page, "s.clip === 'curiosity'", 'portalKettle');
     expect((await state(page, 'portalKettle')).visible).toBe(false);
-    // Longer than the whole curiosity clip (2.25 s): it must not run while unseen.
+    // Longer than the whole curiosity clip (2.6 s): it must not run while unseen.
     await page.waitForTimeout(3000);
     await page.evaluate(() => {
       (window as any).seen = [];
@@ -207,7 +208,7 @@ describe('Kettle lab in Chromium', () => {
     await page.context().close();
   });
 
-  it('copies tuned values as JSON and applies them back to the same clip', async () => {
+  it('copies tuned values and the eye colour as JSON and applies them back', async () => {
     const { page } = await open('/#viewer');
     await ready(page);
     await page.click('[data-clip="little-hop"]');
@@ -221,15 +222,88 @@ describe('Kettle lab in Chromium', () => {
     await height.dispatchEvent('change');
     const tunedLift = await apexLift();
     expect(tunedLift).toBeGreaterThan(defaultLift);
+    // The eye floor colour and minimum light travel in the same JSON.
+    await page.fill('input[aria-label="Eye colour"]', '#3366ff');
+    await page.fill('input[aria-label="Eye floor minimum light"]', '0.6');
     await page.getByRole('button', { name: 'Copy as JSON' }).click();
     const copied = await page.locator('textarea.json').inputValue();
-    // The copied text is the module's own tuning format.
-    expect(parseTuning(copied)['little-hop']!.amount.height).toBe(0.8);
+    // The clip entry is the module's own tuning format; `eyes` is the module's `eyes` option.
+    const { eyes, ...clips } = JSON.parse(copied);
+    expect(parseTuning(clips)['little-hop']!.amount.height).toBe(0.8);
+    expect(eyes).toEqual({ color: '#3366ff', minLight: 0.6 });
     await page.getByRole('button', { name: 'Reset to module values' }).click();
+    await page.getByRole('button', { name: 'Brand accent' }).click();
     expect(await apexLift()).toBeCloseTo(defaultLift, 6);
+    expect(await page.inputValue('input[aria-label="Eye colour"]')).toBe('#ffab62');
     await page.locator('textarea.json').fill(copied);
     await page.getByRole('button', { name: 'Apply pasted JSON' }).click();
     expect(await apexLift()).toBeCloseTo(tunedLift, 6);
+    expect(await page.inputValue('input[aria-label="Eye colour"]')).toBe('#3366ff');
+    expect(await page.inputValue('input[aria-label="Eye floor minimum light"]')).toBe('0.6');
+    await page.context().close();
+  });
+
+  it('opens on saved lab state that names a removed clip, keeping the other saved values', async () => {
+    const { page, errors } = await open('/#viewer');
+    await ready(page);
+    const hopFrames = async () => {
+      await page.evaluate(() => { const k = (window as any).kettle; void k.play('little-hop'); k.pause(); });
+      return (await state(page)).frames;
+    };
+    const shipped = await hopFrames();
+    // Saved before body-flex was removed (#134): selected, and tuned next to a clip whose defaults did not change.
+    await page.evaluate(() => {
+      // A format-1 lab (#146) kept no version and no defaults per entry.
+      for (const key of ['version', 'tuning-base']) localStorage.removeItem(`kettle-lab:${key}`);
+      localStorage.setItem('kettle-lab:selected', JSON.stringify('body-flex'));
+      localStorage.setItem('kettle-lab:tuning', JSON.stringify({ 'body-flex': { timing: {}, amount: {} }, 'little-hop': { timing: { settle: 8 }, amount: {} } }));
+    });
+    await page.reload();
+    await ready(page);
+    expect(await page.getAttribute('[data-clip="double-blink"]', 'aria-pressed')).toBe('true');
+    expect(await hopFrames()).toBe(shipped + 6);
+    expect(errors).toEqual([]);
+    await page.context().close();
+  });
+
+  it('drops saved tuning made against older module defaults, keeping marks and notes', async () => {
+    const { page, errors } = await open('/#viewer');
+    await ready(page);
+    // Saved by the lab before the round-2 defaults: curiosity's old one-exposure snap into the lean.
+    await page.evaluate(() => {
+      for (const key of ['version', 'tuning-base']) localStorage.removeItem(`kettle-lab:${key}`);
+      localStorage.setItem('kettle-lab:tuning', JSON.stringify({ curiosity: { timing: { lean: 1 }, amount: {} } }));
+      localStorage.setItem('kettle-lab:marks', JSON.stringify({ curiosity: { mark: 'adjust', note: 'lean snaps' } }));
+    });
+    await page.reload();
+    await ready(page);
+    await page.evaluate(() => { const k = (window as any).kettle; void k.play('curiosity'); k.pause(); });
+    expect((await state(page)).frames).toBe(createClip('curiosity').frames.length);
+    expect(await page.inputValue('select[aria-label="Decision for Curiosity"]')).toBe('adjust');
+    expect(await page.inputValue('[aria-label="Note for Curiosity"]')).toBe('lean snaps');
+    expect(errors).toEqual([]);
+    await page.context().close();
+  });
+
+  it('rejects pasted JSON that is not an object, with the module tuning error', async () => {
+    const { page } = await open('/#viewer');
+    await ready(page);
+    for (const payload of ['[]', 'true', '42', 'null']) {
+      await page.locator('textarea.json').fill(payload);
+      await page.getByRole('button', { name: 'Apply pasted JSON' }).click();
+      expect(await page.locator('.tuning p[role="status"]').textContent(), payload).toBe('Not applied: Tuning must be a JSON object keyed by clip id');
+    }
+    await page.context().close();
+  });
+
+  it('keeps an imported floor minimum light the slider cannot show when only the eye colour changes', async () => {
+    const { page } = await open('/#viewer');
+    await ready(page);
+    await page.locator('textarea.json').fill(JSON.stringify({ eyes: { color: '#ffab62', minLight: 0.813 } }));
+    await page.getByRole('button', { name: 'Apply pasted JSON' }).click();
+    await page.fill('input[aria-label="Eye colour"]', '#3366ff');
+    await page.getByRole('button', { name: 'Copy as JSON' }).click();
+    expect(JSON.parse(await page.locator('textarea.json').inputValue()).eyes).toEqual({ color: '#3366ff', minLight: 0.813 });
     await page.context().close();
   });
 
@@ -356,7 +430,7 @@ describe('Kettle interaction in Chromium', () => {
     await ready(page);
     await page.check('#reduced');
     await until(page, 's.reducedMotion && s.pose.turn === 0');
-    for (const id of ['little-hop', 'tilted-spin', 'body-flex', 'rock', 'drag-release']) {
+    for (const id of ['little-hop', 'tilted-spin', 'rock', 'drag-release']) {
       await page.evaluate((clip) => (window as any).kettle.play(clip), id);
       const s = await state(page);
       expect(s.skipped).toBe(id);
@@ -517,6 +591,152 @@ describe('Kettle interaction in Chromium', () => {
     expect(turns.length).toBeGreaterThan(2);
     expect(turns.every((turn) => turn >= 0)).toBe(true);
     for (let i = 1; i < turns.length; i++) expect(turns[i]!).toBeLessThanOrEqual(turns[i - 1]!);
+    await page.context().close();
+  });
+
+  it('plays the footer entrance once when first seen, then stays still', async () => {
+    const { page, errors } = await open('/harness.html?surface=footer');
+    await ready(page);
+    await until(page, "s.clip === 'double-blink' && s.playing");
+    await until(page, '!s.playing');
+    const ended = await state(page);
+    expect(ended.frame).toBe(ended.frames - 1);
+    // Scrolled away and back: no second entrance, no idle emotes.
+    await page.evaluate(() => ((document.querySelector('#stage') as HTMLElement).style.transform = 'translateY(-5000px)'));
+    await until(page, '!s.visible');
+    await page.evaluate(() => ((document.querySelector('#stage') as HTMLElement).style.transform = ''));
+    await until(page, 's.visible');
+    await frames(page, 6);
+    const back = await state(page);
+    expect([back.playing, back.frame]).toEqual([false, ended.frame]);
+    expect(errors).toEqual([]);
+    await page.context().close();
+  });
+
+  /**
+   * The landing harness on a virtual 60 Hz display: animation frames run only
+   * when the test steps them, and every turn change is recorded with the
+   * exposure of the frame that drew it.
+   */
+  async function virtualDisplay() {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 360 } });
+    await ctx.addInitScript(() => {
+      const queue = new Map<number, FrameRequestCallback>();
+      let id = 0;
+      window.requestAnimationFrame = (callback) => (queue.set(++id, callback), id);
+      window.cancelAnimationFrame = (handle) => void queue.delete(handle);
+      (window as any).now = 10_000;
+      (window as any).stepFrame = (now: number) => {
+        (window as any).now = now;
+        const due = [...queue.values()];
+        queue.clear();
+        for (const callback of due) callback(now);
+      };
+    });
+    const page = await ctx.newPage();
+    await page.goto(`${lab.url}/harness.html?surface=landing`);
+    await page.waitForFunction(() => (window as any).kettle?.state?.status === 'ready', null, { polling: 100, timeout: 60_000 });
+    await page.evaluate(() => {
+      (window as any).turns = [];
+      let last = 0;
+      (window as any).kettle.subscribe((s: KettleState) => {
+        if (s.dragTurn !== last) (window as any).turns.push([Math.floor(((window as any).now * 12) / 1000), s.dragTurn]);
+        last = s.dragTurn;
+      });
+    });
+    let now = 10_000;
+    return {
+      ctx,
+      page,
+      /** Runs the next display frame, 1/60 s later. */
+      frame: () => page.evaluate((t) => (window as any).stepFrame(t), (now += 1000 / 60)),
+      /** Whether the next display frame falls in the same exposure as the last one. */
+      midExposure: () => Math.floor(((now + 1000 / 60) * 12) / 1000) === Math.floor((now * 12) / 1000),
+      turns: () => page.evaluate(() => (window as any).turns) as Promise<Array<[number, number]>>,
+    };
+  }
+
+  it('steps a drag on the 12 fps grid by default: the turn changes at most once per exposure', async () => {
+    const { ctx, page, frame, turns } = await virtualDisplay();
+    const centre = await body(page);
+    await page.mouse.move(centre.x - 100, centre.y);
+    await page.mouse.down();
+    // A pointer moving on every display frame for two thirds of a second.
+    for (let x = centre.x - 90; x <= centre.x + 70; x += 4) {
+      await page.mouse.move(x, centre.y);
+      await frame();
+    }
+    expect((await state(page)).dragging).toBe(true);
+    await page.mouse.up();
+    const exposures = (await turns()).map(([exposure]) => exposure);
+    expect(exposures.length).toBeGreaterThan(5);
+    expect(new Set(exposures).size, 'turn changes within one exposure').toBe(exposures.length);
+    await ctx.close();
+  });
+
+  it('springs back from the turn on screen after a release between exposures, one turn change per exposure', async () => {
+    const { ctx, page, frame, turns, midExposure } = await virtualDisplay();
+    const centre = await body(page);
+    await page.mouse.move(centre.x - 100, centre.y);
+    await page.mouse.down();
+    for (let x = centre.x - 90; x <= centre.x; x += 4) {
+      await page.mouse.move(x, centre.y);
+      await frame();
+    }
+    // Stop where the next display frame is still in this exposure.
+    while (!midExposure()) await frame();
+    const shown = (await state(page)).dragTurn;
+    const before = (await turns()).length;
+    // The pointer moves on and is let go before the next exposure is drawn.
+    await page.mouse.move(centre.x + 60, centre.y);
+    await page.mouse.up();
+    for (let i = 0; i < 90; i++) await frame();
+    const all = await turns();
+    expect(new Set(all.map(([exposure]) => exposure)).size, 'turn changes within one exposure').toBe(all.length);
+    const reaction = resolveTuning('drag-release');
+    const expected = springBack(shown, reaction.timing.springBack!, reaction.amount.springOvershoot!);
+    expect(all.slice(before).map(([, turn]) => turn)).toEqual(expected);
+    await ctx.close();
+  });
+
+  it('decides the entrance when the Kettle is first seen, not when it loads', async () => {
+    const reveal = (page: Page) => page.evaluate(() => ((document.querySelector('#stage') as HTMLElement).style.transform = ''));
+    const watch = (page: Page) => page.evaluate(() => {
+      (window as any).seen = [];
+      (window as any).kettle.subscribe((s: KettleState) => s.visible && (window as any).seen.push([s.clip, s.frame]));
+    });
+    const seen = (page: Page) => page.evaluate(() => (window as any).seen) as Promise<Array<[string | null, number]>>;
+
+    // Loaded out of view: nothing is queued until it is seen, then the entrance plays from its first exposure.
+    let { page } = await open('/harness.html?surface=footer&offscreen');
+    await ready(page);
+    expect((await state(page)).clip).toBeNull();
+    await watch(page);
+    await reveal(page);
+    await until(page, "s.clip === 'double-blink' && !s.playing");
+    expect((await seen(page)).find(([clip]) => clip === 'double-blink')).toEqual(['double-blink', 0]);
+    await page.context().close();
+
+    // A clip the page plays while the Kettle loads takes precedence: no entrance.
+    ({ page } = await open('/harness.html?surface=footer&offscreen'));
+    expect((await state(page)).status).toBe('loading');
+    await page.evaluate(() => void (window as any).kettle.play('rock'));
+    await ready(page);
+    await watch(page);
+    await reveal(page);
+    await until(page, "s.clip === 'rock' && !s.playing");
+    await frames(page, 6);
+    expect(new Set((await seen(page)).map(([clip]) => clip))).toEqual(new Set(['rock']));
+    await page.context().close();
+
+    // Reduced motion is read when the Kettle is first seen: on at load, off before the reveal, the hop plays.
+    ({ page } = await open('/harness.html?surface=footer&offscreen&entrance=little-hop'));
+    await page.evaluate(() => (window as any).kettle.setReducedMotion(true));
+    await ready(page);
+    await page.evaluate(() => (window as any).kettle.setReducedMotion(false));
+    await reveal(page);
+    await until(page, "s.clip === 'little-hop' && s.playing");
+    expect((await state(page)).skipped).toBeNull();
     await page.context().close();
   });
 

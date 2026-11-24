@@ -3,14 +3,18 @@
 import {
   CAMERA_PRESETS,
   CLIP_DEFINITIONS,
+  DEFAULT_EYE_LOOK,
   DEFAULT_TUNING,
   GAZE_FOLLOW,
+  SURFACES,
+  TUNABLE_IDS,
   createKettle,
   parseTuning,
   resolveTuning,
   serializeTuning,
   type CameraPreset,
   type ClipTuning,
+  type EyeLook,
   type Kettle,
   type KettleOptions,
   type ParamRange,
@@ -69,19 +73,57 @@ async function copyText(text: string, fallback: HTMLTextAreaElement): Promise<st
 }
 
 // ---------- shared state ----------
-let tuning: Tuning = storage.get<Tuning>('tuning', {});
-try {
-  tuning = parseTuning(tuning);
-} catch {
-  tuning = {};
+/**
+ * Format of the saved lab state. 1 (#146): tuned values only. 2 (#148): also
+ * the module defaults each entry was tuned against, so an entry is dropped
+ * once the module's defaults for that clip change. Marks and notes are kept.
+ */
+const STATE_VERSION = 2;
+/** Clips whose module defaults changed between format 1 and 2; their format-1 tuning is dropped. */
+const CHANGED_SINCE_FORMAT_1 = ['double-blink', 'curiosity', 'look-around', 'rock', 'tilted-spin', 'poke'];
+const defaultsOf = (id: string) => JSON.stringify(DEFAULT_TUNING[id] ?? null);
+
+function loadTuning(): Tuning {
+  const saved = storage.get<Record<string, unknown>>('tuning', {});
+  const base = storage.get<number>('version', 1) >= 2
+    ? storage.get<Record<string, string>>('tuning-base', {})
+    : Object.fromEntries(TUNABLE_IDS.filter((id) => !CHANGED_SINCE_FORMAT_1.includes(id)).map((id) => [id, defaultsOf(id)]));
+  // Entries for removed clips, or tuned against other defaults, are dropped one by one.
+  const current = Object.entries(saved).filter(([id]) => TUNABLE_IDS.includes(id) && base[id] === defaultsOf(id));
+  try {
+    return parseTuning(Object.fromEntries(current));
+  } catch {
+    return {};
+  }
 }
+function saveTuning(): void {
+  storage.set('tuning', tuning);
+  storage.set('tuning-base', Object.fromEntries(Object.keys(tuning).map((id) => [id, defaultsOf(id)])));
+  storage.set('version', STATE_VERSION);
+}
+let tuning: Tuning = loadTuning();
+saveTuning();
+/** Eye floor colour and minimum light tried in the lab (the module's `eyes` option). */
+function loadEyes(): EyeLook {
+  const saved = storage.get<Partial<EyeLook>>('eyes', {});
+  const color = typeof saved.color === 'string' && /^#[0-9a-f]{6}$/i.test(saved.color) ? saved.color : DEFAULT_EYE_LOOK.color;
+  const minLight = typeof saved.minLight === 'number' && saved.minLight >= 0 && saved.minLight <= 1 ? saved.minLight : DEFAULT_EYE_LOOK.minLight;
+  return { color, minLight };
+}
+let eyeLook = loadEyes();
+function setEyeLook(next: EyeLook): void {
+  eyeLook = next;
+  storage.set('eyes', eyeLook);
+  for (const kettle of kettles) kettle.setEyes(eyeLook);
+}
+
 const kettles = new Set<Kettle>();
 const reducedToggle = document.querySelector<HTMLInputElement>('#reduced')!;
 const darkToggle = document.querySelector<HTMLInputElement>('#dark')!;
 const reducedSetting = () => (reducedToggle.checked ? true : 'auto') as true | 'auto';
 
 function makeKettle(container: HTMLElement, options: Omit<KettleOptions, 'container' | 'asset'>): Kettle {
-  const kettle = createKettle({ container, asset: ASSET, poster: POSTER, tuning, reducedMotion: reducedSetting(), ...options });
+  const kettle = createKettle({ container, asset: ASSET, poster: POSTER, tuning, eyes: eyeLook, reducedMotion: reducedSetting(), ...options });
   kettles.add(kettle);
   kettle.ready.catch((error: unknown) => console.error(error));
   return kettle;
@@ -104,7 +146,7 @@ darkToggle.addEventListener('change', () => {
 
 function setTuning(id: string, values: ClipTuning): void {
   tuning = { ...tuning, [id]: values };
-  storage.set('tuning', tuning);
+  saveTuning();
   for (const kettle of kettles) kettle.setTuning({ [id]: values });
 }
 
@@ -122,7 +164,8 @@ function decisionsMarkdown(): string {
 
 // ---------- viewer ----------
 function viewer(): HTMLElement {
-  let selected = storage.get('selected', 'double-blink');
+  const stored = storage.get('selected', 'double-blink');
+  let selected = TUNABLE_IDS.includes(stored) ? stored : 'double-blink';
   const stage = h('div', { class: 'stage', 'data-stage': 'viewer' });
   const orbitLayer = h('div', { class: 'orbit-layer', hidden: true });
   stage.append(orbitLayer);
@@ -231,12 +274,26 @@ function viewer(): HTMLElement {
   const applyButton = button('Apply pasted JSON');
   const resetButton = button('Reset to module values');
   const current = (id: string) => resolveTuning(id, tuning[id] ?? DEFAULT_TUNING[id]);
-  copyButton.addEventListener('click', async () => (jsonStatus.textContent = await copyText(serializeTuning({ [selected]: current(selected) }), jsonArea)));
+  /** The selected clip in the `tuning.json` format, plus `eyes`: the module's `eyes` option, not part of `tuning.json`. */
+  const copied = () => JSON.stringify({ ...JSON.parse(serializeTuning({ [selected]: current(selected) })), eyes: eyeLook }, null, 2);
+  copyButton.addEventListener('click', async () => (jsonStatus.textContent = await copyText(copied(), jsonArea)));
   applyButton.addEventListener('click', () => {
     try {
-      const parsed = parseTuning(jsonArea.value);
+      const data: unknown = JSON.parse(jsonArea.value);
+      // Anything but a plain object gets the module's own error, before `eyes` is taken out.
+      if (data === null || typeof data !== 'object' || Array.isArray(data)) parseTuning(data as object);
+      const { eyes, ...clips } = data as Record<string, unknown>;
+      const parsed = parseTuning(clips);
+      if (eyes !== undefined) {
+        const look = eyes as Partial<EyeLook>;
+        if (typeof look.color !== 'string' || !/^#[0-9a-f]{6}$/i.test(look.color) || typeof look.minLight !== 'number' || look.minLight < 0 || look.minLight > 1) {
+          throw new Error('eyes needs a #rrggbb color and a minLight from 0 to 1');
+        }
+        setEyeLook({ color: look.color, minLight: look.minLight });
+        renderEyes();
+      }
       for (const [id, values] of Object.entries(parsed)) setTuning(id, values);
-      jsonStatus.textContent = `Applied ${Object.keys(parsed).join(', ')}.`;
+      jsonStatus.textContent = `Applied ${[...Object.keys(parsed), ...(eyes !== undefined ? ['eyes'] : [])].join(', ')}.`;
       renderTuning();
     } catch (error) {
       jsonStatus.textContent = `Not applied: ${(error as Error).message}`;
@@ -245,7 +302,7 @@ function viewer(): HTMLElement {
   resetButton.addEventListener('click', () => {
     const { [selected]: _, ...rest } = tuning;
     tuning = rest;
-    storage.set('tuning', tuning);
+    saveTuning();
     for (const k of kettles) k.setTuning({ [selected]: DEFAULT_TUNING[selected]! });
     renderTuning();
   });
@@ -257,7 +314,7 @@ function viewer(): HTMLElement {
       values[group][name] = Number(raw);
       setTuning(selected, values);
       input.value = number.value = String(values[group][name]);
-      jsonArea.value = serializeTuning({ [selected]: current(selected) });
+      jsonArea.value = copied();
     };
     input.addEventListener('input', () => update(input.value));
     number.addEventListener('change', () => update(number.value));
@@ -271,8 +328,34 @@ function viewer(): HTMLElement {
     for (const [name, range] of Object.entries(definition.timing)) tuningPanel.append(field('timing', name, range, values.timing[name]!));
     tuningPanel.append(h('h3', { text: 'Amount' }));
     for (const [name, range] of Object.entries(definition.amount)) tuningPanel.append(field('amount', name, range, values.amount[name]!));
-    jsonArea.value = serializeTuning({ [selected]: values });
+    jsonArea.value = copied();
   }
+  // Eye floor colour and its minimum light, for every Kettle in the lab.
+  const eyeColor = h('input', { type: 'color', 'aria-label': 'Eye colour' });
+  const eyeMinLight = h('input', { type: 'range', min: 0, max: 1, step: 0.01, 'aria-label': 'Eye floor minimum light' });
+  const eyeMinLightValue = h('output', {});
+  function renderEyes(): void {
+    eyeColor.value = eyeLook.color;
+    eyeMinLight.value = String(eyeLook.minLight);
+    eyeMinLightValue.textContent = String(eyeLook.minLight);
+  }
+  // Each control changes only its own value, so an imported value the slider cannot show survives a colour change.
+  const updateEyes = (change: Partial<EyeLook>) => {
+    setEyeLook({ ...eyeLook, ...change });
+    renderEyes();
+    jsonArea.value = copied();
+  };
+  eyeColor.addEventListener('input', () => updateEyes({ color: eyeColor.value }));
+  eyeMinLight.addEventListener('input', () => updateEyes({ minLight: Number(eyeMinLight.value) }));
+  const resetEyes = button('Brand accent');
+  resetEyes.addEventListener('click', () => {
+    setEyeLook({ ...DEFAULT_EYE_LOOK });
+    renderEyes();
+    jsonArea.value = copied();
+  });
+  renderEyes();
+  const eyeControls = h('div', { class: 'row eye-controls' },
+    h('label', {}, 'Eye colour ', eyeColor), h('label', {}, 'Floor minimum light ', eyeMinLight, ' ', eyeMinLightValue), resetEyes);
   const title = h('h2', { class: 'clip-title' });
   const meta = h('p', { class: 'hint' });
   function select_(id: string, autoplay: boolean): void {
@@ -302,7 +385,8 @@ function viewer(): HTMLElement {
       h('div', { class: 'heading' }, title, meta),
       stage,
       h('div', { class: 'transport' }, play, h('label', {}, loop, ' Loop'), back, forward, slider, speed, readout),
-      cameras),
+      cameras,
+      eyeControls),
     h('aside', { class: 'panel tuning' }, h('h2', { text: 'Tuning' }), tuningPanel, h('div', { class: 'row' }, copyButton, applyButton, resetButton), jsonStatus, jsonArea));
 }
 
@@ -321,16 +405,16 @@ function playground(): HTMLElement {
   const timing = h('fieldset', { class: 'panel' }, h('legend', { text: 'Stepped (12 fps) or smooth' }));
   for (const name of ['gaze', 'drag'] as const) {
     const select = h('select', { 'data-timing': name, 'aria-label': `${name} timing` },
-      h('option', { value: 'stepped', text: 'Stepped 12 fps', selected: name === 'gaze' }),
-      h('option', { value: 'smooth', text: 'Smooth (display rate)', selected: name === 'drag' }));
+      h('option', { value: 'stepped', text: 'Stepped 12 fps', selected: true }),
+      h('option', { value: 'smooth', text: 'Smooth (display rate)' }));
     select.addEventListener('change', () => kettle.setTiming({ [name]: select.value as 'stepped' | 'smooth' }));
     timing.append(h('label', {}, `${name === 'gaze' ? 'Gaze following' : 'Drag rotation'}: `, select));
   }
   const surfaces = h('fieldset', { class: 'panel' }, h('legend', { text: 'Surface presets' }));
   const presets: Record<string, { gaze: boolean; poke: boolean; drag: boolean }> = {
-    Landing: { gaze: true, poke: true, drag: false },
-    Footer: { gaze: true, poke: true, drag: false },
-    Portal: { gaze: false, poke: false, drag: false },
+    Landing: SURFACES.landing.interactions,
+    Footer: SURFACES.footer.interactions,
+    Portal: SURFACES.portal.interactions,
     Everything: { gaze: true, poke: true, drag: true },
   };
   for (const [name, value] of Object.entries(presets)) {
@@ -404,8 +488,9 @@ function compositions(): HTMLElement {
   const controls = h('div', { class: 'row composition-controls' }, replayGuide, celebrate, h('span', { class: 'hint', text: 'Theme and reduced motion follow the header toggles.' }));
 
   queueMicrotask(() => {
-    const heroKettle = makeKettle(heroStage, { surface: 'landing', camera: 'stage', pokeClips: ['poke', 'little-hop', 'double-blink', 'rock'] });
-    const footerKettle = makeKettle(footerStage, { surface: 'footer', camera: 'stage', pokeClips: ['poke', 'rock', 'double-blink'] });
+    // The module's surface defaults, as the product will use them.
+    const heroKettle = makeKettle(heroStage, { surface: 'landing', camera: 'stage' });
+    const footerKettle = makeKettle(footerStage, { surface: 'footer', camera: 'stage' });
     const portalKettle = makeKettle(portalStage, { surface: 'portal', camera: 'three-quarter', shadow: false });
     let dialogKettle: Kettle | null = null;
     Object.assign(window, { heroKettle, footerKettle, portalKettle });

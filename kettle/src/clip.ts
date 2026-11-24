@@ -134,7 +134,6 @@ export function sampleKeys(keys: readonly Key[], frame: number): Pose {
 
 function finish(value: Pose): Pose {
   value.turn = wrapDegrees(value.turn);
-  value.echo = Math.max(0, Math.min(2, Math.round(value.echo)));
   return value;
 }
 
