@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import { chromium } from 'playwright-core';
 import { CLIP_DEFINITIONS } from '../src/index.ts';
 import { startLabServer } from '../lab/server.ts';
-import { chromiumPath, CHROMIUM_ARGS } from '../tests/chromium.ts';
+import { chromiumPath, CHROMIUM_ARGS } from '../lab/chromium.ts';
 
 const args = process.argv.slice(2);
 const option = (name: string, fallback: string) => {

@@ -1,17 +1,15 @@
-// Clip data through the module's public API: the grid, the neutral endpoints,
-// the copy-as-JSON round trip, stepped playback and the reduced-motion rules.
+// Clip data through the module's public API (the grid, the neutral endpoints,
+// the copy-as-JSON round trip), plus the two stepping state machines, which a
+// browser cannot time reliably. Reduced motion is checked in browser.test.ts.
 import { describe, expect, it } from 'vitest';
-import { composePose } from '../src/compose.ts';
 import { FollowLayer } from '../src/follow.ts';
 import {
-  BODY_CHANNELS,
   CLIP_DEFINITIONS,
   DEFAULT_TUNING,
   GAZE_FOLLOW,
   KETTLE_FPS,
   createClip,
   isNeutral,
-  neutralPose,
   parseTuning,
   resolveTuning,
   serializeTuning,
@@ -88,34 +86,5 @@ describe('stepped playback', () => {
     follow.setTarget(null);
     for (let t = 1000; t < 3000; t += 1000 / 60) follow.update(t, 'stepped');
     expect([follow.x, follow.y]).toEqual([0, 0]);
-  });
-});
-
-describe('reduced motion', () => {
-  const at = (id: string, frame: number, reduced: boolean) => {
-    const clip = createClip(id);
-    return composePose({ clip, clipPose: clip.frames[frame]!, clipPlaying: true, follow: null, reduced });
-  };
-
-  it('holds the still pose instead of hops, spins and large deformations', () => {
-    for (const id of ['little-hop', 'tilted-spin', 'body-flex', 'rock', 'drag-release']) {
-      const clip = createClip(id);
-      expect(clip.reducedMotion, id).toBe('still');
-      for (let frame = 0; frame < clip.frames.length; frame++) expect(isNeutral(at(id, frame, true)), `${id} #${frame}`).toBe(true);
-    }
-  });
-
-  it('keeps eye-only motion and small gaze following', () => {
-    const blink = createClip('double-blink');
-    const reduced = blink.frames.map((_, frame) => at('double-blink', frame, true));
-    expect(reduced.some((p) => p.blinkL > 0.9)).toBe(true);
-    for (const p of reduced) for (const channel of BODY_CHANNELS) expect(p[channel]).toBe(0);
-    const follow = new FollowLayer(resolveTuning(GAZE_FOLLOW.id));
-    follow.setTarget({ x: 1, y: 1 });
-    follow.update(0, 'smooth');
-    for (let t = 0; t < 2000; t += 16) follow.update(t, 'smooth');
-    const pose = composePose({ clip: null, clipPose: neutralPose(), clipPlaying: false, follow: follow.pose(true), reduced: true });
-    expect(pose.gazeX).toBeLessThanOrEqual(0.35);
-    expect(pose.turn).toBe(0);
   });
 });

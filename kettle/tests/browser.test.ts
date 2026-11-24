@@ -4,7 +4,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { chromium, type Browser, type BrowserContextOptions, type Page } from 'playwright-core';
 import { startLabServer, type LabServer } from '../lab/server.ts';
 import type { KettleState } from '../src/index.ts';
-import { CHROMIUM_ARGS, chromiumPath } from './chromium.ts';
+import { CHROMIUM_ARGS, chromiumPath } from '../lab/chromium.ts';
 
 let lab: LabServer;
 let browser: Browser;
@@ -59,7 +59,6 @@ describe('Kettle in Chromium', () => {
         await ready(page, 'footerKettle');
         await ready(page, 'portalKettle');
       }
-      await page.waitForTimeout(300);
       expect(problems.errors, hash).toEqual([]);
       await page.context().close();
     }
@@ -108,10 +107,10 @@ describe('Kettle in Chromium', () => {
     await page.context().close();
   });
 
-  it('replaces hops and spins with the still pose under reduced motion, keeping eyes and small gaze', async () => {
+  it('replaces hops, spins and large deformations with the still pose under reduced motion, keeping eyes and small gaze', async () => {
     const { page } = await open('/harness.html?surface=landing', { reducedMotion: 'reduce' });
     await ready(page);
-    for (const id of ['little-hop', 'tilted-spin']) {
+    for (const id of ['little-hop', 'tilted-spin', 'body-flex', 'rock', 'drag-release']) {
       await page.evaluate((clip) => (window as any).kettle.play(clip), id);
       const s = await state(page);
       expect(s.skipped).toBe(id);
@@ -130,11 +129,23 @@ describe('Kettle in Chromium', () => {
     await page.context().close();
   });
 
+  it('keeps the portal guide looking where the page points while curiosity plays', async () => {
+    const { page } = await open('/harness.html?surface=portal');
+    await ready(page);
+    await page.evaluate(() => (window as any).kettle.setGaze({ x: 1, y: 0 }));
+    await page.waitForFunction(() => (window as any).kettle.state.gaze.x === 1);
+    await page.evaluate(() => void (window as any).kettle.play('curiosity'));
+    // Curiosity's own gaze peaks near 0.4; the page's target adds to it.
+    await page.waitForFunction(() => (window as any).kettle.state.playing && (window as any).kettle.state.pose.gazeX > 1);
+    await page.context().close();
+  });
+
   it('draws only while something moves', async () => {
     const { page } = await open('/harness.html?surface=none');
     await ready(page);
-    await page.waitForTimeout(300);
+    await page.waitForFunction(() => (window as any).kettle.state.renders > 0);
     const idle = (await state(page)).renders;
+    // Proving that nothing happens needs an observation window.
     await page.waitForTimeout(600);
     expect((await state(page)).renders).toBe(idle);
     await page.evaluate(() => (window as any).kettle.play('rock'));

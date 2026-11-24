@@ -11,6 +11,8 @@ export interface Layers {
   /** Whether the clip is advancing (an ended clip no longer owns the gaze). */
   clipPlaying: boolean;
   follow: Pose | null;
+  /** The page aims the gaze (`setGaze`); it adds to a clip's own gaze instead of pausing. */
+  directed: boolean;
   reduced: boolean;
 }
 
@@ -32,6 +34,6 @@ export function composePose(layers: Layers): Pose {
     else if (layers.clip.reducedMotion === 'eyes') result = stripBody(layers.clipPose);
   }
   const clipOwnsGaze = layers.clipPlaying && layers.clip?.ownsGaze === true;
-  if (layers.follow && !clipOwnsGaze) result = addPoses(result, layers.follow);
+  if (layers.follow && (!clipOwnsGaze || layers.directed)) result = addPoses(result, layers.follow);
   return result;
 }

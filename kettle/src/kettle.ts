@@ -306,6 +306,7 @@ export function createKettle(options: KettleOptions): Kettle {
       clipPose: frame === null ? player.pose() : player.poseAt(frame),
       clipPlaying: player.playing || (player.paused && clip !== null && player.frame < (clip?.frames.length ?? 0) - 1),
       follow: frame === null && (interactions.gaze || externalGaze) ? follow.pose(reduced()) : null,
+      directed: externalGaze,
       reduced: reduced(),
     });
   };

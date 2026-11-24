@@ -3,7 +3,7 @@
 import { resolve } from 'node:path';
 import { chromium } from 'playwright-core';
 import { startLabServer, POSTER } from '../lab/server.ts';
-import { chromiumPath, CHROMIUM_ARGS } from '../tests/chromium.ts';
+import { chromiumPath, CHROMIUM_ARGS } from '../lab/chromium.ts';
 
 const size = Number(process.argv[2] ?? 512);
 const lab = await startLabServer({ port: 0 });

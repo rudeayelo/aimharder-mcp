@@ -6,7 +6,7 @@ This package is private: it is not published to npm, not part of the root packag
 
 ## Commands
 
-Run from `kettle/` with Node 24 or later:
+Run from `kettle/` with Node 24:
 
 ```sh
 pnpm install
@@ -15,6 +15,7 @@ pnpm lab --host     # also on the tailnet; prints the Tailscale URL
 pnpm typecheck
 pnpm test           # clip data, module boundaries and Chromium checks
 pnpm record <dir> [clip-id ...] [--camera front,three-quarter] [--size 480]
+pnpm poster         # re-renders design/assets/kettle/kettle-poster-front.png
 ```
 
 `pnpm lab --host` listens on every interface, so the lab is reachable at `http://<machine>.<tailnet>.ts.net:5174/`. Use `--port <n>` to change the port. The Chromium checks and `pnpm record` use the first system Chromium or Chrome they find; set `KETTLE_CHROMIUM` to choose one. `pnpm record` needs `ffmpeg` and writes one MP4 and one GIF per clip and camera, stepping exposure by exposure rather than waiting on a clock.
@@ -35,7 +36,7 @@ import { createKettle } from './kettle/src/index.ts';
 const kettle = createKettle({
   container: document.querySelector('#kettle')!, // sized by CSS; the canvas fills it
   asset: '/assets/kettle-body-32k.sog',
-  poster: '/assets/kettle-poster.png', // shown while loading and without WebGL
+  poster: '/assets/kettle-poster-front.png', // design/assets/kettle/; shown while loading and without WebGL
   surface: 'landing', // landing | footer | portal | none
 });
 await kettle.ready;
@@ -102,6 +103,6 @@ The body is a cloud of Gaussians with no skeleton, mesh or separate parts. Defor
 | Path | Contents |
 | --- | --- |
 | `src/` | The module. `index.ts` is its only public entry; `kettle.ts` is `createKettle`. |
-| `lab/` | Lab server (`server.ts`, `serve.ts`), lab page (`main.ts`, `public/`) and the test harness page. |
+| `lab/` | Lab server (`server.ts`, `serve.ts`), lab page (`main.ts`, `public/`), the test harness page and the Chromium launcher (`chromium.ts`) shared by tests and scripts. |
 | `tests/` | Clip data and boundary tests, and Chromium checks of the lab and the interactions. |
-| `scripts/record.ts` | Evidence recorder. |
+| `scripts/` | `record.ts` (evidence recorder) and `poster.ts` (poster renderer). |
