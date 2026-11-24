@@ -71,12 +71,14 @@ describe('clips', () => {
   });
 });
 
-/** The tuned values the maintainer approved in the Decisions comment on #134, verbatim. */
+/** The tuned values the maintainer approved in "Decisions, round 2" on #134, verbatim. */
 const DECIDED = `{
   "double-blink": { "timing": { "lead": 1, "shut": 2, "gap": 2, "shut2": 2, "pop": 1, "settle": 1 }, "amount": { "pop": 0.1, "squash": 0.01 } },
   "rock": { "timing": { "lead": 2, "swing": 2, "back": 3, "decay": 2, "settle": 2 }, "amount": { "swing": 20, "bend": 0.07, "lag": 0.04, "decay": 0.6 } },
-  "look-around": { "timing": { "lead": 2, "follow": 2, "hold": 4, "settle": 3 }, "amount": { "gaze": 0.9, "turn": 24, "lean": 8, "stretch": 0.12, "lag": 0.02 } },
-  "tilted-spin": { "timing": { "windup": 3, "spin": 5, "land": 2, "proud": 3, "settle": 3 }, "amount": { "counter": 35, "tilt": 26, "height": 0.55, "twist": 35, "squash": 0.22, "overshoot": 16 } }
+  "look-around": { "timing": { "lead": 1, "follow": 2, "hold": 7, "settle": 8 }, "amount": { "gaze": 0.9, "turn": 24, "lean": 4, "stretch": 0.12, "lag": 0.02 } },
+  "tilted-spin": { "timing": { "windup": 3, "spin": 5, "land": 2, "proud": 1, "settle": 8 }, "amount": { "counter": 35, "tilt": 11, "height": 0.4, "twist": 28, "squash": 0.22, "overshoot": 7 } },
+  "curiosity": { "timing": { "dip": 3, "pop": 2, "hold": 6, "lean": 4, "hold2": 7, "back": 3, "settle": 4 }, "amount": { "tilt": 17, "bend": 0.07, "turn": 10, "bigEye": 0, "squint": 0.3, "leanIn": 11 } },
+  "poke": { "timing": { "hit": 2, "surprise": 4, "shake": 1, "settle": 2 }, "amount": { "squash": 0.1, "recoil": 15, "surprise": 0.38, "hop": 0.25 } }
 }`;
 
 /** Each exposure's largest body change, as a share of that channel's travel over the whole clip. */
