@@ -24,7 +24,7 @@ The brand variables (product name, domain, support email, brand colors) are the 
 
 | Path | Contents |
 | --- | --- |
-| [assets/kettle/](assets/kettle/README.md) | The 3D Kettle body (`kettle-body-32k.sog`), its provenance and licenses. |
+| [assets/kettle/](assets/kettle/README.md) | The 3D Kettle body (`kettle-body-32k.sog`), its poster, provenance and licenses. The code that draws and animates it is the [Kettle module](../kettle/README.md). |
 
 Assets that ship in the product live under `assets/`, each with its provenance and licenses beside it.
 

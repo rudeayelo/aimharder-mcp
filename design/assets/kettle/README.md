@@ -11,7 +11,11 @@
 | Coordinate system | Source IDOL coordinates: x is front, y is down. Renderers flip Y around X and place the base at the animation pivot. |
 | Copied from | `design/identity/idol-motion-prototype/hybrid/kettle-body-32k.sog` at tag [`archive/95-iteration-1`](https://github.com/rudeayelo/aimharder-mcp/tree/archive/95-iteration-1) (commit `75f80c5`), byte-identical |
 
-The body alone does not show eyes. In iteration 1 the eyes were a separate procedural mesh (two deformable recesses projected onto a fitted curved face surface). That rig, the renderer bundle and the motion prototypes stay in the tag; production rebuilds them with npm dependencies (see [Product experience](../../../docs/product-experience.md#3d-kettle)).
+The body alone does not show eyes. In iteration 1 the eyes were a separate procedural mesh (two deformable recesses projected onto a fitted curved face surface). That rig, the renderer bundle and the motion prototypes stay in the tag; the [Kettle module](../../../kettle/README.md) rebuilds the renderer and the rig with npm dependencies (see [Product experience](../../../docs/product-experience.md#3d-kettle)).
+
+## Poster
+
+`kettle-poster-front.png` is the neutral Kettle rendered by the Kettle module from this body: 512 × 512, transparent background, the module's `front` camera on a square canvas. The module shows it while the body loads and when WebGL is unavailable. Regenerate it with `pnpm poster` from `kettle/` after a change to the body, the eye rig or the `front` camera.
 
 ## Provenance
 
