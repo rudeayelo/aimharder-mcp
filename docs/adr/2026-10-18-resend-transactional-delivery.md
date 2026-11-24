@@ -2,6 +2,8 @@
 
 Status: accepted on 2026-10-18 after the user supplied an existing Resend credential for the authorized isolated test environment, with no purchases or plan changes. Supersedes only the native Cloudflare email-provider selection in the [invited password decision](2026-10-18-invited-password-admission.md). Complements the [test-environment boundary](2026-10-18-isolated-cloudflare-test-environment.md).
 
+Superseded in part, 2026-11-24: the support address `support@ahmcp.link` is superseded by `support@aiharder.link` in the [provisional product name and domain decision](2026-11-24-provisional-product-name-and-domain.md). The Resend Inboxes choice and its pending activation are unchanged; current sending configuration stays in place until [#141](https://github.com/rudeayelo/aimharder-mcp/issues/141) and its coordinated activation.
+
 ## Context
 
 The authenticated Cloudflare dashboard established Workers Free as the current plan. Native Email Sending requires Paid, while the user excludes purchases and plan changes. The owner then supplied an existing Resend token through 1Password. Admission, maintained Better Auth password hashing, verified-email policy and generic recovery must remain unchanged.
@@ -24,7 +26,7 @@ One private owner invitation was acknowledged with HTTP 200 and later read back 
 
 ## Consequences
 
-Support-channel product amendment, 2026-10-28: the owner accepted Resend Inboxes as the intended human-operated support channel for `support@ahmcp.link`, accessed through the provider dashboard. This extends the product direction beyond transactional sending; configuration, account-specific pricing/quota, receiving-mail routing and an inbound/reply test remain pending. It does not change the existing mail adapter or activate an inbox, agent, DNS change, purchase or plan change. See the [product experience record](../product-experience.md#support-inbox-assessment) for the researched provider capabilities and pending activation evidence.
+Support-channel product amendment, 2026-10-28: the owner accepted Resend Inboxes as the intended human-operated support channel for `support@ahmcp.link`, accessed through the provider dashboard. This extends the product direction beyond transactional sending; configuration, account-specific pricing/quota, receiving-mail routing and an inbound/reply test remain pending. It does not change the existing mail adapter or activate an inbox, agent, DNS change, purchase or plan change. See the [product experience record](../product-experience.md#support-and-help) for the researched provider capabilities and pending activation evidence.
 
 The sender can be configured without enabling Cloudflare Paid or changing maintained authentication. The provider receives recipient addresses and capability-bearing message content; tracking, token scope, retention and deletion remain material security/acceptance concerns. The real invitation, verification and recovery mailbox/authentication requirement for #71 is complete as recorded above. Workers Free's CPU suitability for default scrypt, measured full-pilot cost, Google, client onboarding and later isolation/lifecycle gates remain unresolved. No local stdio or upstream AimHarder contract changes.
 
