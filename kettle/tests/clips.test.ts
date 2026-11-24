@@ -3,7 +3,7 @@
 // state machines, which a browser cannot time reliably. Reduced motion is
 // checked in browser.test.ts.
 import { describe, expect, it } from 'vitest';
-import { eyeShape, recessRings } from '../src/eyes.ts';
+import { eyeShape, recessRings, type EyeShape } from '../src/eyes.ts';
 import { FollowLayer } from '../src/follow.ts';
 import {
   BODY_CHANNELS,
@@ -91,8 +91,8 @@ function bodySteps(frames: Pose[]): number[] {
 }
 
 /** Twice the signed area of each triangle of an eye recess (centre fan and ring strips). */
-function recessAreas(pose: Pose, eye: 0 | 1): number[] {
-  const { center, rings } = recessRings(eyeShape(pose, eye), eye === 0 ? -1 : 1);
+function recessAreas(shape: EyeShape, side: -1 | 1): number[] {
+  const { center, rings } = recessRings(shape, side);
   const cross = (a: [number, number], b: [number, number], c: [number, number]) =>
     (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
   const areas: number[] = [];
@@ -106,6 +106,20 @@ function recessAreas(pose: Pose, eye: 0 | 1): number[] {
     }
   }
   return areas;
+}
+
+/** Triangles that are inverted, collapsed (zero area) or not a number, against the rest orientation. */
+function badTriangles(shape: EyeShape, side: -1 | 1): number {
+  const sign = Math.sign(recessAreas(eyeShape(neutralPose(), 0), -1)[0]!);
+  // Smaller than any real triangle: the thinnest blink still makes areas above 1e-12.
+  return recessAreas(shape, side).filter((area) => !(area * sign > 1e-15)).length;
+}
+
+/** Every eye of every exposure of a clip, as `[label, shape, side]`. */
+function clipEyes(id: string, tuning?: Partial<ClipTuning>): Array<[string, EyeShape, -1 | 1]> {
+  return createClip(id, tuning).frames.flatMap((pose, frame) =>
+    ([0, 1] as const).map((eye): [string, EyeShape, -1 | 1] => [`exposure ${frame} eye ${eye}`, eyeShape(pose, eye), eye === 0 ? -1 : 1]),
+  );
 }
 
 describe('motion rules (#134)', () => {
@@ -132,18 +146,31 @@ describe('motion rules (#134)', () => {
     expect(back).toBeLessThan(leadIn);
   });
 
-  it('keep every eye recess unfolded in every exposure of every clip', () => {
-    const rest = recessAreas(neutralPose(), 0);
-    const sign = Math.sign(rest[0]!);
-    expect(rest.every((area) => Math.sign(area) === sign)).toBe(true);
+  it('keep every eye recess unfolded in every exposure of every clip, at default and extreme tuning', () => {
     for (const definition of CLIP_DEFINITIONS) {
-      for (const [frame, pose] of createClip(definition.id).frames.entries()) {
-        for (const eye of [0, 1] as const) {
-          const flipped = recessAreas(pose, eye).filter((area) => area * sign < -1e-12).length;
-          expect(flipped, `${definition.id} exposure ${frame} eye ${eye}`).toBe(0);
+      const tunings: Array<[string, Partial<ClipTuning> | undefined]> = [['default', undefined]];
+      for (const [name, range] of Object.entries(definition.amount)) {
+        tunings.push([`${name} = ${range.min}`, { amount: { [name]: range.min } }], [`${name} = ${range.max}`, { amount: { [name]: range.max } }]);
+      }
+      for (const [label, tuning] of tunings) {
+        for (const [where, shape, side] of clipEyes(definition.id, tuning)) {
+          expect(badTriangles(shape, side), `${definition.id} (${label}) ${where}`).toBe(0);
         }
       }
     }
+  });
+
+  it('keep every eye recess unfolded at the extremes of every eye-shape parameter', () => {
+    // Each parameter at its clamp or largest reachable value, in every combination.
+    const extremes = {
+      open: [0.028, 1, 1.5], size: [-0.6, 0, 1.1], squeeze: [-0.6, 0, 0.6], tilt: [-30, 0, 30],
+      lid: [0, 0.5, 1], slant: [-45, 0, 45], smile: [0, 0.6, 1.2],
+    };
+    let shapes: EyeShape[] = [{ open: 1, size: 0, squeeze: 0, tilt: 0, lid: 0, slant: 0, smile: 0, gx: 0, gy: 0 }];
+    for (const [name, values] of Object.entries(extremes)) shapes = shapes.flatMap((shape) => values.map((value) => ({ ...shape, [name]: value })));
+    expect(shapes).toHaveLength(3 ** 7);
+    const bad = shapes.flatMap((shape) => ([-1, 1] as const).filter((side) => badTriangles(shape, side) > 0).map((side) => ({ ...shape, side })));
+    expect(bad.slice(0, 3)).toEqual([]);
   });
 });
 
