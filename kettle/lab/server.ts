@@ -10,6 +10,7 @@ import * as esbuild from 'esbuild';
 const here = fileURLToPath(new URL('.', import.meta.url));
 export const ROOT = resolve(here, '..');
 export const ASSET = resolve(ROOT, '../design/assets/kettle/kettle-body-32k.sog');
+export const POSTER = resolve(ROOT, '../design/assets/kettle/kettle-poster-front.png');
 
 /** The policy the module is verified against (see the module README). */
 export const STRICT_CSP = [
@@ -72,6 +73,7 @@ export async function startLabServer({ host = '127.0.0.1', port = 5174, minify =
         return response.end();
       }
       if (path === '/assets/kettle-body-32k.sog') return send(200, await readFile(ASSET), TYPES['.sog']);
+      if (path === '/assets/kettle-poster.png') return send(200, await readFile(POSTER), TYPES['.png']);
       if (path.endsWith('.js') || path.endsWith('.js.map')) {
         // Rebuild on page load so edits show up on refresh.
         if (!minify && path === '/lab.js' && Date.now() - built > 500) {

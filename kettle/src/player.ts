@@ -79,9 +79,10 @@ export class ClipPlayer {
     if (due >= length) {
       if (this.options.loop) next = due % length;
       else {
+        const changed = this.frame !== length - 1;
         this.frame = length - 1;
         this.finish(true);
-        return true;
+        return changed;
       }
     }
     if (next === this.frame) return false;

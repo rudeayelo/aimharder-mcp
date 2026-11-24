@@ -545,6 +545,7 @@ export function createKettle(options: KettleOptions): Kettle {
     dragTurn = turn;
     spring = { start: Math.floor((performance.now() * KETTLE_FPS) / 1000), values };
     const { minSpeed, fullSpeed } = reaction.amount;
+
     if (!reduced() && Math.abs(speed) >= minSpeed!) {
       const intensity = Math.max(0.35, Math.min(1, (Math.abs(speed) - minSpeed!) / Math.max(1, fullSpeed! - minSpeed!)));
       void play('drag-release', { intensity, mirror: speed < 0 });
@@ -554,7 +555,8 @@ export function createKettle(options: KettleOptions): Kettle {
   const onPointerDown = (event: PointerEvent) => {
     if (event.button !== 0 || (!interactions.poke && !interactions.drag) || state.status !== 'ready') return;
     canvas!.setPointerCapture(event.pointerId);
-    pointer = { id: event.pointerId, x: event.clientX, y: event.clientY, startTurn: dragTurn, dragging: false, samples: [[performance.now(), dragTurn]] };
+    // Input timestamps, not processing time, so a slow frame does not hide a fast fling.
+    pointer = { id: event.pointerId, x: event.clientX, y: event.clientY, startTurn: dragTurn, dragging: false, samples: [[event.timeStamp, dragTurn]] };
   };
   const onPointerMove = (event: PointerEvent) => {
     if (!pointer || event.pointerId !== pointer.id) return;
@@ -566,7 +568,7 @@ export function createKettle(options: KettleOptions): Kettle {
     }
     if (!pointer.dragging) return;
     dragTarget = pointer.startTurn + dx * DRAG_DEGREES_PER_PIXEL;
-    const now = performance.now();
+    const now = event.timeStamp;
     pointer.samples.push([now, dragTarget]);
     while (pointer.samples.length > 2 && now - pointer.samples[0]![0] > 100) pointer.samples.shift();
     wake();
@@ -576,9 +578,10 @@ export function createKettle(options: KettleOptions): Kettle {
     const ended = pointer;
     pointer = null;
     if (ended.dragging) {
-      const now = performance.now();
-      const recent = ended.samples.filter(([t]) => now - t <= 120);
-      const first = recent[0] ?? ended.samples[0]!, last = ended.samples[ended.samples.length - 1]!;
+      // Release speed over the last ~120 ms of the drag (at least the last two samples).
+      const samples = ended.samples, last = samples[samples.length - 1]!;
+      const recent = samples.filter(([t]) => last[0] - t <= 120);
+      const first = recent.length >= 2 ? recent[0]! : samples[Math.max(0, samples.length - 2)]!;
       const speed = last[0] > first[0] ? ((last[1] - first[1]) * 1000) / (last[0] - first[0]) : 0;
       startSpring(dragTarget, event.type === 'pointercancel' ? 0 : speed);
     } else if (interactions.poke && event.type === 'pointerup') {

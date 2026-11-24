@@ -8,7 +8,8 @@
   },
   "scripts": {
     "lab": "node lab/serve.ts",
-    "build": "node scripts/build.ts",
+    "record": "node scripts/record.ts",
+    "poster": "node scripts/poster.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },

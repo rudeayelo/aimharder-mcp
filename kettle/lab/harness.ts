@@ -10,7 +10,9 @@ const kettle = createKettle({
   surface: (params.get('surface') ?? 'landing') as Surface,
   interactions: params.has('drag') ? { drag: params.get('drag') === '1' } : {},
   camera: (params.get('camera') ?? 'front') as CameraPreset,
+  ...(params.has('poster') ? { poster: '/assets/kettle-poster.png' } : {}),
 });
+if (params.has('transparent')) document.documentElement.classList.add('transparent');
 Object.assign(window, { kettle });
 kettle.ready.then(
   () => document.documentElement.setAttribute('data-kettle', kettle.state.status),
