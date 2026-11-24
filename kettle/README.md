@@ -1,6 +1,6 @@
 # Kettle module and lab
 
-The 3D Kettle character as one framework-free module (renderer, body, eye rig, clips, interaction), plus a local lab to review, tune and place its animations. The product surfaces (landing, footer, portal onboarding) import the same module the lab uses, so a value tuned in the lab is the production value.
+The 3D Kettle character as one framework-free module (renderer, body, eye rig, clips, interaction), plus a local lab to review, tune and place its animations. It is written to be the module the product surfaces (landing, footer, portal onboarding) will import, so a value tuned in the lab becomes the production value. Today its only consumers are the lab and its tooling (tests, recorder, poster renderer); no product page imports it yet.
 
 This package is private: it is not published to npm, not part of the root package and not versioned with changesets. The lab is a development tool and is never deployed or linked from the product. Design context: [Product experience § 3D Kettle](../docs/product-experience.md#3d-kettle). Renderer decision: [own splat renderer ADR](../docs/adr/2026-11-24-kettle-own-splat-renderer.md).
 
@@ -61,7 +61,9 @@ Interactions by surface (`surface` sets the defaults; `interactions` overrides t
 | `portal` | No; the page drives `setGaze` and `play` | Off | Off |
 | `none` | Off | Off | Off |
 
-The Kettle draws only when something changes (an exposure, the gaze, a drag, the camera), and pauses while the container is off-screen or the tab is hidden. Without WebGL2, or after a lost context, it shows the poster.
+The Kettle draws only when something changes (an exposure, the gaze, a drag, the camera), and pauses while the container is off-screen, the tab is hidden or the body is still loading. Clip time and the drag spring stand still meanwhile, so a clip started out of view plays from its first exposure once it is seen. Without WebGL2, or after a lost context, it shows the poster. `play()` always settles: at once in poster mode, and when the context is lost or the Kettle is destroyed.
+
+Pointer rules: one pointer at a time (a second finger during a drag is ignored); a cancelled pointer or lost capture springs the turn back with no reaction; the fling speed is measured at the release, so dragging fast and then holding still before letting go plays no reaction; a release outside the canvas never pokes. Under reduced motion the turn returns without passing the front, and the gaze stays within ±0.35 whatever the tuning or `setGaze` asks for.
 
 ## Content-Security-Policy
 

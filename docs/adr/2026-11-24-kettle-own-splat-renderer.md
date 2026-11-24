@@ -28,7 +28,7 @@ Both libraries loaded and rendered the asset without a policy. Sort and frame ti
 ## Consequences
 
 - The module's CSP needs are exactly `script-src 'self'` for the bundle, `connect-src` for the `.sog` URL and `img-src` for the poster; nothing else ([module README](../../kettle/README.md#content-security-policy)). The portal or landing implementation still has to add those to the Worker's `default-src 'none'` policy; this ADR does not change it.
-- Splat drawing, SOG parsing and sorting are now code this repository maintains. SOG features the asset does not use (higher spherical-harmonics bands, compressed zip entries) are rejected with an error rather than supported.
+- Splat drawing, SOG parsing and sorting are now code this repository maintains. SOG features the asset does not use (higher spherical-harmonics bands in `shN`, compressed zip entries) are rejected with a clear error rather than supported or silently ignored, and so are truncated archives, metadata that does not match its textures and failed texture readbacks.
 - Deformation is limited by CPU time per exposure (6.4 ms on the spike machine for 32k splats); a much larger body, or deformation at display rate, would need a GPU path.
 - Gaussian splats have no skeleton: deformations are space warps (squash, bulge, bend, twist, handle flop). The handle bends as a soft region of the same body, not as a jointed part.
 - Iteration 1's vendored Visus and `affine-sort.js` stay only at the archive tag.
