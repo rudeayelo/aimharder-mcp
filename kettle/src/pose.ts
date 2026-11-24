@@ -78,6 +78,15 @@ export function addPoses(a: Pose, b: Pose): Pose {
   return out;
 }
 
+/** Blends two poses; turn takes the short way round. */
+export function lerpPose(a: Pose, b: Pose, t: number): Pose {
+  const out = { ...a };
+  for (const channel of CHANNELS) out[channel] = a[channel] + (b[channel] - a[channel]) * t;
+  out.turn = a.turn + wrapDegrees(b.turn - a.turn) * t;
+  out.echo = 0;
+  return out;
+}
+
 export function isNeutral(value: Pose, epsilon = 1e-9): boolean {
   return CHANNELS.every((channel) => Math.abs(value[channel]) <= epsilon);
 }

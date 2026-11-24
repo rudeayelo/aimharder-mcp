@@ -64,7 +64,7 @@ export const CURIOSITY: ClipDefinition = {
   keys: (t, a) => {
     const tilted = (k: number) => ({
       lean: a.tilt! * k, bend: a.bend! * k, turn: a.turn! * k, stretch: 0.05 * k,
-      sizeL: a.bigEye! * k, blinkL: -0.3 * k, blinkR: a.squint! * k, slantR: 14 * k, lidR: 0.12 * k,
+      sizeL: a.bigEye! * k, squeezeL: 0.2 * k, blinkL: -0.3 * k, blinkR: a.squint! * k, slantR: 14 * k, lidR: 0.12 * k,
       gazeX: 0.35 * k, gazeY: 0.2 * k, flop: -0.03 * k,
     });
     return new Timeline()
@@ -319,8 +319,8 @@ export const POKE: ClipDefinition = {
   keys: (t, a) =>
     new Timeline()
       // Eyes shut into > < while the body is knocked away from the poke.
-      .to(1, { stretch: -a.squash!, bulge: a.squash! * 0.7, lean: -a.recoil!, slide: -0.04, blink: 1, tilt: 28, squeeze: 0.3, flop: 0.08 }, 'snap')
-      .to(t.hit!, { stretch: -a.squash! * 0.7, lean: -a.recoil! * 1.1, slide: -0.05, blink: 1, tilt: 28, squeeze: 0.3, flop: 0.1 }, 'linear')
+      .to(1, { stretch: -a.squash!, bulge: a.squash! * 0.5, lean: -a.recoil!, slide: -0.04, blink: 1, tilt: 28, squeeze: 0.3, flop: 0.08 }, 'snap')
+      .to(t.hit!, { stretch: -a.squash! * 0.7, bulge: a.squash! * 0.3, lean: -a.recoil! * 1.1, slide: -0.05, blink: 1, tilt: 28, squeeze: 0.3, flop: 0.1 }, 'linear')
       // "!" pop: stretch up, huge eyes, multiple-image smear.
       .to(1, { stretch: 0.3, bulge: -0.08, lean: a.recoil! * 0.3, lift: a.hop!, blink: -0.45, size: a.surprise!, flop: -0.08, echo: 1 }, 'snap')
       .to(1, { stretch: 0.22, lean: a.recoil! * 0.35, lift: a.hop! * 1.1, blink: -0.45, size: a.surprise! * 1.05 }, 'out')

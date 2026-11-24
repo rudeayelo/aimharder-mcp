@@ -130,7 +130,10 @@ export class SplatLayer {
   /** Number of sorts run; exposed for profiling. */
   sorts = 0;
 
-  constructor(readonly count: number, colors: DataTexture, opacity = 1) {
+  readonly count: number;
+
+  constructor(count: number, colors: DataTexture, opacity = 1) {
+    this.count = count;
     const height = Math.ceil(count / WIDTH);
     this.centers = new Float32Array(count * 3);
     this.centerTex = floatTexture(height);

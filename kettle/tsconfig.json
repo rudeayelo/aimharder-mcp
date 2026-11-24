@@ -8,7 +8,7 @@
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
     "allowImportingTsExtensions": true,
-    "rewriteRelativeImportExtensions": false,
+    "erasableSyntaxOnly": true,
     "resolveJsonModule": true,
     "noEmit": true,
     "skipLibCheck": true,

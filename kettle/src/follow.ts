@@ -15,7 +15,11 @@ export class FollowLayer {
   private lastExposure = -1;
   private lastTime = -1;
 
-  constructor(public tuning: ClipTuning) {}
+  tuning: ClipTuning;
+
+  constructor(tuning: ClipTuning) {
+    this.tuning = tuning;
+  }
 
   /** Normalised target (-1..1, x toward the viewer's right, y up), or null to rest at the centre. */
   setTarget(target: { x: number; y: number } | null): void {

@@ -25,7 +25,7 @@ import { GAZE_FOLLOW, definitionOf } from './library.ts';
 import { loadKettleBody } from './load.ts';
 import type { ModelSplats } from './model.ts';
 import { ClipPlayer, type PlayOptions } from './player.ts';
-import { BODY_CHANNELS, CHANNELS, EYE_CHANNELS, neutralPose, type Pose } from './pose.ts';
+import { BODY_CHANNELS, CHANNELS, EYE_CHANNELS, lerpPose, neutralPose, type Pose } from './pose.ts';
 import { SplatLayer, colorTexture } from './splat-mesh.ts';
 import { DEFAULT_TUNING, createClip, parseTuning, resolveTuning, type Tuning } from './tuning.ts';
 
@@ -134,9 +134,9 @@ export interface Kettle {
 }
 
 export const CAMERA_PRESETS: Record<CameraPreset, CameraView> = {
-  front: { azimuth: 0, elevation: 4, distance: 3.6, targetY: 0.55, fov: 32 },
-  'three-quarter': { azimuth: 32, elevation: 6, distance: 3.6, targetY: 0.55, fov: 32 },
-  side: { azimuth: 90, elevation: 4, distance: 3.6, targetY: 0.55, fov: 32 },
+  front: { azimuth: 0, elevation: 4, distance: 4.4, targetY: 0.75, fov: 32 },
+  'three-quarter': { azimuth: 32, elevation: 6, distance: 4.4, targetY: 0.75, fov: 32 },
+  side: { azimuth: 90, elevation: 4, distance: 4.4, targetY: 0.75, fov: 32 },
   'eye-detail': { azimuth: 16, elevation: 3, distance: 1.7, targetY: 0.42, fov: 32 },
   stage: { azimuth: 14, elevation: 5, distance: 4.2, targetY: 0.7, fov: 32 },
 };
@@ -152,7 +152,7 @@ const SURFACE_INTERACTIONS: Record<Surface, Interactions> = {
 const FACE_POINT = new Vector3(0.42, 0.4, 0);
 const DRAG_THRESHOLD = 6;
 const DRAG_DEGREES_PER_PIXEL = 0.6;
-const ECHO_OPACITY = [0.42, 0.2];
+const ECHO_OPACITY = [0.45, 0.25];
 
 function shadowTexture(): DataTexture {
   const size = 64, data = new Uint8Array(size * size * 4);
@@ -327,21 +327,22 @@ export function createKettle(options: KettleOptions): Kettle {
         shadow.material.opacity = 0.3 * Math.max(0.25, 1 - lift * 1.2);
       }
     }
-    // Multiple-image smear: earlier exposures of the clip, fainter.
+    // Multiple-image smear: in-between images from the previous exposure to
+    // this one, drawn behind the body and fainter the further back they are.
     const count = player.clip && !reduced() ? Math.min(2, p.echo) : 0;
+    const previous = player.frame > 0 ? player.poseAt(player.frame - 1) : null;
     echoes.forEach((layer, index) => {
       const group = echoGroups[index]!;
-      const frame = player.frame - (index + 1);
-      if (index >= count || frame < 0) {
+      if (index >= count || !previous) {
         group.visible = false;
         echoShown[index] = '';
         return;
       }
       group.visible = true;
-      const key = `${player.clip!.id}:${frame}`;
+      const key = `${player.clip!.id}:${player.frame}:${count}:${index}`;
       if (echoShown[index] === key) return;
       echoShown[index] = key;
-      const ghost = player.poseAt(frame);
+      const ghost = lerpPose(previous, player.pose(), 1 - (index + 1) / (count + 1));
       bakeSplats(model!, ghost, bakedCenters, bakedCov);
       layer.setData(bakedCenters, bakedCov);
       const placement = placeBody(ghost, support);

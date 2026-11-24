@@ -7,7 +7,10 @@ export class DepthSorter {
   private readonly keys: Uint32Array;
   private readonly counts = new Uint32Array(65536);
 
-  constructor(readonly count: number) {
+  readonly count: number;
+
+  constructor(count: number) {
+    this.count = count;
     this.depths = new Float32Array(count);
     this.keys = new Uint32Array(count);
   }

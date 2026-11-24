@@ -67,6 +67,10 @@ export async function startLabServer({ host = '127.0.0.1', port = 5174, minify =
       response.end(body);
     };
     try {
+      if (path === '/favicon.ico') {
+        response.writeHead(204, { 'content-security-policy': STRICT_CSP });
+        return response.end();
+      }
       if (path === '/assets/kettle-body-32k.sog') return send(200, await readFile(ASSET), TYPES['.sog']);
       if (path.endsWith('.js') || path.endsWith('.js.map')) {
         // Rebuild on page load so edits show up on refresh.
