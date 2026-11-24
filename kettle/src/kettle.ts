@@ -57,7 +57,7 @@ export interface Interactions {
 export interface MotionTiming {
   /** Gaze following on the 12 fps grid, or at display rate. */
   gaze: Motion;
-  /** Drag rotation on the 12 fps grid, or at display rate (the default: direct manipulation never lags). */
+  /** Drag rotation on the 12 fps grid (the default), or at display rate. */
   drag: Motion;
 }
 
@@ -154,8 +154,8 @@ export interface SurfaceDefaults {
   entrance: string | null;
 }
 
-/** Character motion and gaze on the 12 fps grid; dragging follows the pointer at display rate. */
-const TIMING: MotionTiming = { gaze: 'stepped', drag: 'smooth' };
+/** Gaze following and dragging step on the 12 fps grid, like character motion. */
+const TIMING: MotionTiming = { gaze: 'stepped', drag: 'stepped' };
 
 /**
  * Defaults per product surface. Provisional (#134): proposed, not yet confirmed

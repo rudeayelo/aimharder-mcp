@@ -560,6 +560,48 @@ describe('Kettle interaction in Chromium', () => {
     await page.context().close();
   });
 
+  it('steps a drag on the 12 fps grid by default: the turn changes at most once per exposure', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 360 } });
+    // A virtual 60 Hz display: animation frames run only when the test steps them.
+    await ctx.addInitScript(() => {
+      const queue = new Map<number, FrameRequestCallback>();
+      let id = 0;
+      window.requestAnimationFrame = (callback) => (queue.set(++id, callback), id);
+      window.cancelAnimationFrame = (handle) => void queue.delete(handle);
+      (window as any).stepFrame = (now: number) => {
+        const due = [...queue.values()];
+        queue.clear();
+        for (const callback of due) callback(now);
+      };
+    });
+    const page = await ctx.newPage();
+    await page.goto(`${lab.url}/harness.html?surface=landing`);
+    await page.waitForFunction(() => (window as any).kettle?.state?.status === 'ready', null, { polling: 100, timeout: 60_000 });
+    await page.evaluate(() => {
+      (window as any).turnChanges = [];
+      let last = 0;
+      (window as any).kettle.subscribe((s: KettleState) => {
+        if (s.dragTurn !== last) (window as any).turnChanges.push(Math.floor(((window as any).now * 12) / 1000));
+        last = s.dragTurn;
+      });
+    });
+    const centre = await body(page);
+    let now = 10_000;
+    await page.mouse.move(centre.x - 100, centre.y);
+    await page.mouse.down();
+    // A pointer moving on every display frame for two thirds of a second.
+    for (let x = centre.x - 90; x <= centre.x + 70; x += 4) {
+      await page.mouse.move(x, centre.y);
+      await page.evaluate((t) => { (window as any).now = t; (window as any).stepFrame(t); }, (now += 1000 / 60));
+    }
+    expect((await state(page)).dragging).toBe(true);
+    await page.mouse.up();
+    const exposures = (await page.evaluate(() => (window as any).turnChanges)) as number[];
+    expect(exposures.length).toBeGreaterThan(5);
+    expect(new Set(exposures).size, 'turn changes within one exposure').toBe(exposures.length);
+    await ctx.close();
+  });
+
   it('keeps the portal guide looking where the page points while curiosity plays', async () => {
     const { page } = await open('/harness.html?surface=portal');
     await ready(page);

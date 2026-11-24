@@ -326,8 +326,8 @@ function playground(): HTMLElement {
   const timing = h('fieldset', { class: 'panel' }, h('legend', { text: 'Stepped (12 fps) or smooth' }));
   for (const name of ['gaze', 'drag'] as const) {
     const select = h('select', { 'data-timing': name, 'aria-label': `${name} timing` },
-      h('option', { value: 'stepped', text: 'Stepped 12 fps', selected: name === 'gaze' }),
-      h('option', { value: 'smooth', text: 'Smooth (display rate)', selected: name === 'drag' }));
+      h('option', { value: 'stepped', text: 'Stepped 12 fps', selected: true }),
+      h('option', { value: 'smooth', text: 'Smooth (display rate)' }));
     select.addEventListener('change', () => kettle.setTiming({ [name]: select.value as 'stepped' | 'smooth' }));
     timing.append(h('label', {}, `${name === 'gaze' ? 'Gaze following' : 'Drag rotation'}: `, select));
   }

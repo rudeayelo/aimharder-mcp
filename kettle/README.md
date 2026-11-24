@@ -49,7 +49,7 @@ kettle.setGaze({ x: 0.8, y: 0.3 }); // look at something (portal guide); null re
 | `play(id, { loop, speed, mirror, intensity })` | Plays a clip; resolves when it ends, is replaced or is skipped under reduced motion. |
 | `pause()`, `resume()`, `seek(frame)`, `stop()`, `setSpeed()`, `setLoop()` | Review controls. |
 | `setGaze(target \| null)` | Points the eyes and a little of the head at a normalised target. |
-| `setInteractions({ gaze, poke, drag })`, `setTiming({ gaze, drag })` | Interaction switches; `stepped` (12 fps) or `smooth` (display rate). |
+| `setInteractions({ gaze, poke, drag })`, `setTiming({ gaze, drag })` | Interaction switches; `stepped` (12 fps, the default for both) or `smooth` (display rate). |
 | `setReducedMotion('auto' \| boolean)` | `auto` follows `prefers-reduced-motion`. |
 | `setTuning(tuning)`, `setCamera(preset \| view)`, `subscribe(listener)`, `state`, `destroy()` | Live tuning, camera, observation and teardown. |
 
@@ -57,7 +57,7 @@ Defaults by surface, from `SURFACES` in [`src/kettle.ts`](src/kettle.ts). `surfa
 
 | Surface | Gaze follows the cursor | Click or tap | Drag to turn | Entrance |
 | --- | --- | --- | --- | --- |
-| `landing` (hero) | Yes, stepped at 12 fps (mouse and pen only, never touch) | Alternates `poke` and `little-hop` | Yes | None |
+| `landing` (hero) | Yes, stepped at 12 fps (mouse and pen only, never touch) | Alternates `poke` and `little-hop` | Yes, stepped at 12 fps | None |
 | `footer` | Yes, stepped at 12 fps (mouse and pen only, never touch) | Alternates `poke` and `little-hop` | Off | `double-blink` once, the first time it is seen; then still |
 | `portal` | No; the page drives `setGaze` and `play` | Off | Off | None |
 | `none` | Off | Off | Off | None |
