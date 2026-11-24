@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kettle lab</title>
+  <link rel="stylesheet" href="/tokens.css">
+  <link rel="stylesheet" href="/lab.css">
+  <script type="module" src="/lab.js"></script>
+</head>
+<body>
+  <header class="bar">
+    <h1>Kettle lab</h1>
+    <nav class="tabs" aria-label="Lab sections">
+      <button type="button" data-tab="viewer" aria-pressed="true">Viewer</button>
+      <button type="button" data-tab="playground" aria-pressed="false">Interaction playground</button>
+      <button type="button" data-tab="compositions" aria-pressed="false">Compositions</button>
+    </nav>
+    <div class="global">
+      <label><input type="checkbox" id="dark"> Dark</label>
+      <label><input type="checkbox" id="reduced"> Simulate reduced motion</label>
+    </div>
+  </header>
+  <main id="app"></main>
+</body>
+</html>

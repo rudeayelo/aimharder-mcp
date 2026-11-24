@@ -1,0 +1,59 @@
+/* Phase 1 color variables from the «AIHarder» Figma file (Foundations →
+   Color roles, Light and Dark modes), read through the Figma API. Only the
+   roles the composition mockups use are copied; Figma stays the source. */
+:root,
+[data-theme="light"] {
+  --brand-primary: #2490f4;
+  --brand-accent: #ffab62;
+  --color-surface-page: #ffffff;
+  --color-surface-subtle: #f3f6fa;
+  --color-surface-raised: #ffffff;
+  --color-surface-selected: #eaf4fe;
+  --color-surface-accent: #fff0e2;
+  --color-surface-scrim: #0d15217a;
+  --color-text-primary: #14283f;
+  --color-text-secondary: #5a6b80;
+  --color-text-brand: #1765b0;
+  --color-text-on-action: #ffffff;
+  --color-text-on-accent: #14283f;
+  --color-accent-bg: #ffab62;
+  --color-border-default: #ced8e4;
+  --color-border-subtle: #e6ecf3;
+  --color-action-primary-bg: #1765b0;
+  --color-action-secondary-bg: #ffffff;
+  --color-action-secondary-border: #7c8ca1;
+  --color-action-secondary-text: #14283f;
+  --color-focus-ring: #2490f4;
+  --color-status-success-bg: #e8f6ee;
+  --color-status-success-icon: #1b7a43;
+  --color-logo-lead: #2490f4;
+  --color-logo-rest: #14283f;
+  --color-effect-shadow: #0d15211f;
+}
+
+[data-theme="dark"] {
+  --color-surface-page: #0d1521;
+  --color-surface-subtle: #0a111b;
+  --color-surface-raised: #141e2c;
+  --color-surface-selected: #0b2540;
+  --color-surface-accent: #3a2410;
+  --color-surface-scrim: #000000a3;
+  --color-text-primary: #f3f6fa;
+  --color-text-secondary: #a9b7c8;
+  --color-text-brand: #5aacf7;
+  --color-text-on-action: #0d1521;
+  --color-text-on-accent: #0d1521;
+  --color-accent-bg: #ffab62;
+  --color-border-default: #2a3749;
+  --color-border-subtle: #1b2636;
+  --color-action-primary-bg: #5aacf7;
+  --color-action-secondary-bg: #141e2c;
+  --color-action-secondary-border: #6b7c92;
+  --color-action-secondary-text: #f3f6fa;
+  --color-focus-ring: #8cc4f9;
+  --color-status-success-bg: #0f2a1c;
+  --color-status-success-icon: #6fd69a;
+  --color-logo-lead: #2490f4;
+  --color-logo-rest: #f3f6fa;
+  --color-effect-shadow: #0000007a;
+}

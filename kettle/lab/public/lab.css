@@ -1,0 +1,152 @@
+/* Lab chrome uses the phase 1 roles too, so Light/Dark previews the Kettle on real backgrounds. */
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font: 14px/1.4 system-ui, sans-serif;
+  background: var(--color-surface-page);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+}
+button, select, input, textarea { font: inherit; color: inherit; }
+button, select {
+  background: var(--color-action-secondary-bg);
+  border: 1px solid var(--color-action-secondary-border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+button[aria-pressed="true"] { background: var(--color-surface-selected); border-color: var(--color-text-brand); color: var(--color-text-brand); }
+button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset: 2px; }
+input[type="number"], input[type="text"], textarea {
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+  padding: 4px 6px;
+}
+h1 { font-size: 16px; margin: 0; }
+h2 { font-size: 15px; margin: 0 0 8px; }
+h3 { font-size: 13px; margin: 12px 0 4px; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: .04em; }
+.hint { color: var(--color-text-secondary); font-size: 12px; margin: 4px 0; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+.bar {
+  display: flex; flex-wrap: wrap; gap: 16px; align-items: center;
+  padding: 10px 16px; border-bottom: 1px solid var(--color-border-subtle);
+  position: sticky; top: 0; background: var(--color-surface-page); z-index: 5;
+}
+.tabs, .global { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.global { margin-left: auto; gap: 16px; }
+
+.panel {
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 12px;
+  padding: 12px;
+}
+.stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  max-height: 70vh;
+  border-radius: 12px;
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-surface-page);
+  overflow: hidden;
+}
+.orbit-layer { position: absolute; inset: 0; z-index: 2; cursor: move; touch-action: none; }
+
+/* Viewer */
+.viewer { display: grid; grid-template-columns: 280px minmax(0, 1fr) 320px; gap: 16px; padding: 16px; align-items: start; }
+.center { display: grid; gap: 10px; }
+.heading { display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+.clip-title { margin: 0; }
+.clip-list { list-style: none; padding: 0; margin: 0 0 12px; display: grid; gap: 6px; }
+.clip-list li { display: grid; gap: 4px; padding: 6px; border-radius: 8px; background: var(--color-surface-raised); }
+.clip-list li[data-kind="reaction"] .clip-name::after { content: " · reaction"; color: var(--color-text-secondary); font-size: 12px; }
+.clip-name { text-align: left; border: 0; background: none; padding: 2px 4px; font-weight: 600; }
+.mark { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 6px; }
+.mark > * { min-width: 0; width: 100%; }
+.transport { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.transport input[type="range"] { flex: 1 1 160px; }
+.readout { font-variant-numeric: tabular-nums; color: var(--color-text-secondary); font-size: 12px; }
+.segmented { display: flex; flex-wrap: wrap; gap: 6px; }
+.tuning-fields .field { display: grid; grid-template-columns: 1fr 64px; gap: 2px 8px; margin: 6px 0; align-items: center; }
+.tuning-fields .field span { grid-column: 1 / -1; font-size: 12px; }
+.json, .export { width: 100%; font: 12px/1.4 ui-monospace, monospace; margin-top: 8px; }
+
+/* Playground */
+.playground { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; padding: 16px; align-items: start; }
+.controls { display: grid; gap: 12px; }
+.controls fieldset { display: grid; gap: 8px; margin: 0; }
+.log { font: 12px/1.4 ui-monospace, monospace; padding-left: 18px; margin: 0; color: var(--color-text-secondary); }
+
+@media (max-width: 1100px) {
+  .viewer, .playground { grid-template-columns: 1fr; }
+}
+
+/* Compositions: rough mockups around the Kettle, coloured only with Figma roles. */
+.compositions { display: grid; gap: 24px; padding: 16px; max-width: 1240px; margin: 0 auto; }
+.mock {
+  position: relative;
+  border: 1px solid var(--color-border-default);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--color-surface-page);
+  box-shadow: 0 8px 24px var(--color-effect-shadow);
+}
+.mock-nav { display: flex; gap: 24px; align-items: center; padding: 16px 24px; border-bottom: 1px solid var(--color-border-subtle); }
+.mock-nav .mock-button { margin-left: auto; }
+.wordmark { font-weight: 800; letter-spacing: .06em; font-size: 18px; }
+.wordmark .lead { color: var(--color-logo-lead); }
+.wordmark .rest { color: var(--color-logo-rest); }
+.nav-links { display: flex; gap: 16px; }
+.pill { display: inline-block; height: 10px; width: 56px; border-radius: 5px; background: var(--color-border-default); }
+.mock-button {
+  display: inline-block; padding: 10px 18px; border-radius: 10px; font-weight: 600;
+  background: var(--color-action-primary-bg); color: var(--color-text-on-action);
+}
+.mock-button.secondary { background: var(--color-action-secondary-bg); color: var(--color-action-secondary-text); border: 1px solid var(--color-action-secondary-border); }
+.line, .block { display: block; height: 12px; border-radius: 6px; background: var(--color-border-subtle); margin: 10px 0; }
+.block { height: 30px; border-radius: 8px; background: var(--color-border-default); }
+.line:nth-child(1), .block:nth-child(1) { width: 92%; }
+.line:nth-child(2), .block:nth-child(2) { width: 70%; }
+.line:nth-child(3) { width: 58%; }
+.eyebrow { color: var(--color-text-brand); font-weight: 600; margin: 0 0 8px; }
+.kettle-slot { position: relative; }
+.bubble {
+  background: var(--color-surface-raised); border: 1px solid var(--color-border-default);
+  border-radius: 14px; padding: 10px 14px; box-shadow: 0 4px 12px var(--color-effect-shadow);
+  font-weight: 600; width: max-content; max-width: 260px;
+}
+
+.hero { background: linear-gradient(180deg, var(--color-surface-page), var(--color-surface-selected)); }
+.hero-body { display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; padding: 48px 48px 0; min-height: 440px; }
+.hero-copy { align-self: center; padding-bottom: 48px; }
+.headline { max-width: 460px; }
+.paragraph { max-width: 420px; margin: 16px 0 24px; }
+.hero-art { position: relative; min-height: 400px; }
+.hero-art .bubble { position: absolute; top: 24px; right: 24px; z-index: 1; }
+.hero-kettle { position: absolute; inset: 0; }
+
+.footer { background: var(--color-surface-subtle); }
+.footer-cta { display: flex; align-items: flex-end; justify-content: space-between; padding: 32px 48px 0; }
+.headline.small { width: 360px; padding-bottom: 24px; }
+.footer-kettle { width: 220px; height: 220px; margin-bottom: -1px; }
+.footer-bar { display: flex; gap: 32px; align-items: center; padding: 20px 48px; border-top: 1px solid var(--color-border-default); background: var(--color-surface-page); }
+.caption { margin-left: auto; color: var(--color-text-secondary); font-size: 12px; }
+
+.portal { background: var(--color-surface-subtle); min-height: 480px; }
+.avatar { margin-left: auto; width: 32px; height: 32px; border-radius: 50%; background: var(--color-border-default); }
+.portal-body { display: grid; grid-template-columns: 220px 1fr; gap: 32px; padding: 32px 48px; }
+.steps { margin: 0; padding-left: 20px; display: grid; align-content: start; gap: 12px; color: var(--color-text-secondary); }
+.steps .current { color: var(--color-text-brand); font-weight: 600; }
+.card { background: var(--color-surface-raised); border: 1px solid var(--color-border-default); border-radius: 16px; padding: 24px; max-width: 620px; }
+.guide { display: flex; align-items: center; gap: 4px; }
+.portal-kettle { width: 150px; height: 150px; flex: none; }
+.guide-bubble { background: var(--color-accent-bg); color: var(--color-text-on-accent); border-color: var(--color-accent-bg); }
+.dialog { position: absolute; inset: 0; display: grid; place-items: center; background: var(--color-surface-scrim); z-index: 3; }
+.dialog[hidden] { display: none; }
+.dialog-card { background: var(--color-surface-raised); border-radius: 16px; padding: 0 32px 24px; text-align: center; width: 360px; }
+.dialog-kettle { width: 220px; height: 220px; margin: -90px auto 0; }
+.dialog-title { font-weight: 600; }
+.composition-controls { position: sticky; top: 54px; z-index: 4; background: var(--color-surface-page); padding: 8px 0; }

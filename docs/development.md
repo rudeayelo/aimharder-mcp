@@ -49,6 +49,10 @@ For other live comparisons, build and run `AIMHARDER_LIVE_CHECK=1 node scripts/l
 
 Add a changeset with `pnpm changeset` when a pull request changes the distributed package or its packaged consumer documentation. Internal-only changes need no changeset. The [release procedure](releasing.md) describes version pull requests, CI, npm OIDC setup, and the local live check of each published artifact.
 
+## Kettle module and lab
+
+The private [Kettle package](../kettle/README.md) has its own lockfile. From `kettle/`, run `pnpm install --frozen-lockfile`, `pnpm typecheck` and `pnpm test`; the tests include Chromium checks with software WebGL and use the first system Chromium or Chrome found (`KETTLE_CHROMIUM` overrides it). `pnpm lab` starts the lab locally and `pnpm lab --host` exposes it on the tailnet. CI runs the install, typecheck and tests with Google Chrome.
+
 ## Hosted observability harness
 
 Run `pnpm --dir hosted exec vitest run tests/worker.test.ts tests/telemetry.test.ts

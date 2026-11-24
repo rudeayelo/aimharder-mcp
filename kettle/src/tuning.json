@@ -1,0 +1,161 @@
+{
+  "double-blink": {
+    "timing": {
+      "lead": 2,
+      "shut": 2,
+      "gap": 3,
+      "shut2": 2,
+      "pop": 3,
+      "settle": 3
+    },
+    "amount": {
+      "pop": 0.22,
+      "squash": 0.06
+    }
+  },
+  "curiosity": {
+    "timing": {
+      "dip": 3,
+      "pop": 2,
+      "hold": 6,
+      "lean": 1,
+      "hold2": 5,
+      "back": 3,
+      "settle": 3
+    },
+    "amount": {
+      "tilt": 17,
+      "bend": 0.07,
+      "turn": 14,
+      "bigEye": 0.38,
+      "squint": 0.55,
+      "leanIn": 7
+    }
+  },
+  "look-around": {
+    "timing": {
+      "lead": 2,
+      "follow": 2,
+      "hold": 4,
+      "settle": 3
+    },
+    "amount": {
+      "gaze": 0.9,
+      "turn": 24,
+      "lean": 8,
+      "stretch": 0.12,
+      "lag": 0.06
+    }
+  },
+  "body-flex": {
+    "timing": {
+      "windup": 3,
+      "pop": 2,
+      "flex": 2,
+      "hold": 3,
+      "proud": 5,
+      "settle": 3
+    },
+    "amount": {
+      "squash": 0.22,
+      "stretch": 0.24,
+      "bulge": 0.2,
+      "bend": 0.12,
+      "lean": 11,
+      "determination": 0.35
+    }
+  },
+  "rock": {
+    "timing": {
+      "lead": 2,
+      "swing": 2,
+      "back": 3,
+      "decay": 2,
+      "settle": 2
+    },
+    "amount": {
+      "swing": 24,
+      "bend": 0.07,
+      "lag": 0.09,
+      "decay": 0.6
+    }
+  },
+  "little-hop": {
+    "timing": {
+      "squash": 2,
+      "rise": 2,
+      "apex": 1,
+      "fall": 2,
+      "recover": 1,
+      "settle": 2
+    },
+    "amount": {
+      "height": 0.5,
+      "squash": 0.24,
+      "stretch": 0.28,
+      "bulge": 0.12,
+      "joy": 0.7
+    }
+  },
+  "tilted-spin": {
+    "timing": {
+      "windup": 3,
+      "spin": 5,
+      "land": 2,
+      "proud": 4,
+      "settle": 3
+    },
+    "amount": {
+      "counter": 35,
+      "tilt": 26,
+      "height": 0.55,
+      "twist": 35,
+      "squash": 0.22,
+      "overshoot": 16
+    }
+  },
+  "poke": {
+    "timing": {
+      "hit": 1,
+      "surprise": 3,
+      "shake": 1,
+      "settle": 2
+    },
+    "amount": {
+      "squash": 0.2,
+      "recoil": 16,
+      "surprise": 0.38,
+      "hop": 0.08
+    }
+  },
+  "drag-release": {
+    "timing": {
+      "cycle": 5,
+      "cycles": 3,
+      "shake": 1,
+      "settle": 3,
+      "springBack": 4
+    },
+    "amount": {
+      "wobble": 14,
+      "eyeSpin": 0.6,
+      "droop": 0.3,
+      "minSpeed": 240,
+      "fullSpeed": 1080,
+      "springOvershoot": 0.25
+    }
+  },
+  "gaze-follow": {
+    "timing": {
+      "catchUp": 2,
+      "rest": 6
+    },
+    "amount": {
+      "eyes": 0.9,
+      "head": 12,
+      "nod": 6,
+      "radius": 320,
+      "reduced": 0.35
+    }
+  }
+}

@@ -42,3 +42,14 @@ jobs:
       - name: Build hosted Worker
         working-directory: hosted
         run: pnpm build
+      - name: Install Kettle module dependencies
+        working-directory: kettle
+        run: pnpm install --frozen-lockfile
+      - name: Check Kettle module types
+        working-directory: kettle
+        run: pnpm typecheck
+      - name: Test Kettle module and lab in Chromium
+        working-directory: kettle
+        env:
+          KETTLE_CHROMIUM: /usr/bin/google-chrome
+        run: pnpm test
