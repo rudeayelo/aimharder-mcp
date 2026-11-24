@@ -152,9 +152,9 @@
     },
     "amount": {
       "eyes": 0.9,
-      "head": 8,
-      "nod": 4,
-      "radius": 420,
+      "head": 12,
+      "nod": 6,
+      "radius": 320,
       "reduced": 0.35
     }
   }

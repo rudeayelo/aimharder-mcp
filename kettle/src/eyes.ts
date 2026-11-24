@@ -26,7 +26,7 @@ const EYE_Y = 0.103;
 const EYE_Z = [-0.108, 0.107] as const;
 const SEAM = { hx: 0.078, hy: 0.142, r: 0.065 };
 const BASE = { hx: 0.029, hy: 0.065 };
-const GAZE = { x: 0.03, y: 0.034 };
+const GAZE = { x: 0.046, y: 0.05 };
 const DEG = Math.PI / 180;
 
 function contour(theta: number, hx: number, hy: number, radius: number): [number, number] {
