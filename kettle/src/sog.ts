@@ -1,6 +1,6 @@
 // SOG version 2 reader: a stored (uncompressed) zip with meta.json and WebP
-// attribute textures. Only spherical-harmonics degree 0 is read; the Kettle
-// asset has no higher bands.
+// attribute textures. Only spherical-harmonics degree 0 is supported: an asset
+// with higher bands (`shN`) is rejected, as are truncated or mismatched files.
 
 export interface SogMeta {
   version: number;
@@ -43,6 +43,9 @@ const SH_C0 = 0.28209479177387814;
 /** Lists the entries of a stored (method 0) zip archive. */
 export function readStoredZip(bytes: Uint8Array): Map<string, Uint8Array> {
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  const within = (start: number, length: number) => {
+    if (start < 0 || length < 0 || start + length > bytes.length) throw new Error('SOG: archive is truncated');
+  };
   let end = -1;
   for (let i = bytes.length - 22; i >= Math.max(0, bytes.length - 65_557); i--) {
     if (view.getUint32(i, true) === 0x06054b50) {
@@ -53,9 +56,11 @@ export function readStoredZip(bytes: Uint8Array): Map<string, Uint8Array> {
   if (end < 0) throw new Error('SOG: zip end record not found');
   const entries = view.getUint16(end + 10, true);
   let offset = view.getUint32(end + 16, true);
+  within(offset, view.getUint32(end + 12, true));
   const files = new Map<string, Uint8Array>();
   const decoder = new TextDecoder();
   for (let n = 0; n < entries; n++) {
+    within(offset, 46);
     if (view.getUint32(offset, true) !== 0x02014b50) throw new Error('SOG: bad central directory');
     const method = view.getUint16(offset + 10, true);
     const size = view.getUint32(offset + 20, true);
@@ -65,19 +70,31 @@ export function readStoredZip(bytes: Uint8Array): Map<string, Uint8Array> {
     const local = view.getUint32(offset + 42, true);
     const name = decoder.decode(bytes.subarray(offset + 46, offset + 46 + nameLength));
     if (method !== 0) throw new Error(`SOG: ${name} is compressed; only stored entries are supported`);
+    within(local, 30);
     const localName = view.getUint16(local + 26, true);
     const localExtra = view.getUint16(local + 28, true);
     const start = local + 30 + localName + localExtra;
+    within(start, size);
     files.set(name, bytes.subarray(start, start + size));
     offset += 46 + nameLength + extraLength + commentLength;
   }
   return files;
 }
 
+const finiteList = (value: unknown, length: number) =>
+  Array.isArray(value) && value.length === length && value.every((n) => typeof n === 'number' && Number.isFinite(n));
+
 export function parseSogMeta(json: string): SogMeta {
-  const meta = JSON.parse(json) as SogMeta;
+  const meta = JSON.parse(json) as SogMeta & { shN?: unknown };
   if (meta.version !== 2) throw new Error(`SOG: version ${String(meta.version)} is not supported`);
-  if (!meta.sh0?.codebook || !meta.scales?.codebook) throw new Error('SOG: codebooks missing');
+  if (!Number.isInteger(meta.count) || meta.count <= 0) throw new Error(`SOG: count ${String(meta.count)} is not a positive integer`);
+  if (meta.shN) throw new Error('SOG: higher spherical-harmonics bands (shN) are not supported; export degree 0 only');
+  if (!finiteList(meta.means?.mins, 3) || !finiteList(meta.means?.maxs, 3)) throw new Error('SOG: means mins/maxs must be three finite numbers');
+  if (!finiteList(meta.scales?.codebook, 256)) throw new Error('SOG: scales codebook must hold 256 finite numbers');
+  if (!finiteList(meta.sh0?.codebook, 256)) throw new Error('SOG: sh0 codebook must hold 256 finite numbers');
+  if (meta.means.files?.length !== 2 || !meta.scales.files?.[0] || !meta.quats?.files?.[0] || !meta.sh0.files?.[0]) {
+    throw new Error('SOG: attribute texture files missing');
+  }
   return meta;
 }
 
@@ -86,6 +103,11 @@ const logDecode = (value: number) => Math.sign(value) * (Math.exp(Math.abs(value
 /** Decodes attribute pixels into centres, 3D covariances and colours. */
 export function decodeSog(meta: SogMeta, textures: SogTextures): SourceSplats {
   const count = meta.count;
+  for (const [name, texture] of Object.entries(textures)) {
+    if (texture.width * texture.height < count || texture.data.length < texture.width * texture.height * 4) {
+      throw new Error(`SOG: ${name} texture (${texture.width} × ${texture.height}) is too small for ${count} splats`);
+    }
+  }
   const centers = new Float32Array(count * 3);
   const covariances = new Float32Array(count * 6);
   const colors = new Uint8Array(count * 4);

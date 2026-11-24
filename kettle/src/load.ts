@@ -20,8 +20,10 @@ async function readPixels(gl: WebGL2RenderingContext, bytes: Uint8Array): Promis
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, bitmap);
     gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) throw new Error('Kettle body: texture readback unavailable');
     const data = new Uint8Array(bitmap.width * bitmap.height * 4);
     gl.readPixels(0, 0, bitmap.width, bitmap.height, gl.RGBA, gl.UNSIGNED_BYTE, data);
+    if (gl.getError() !== gl.NO_ERROR || gl.isContextLost()) throw new Error('Kettle body: texture readback failed');
     return { width: bitmap.width, height: bitmap.height, data };
   } finally {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
