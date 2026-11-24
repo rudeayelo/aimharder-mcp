@@ -5,7 +5,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { chromium, type Browser, type BrowserContextOptions, type Page } from 'playwright-core';
 import { startLabServer, type LabServer } from '../lab/server.ts';
 import { CHROMIUM_ARGS, chromiumPath } from '../lab/chromium.ts';
-import { createClip, parseTuning, type KettleState } from '../src/index.ts';
+import { createClip, parseTuning, resolveTuning, type KettleState } from '../src/index.ts';
+import { springBack } from '../src/spring.ts';
 import { kettleBlueShare, readPng } from './png.ts';
 
 /** The policy the module must run under, written out here rather than read from the server. */
@@ -612,15 +613,21 @@ describe('Kettle interaction in Chromium', () => {
     await page.context().close();
   });
 
-  it('steps a drag on the 12 fps grid by default: the turn changes at most once per exposure', async () => {
+  /**
+   * The landing harness on a virtual 60 Hz display: animation frames run only
+   * when the test steps them, and every turn change is recorded with the
+   * exposure of the frame that drew it.
+   */
+  async function virtualDisplay() {
     const ctx = await browser.newContext({ viewport: { width: 360, height: 360 } });
-    // A virtual 60 Hz display: animation frames run only when the test steps them.
     await ctx.addInitScript(() => {
       const queue = new Map<number, FrameRequestCallback>();
       let id = 0;
       window.requestAnimationFrame = (callback) => (queue.set(++id, callback), id);
       window.cancelAnimationFrame = (handle) => void queue.delete(handle);
+      (window as any).now = 10_000;
       (window as any).stepFrame = (now: number) => {
+        (window as any).now = now;
         const due = [...queue.values()];
         queue.clear();
         for (const callback of due) callback(now);
@@ -630,27 +637,65 @@ describe('Kettle interaction in Chromium', () => {
     await page.goto(`${lab.url}/harness.html?surface=landing`);
     await page.waitForFunction(() => (window as any).kettle?.state?.status === 'ready', null, { polling: 100, timeout: 60_000 });
     await page.evaluate(() => {
-      (window as any).turnChanges = [];
+      (window as any).turns = [];
       let last = 0;
       (window as any).kettle.subscribe((s: KettleState) => {
-        if (s.dragTurn !== last) (window as any).turnChanges.push(Math.floor(((window as any).now * 12) / 1000));
+        if (s.dragTurn !== last) (window as any).turns.push([Math.floor(((window as any).now * 12) / 1000), s.dragTurn]);
         last = s.dragTurn;
       });
     });
-    const centre = await body(page);
     let now = 10_000;
+    return {
+      ctx,
+      page,
+      /** Runs the next display frame, 1/60 s later. */
+      frame: () => page.evaluate((t) => (window as any).stepFrame(t), (now += 1000 / 60)),
+      /** Whether the next display frame falls in the same exposure as the last one. */
+      midExposure: () => Math.floor(((now + 1000 / 60) * 12) / 1000) === Math.floor((now * 12) / 1000),
+      turns: () => page.evaluate(() => (window as any).turns) as Promise<Array<[number, number]>>,
+    };
+  }
+
+  it('steps a drag on the 12 fps grid by default: the turn changes at most once per exposure', async () => {
+    const { ctx, page, frame, turns } = await virtualDisplay();
+    const centre = await body(page);
     await page.mouse.move(centre.x - 100, centre.y);
     await page.mouse.down();
     // A pointer moving on every display frame for two thirds of a second.
     for (let x = centre.x - 90; x <= centre.x + 70; x += 4) {
       await page.mouse.move(x, centre.y);
-      await page.evaluate((t) => { (window as any).now = t; (window as any).stepFrame(t); }, (now += 1000 / 60));
+      await frame();
     }
     expect((await state(page)).dragging).toBe(true);
     await page.mouse.up();
-    const exposures = (await page.evaluate(() => (window as any).turnChanges)) as number[];
+    const exposures = (await turns()).map(([exposure]) => exposure);
     expect(exposures.length).toBeGreaterThan(5);
     expect(new Set(exposures).size, 'turn changes within one exposure').toBe(exposures.length);
+    await ctx.close();
+  });
+
+  it('springs back from the turn on screen after a release between exposures, one turn change per exposure', async () => {
+    const { ctx, page, frame, turns, midExposure } = await virtualDisplay();
+    const centre = await body(page);
+    await page.mouse.move(centre.x - 100, centre.y);
+    await page.mouse.down();
+    for (let x = centre.x - 90; x <= centre.x; x += 4) {
+      await page.mouse.move(x, centre.y);
+      await frame();
+    }
+    // Stop where the next display frame is still in this exposure.
+    while (!midExposure()) await frame();
+    const shown = (await state(page)).dragTurn;
+    const before = (await turns()).length;
+    // The pointer moves on and is let go before the next exposure is drawn.
+    await page.mouse.move(centre.x + 60, centre.y);
+    await page.mouse.up();
+    for (let i = 0; i < 90; i++) await frame();
+    const all = await turns();
+    expect(new Set(all.map(([exposure]) => exposure)).size, 'turn changes within one exposure').toBe(all.length);
+    const reaction = resolveTuning('drag-release');
+    const expected = springBack(shown, reaction.timing.springBack!, reaction.amount.springOvershoot!);
+    expect(all.slice(before).map(([, turn]) => turn)).toEqual(expected);
     await ctx.close();
   });
 
