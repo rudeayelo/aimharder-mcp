@@ -26,7 +26,7 @@ pnpm poster         # re-renders design/assets/kettle/kettle-poster-front.png
 - **Tuning:** every timing (in exposures) and amount of the selected clip. **Copy as JSON** copies the entry in the format of [`src/tuning.json`](src/tuning.json); pasting it over the same key there makes it the module's value. **Apply pasted JSON** takes the same format back.
 - **Interaction playground:** gaze following, poke and drag each switched on or off, stepped (12 fps) or smooth timing for gaze and drag, surface presets, the portal guide cue and celebration, and an event log. For touch, open the browser's device toolbar.
 - **Compositions:** rough mockups of the landing hero, the footer and the portal onboarding cue (with its celebration dialog), each Kettle on its surface's defaults, coloured only with the phase 1 Figma variables in [`lab/public/tokens.css`](lab/public/tokens.css).
-- Header toggles switch Light/Dark and simulate `prefers-reduced-motion` for every Kettle on the page. Markers, notes and tuned values persist in the browser's local storage.
+- Header toggles switch Light/Dark and simulate `prefers-reduced-motion` for every Kettle on the page. Markers, notes and tuned values persist in the browser's local storage; a saved tuned value is dropped when the module's defaults for its clip change (or the clip is removed), and markers and notes stay.
 
 ## Using the module
 

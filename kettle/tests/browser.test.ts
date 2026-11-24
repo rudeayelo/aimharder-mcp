@@ -5,7 +5,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { chromium, type Browser, type BrowserContextOptions, type Page } from 'playwright-core';
 import { startLabServer, type LabServer } from '../lab/server.ts';
 import { CHROMIUM_ARGS, chromiumPath } from '../lab/chromium.ts';
-import { parseTuning, type KettleState } from '../src/index.ts';
+import { createClip, parseTuning, type KettleState } from '../src/index.ts';
 import { kettleBlueShare, readPng } from './png.ts';
 
 /** The policy the module must run under, written out here rather than read from the server. */
@@ -236,20 +236,41 @@ describe('Kettle lab in Chromium', () => {
   it('opens on saved lab state that names a removed clip, keeping the other saved values', async () => {
     const { page, errors } = await open('/#viewer');
     await ready(page);
-    const rockFrames = async () => {
-      await page.evaluate(() => { const k = (window as any).kettle; void k.play('rock'); k.pause(); });
+    const hopFrames = async () => {
+      await page.evaluate(() => { const k = (window as any).kettle; void k.play('little-hop'); k.pause(); });
       return (await state(page)).frames;
     };
-    const shipped = await rockFrames();
-    // Saved before body-flex was removed (#134): selected, and tuned next to another clip.
+    const shipped = await hopFrames();
+    // Saved before body-flex was removed (#134): selected, and tuned next to a clip whose defaults did not change.
     await page.evaluate(() => {
+      // A format-1 lab (#146) kept no version and no defaults per entry.
+      for (const key of ['version', 'tuning-base']) localStorage.removeItem(`kettle-lab:${key}`);
       localStorage.setItem('kettle-lab:selected', JSON.stringify('body-flex'));
-      localStorage.setItem('kettle-lab:tuning', JSON.stringify({ 'body-flex': { timing: {}, amount: {} }, rock: { timing: { settle: 8 }, amount: {} } }));
+      localStorage.setItem('kettle-lab:tuning', JSON.stringify({ 'body-flex': { timing: {}, amount: {} }, 'little-hop': { timing: { settle: 8 }, amount: {} } }));
     });
     await page.reload();
     await ready(page);
     expect(await page.getAttribute('[data-clip="double-blink"]', 'aria-pressed')).toBe('true');
-    expect(await rockFrames()).toBe(shipped + 6);
+    expect(await hopFrames()).toBe(shipped + 6);
+    expect(errors).toEqual([]);
+    await page.context().close();
+  });
+
+  it('drops saved tuning made against older module defaults, keeping marks and notes', async () => {
+    const { page, errors } = await open('/#viewer');
+    await ready(page);
+    // Saved by the lab before the round-2 defaults: curiosity's old one-exposure snap into the lean.
+    await page.evaluate(() => {
+      for (const key of ['version', 'tuning-base']) localStorage.removeItem(`kettle-lab:${key}`);
+      localStorage.setItem('kettle-lab:tuning', JSON.stringify({ curiosity: { timing: { lean: 1 }, amount: {} } }));
+      localStorage.setItem('kettle-lab:marks', JSON.stringify({ curiosity: { mark: 'adjust', note: 'lean snaps' } }));
+    });
+    await page.reload();
+    await ready(page);
+    await page.evaluate(() => { const k = (window as any).kettle; void k.play('curiosity'); k.pause(); });
+    expect((await state(page)).frames).toBe(createClip('curiosity').frames.length);
+    expect(await page.inputValue('select[aria-label="Decision for Curiosity"]')).toBe('adjust');
+    expect(await page.inputValue('[aria-label="Note for Curiosity"]')).toBe('lean snaps');
     expect(errors).toEqual([]);
     await page.context().close();
   });

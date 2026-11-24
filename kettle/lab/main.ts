@@ -71,14 +71,36 @@ async function copyText(text: string, fallback: HTMLTextAreaElement): Promise<st
 }
 
 // ---------- shared state ----------
-// Saved values for clips that no longer exist (e.g. a removed clip) are dropped, not the whole set.
-const saved = storage.get<Record<string, unknown>>('tuning', {});
-let tuning: Tuning = {};
-try {
-  tuning = parseTuning(Object.fromEntries(Object.entries(saved).filter(([id]) => TUNABLE_IDS.includes(id))));
-} catch {
-  tuning = {};
+/**
+ * Format of the saved lab state. 1 (#146): tuned values only. 2 (#148): also
+ * the module defaults each entry was tuned against, so an entry is dropped
+ * once the module's defaults for that clip change. Marks and notes are kept.
+ */
+const STATE_VERSION = 2;
+/** Clips whose module defaults changed between format 1 and 2; their format-1 tuning is dropped. */
+const CHANGED_SINCE_FORMAT_1 = ['double-blink', 'curiosity', 'look-around', 'rock', 'tilted-spin', 'poke'];
+const defaultsOf = (id: string) => JSON.stringify(DEFAULT_TUNING[id] ?? null);
+
+function loadTuning(): Tuning {
+  const saved = storage.get<Record<string, unknown>>('tuning', {});
+  const base = storage.get<number>('version', 1) >= 2
+    ? storage.get<Record<string, string>>('tuning-base', {})
+    : Object.fromEntries(TUNABLE_IDS.filter((id) => !CHANGED_SINCE_FORMAT_1.includes(id)).map((id) => [id, defaultsOf(id)]));
+  // Entries for removed clips, or tuned against other defaults, are dropped one by one.
+  const current = Object.entries(saved).filter(([id]) => TUNABLE_IDS.includes(id) && base[id] === defaultsOf(id));
+  try {
+    return parseTuning(Object.fromEntries(current));
+  } catch {
+    return {};
+  }
 }
+function saveTuning(): void {
+  storage.set('tuning', tuning);
+  storage.set('tuning-base', Object.fromEntries(Object.keys(tuning).map((id) => [id, defaultsOf(id)])));
+  storage.set('version', STATE_VERSION);
+}
+let tuning: Tuning = loadTuning();
+saveTuning();
 const kettles = new Set<Kettle>();
 const reducedToggle = document.querySelector<HTMLInputElement>('#reduced')!;
 const darkToggle = document.querySelector<HTMLInputElement>('#dark')!;
@@ -108,7 +130,7 @@ darkToggle.addEventListener('change', () => {
 
 function setTuning(id: string, values: ClipTuning): void {
   tuning = { ...tuning, [id]: values };
-  storage.set('tuning', tuning);
+  saveTuning();
   for (const kettle of kettles) kettle.setTuning({ [id]: values });
 }
 
@@ -250,7 +272,7 @@ function viewer(): HTMLElement {
   resetButton.addEventListener('click', () => {
     const { [selected]: _, ...rest } = tuning;
     tuning = rest;
-    storage.set('tuning', tuning);
+    saveTuning();
     for (const k of kettles) k.setTuning({ [selected]: DEFAULT_TUNING[selected]! });
     renderTuning();
   });
