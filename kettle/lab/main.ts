@@ -5,6 +5,7 @@ import {
   CLIP_DEFINITIONS,
   DEFAULT_TUNING,
   GAZE_FOLLOW,
+  SURFACES,
   createKettle,
   parseTuning,
   resolveTuning,
@@ -328,9 +329,9 @@ function playground(): HTMLElement {
   }
   const surfaces = h('fieldset', { class: 'panel' }, h('legend', { text: 'Surface presets' }));
   const presets: Record<string, { gaze: boolean; poke: boolean; drag: boolean }> = {
-    Landing: { gaze: true, poke: true, drag: false },
-    Footer: { gaze: true, poke: true, drag: false },
-    Portal: { gaze: false, poke: false, drag: false },
+    Landing: SURFACES.landing.interactions,
+    Footer: SURFACES.footer.interactions,
+    Portal: SURFACES.portal.interactions,
     Everything: { gaze: true, poke: true, drag: true },
   };
   for (const [name, value] of Object.entries(presets)) {
@@ -404,8 +405,9 @@ function compositions(): HTMLElement {
   const controls = h('div', { class: 'row composition-controls' }, replayGuide, celebrate, h('span', { class: 'hint', text: 'Theme and reduced motion follow the header toggles.' }));
 
   queueMicrotask(() => {
-    const heroKettle = makeKettle(heroStage, { surface: 'landing', camera: 'stage', pokeClips: ['poke', 'little-hop', 'double-blink', 'rock'] });
-    const footerKettle = makeKettle(footerStage, { surface: 'footer', camera: 'stage', pokeClips: ['poke', 'rock', 'double-blink'] });
+    // The module's surface defaults, as the product will use them.
+    const heroKettle = makeKettle(heroStage, { surface: 'landing', camera: 'stage' });
+    const footerKettle = makeKettle(footerStage, { surface: 'footer', camera: 'stage' });
     const portalKettle = makeKettle(portalStage, { surface: 'portal', camera: 'three-quarter', shadow: false });
     let dialogKettle: Kettle | null = null;
     Object.assign(window, { heroKettle, footerKettle, portalKettle });

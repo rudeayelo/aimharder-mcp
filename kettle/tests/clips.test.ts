@@ -1,19 +1,25 @@
 // Clip data through the module's public API (the grid, the neutral endpoints,
-// the copy-as-JSON round trip), plus the two stepping state machines, which a
-// browser cannot time reliably. Reduced motion is checked in browser.test.ts.
+// the copy-as-JSON round trip, the motion rules of #134), plus the two stepping
+// state machines, which a browser cannot time reliably. Reduced motion is
+// checked in browser.test.ts.
 import { describe, expect, it } from 'vitest';
+import { eyeShape, recessRings } from '../src/eyes.ts';
 import { FollowLayer } from '../src/follow.ts';
 import {
+  BODY_CHANNELS,
+  CHANNELS,
   CLIP_DEFINITIONS,
   DEFAULT_TUNING,
   GAZE_FOLLOW,
   createClip,
   isNeutral,
+  neutralPose,
   parseTuning,
   resolveTuning,
   serializeTuning,
   type ClipTuning,
   type ParamRange,
+  type Pose,
 } from '../src/index.ts';
 import { ClipPlayer } from '../src/player.ts';
 import { springBack } from '../src/spring.ts';
@@ -29,10 +35,12 @@ function randomTuning(id: string, seed: number): ClipTuning {
 }
 
 describe('clips', () => {
-  it('covers the seven base clips and the poke and drag-release reactions', () => {
+  it('covers the six kept emotes and the poke and drag-release reactions', () => {
     expect(CLIP_DEFINITIONS.map((d) => d.id)).toEqual([
-      'double-blink', 'curiosity', 'look-around', 'body-flex', 'rock', 'little-hop', 'tilted-spin', 'poke', 'drag-release',
+      'double-blink', 'curiosity', 'look-around', 'rock', 'little-hop', 'tilted-spin', 'poke', 'drag-release',
     ]);
+    // body-flex was removed (#134): its tuning is rejected like any unknown clip.
+    expect(() => parseTuning('{"body-flex": {}}')).toThrow(/Unknown Kettle clip/);
   });
 
   it('play on the 12 fps grid and start and end on the neutral pose, at default and tuned values', () => {
@@ -45,6 +53,8 @@ describe('clips', () => {
         expect(isNeutral(clip.frames.at(-1)!), `${definition.id} last exposure`).toBe(true);
         // Every clip actually moves.
         expect(clip.frames.some((frame) => !isNeutral(frame, 1e-3)), definition.id).toBe(true);
+        // One body per exposure: no echo (multiple-image) channel in any pose.
+        for (const frame of clip.frames) expect(Object.keys(frame), definition.id).toEqual([...CHANNELS]);
       }
     }
   });
@@ -59,6 +69,81 @@ describe('clips', () => {
     // The module's own tuning.json is in that same format, unchanged by parsing.
     expect(parseTuning(JSON.parse(JSON.stringify(DEFAULT_TUNING)))).toEqual(DEFAULT_TUNING);
     expect(() => parseTuning('{"little-hops": {}}')).toThrow(/Unknown Kettle clip/);
+  });
+});
+
+/** The tuned values the maintainer approved in the Decisions comment on #134, verbatim. */
+const DECIDED = `{
+  "double-blink": { "timing": { "lead": 1, "shut": 2, "gap": 2, "shut2": 2, "pop": 1, "settle": 1 }, "amount": { "pop": 0.1, "squash": 0.01 } },
+  "rock": { "timing": { "lead": 2, "swing": 2, "back": 3, "decay": 2, "settle": 2 }, "amount": { "swing": 20, "bend": 0.07, "lag": 0.04, "decay": 0.6 } },
+  "look-around": { "timing": { "lead": 2, "follow": 2, "hold": 4, "settle": 3 }, "amount": { "gaze": 0.9, "turn": 24, "lean": 8, "stretch": 0.12, "lag": 0.02 } },
+  "tilted-spin": { "timing": { "windup": 3, "spin": 5, "land": 2, "proud": 3, "settle": 3 }, "amount": { "counter": 35, "tilt": 26, "height": 0.55, "twist": 35, "squash": 0.22, "overshoot": 16 } }
+}`;
+
+/** Each exposure's largest body change, as a share of that channel's travel over the whole clip. */
+function bodySteps(frames: Pose[]): number[] {
+  const travel = (channel: (typeof BODY_CHANNELS)[number]) =>
+    Math.max(...frames.map((f) => f[channel])) - Math.min(...frames.map((f) => f[channel]));
+  const moving = BODY_CHANNELS.filter((channel) => travel(channel) > 1e-9);
+  return frames.map((frame, i) =>
+    i === 0 ? 0 : Math.max(...moving.map((channel) => Math.abs(frame[channel] - frames[i - 1]![channel]) / travel(channel))),
+  );
+}
+
+/** Twice the signed area of each triangle of an eye recess (centre fan and ring strips). */
+function recessAreas(pose: Pose, eye: 0 | 1): number[] {
+  const { center, rings } = recessRings(eyeShape(pose, eye), eye === 0 ? -1 : 1);
+  const cross = (a: [number, number], b: [number, number], c: [number, number]) =>
+    (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+  const areas: number[] = [];
+  const n = rings[0]!.pts.length;
+  for (let j = 0; j < n; j++) areas.push(cross(center, rings[0]!.pts[j]!, rings[0]!.pts[(j + 1) % n]!));
+  for (let r = 1; r < rings.length; r++) {
+    const inner = rings[r - 1]!.pts, outer = rings[r]!.pts;
+    for (let j = 0; j < n; j++) {
+      const k = (j + 1) % n;
+      areas.push(cross(inner[j]!, outer[j]!, outer[k]!), cross(inner[j]!, outer[k]!, inner[k]!));
+    }
+  }
+  return areas;
+}
+
+describe('motion rules (#134)', () => {
+  it('ship the tuned values the maintainer approved', () => {
+    const decided = JSON.parse(DECIDED) as Record<string, ClipTuning>;
+    for (const [id, values] of Object.entries(decided)) {
+      expect(DEFAULT_TUNING[id], id).toEqual(values);
+      // Inside the declared ranges: parsing does not clamp them.
+      expect(parseTuning({ [id]: values })[id], id).toEqual(values);
+    }
+  });
+
+  it('ease curiosity out of its held pose: no return step larger than its lead-in', () => {
+    const frames = createClip('curiosity').frames;
+    const steps = bodySteps(frames);
+    const same = (a: Pose, b: Pose) => BODY_CHANNELS.every((channel) => a[channel] === b[channel]);
+    // The first held pose ends the lead-in; everything after it is the return.
+    const holdStart = frames.findIndex((frame, i) => i > 0 && !isNeutral(frame) && same(frame, frames[i + 1]!));
+    let holdEnd = holdStart;
+    while (same(frames[holdEnd]!, frames[holdEnd + 1]!)) holdEnd++;
+    const leadIn = Math.max(...steps.slice(1, holdStart + 1));
+    const back = Math.max(...steps.slice(holdEnd + 1));
+    expect(holdStart).toBeGreaterThan(0);
+    expect(back).toBeLessThan(leadIn);
+  });
+
+  it('keep every eye recess unfolded in every exposure of every clip', () => {
+    const rest = recessAreas(neutralPose(), 0);
+    const sign = Math.sign(rest[0]!);
+    expect(rest.every((area) => Math.sign(area) === sign)).toBe(true);
+    for (const definition of CLIP_DEFINITIONS) {
+      for (const [frame, pose] of createClip(definition.id).frames.entries()) {
+        for (const eye of [0, 1] as const) {
+          const flipped = recessAreas(pose, eye).filter((area) => area * sign < -1e-12).length;
+          expect(flipped, `${definition.id} exposure ${frame} eye ${eye}`).toBe(0);
+        }
+      }
+    }
   });
 });
 

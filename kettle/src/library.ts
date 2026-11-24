@@ -1,6 +1,8 @@
 // The Kettle's clips. Style: strongly marked cartoon on a 12 fps exposure grid
-// (on twos): hard anticipation, squash and stretch, overshoot, snappy holds and
-// multiple-image smears, with the eyes carrying the emotion.
+// (on twos): hard anticipation, squash and stretch, overshoot and snappy holds,
+// with the eyes carrying the emotion. Rules (#134): no echo or multiple-image
+// frames; no snap into a pose right before the return to neutral, which eases
+// out of the last held pose; eye shapes stay readable.
 import { Timeline, type ClipDefinition, type ParamRange, type Values } from './clip.ts';
 
 const exposures = (label: string, max = 12, min = 1): ParamRange => ({ min, max, step: 1, label });
@@ -48,9 +50,9 @@ export const CURIOSITY: ClipDefinition = {
     dip: exposures('Anticipation dip', 6),
     pop: exposures('Pop into the tilt', 4),
     hold: exposures('First hold', 12),
-    lean: exposures('Lean in ("ooh")', 4),
+    lean: exposures('Lean in ("ooh"), eased', 8),
     hold2: exposures('Second hold', 12),
-    back: exposures('Return', 6),
+    back: exposures('Return, eased out of the lean', 8),
     settle: exposures('Settle', 8),
   },
   amount: {
@@ -72,9 +74,11 @@ export const CURIOSITY: ClipDefinition = {
       .to(t.pop!, { ...tilted(1.08), flop: -0.07 }, 'out')
       .to(2, tilted(1), 'inOut')
       .hold(t.hold! - 2)
-      .to(t.lean!, { ...tilted(1.2), nod: a.leanIn!, sizeL: a.bigEye! * 1.3, blinkL: -0.4, stretch: 0.1 }, 'snap')
+      // The lean toward the camera eases out of the hold, never snaps into it.
+      .to(t.lean!, { ...tilted(1.2), nod: a.leanIn!, sizeL: a.bigEye! * 1.3, blinkL: -0.4, stretch: 0.1 }, 'inOut')
       .to(Math.max(1, t.hold2!), { ...tilted(1.22), nod: a.leanIn! * 1.1, sizeL: a.bigEye! * 1.35, blinkL: -0.4, stretch: 0.1 }, 'linear')
-      .to(t.back!, { lean: -a.tilt! * 0.3, bend: -a.bend! * 0.4, turn: -a.turn! * 0.15, blink: 0.6, flop: 0.05 }, 'in')
+      // The return eases out of the held lean into a small counter-lean.
+      .to(t.back!, { lean: -a.tilt! * 0.3, bend: -a.bend! * 0.4, turn: -a.turn! * 0.15, blink: 0.6, flop: 0.05 }, 'inOut')
       .to(2, { lean: a.tilt! * 0.1, stretch: -0.03, blink: 0 }, 'out')
       .end(t.settle!, 'inOut');
   },
@@ -124,54 +128,6 @@ export const LOOK_AROUND: ClipDefinition = {
       // Back to centre: blink, pop.
       .to(1, { blink: 1, stretch: -s * 0.3 }, 'snap')
       .to(1, { blink: -0.2, size: 0.12, stretch: s * 0.3 }, 'snap')
-      .end(t.settle!, 'inOut');
-  },
-};
-
-export const BODY_FLEX: ClipDefinition = {
-  id: 'body-flex',
-  name: 'Body flex',
-  kind: 'emote',
-  reducedMotion: 'still',
-  ownsGaze: false,
-  timing: {
-    windup: exposures('Wind-up squash', 8),
-    pop: exposures('Pop-up hold', 6),
-    flex: exposures('Each flex', 6),
-    hold: exposures('Flex hold', 8),
-    proud: exposures('Proud hold', 12),
-    settle: exposures('Settle', 8),
-  },
-  amount: {
-    squash: amount('Wind-up squash', 0, 0.45),
-    stretch: amount('Pop-up stretch', 0, 0.45),
-    bulge: amount('Muscle bulge', 0, 0.5),
-    bend: amount('Flex bend', 0, 0.25),
-    lean: amount('Flex lean (deg)', 0, 25, 0.5),
-    determination: amount('Determined lids', 0, 0.6),
-  },
-  keys: (t, a) => {
-    const lid = a.determination!;
-    const eyes = { lid, slant: 22 * lid / 0.35, blink: 0.1 };
-    const flex = (side: 1 | -1, k: number) => ({
-      ...eyes, lean: side * a.lean! * k, bend: side * a.bend! * k, bulge: a.bulge! * k,
-      stretch: -0.08 * k, flop: -side * 0.07 * k,
-    });
-    return new Timeline()
-      .to(t.windup!, { ...eyes, stretch: -a.squash!, bulge: a.bulge! * 0.8, nod: 4 }, 'in')
-      .to(1, { ...eyes, stretch: a.stretch!, bulge: -0.05, bendFront: -0.08, size: 0.05, echo: 1 }, 'snap')
-      .to(1, { ...eyes, stretch: a.stretch! * 0.8, bendFront: -0.1 }, 'out')
-      .hold(t.pop! - 1)
-      .to(t.flex!, flex(-1, 0.85), 'out')
-      .to(1, flex(-1, 1.15), 'snap')
-      .hold(t.hold!)
-      .to(t.flex!, flex(1, 1), 'out')
-      .to(1, flex(1, 1.3), 'snap')
-      .hold(t.hold!)
-      .to(2, { lean: a.lean! * 0.2, stretch: 0.1, smile: 0.8, size: 0.1 }, 'out')
-      .hold(t.proud! - 2)
-      .to(2, { stretch: -0.1, bulge: 0.1, blink: 0.7, smile: 0.4 }, 'in')
-      .to(1, { stretch: 0.06, smile: 0.2 }, 'snap')
       .end(t.settle!, 'inOut');
   },
 };
@@ -238,7 +194,8 @@ export const LITTLE_HOP: ClipDefinition = {
     const h = a.height!;
     return new Timeline()
       .to(t.squash!, { stretch: -a.squash!, bulge: a.bulge!, blink: 0.9, nod: 3 }, 'in')
-      .to(1, { lift: h * 0.2, stretch: a.stretch!, bulge: -0.06, blink: -0.25, size: 0.12, echo: 1 }, 'snap')
+      // Launch: the stretch past the tuned value carries the speed (no echo images).
+      .to(1, { lift: h * 0.2, stretch: a.stretch! * 1.3, bulge: -0.1, blink: -0.25, size: 0.12 }, 'snap')
       .to(t.rise!, { lift: h * 0.9, stretch: a.stretch! * 0.3, size: 0.18, blink: -0.3, lean: -4 }, 'out')
       .to(1, { lift: h, smile: a.joy!, size: 0.1, lean: 4 }, 'out')
       .hold(t.apex!)
@@ -274,7 +231,8 @@ export const TILTED_SPIN: ClipDefinition = {
   keys: (t, a) => {
     const tl = new Timeline()
       .to(t.windup!, { turn: -a.counter!, lean: -6, stretch: -a.squash! * 0.8, bulge: a.squash! * 0.6, blink: 0.9, slant: 10 }, 'in')
-      .to(1, { lift: a.height! * 0.3, turn: -a.counter! * 0.3, stretch: a.squash!, twist: -a.twist! * 0.6, echo: 1, blink: -0.2 }, 'snap');
+      // Launch and spin: a stronger stretch and the twist smear carry the speed (no echo images).
+      .to(1, { lift: a.height! * 0.3, turn: -a.counter! * 0.3, stretch: a.squash! * 1.3, bulge: -0.08, twist: -a.twist! * 0.8, blink: -0.2 }, 'snap');
     const steps = Math.max(3, t.spin!);
     for (let i = 1; i <= steps; i++) {
       const u = i / steps;
@@ -283,8 +241,8 @@ export const TILTED_SPIN: ClipDefinition = {
         turn: 360 * u + a.overshoot! * u * u,
         lean: a.tilt! * Math.sin(Math.PI * u),
         twist: -a.twist! * (1 - u * 0.6),
-        stretch: 0.12 * (1 - u),
-        echo: u < 0.9 ? 2 : 1,
+        stretch: 0.2 * (1 - u),
+        bulge: -0.06 * (1 - u),
         size: 0.15,
         blink: -0.2,
       }, 'linear');
@@ -321,8 +279,8 @@ export const POKE: ClipDefinition = {
       // Eyes shut into > < while the body is knocked away from the poke.
       .to(1, { stretch: -a.squash!, bulge: a.squash! * 0.5, lean: -a.recoil!, slide: -0.04, blink: 1, tilt: 28, squeeze: 0.3, flop: 0.08 }, 'snap')
       .to(t.hit!, { stretch: -a.squash! * 0.7, bulge: a.squash! * 0.3, lean: -a.recoil! * 1.1, slide: -0.05, blink: 1, tilt: 28, squeeze: 0.3, flop: 0.1 }, 'linear')
-      // "!" pop: stretch up, huge eyes, multiple-image smear.
-      .to(1, { stretch: 0.3, bulge: -0.08, lean: a.recoil! * 0.3, lift: a.hop!, blink: -0.45, size: a.surprise!, flop: -0.08, echo: 1 }, 'snap')
+      // "!" pop: stretch up, huge eyes.
+      .to(1, { stretch: 0.3, bulge: -0.08, lean: a.recoil! * 0.3, lift: a.hop!, blink: -0.45, size: a.surprise!, flop: -0.08 }, 'snap')
       .to(1, { stretch: 0.22, lean: a.recoil! * 0.35, lift: a.hop! * 1.1, blink: -0.45, size: a.surprise! * 1.05 }, 'out')
       .hold(t.surprise! - 1)
       .to(t.shake!, { lean: -6, turn: -9, size: a.surprise! * 0.6, blink: -0.3, gazeX: -0.3 }, 'snap')
@@ -394,7 +352,7 @@ export const GAZE_FOLLOW = {
   },
 } as const satisfies Pick<ClipDefinition, 'id' | 'name' | 'timing' | 'amount'>;
 
-export const EMOTES = [DOUBLE_BLINK, CURIOSITY, LOOK_AROUND, BODY_FLEX, ROCK, LITTLE_HOP, TILTED_SPIN] as const;
+export const EMOTES = [DOUBLE_BLINK, CURIOSITY, LOOK_AROUND, ROCK, LITTLE_HOP, TILTED_SPIN] as const;
 export const REACTIONS = [POKE, DRAG_RELEASE] as const;
 export const CLIP_DEFINITIONS: readonly ClipDefinition[] = [...EMOTES, ...REACTIONS];
 

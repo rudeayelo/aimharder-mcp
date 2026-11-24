@@ -158,7 +158,7 @@ describe('Kettle lab in Chromium', () => {
     // The guide cue plays curiosity as soon as the portal Kettle loads, below the fold.
     await until(page, "s.clip === 'curiosity'", 'portalKettle');
     expect((await state(page, 'portalKettle')).visible).toBe(false);
-    // Longer than the whole curiosity clip (2.25 s): it must not run while unseen.
+    // Longer than the whole curiosity clip (2.6 s): it must not run while unseen.
     await page.waitForTimeout(3000);
     await page.evaluate(() => {
       (window as any).seen = [];
@@ -356,7 +356,7 @@ describe('Kettle interaction in Chromium', () => {
     await ready(page);
     await page.check('#reduced');
     await until(page, 's.reducedMotion && s.pose.turn === 0');
-    for (const id of ['little-hop', 'tilted-spin', 'body-flex', 'rock', 'drag-release']) {
+    for (const id of ['little-hop', 'tilted-spin', 'rock', 'drag-release']) {
       await page.evaluate((clip) => (window as any).kettle.play(clip), id);
       const s = await state(page);
       expect(s.skipped).toBe(id);
@@ -517,6 +517,25 @@ describe('Kettle interaction in Chromium', () => {
     expect(turns.length).toBeGreaterThan(2);
     expect(turns.every((turn) => turn >= 0)).toBe(true);
     for (let i = 1; i < turns.length; i++) expect(turns[i]!).toBeLessThanOrEqual(turns[i - 1]!);
+    await page.context().close();
+  });
+
+  it('plays the footer entrance once when first seen, then stays still', async () => {
+    const { page, errors } = await open('/harness.html?surface=footer');
+    await ready(page);
+    await until(page, "s.clip === 'double-blink' && s.playing");
+    await until(page, '!s.playing');
+    const ended = await state(page);
+    expect(ended.frame).toBe(ended.frames - 1);
+    // Scrolled away and back: no second entrance, no idle emotes.
+    await page.evaluate(() => ((document.querySelector('#stage') as HTMLElement).style.transform = 'translateY(-5000px)'));
+    await until(page, '!s.visible');
+    await page.evaluate(() => ((document.querySelector('#stage') as HTMLElement).style.transform = ''));
+    await until(page, 's.visible');
+    await frames(page, 6);
+    const back = await state(page);
+    expect([back.playing, back.frame]).toEqual([false, ended.frame]);
+    expect(errors).toEqual([]);
     await page.context().close();
   });
 

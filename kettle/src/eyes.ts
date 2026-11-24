@@ -46,7 +46,7 @@ function faceColor(y: number, z: number): [number, number, number] {
   return SURFACE.colorCoefficients.map(([a, b, c]) => Math.max(0.018, Math.min(0.4, a + b * y + c * z))) as [number, number, number];
 }
 
-interface EyeShape {
+export interface EyeShape {
   open: number;
   size: number;
   squeeze: number;
@@ -72,6 +72,75 @@ export function eyeShape(p: Pose, eye: 0 | 1): EyeShape {
     gx: p.gazeX + get('dx'),
     gy: p.gazeY + get('dy'),
   };
+}
+
+/**
+ * Happy arc: lift per unit of `smile`, its cap (in recess half-heights; below
+ * 2 the lift cannot fold the recess), and how wide it falls off relative to
+ * the outer wall. Chosen so the arc's inner edge stays round and the walls
+ * keep their width (#134, rule 3: eye shapes stay readable).
+ */
+const SMILE_GAIN = 1.45;
+const MAX_SMILE_PUSH = 1.25;
+const SMILE_WIDTH = 1.2;
+/** How far each wall ring sits outside the floor's edge. */
+const WALL_MARGINS = [0.002, 0.004, 0.008, 0.011] as const;
+
+export interface RecessRing {
+  /** Points in eye-local units: a toward the viewer's right, b up, around the recess centre. */
+  pts: Array<[number, number]>;
+  depth: number;
+  tone: number;
+}
+
+/**
+ * The recess floor (rings 0-3) and walls (rings 4-7) for one eye shape;
+ * `side` is -1 for the viewer's left eye and 1 for the right.
+ */
+export function recessRings(shape: EyeShape, side: number): { center: [number, number]; rings: RecessRing[]; depth: number } {
+  const scale = 1 + shape.size;
+  const hx = BASE.hx * scale * (1 + shape.squeeze);
+  const hy = Math.max(0.0018, BASE.hy * scale * shape.open);
+  const depth = Math.max(0.003, 0.027 * Math.sqrt(Math.min(1.6, shape.open * scale)));
+  const bevel = Math.max(0.06, Math.min(1, shape.open));
+  const tilt = shape.tilt * DEG * side;
+  const cosT = Math.cos(tilt), sinT = Math.sin(tilt);
+  const slope = Math.tan(shape.slant * DEG);
+  const push = Math.min(MAX_SMILE_PUSH, shape.smile * SMILE_GAIN);
+  const falloff = (hx + WALL_MARGINS[3]!) * SMILE_WIDTH;
+  // Warp a capsule point (a toward the viewer's right, b up) by the eye's shape.
+  const warp = (a: number, b: number, rx: number, ry: number): [number, number] => {
+    // Lid line, in the ring's own units.
+    const inward = -side * (a / rx) * (rx / ry);
+    const lidded = Math.max(-1, Math.min(b / ry, 1 - 2 * shape.lid - slope * inward)) * ry;
+    // Happy arc: lift the lower edge into an arc while the upper edge stays. The
+    // lift is measured on the whole recess (out to its outer wall, not on each
+    // ring) and grows steadily from the top edge down, so the rings stay nested
+    // around the lifted centre and never fold.
+    const across = Math.max(0, 1 - (a / falloff) ** 2);
+    const bb = lidded + (push * across * (hy - lidded)) / 2;
+    return [a * cosT - bb * sinT, a * sinT + bb * cosT];
+  };
+  const rings: RecessRing[] = [];
+  for (let ring = 0; ring < 8; ring++) {
+    let rx: number, ry: number, radius: number, d: number, tone: number;
+    if (ring < 4) {
+      const f = (ring + 1) / 4;
+      rx = hx * f; ry = hy * f; radius = 0.029 * scale * f; d = depth; tone = 2;
+    } else {
+      const k = ring - 4;
+      const margin = WALL_MARGINS[k]!;
+      rx = hx + margin; ry = hy + margin * bevel; radius = 0.029 * scale + margin;
+      d = depth * [0.95, 0.48, 0.1, 0][k]!; tone = [0.26, 0.48, 0.78, 1][k]!;
+    }
+    const pts: Array<[number, number]> = [];
+    for (let j = 0; j < N; j++) {
+      const [a, b] = contour((2 * Math.PI * (j + 0.5)) / N, rx, ry, radius);
+      pts.push(warp(a, b, rx, ry));
+    }
+    rings.push({ pts, depth: d, tone });
+  }
+  return { center: warp(0, 0, hx, hy), rings, depth };
 }
 
 export interface EyeRig {
@@ -113,45 +182,7 @@ export function createEyeRig(): EyeRig {
       const deform = createDeformer(p);
       eyes.forEach((eye, index) => {
         const shape = eyeShape(p, index as 0 | 1);
-        const scale = 1 + shape.size;
-        const hx = BASE.hx * scale * (1 + shape.squeeze);
-        const hy = Math.max(0.0018, BASE.hy * scale * shape.open);
-        const depth = Math.max(0.003, 0.027 * Math.sqrt(Math.min(1.6, shape.open * scale)));
-        const bevel = Math.max(0.06, Math.min(1, shape.open));
-        const tilt = shape.tilt * DEG * eye.side;
-        const cosT = Math.cos(tilt), sinT = Math.sin(tilt);
-        const slope = Math.tan(shape.slant * DEG);
-        // Warp a capsule point (a toward the viewer's right, b up) by the eye's shape.
-        const warp = (a: number, b: number, rx: number, ry: number): [number, number] => {
-          let nb = b / ry;
-          const na = a / rx;
-          if (nb < 0) nb += shape.smile * 1.7 * Math.max(0, 1 - na * na);
-          const inward = -eye.side * na * (rx / ry);
-          nb = Math.min(nb, 1 - 2 * shape.lid - slope * inward);
-          nb = Math.max(nb, -1);
-          const bb = nb * ry;
-          return [a * cosT - bb * sinT, a * sinT + bb * cosT];
-        };
-        // Inner rings (floor and walls) in eye-local units.
-        const rings: Array<{ pts: Array<[number, number]>; depth: number; tone: number }> = [];
-        for (let ring = 0; ring < 8; ring++) {
-          let rx: number, ry: number, radius: number, d: number, tone: number;
-          if (ring < 4) {
-            const f = (ring + 1) / 4;
-            rx = hx * f; ry = hy * f; radius = 0.029 * scale * f; d = depth; tone = 2;
-          } else {
-            const k = ring - 4;
-            const margin = [0.002, 0.004, 0.008, 0.011][k]!;
-            rx = hx + margin; ry = hy + margin * bevel; radius = 0.029 * scale + margin;
-            d = depth * [0.95, 0.48, 0.1, 0][k]!; tone = [0.26, 0.48, 0.78, 1][k]!;
-          }
-          const pts: Array<[number, number]> = [];
-          for (let j = 0; j < N; j++) {
-            const [a, b] = contour((2 * Math.PI * (j + 0.5)) / N, rx, ry, radius);
-            pts.push(warp(a, b, rx, ry));
-          }
-          rings.push({ pts, depth: d, tone });
-        }
+        const { center, rings, depth } = recessRings(shape, eye.side);
         // Keep the moving recess inside the fixed seam.
         let gx = shape.gx * GAZE.x, gy = shape.gy * GAZE.y;
         let fit = 1;
@@ -168,7 +199,7 @@ export function createEyeRig(): EyeRig {
           eye.tones[index] = tone;
           eye.rgb.set(faceColor(y, z), index * 3);
         };
-        place(0, 0, 0, depth, 2);
+        place(0, center[0] * shrink, center[1] * shrink, depth, 2);
         rings.forEach((ring, r) => ring.pts.forEach(([a, b], j) => place(1 + r * N + j, a * shrink, b * shrink, ring.depth, ring.tone)));
         for (let ring = 8; ring < LAYERS; ring++) {
           const t = (ring - 7) / 4;

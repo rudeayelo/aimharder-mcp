@@ -105,11 +105,41 @@ The Kettle is a kettlebell-shaped character: blue body, dark circular face, oran
 - **Asset:** [kettle-body-32k.sog](../design/assets/kettle/README.md), a 32,768-Gaussian SOG body (414,243 bytes) with its provenance and licenses. Not the AI-generated videos and not the 17.8 MB source PLY.
 - **Eyes:** drawn by a separate procedural rig, two deformable recesses on a fitted curved face surface, so blinks and gaze move the whole recess. The rig is rebuilt in the Kettle module with npm dependencies; the iteration-1 prototype code stays in the tag.
 - **Module:** one framework-free module in [`kettle/`](../kettle/README.md) (renderer, body, eye rig, clips as data, interaction), a private package never published to npm. It is meant for the landing, the footer and portal onboarding, but none of them imports it yet: today its consumers are its local [lab](../kettle/README.md#the-lab) and the lab's tooling. The lab uses only the module's public API, so tuned values will be the production values. The renderer is the module's own ([ADR](adr/2026-11-24-kettle-own-splat-renderer.md)); its CSP needs are listed in the [module README](../kettle/README.md#content-security-policy).
-- **Style direction** ([#146](https://github.com/rudeayelo/aimharder-mcp/issues/146)): strongly marked cartoon, in the manner of *The Amazing World of Gumball*, as expressive as a kettlebell with no mouth and no limbs allows. Character motion is stop-motion at 12 fps (on twos). The body carries strong anticipation, squash and stretch, overshoot, snappy holds and multiple-image smears; the eyes carry emotion through shape, size, lids, asymmetry and gaze. Every clip starts and ends on the same neutral pose. This supersedes iteration 1's restraint: body deformation is part of the language.
-- **Interaction per surface:** landing and footer — the eyes, and a little of the head, follow the cursor, and clicking or tapping the Kettle plays an emote; portal — no free interaction, only the onboarding guide and the final celebration; touch — no cursor following, a tap plays an emote; reduced motion — gaze following stays at a small amplitude and hops, spins and large deformations are replaced by a still pose. Character motion is stepped at 12 fps; direct manipulation (dragging to turn, the camera) follows the pointer at display rate. No sound.
-- **Motion candidates** from iteration 1: double blink, curiosity, look around, body flex, rock, little hop and tilted spin, cataloged in [#134](https://github.com/rudeayelo/aimharder-mcp/issues/134). The lab rebuilds them in the new style, adds the poke and drag-release reactions and gaze following, and exports the maintainer's keep / adjust / remove marks to #134. Kept animations get a specification here (trigger, duration, easing, reduced-motion behavior) after that decision.
+- **Style direction** ([#146](https://github.com/rudeayelo/aimharder-mcp/issues/146)): strongly marked cartoon, in the manner of *The Amazing World of Gumball*, as expressive as a kettlebell with no mouth and no limbs allows. Character motion is stop-motion at 12 fps (on twos). The body carries strong anticipation, squash and stretch, overshoot and snappy holds; the eyes carry emotion through shape, size, lids, asymmetry and gaze. Multiple-image (echo) frames were tried in the lab and rejected ([#134](https://github.com/rudeayelo/aimharder-mcp/issues/134)); the [motion rules](#kettle-motion-spec) apply to every clip. Every clip starts and ends on the same neutral pose. This supersedes iteration 1's restraint: body deformation is part of the language.
+- **Interaction per surface:** landing and footer — the eyes, and a little of the head, follow the cursor, and clicking or tapping the Kettle plays an emote; the landing hero also turns when dragged (*provisional*, see the [surface defaults](#kettle-motion-spec)); portal — no free interaction, only the onboarding guide and the final celebration; touch — no cursor following, a tap plays an emote; reduced motion — gaze following stays at a small amplitude and hops, spins and large deformations are replaced by a still pose. Character motion is stepped at 12 fps; direct manipulation (dragging to turn, the camera) follows the pointer at display rate. No sound.
+- **Animations:** the iteration-1 candidates were rebuilt in the lab, with the poke and drag-release reactions and gaze following, and decided in [#134](https://github.com/rudeayelo/aimharder-mcp/issues/134): body flex was removed, drag-release and gaze following were kept as they are, and the rest were adjusted. The kept clips are specified in the [motion spec](#kettle-motion-spec) below; their tuned values live in [`kettle/src/tuning.json`](../kettle/src/tuning.json).
 - **Portal onboarding:** iteration 1 storyboarded a six-moment Kettle-guided walkthrough (spotlight the AimHarder connection, step aside during sign-in, spotlight Connect an app, celebrate the first connected app in a dialog the Kettle overlaps). Phase 5 redesigns it from the system's components.
 - **Behavior rules:** honor reduced motion as above; show a static poster when WebGL is unavailable; render only while animating and pause while off-screen or hidden; hide decorative placements on small screens where they compete with content.
+
+#### Kettle motion spec
+
+Durations are in exposures at 12 fps (on twos), counting the neutral first and last exposures; every clip starts and ends on the same neutral pose. Triggers marked *provisional* come from the provisional surface defaults below.
+
+| Clip | Trigger per surface | Duration | Motion | Reduced motion |
+| --- | --- | --- | --- | --- |
+| `double-blink` | Footer: once when it first comes into view (*provisional*). Portal: after curiosity in the onboarding guide cue. | 12 (1.0 s) | Two quick blinks, shut for two exposures each, and a small pop-open; the body barely squashes. | Eyes only |
+| `curiosity` | Portal: the onboarding guide cue, with the page aiming the gaze at the bubble. | 31 (2.6 s) | Dip, pop into a head tilt with one big eye and one squint, hold; ease into a lean toward the camera, hold; ease back through a small counter-lean. | Eyes only, gaze within ±0.35 |
+| `look-around` | Not assigned to a surface yet; played with `play()`. | 34 (2.8 s) | The eyes dart right, left, up and down; the body follows two exposures behind with turn, lean and stretch; a blink through the big turn; back to centre. | Eyes only, gaze within ±0.35 |
+| `rock` | Not assigned to a surface yet; played with `play()`. | 17 (1.4 s) | Rocks 20° to one side and back in decaying swings, the handle lagging slightly. | Still pose |
+| `little-hop` | Landing hero and footer: every other click or tap, alternating with poke (*provisional*). | 16 (1.3 s) | Squash, launch in a tall stretch, hang at the apex with happy-arc eyes, land squashed, recover. | Still pose |
+| `tilted-spin` | Portal: the onboarding celebration dialog. | 21 (1.8 s) | Wind-up counter-turn, a 360° spin in five exposures tilted up to 26° with a twist smear and stretch, overshoot, land, hold with happy-arc eyes. | Still pose |
+| `poke` | Landing hero and footer: every other click or tap, alternating with little hop (*provisional*). | 14 (1.2 s) | Knocked away from the poke with > < eyes, pops up surprised with big eyes, shakes it off. | Eyes only |
+| `drag-release` | Landing hero only: releasing a fast drag (*provisional*). Scaled by the release speed. | 24 (2.0 s) | Dizzy wobble circles with spinning eyes and droopy lids, then a shake-off, while the turn springs back to the front. | Still pose; the turn returns without passing the front |
+| Gaze following | Landing hero and footer: follows a mouse or pen, never touch, stepped at 12 fps (*provisional*). Portal: only where the page points it. | Continuous | The eyes, and a little of the head, turn toward the pointer and return to rest when it leaves. | Eyes only, gaze within ±0.35 |
+
+Motion rules, for every clip (from the maintainer's notes in #134):
+
+1. **No echo or multiple-image frames.** The cartoon effect comes from anticipation, squash and stretch, overshoot and holds. Where echoes carried speed (the hop launch, the spin), a stronger stretch and the twist smear carry it.
+2. **No snap into a pose right before the return to neutral.** The return eases out of the last held pose.
+3. **Eye shapes stay readable.** Happy arcs and squints never distort the recess beyond a readable shape; the happy arc lifts the recess into an arch without folding it.
+
+Surface defaults, **provisional**: proposed with the decision, not yet confirmed by the maintainer, and kept as configuration in the Kettle module (`SURFACES`, [module README](../kettle/README.md#using-the-module)) so they are cheap to change:
+
+- A click or tap on the landing hero and the footer alternates poke and little hop.
+- The footer plays one emote (double blink) when it first comes into view, then stays still; there is no idle scheduler.
+- Dragging to turn is on in the landing hero only, never in the portal.
+- Gaze following is stepped at 12 fps.
+- Under reduced motion, eye-only clips keep their eye motion; every other clip is a still pose.
 
 ### Logo
 
@@ -180,7 +210,7 @@ Use the terms in [CONTEXT.md](../CONTEXT.md), especially portal account, AimHard
 
 ## Open questions
 
-- Which Kettle animations to keep ([#134](https://github.com/rudeayelo/aimharder-mcp/issues/134)), and their final specification.
+- Confirmation of the provisional Kettle surface defaults, including which emote the footer plays and triggers for look around and rock ([#134](https://github.com/rudeayelo/aimharder-mcp/issues/134)).
 - Final landing copy, including the hero headline and supporting line, within the structure above.
 - The complementary accent and final color values (phase 1).
 - Help: whether it is a navigation entry or a persistent secondary FAQ link, and its exact content.

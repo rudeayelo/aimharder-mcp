@@ -15,7 +15,6 @@ export const BODY_CHANNELS = [
   'twist', // degrees of extra turn at the top, quadratic in height (spin smear)
   'flop', // handle displacement toward the viewer's right (handle only)
   'flopFront', // handle displacement toward the camera (handle only)
-  'echo', // number of trailing images (multiple-image smear), 0..2
 ] as const;
 
 /** Eye channels. `L` and `R` are the viewer's left and right eye. */
@@ -68,22 +67,12 @@ export function mirrorPose(source: Pose): Pose {
 export function scalePose(source: Pose, factor: number): Pose {
   const out = { ...source };
   for (const channel of CHANNELS) out[channel] = source[channel] * factor;
-  out.echo = Math.round(out.echo);
   return out;
 }
 
 export function addPoses(a: Pose, b: Pose): Pose {
   const out = { ...a };
   for (const channel of CHANNELS) out[channel] = a[channel] + b[channel];
-  return out;
-}
-
-/** Blends two poses; turn takes the short way round. */
-export function lerpPose(a: Pose, b: Pose, t: number): Pose {
-  const out = { ...a };
-  for (const channel of CHANNELS) out[channel] = a[channel] + (b[channel] - a[channel]) * t;
-  out.turn = a.turn + wrapDegrees(b.turn - a.turn) * t;
-  out.echo = 0;
   return out;
 }
 
