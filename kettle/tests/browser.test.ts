@@ -1,10 +1,12 @@
-// The Kettle in Chromium (software WebGL), served under the strict CSP the
-// module must run with, driven only through real input and its public state.
+// The Kettle in Chromium (software WebGL), served by the lab under the strict
+// CSP the module must run with, driven through real input, the lab's controls
+// and the module's public state.
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { chromium, type Browser, type BrowserContextOptions, type Page } from 'playwright-core';
-import { startLabServer, type LabServer } from '../lab/server.ts';
-import type { KettleState } from '../src/index.ts';
+import { STRICT_CSP, startLabServer, type LabServer } from '../lab/server.ts';
 import { CHROMIUM_ARGS, chromiumPath } from '../lab/chromium.ts';
+import { parseTuning, type KettleState } from '../src/index.ts';
+import { kettleBlueShare, readPng } from './png.ts';
 
 let lab: LabServer;
 let browser: Browser;
@@ -18,114 +20,365 @@ afterAll(async () => {
   await lab?.close();
 });
 
-interface Problems {
-  errors: string[];
+/** Counts live WebGL contexts: created and not yet released with WEBGL_lose_context. */
+function trackContexts(): void {
+  const live = new Set<object>();
+  Object.assign(window, { liveContexts: () => live.size });
+  const getContext = HTMLCanvasElement.prototype.getContext;
+  HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, type: string, ...rest: unknown[]) {
+    const context = (getContext as (...a: unknown[]) => unknown).call(this, type, ...rest) as (WebGLRenderingContext & { tracked?: boolean }) | null;
+    if (context && type.startsWith('webgl') && !context.tracked) {
+      context.tracked = true;
+      live.add(context);
+      const getExtension = context.getExtension.bind(context);
+      context.getExtension = ((name: string) => {
+        const extension = getExtension(name);
+        if (name !== 'WEBGL_lose_context' || !extension) return extension;
+        const lose = extension as WEBGL_lose_context;
+        return { loseContext: () => { live.delete(context); lose.loseContext(); }, restoreContext: () => lose.restoreContext() };
+      }) as typeof context.getExtension;
+    }
+    return context;
+  } as typeof HTMLCanvasElement.prototype.getContext;
 }
 
-async function open(path: string, context: BrowserContextOptions = {}): Promise<{ page: Page; problems: Problems }> {
-  const ctx = await browser.newContext({ viewport: { width: 640, height: 640 }, ...context });
+async function open(path: string, context: BrowserContextOptions = {}, using: Browser = browser) {
+  const ctx = await using.newContext({ viewport: { width: 1280, height: 900 }, ...context });
   const page = await ctx.newPage();
-  const problems: Problems = { errors: [] };
-  page.on('console', (message) => message.type() === 'error' && problems.errors.push(message.text()));
-  page.on('pageerror', (error) => problems.errors.push(error.message));
+  const errors: string[] = [];
+  page.on('console', (message) => message.type() === 'error' && errors.push(message.text()));
+  page.on('pageerror', (error) => errors.push(error.message));
   await ctx.addInitScript(() =>
     document.addEventListener('securitypolicyviolation', (event) => console.error(`CSP violation: ${event.violatedDirective} ${event.blockedURI}`)),
   );
-  await page.goto(`${lab.url}${path}`);
-  return { page, problems };
+  await ctx.addInitScript(trackContexts);
+  const response = await page.goto(`${lab.url}${path}`);
+  return { page, errors, response };
 }
 
 const state = (page: Page, name = 'kettle') =>
   page.evaluate((n) => JSON.parse(JSON.stringify((window as unknown as Record<string, { state: KettleState }>)[n]!.state)) as KettleState, name);
 
-async function ready(page: Page, name = 'kettle'): Promise<void> {
-  await page.waitForFunction((n) => (window as unknown as Record<string, { state?: KettleState }>)[n]?.state?.status === 'ready', name, { timeout: 60_000 });
+async function ready(page: Page, name = 'kettle', status = 'ready'): Promise<void> {
+  await page.waitForFunction(([n, s]) => (window as any)[n!]?.state?.status === s, [name, status], { timeout: 60_000 });
 }
 
-/** Screen position of the Kettle's face in the harness (front camera, 640 × 640). */
-const FACE = { x: 320, y: 400 };
+/** Waits until the predicate on the Kettle's state holds. */
+// Built in Node and sent as a function: a string predicate would be evaluated
+// in the page with eval, which the strict CSP blocks.
+const until = (page: Page, predicate: string, name = 'kettle', timeout = 15_000) =>
+  page.waitForFunction(new Function('n', `const s = window[n].state; return ${predicate};`) as (n: string) => boolean, name, { timeout });
 
-/** Software WebGL can take a while per frame, so input arrives slowly; lower the fling threshold. */
+const frames = (page: Page, count = 3) =>
+  page.evaluate((n) => new Promise<void>((done) => { let i = 0; const step = () => (++i >= n ? done() : requestAnimationFrame(step)); requestAnimationFrame(step); }), count);
+
+/** Centre of the Kettle's body on screen. */
+async function body(page: Page, name = 'kettle'): Promise<{ x: number; y: number }> {
+  const box = await page.evaluate((n) => (window as any)[n].canvas.getBoundingClientRect().toJSON(), name);
+  return { x: box.x + box.width / 2, y: box.y + box.height * 0.62 };
+}
+
+/** Software WebGL is slow, so input arrives slowly; lower the fling threshold. */
 const lowFlingThreshold = (page: Page) =>
   page.evaluate(() => (window as any).kettle.setTuning({ 'drag-release': { amount: { minSpeed: 40 } } }));
 
-describe('Kettle in Chromium', () => {
-  it('loads every lab section with no console errors under the strict CSP', async () => {
+async function fastDrag(page: Page, from: { x: number; y: number }, release = true): Promise<void> {
+  await page.mouse.move(from.x - 150, from.y);
+  await page.mouse.down();
+  await page.mouse.move(from.x + 250, from.y, { steps: 6 });
+  if (release) await page.mouse.up();
+}
+
+describe('Kettle lab in Chromium', () => {
+  it('serves every section under the strict CSP, draws the body and logs no errors', async () => {
     for (const [hash, name] of [['viewer', 'kettle'], ['playground', 'kettle'], ['compositions', 'heroKettle']] as const) {
-      const { page, problems } = await open(`/#${hash}`, { viewport: { width: 1440, height: 1000 } });
+      const { page, errors, response } = await open(`/#${hash}`);
+      expect(response?.headers()['content-security-policy'], hash).toBe(STRICT_CSP);
       await ready(page, name);
-      expect((await state(page, name)).renders, hash).toBeGreaterThan(0);
+      await until(page, 's.renders > 0', name);
+      const shot = await page.evaluate((n) => (window as any)[n].canvas.getBoundingClientRect().toJSON(), name);
+      const image = readPng(await page.screenshot({ clip: { x: shot.x, y: shot.y, width: shot.width, height: shot.height } }));
+      expect(kettleBlueShare(image), `${hash} canvas shows the blue body`).toBeGreaterThan(0.03);
       if (hash === 'compositions') {
         await ready(page, 'footerKettle');
         await ready(page, 'portalKettle');
       }
-      expect(problems.errors, hash).toEqual([]);
+      expect(errors, hash).toEqual([]);
       await page.context().close();
     }
   });
 
-  it('follows a mouse, plays the poke on click and the drag-release reaction after a fast drag', async () => {
-    const { page, problems } = await open('/harness.html?surface=landing&drag=1');
-    await ready(page);
-    await lowFlingThreshold(page);
-    await page.mouse.move(630, 300);
-    await page.waitForFunction(() => (window as any).kettle.state.gaze.x > 0.3);
-    await page.mouse.move(10, 300, { steps: 4 });
-    await page.waitForFunction(() => (window as any).kettle.state.gaze.x < -0.3);
-    expect((await state(page)).pose.gazeX).toBeLessThan(0);
+  it('shows the shipped poster in every placement without WebGL, and play() still settles', async () => {
+    const noWebgl = await chromium.launch({ executablePath: chromiumPath(), args: ['--disable-3d-apis'] });
+    try {
+      const { page, errors } = await open('/#compositions', {}, noWebgl);
+      for (const name of ['heroKettle', 'footerKettle', 'portalKettle']) await ready(page, name, 'poster');
+      const posters = page.locator('.kettle-slot img');
+      expect(await posters.count()).toBe(3);
+      for (let i = 0; i < 3; i++) {
+        await expect.poll(() => posters.nth(i).evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0 && getComputedStyle(img).visibility === 'visible')).toBe(true);
+      }
+      const settled = await page.evaluate(() => Promise.race([(window as any).heroKettle.play('rock').then(() => 'settled'), new Promise((r) => setTimeout(() => r('pending'), 2000))]));
+      expect(settled).toBe('settled');
+      expect(await page.locator('canvas').count()).toBe(0);
+      expect(errors).toEqual([]);
+    } finally {
+      await noWebgl.close();
+    }
+  });
 
-    await page.mouse.click(FACE.x, FACE.y);
-    await page.waitForFunction(() => (window as any).kettle.state.clip === 'poke' && (window as any).kettle.state.playing);
-    await page.waitForFunction(() => !(window as any).kettle.state.playing, null, { timeout: 10_000 });
-
-    await page.mouse.move(FACE.x - 150, FACE.y);
-    await page.mouse.down();
-    await page.mouse.move(FACE.x + 250, FACE.y, { steps: 6 });
-    await page.mouse.up();
-    await page.waitForFunction(() => (window as any).kettle.state.clip === 'drag-release');
-    await page.waitForFunction(() => !(window as any).kettle.state.playing && (window as any).kettle.state.dragTurn === 0, null, { timeout: 10_000 });
-    expect(problems.errors).toEqual([]);
+  it('starts a clip queued off-screen from its first exposure once it scrolls into view', async () => {
+    const { page } = await open('/#compositions', { viewport: { width: 1280, height: 640 } });
+    await ready(page, 'portalKettle');
+    // The guide cue plays curiosity as soon as the portal Kettle loads, below the fold.
+    await until(page, "s.clip === 'curiosity'", 'portalKettle');
+    expect((await state(page, 'portalKettle')).visible).toBe(false);
+    // Longer than the whole curiosity clip (2.25 s): it must not run while unseen.
+    await page.waitForTimeout(3000);
+    await page.evaluate(() => {
+      (window as any).seen = [];
+      (window as any).portalKettle.subscribe((s: KettleState) => s.visible && (window as any).seen.push([s.clip, s.frame]));
+    });
+    await page.locator('.portal').scrollIntoViewIfNeeded();
+    // Curiosity then plays on screen from its start, exposure by exposure, before the guide moves on.
+    await page.waitForFunction(() => (window as any).seen.some(([clip]: [string]) => clip === 'double-blink'), undefined, { timeout: 15_000 });
+    const seen = (await page.evaluate(() => (window as any).seen)) as Array<[string, number]>;
+    expect(seen[0]).toEqual(['curiosity', 0]);
+    const shown = new Set(seen.filter(([clip]) => clip === 'curiosity').map(([, frame]) => frame));
+    expect(shown.size, 'curiosity exposures seen on screen').toBeGreaterThanOrEqual(8);
     await page.context().close();
   });
 
-  it('never follows touch, pokes on a tap and reacts to a touch drag', async () => {
-    const { page, problems } = await open('/harness.html?surface=landing&drag=1', { hasTouch: true, isMobile: true });
+  it('settles play() when the WebGL context is lost and when the lab tears the Kettle down', async () => {
+    const { page } = await open('/#viewer');
     await ready(page);
-    await lowFlingThreshold(page);
-    await page.touchscreen.tap(FACE.x, FACE.y);
-    await page.waitForFunction(() => (window as any).kettle.state.clip === 'poke');
+    await page.evaluate(() => { (window as any).lost = (window as any).kettle.play('look-around', { loop: true }).then(() => 'settled'); });
+    await until(page, 's.playing');
+    await page.evaluate(() => (window as any).kettle.canvas.getContext('webgl2').getExtension('WEBGL_lose_context').loseContext());
+    expect(await page.evaluate(() => Promise.race([(window as any).lost, new Promise((r) => setTimeout(() => r('pending'), 2000))]))).toBe('settled');
+    expect((await state(page)).status).toBe('poster');
+
+    await page.click('[data-tab="playground"]');
+    await ready(page);
+    await page.evaluate(() => { (window as any).torn = (window as any).kettle.play('look-around', { loop: true }).then(() => 'settled'); });
+    await until(page, 's.playing');
+    await page.click('[data-tab="viewer"]');
+    expect(await page.evaluate(() => Promise.race([(window as any).torn, new Promise((r) => setTimeout(() => r('pending'), 2000))]))).toBe('settled');
+    await page.context().close();
+  });
+
+  it('does not grow live WebGL contexts over repeated mount and unmount', async () => {
+    const { page, errors } = await open('/#viewer');
+    await ready(page);
+    for (let round = 0; round < 3; round++) {
+      await page.click('[data-tab="compositions"]');
+      for (const name of ['heroKettle', 'footerKettle', 'portalKettle']) await ready(page, name);
+      await page.click('[data-tab="viewer"]');
+      await ready(page);
+    }
+    // Only the viewer's own renderer is still alive.
+    expect(await page.evaluate(() => (window as any).liveContexts())).toBe(1);
+    expect(errors).toEqual([]);
+    await page.context().close();
+  });
+
+  it('copies tuned values as JSON and applies them back to the same clip', async () => {
+    const { page } = await open('/#viewer');
+    await ready(page);
+    await page.click('[data-clip="little-hop"]');
+    const apexLift = async () => {
+      await page.evaluate(() => { const k = (window as any).kettle; void k.play('little-hop'); k.pause(); k.seek(7); });
+      return (await state(page)).pose.lift;
+    };
+    const defaultLift = await apexLift();
+    const height = page.locator('input[type=number][aria-label="Hop height (body heights)"]');
+    await height.fill('0.8');
+    await height.dispatchEvent('change');
+    const tunedLift = await apexLift();
+    expect(tunedLift).toBeGreaterThan(defaultLift);
+    await page.getByRole('button', { name: 'Copy as JSON' }).click();
+    const copied = await page.locator('textarea.json').inputValue();
+    // The copied text is the module's own tuning format.
+    expect(parseTuning(copied)['little-hop']!.amount.height).toBe(0.8);
+    await page.getByRole('button', { name: 'Reset to module values' }).click();
+    expect(await apexLift()).toBeCloseTo(defaultLift, 6);
+    await page.locator('textarea.json').fill(copied);
+    await page.getByRole('button', { name: 'Apply pasted JSON' }).click();
+    expect(await apexLift()).toBeCloseTo(tunedLift, 6);
+    await page.context().close();
+  });
+
+  it('keeps the free orbit on the pointer that started it', async () => {
+    const { page } = await open('/#viewer', { hasTouch: true });
+    await ready(page);
+    await page.click('[data-camera="orbit"]');
+    const start = (await state(page)).camera.azimuth;
+    const box = (await page.locator('.orbit-layer').boundingBox())!;
     const cdp = await page.context().newCDPSession(page);
-    const touch = (type: 'touchStart' | 'touchMove' | 'touchEnd', x: number) =>
-      cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y: FACE.y }] });
-    await touch('touchStart', FACE.x - 150);
-    for (let x = FACE.x - 100; x <= FACE.x + 250; x += 70) await touch('touchMove', x);
-    await touch('touchEnd', 0);
-    await page.waitForFunction(() => (window as any).kettle.state.clip === 'drag-release');
-    const after = await state(page);
-    expect(after.gaze).toEqual({ x: 0, y: 0 });
-    expect(problems.errors).toEqual([]);
+    const a = { x: box.x + 200, y: box.y + 200, id: 1 };
+    const touch = (type: 'touchStart' | 'touchMove' | 'touchEnd', points: Array<{ x: number; y: number; id: number }>) =>
+      cdp.send('Input.dispatchTouchEvent', { type, touchPoints: points });
+    await touch('touchStart', [a]);
+    await touch('touchStart', [a, { x: box.x + 300, y: box.y + 300, id: 2 }]);
+    for (let dx = 40; dx <= 200; dx += 40) await touch('touchMove', [a, { x: box.x + 300 + dx, y: box.y + 300, id: 2 }]);
+    await frames(page); // pointer moves are dispatched with animation frames
+    expect((await state(page)).camera.azimuth).toBe(start);
+    await touch('touchMove', [{ ...a, x: a.x + 100 }, { x: box.x + 500, y: box.y + 300, id: 2 }]);
+    await expect.poll(async () => (await state(page)).camera.azimuth).not.toBe(start);
+    await touch('touchEnd', []);
+    await page.context().close();
+  });
+});
+
+describe('Kettle interaction in Chromium', () => {
+  it('follows a mouse, plays the poke on click and the drag-release reaction after a fast drag', async () => {
+    const { page, errors } = await open('/#playground');
+    await ready(page);
+    await lowFlingThreshold(page);
+    const centre = await body(page);
+    await page.mouse.move(1270, centre.y - 150);
+    await until(page, 's.gaze.x > 0.3');
+    await page.mouse.move(5, centre.y - 150, { steps: 4 });
+    await until(page, 's.gaze.x < -0.3');
+
+    await page.mouse.click(centre.x, centre.y);
+    await until(page, "s.clip === 'poke' && s.playing");
+    await until(page, '!s.playing');
+
+    await fastDrag(page, centre);
+    await until(page, "s.clip === 'drag-release'");
+    await until(page, '!s.playing && s.dragTurn === 0');
+    expect(errors).toEqual([]);
     await page.context().close();
   });
 
-  it('replaces hops, spins and large deformations with the still pose under reduced motion, keeping eyes and small gaze', async () => {
-    const { page } = await open('/harness.html?surface=landing', { reducedMotion: 'reduce' });
+  it('measures the fling up to the release: drag fast, hold still, release plays no wobble', async () => {
+    const { page } = await open('/#playground');
     await ready(page);
+    await lowFlingThreshold(page);
+    await fastDrag(page, await body(page), false);
+    await until(page, 's.dragging');
+    await page.waitForTimeout(800); // the user holds still before letting go
+    await page.mouse.up();
+    await until(page, '!s.dragging && s.dragTurn === 0');
+    expect((await state(page)).clip).toBeNull();
+    await page.context().close();
+  });
+
+  it('ignores a second pointer during a drag, and treats a lost capture as a release without wobble', async () => {
+    const { page } = await open('/#playground', { hasTouch: true });
+    await ready(page);
+    await lowFlingThreshold(page);
+    const centre = await body(page);
+    await fastDrag(page, centre, false);
+    await until(page, 's.dragging');
+    await page.touchscreen.tap(centre.x, centre.y);
+    await frames(page);
+    let s = await state(page);
+    expect(s.dragging).toBe(true);
+    expect(s.clip).toBeNull();
+    // Losing pointer capture (e.g. the element moved) ends the drag like a cancel.
+    await page.evaluate(() => (window as any).kettle.canvas.releasePointerCapture(1));
+    // The browser applies the capture change at the next pointer event.
+    await page.mouse.move(centre.x + 260, centre.y);
+    await until(page, '!s.dragging');
+    await page.mouse.up();
+    await until(page, 's.dragTurn === 0');
+    s = await state(page);
+    expect(s.clip).toBeNull();
+    await page.context().close();
+  });
+
+  it('springs back without wobble when a touch drag is cancelled', async () => {
+    const { page } = await open('/#playground', { hasTouch: true, isMobile: true });
+    await ready(page);
+    await lowFlingThreshold(page);
+    const centre = await body(page);
+    const cdp = await page.context().newCDPSession(page);
+    const touch = (type: 'touchStart' | 'touchMove' | 'touchCancel', x: number) =>
+      cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchCancel' ? [] : [{ x, y: centre.y }] });
+    await touch('touchStart', centre.x - 150);
+    for (let x = centre.x - 80; x <= centre.x + 180; x += 70) await touch('touchMove', x);
+    await until(page, 's.dragging');
+    // Cancel in the middle of a fast move: a cancel must never fling.
+    await Promise.all([touch('touchMove', centre.x + 260), touch('touchCancel', 0)]);
+    await until(page, '!s.dragging && s.dragTurn === 0');
+    expect((await state(page)).clip).toBeNull();
+    await page.context().close();
+  });
+
+  it('pokes on a tap, never follows touch, and does not poke on a release outside the canvas', async () => {
+    const { page } = await open('/#playground', { hasTouch: true, isMobile: true });
+    await ready(page);
+    const centre = await body(page);
+    await page.touchscreen.tap(centre.x, centre.y);
+    await until(page, "s.clip === 'poke'");
+    expect((await state(page)).gaze).toEqual({ x: 0, y: 0 });
+    await until(page, '!s.playing');
+
+    await page.uncheck('[data-interaction="drag"]');
+    await page.evaluate(() => (window as any).kettle.stop());
+    await page.mouse.move(centre.x, centre.y);
+    await page.mouse.down();
+    await page.mouse.move(1250, 850, { steps: 4 });
+    await page.mouse.up();
+    await frames(page);
+    expect((await state(page)).clip).toBeNull();
+    await page.context().close();
+  });
+
+  it('under reduced motion: still pose for hops and spins, eyes only, capped gaze and a monotonic spring', async () => {
+    const { page } = await open('/#playground');
+    await ready(page);
+    await page.check('#reduced');
+    await until(page, 's.reducedMotion && s.pose.turn === 0');
     for (const id of ['little-hop', 'tilted-spin', 'body-flex', 'rock', 'drag-release']) {
       await page.evaluate((clip) => (window as any).kettle.play(clip), id);
       const s = await state(page);
       expect(s.skipped).toBe(id);
-      expect(Object.values(s.pose).every((value) => value === 0)).toBe(true);
+      // Still pose: nothing moves but the (small) gaze following the mouse.
+      expect(Object.entries(s.pose).filter(([channel, value]) => value !== 0 && !channel.startsWith('gaze'))).toEqual([]);
     }
     await page.evaluate(() => void (window as any).kettle.play('double-blink'));
-    await page.waitForFunction(() => (window as any).kettle.state.pose.blinkL > 0.9);
+    await until(page, 's.pose.blinkL > 0.9');
     const blink = await state(page);
     expect([blink.pose.lift, blink.pose.stretch, blink.pose.lean, blink.pose.turn]).toEqual([0, 0, 0, 0]);
-    await page.waitForFunction(() => !(window as any).kettle.state.playing, null, { timeout: 10_000 });
-    await page.mouse.move(630, 100);
-    await page.waitForFunction(() => (window as any).kettle.state.gaze.x > 0.6);
-    const gaze = await state(page);
-    expect(gaze.pose.gazeX).toBeLessThanOrEqual(0.35);
-    expect(gaze.pose.turn).toBe(0);
+    await until(page, '!s.playing');
+
+    // Gaze stays small even when tuning asks for more and the page directs it during a gaze clip.
+    await page.evaluate(() => {
+      const k = (window as any).kettle;
+      k.setTuning({ 'gaze-follow': { amount: { reduced: 1 } } });
+      k.setGaze({ x: 1, y: 1 });
+    });
+    await until(page, 's.gaze.x === 1');
+    expect((await state(page)).pose.gazeX).toBeLessThanOrEqual(0.35);
+    await page.evaluate(() => {
+      (window as any).maxGaze = 0;
+      (window as any).kettle.subscribe((s: KettleState) => ((window as any).maxGaze = Math.max((window as any).maxGaze, Math.abs(s.pose.gazeX), Math.abs(s.pose.gazeY))));
+      void (window as any).kettle.play('curiosity');
+    });
+    await until(page, "s.clip === 'curiosity' && !s.playing");
+    expect(await page.evaluate(() => (window as any).maxGaze)).toBeLessThanOrEqual(0.35);
+    await page.evaluate(() => (window as any).kettle.setGaze(null));
+
+    // The drag turn returns to the front without passing it.
+    await page.evaluate(() => (window as any).kettle.setTuning({ 'drag-release': { timing: { springBack: 10 } } }));
+    await page.evaluate(() => {
+      (window as any).turns = [];
+      (window as any).kettle.subscribe((s: KettleState) => !s.dragging && (window as any).turns.push(s.dragTurn));
+    });
+    const centre = await body(page);
+    await page.mouse.move(centre.x, centre.y);
+    await page.mouse.down();
+    await page.mouse.move(centre.x + 100, centre.y, { steps: 5 });
+    await page.evaluate(() => ((window as any).turns = []));
+    await page.mouse.up();
+    await until(page, 's.dragTurn === 0');
+    const turns = (await page.evaluate(() => (window as any).turns)) as number[];
+    expect(turns.length).toBeGreaterThan(2);
+    expect(turns.every((turn) => turn >= 0)).toBe(true);
+    for (let i = 1; i < turns.length; i++) expect(turns[i]!).toBeLessThanOrEqual(turns[i - 1]!);
     await page.context().close();
   });
 
@@ -133,17 +386,17 @@ describe('Kettle in Chromium', () => {
     const { page } = await open('/harness.html?surface=portal');
     await ready(page);
     await page.evaluate(() => (window as any).kettle.setGaze({ x: 1, y: 0 }));
-    await page.waitForFunction(() => (window as any).kettle.state.gaze.x === 1);
+    await until(page, 's.gaze.x === 1');
     await page.evaluate(() => void (window as any).kettle.play('curiosity'));
     // Curiosity's own gaze peaks near 0.4; the page's target adds to it.
-    await page.waitForFunction(() => (window as any).kettle.state.playing && (window as any).kettle.state.pose.gazeX > 1);
+    await until(page, 's.playing && s.pose.gazeX > 1');
     await page.context().close();
   });
 
   it('draws only while something moves', async () => {
     const { page } = await open('/harness.html?surface=none');
     await ready(page);
-    await page.waitForFunction(() => (window as any).kettle.state.renders > 0);
+    await until(page, 's.renders > 0');
     const idle = (await state(page)).renders;
     // Proving that nothing happens needs an observation window.
     await page.waitForTimeout(600);
@@ -156,21 +409,5 @@ describe('Kettle in Chromium', () => {
     await page.waitForTimeout(600);
     expect((await state(page)).renders).toBe(after.renders);
     await page.context().close();
-  });
-  it('shows the static poster when WebGL is unavailable', async () => {
-    const noWebgl = await chromium.launch({ executablePath: chromiumPath(), args: ['--disable-3d-apis'] });
-    try {
-      const page = await noWebgl.newPage({ viewport: { width: 400, height: 400 } });
-      const errors: string[] = [];
-      page.on('pageerror', (error) => errors.push(error.message));
-      await page.goto(`${lab.url}/harness.html?surface=landing&poster=1`);
-      await page.waitForFunction(() => (window as any).kettle?.state?.status === 'poster');
-      const poster = page.locator('#stage img');
-      await expect.poll(() => poster.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0 && getComputedStyle(img).visibility === 'visible')).toBe(true);
-      expect(await page.locator('#stage canvas').count()).toBe(0);
-      expect(errors).toEqual([]);
-    } finally {
-      await noWebgl.close();
-    }
   });
 });

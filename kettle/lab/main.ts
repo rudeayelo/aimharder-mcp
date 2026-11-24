@@ -18,6 +18,8 @@ import {
 } from '../src/index.ts';
 
 const ASSET = '/assets/kettle-body-32k.sog';
+/** The shipped poster (design/assets/kettle/kettle-poster-front.png), shown without WebGL. */
+const POSTER = '/assets/kettle-poster.png';
 const app = document.querySelector<HTMLElement>('#app')!;
 const root = document.documentElement;
 
@@ -79,7 +81,7 @@ const darkToggle = document.querySelector<HTMLInputElement>('#dark')!;
 const reducedSetting = () => (reducedToggle.checked ? true : 'auto') as true | 'auto';
 
 function makeKettle(container: HTMLElement, options: Omit<KettleOptions, 'container' | 'asset'>): Kettle {
-  const kettle = createKettle({ container, asset: ASSET, tuning, reducedMotion: reducedSetting(), ...options });
+  const kettle = createKettle({ container, asset: ASSET, poster: POSTER, tuning, reducedMotion: reducedSetting(), ...options });
   kettles.add(kettle);
   kettle.ready.catch((error: unknown) => console.error(error));
   return kettle;
@@ -196,16 +198,25 @@ function viewer(): HTMLElement {
     b.addEventListener('click', () => setPreset(name));
     cameras.append(b);
   }
-  let drag: { x: number; y: number } | null = null;
-  orbitLayer.addEventListener('pointerdown', (e) => { drag = { x: e.clientX, y: e.clientY }; orbitLayer.setPointerCapture(e.pointerId); });
+  // The orbit follows the pointer that started it; other fingers are ignored.
+  let drag: { id: number; x: number; y: number } | null = null;
+  orbitLayer.addEventListener('pointerdown', (e) => {
+    if (drag) return;
+    drag = { id: e.pointerId, x: e.clientX, y: e.clientY };
+    orbitLayer.setPointerCapture(e.pointerId);
+  });
   orbitLayer.addEventListener('pointermove', (e) => {
-    if (!drag) return;
+    if (!drag || e.pointerId !== drag.id) return;
     orbit.azimuth -= (e.clientX - drag.x) * 0.4;
     orbit.elevation = Math.max(-30, Math.min(75, orbit.elevation + (e.clientY - drag.y) * 0.3));
-    drag = { x: e.clientX, y: e.clientY };
+    drag = { id: drag.id, x: e.clientX, y: e.clientY };
     kettle.setCamera(orbit);
   });
-  orbitLayer.addEventListener('pointerup', () => (drag = null));
+  for (const type of ['pointerup', 'pointercancel', 'lostpointercapture'] as const) {
+    orbitLayer.addEventListener(type, (e) => {
+      if (drag?.id === e.pointerId) drag = null;
+    });
+  }
   orbitLayer.addEventListener('wheel', (e) => {
     e.preventDefault();
     orbit.distance = Math.max(1.2, Math.min(9, orbit.distance * (1 + e.deltaY * 0.001)));

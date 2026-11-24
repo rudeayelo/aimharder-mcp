@@ -7,7 +7,6 @@ import {
   CLIP_DEFINITIONS,
   DEFAULT_TUNING,
   GAZE_FOLLOW,
-  KETTLE_FPS,
   createClip,
   isNeutral,
   parseTuning,
@@ -17,6 +16,7 @@ import {
   type ParamRange,
 } from '../src/index.ts';
 import { ClipPlayer } from '../src/player.ts';
+import { springBack } from '../src/spring.ts';
 
 /** Deterministic pseudo-random tuned values inside each declared range. */
 function randomTuning(id: string, seed: number): ClipTuning {
@@ -39,7 +39,7 @@ describe('clips', () => {
     for (const definition of CLIP_DEFINITIONS) {
       for (const tuning of [undefined, randomTuning(definition.id, 7), randomTuning(definition.id, 99)]) {
         const clip = createClip(definition.id, tuning);
-        expect(clip.fps, definition.id).toBe(KETTLE_FPS);
+        expect(clip.fps, definition.id).toBe(12);
         expect(clip.frames.length, definition.id).toBeGreaterThan(4);
         expect(isNeutral(clip.frames[0]!), `${definition.id} first exposure`).toBe(true);
         expect(isNeutral(clip.frames.at(-1)!), `${definition.id} last exposure`).toBe(true);
@@ -73,18 +73,30 @@ describe('stepped playback', () => {
     expect(ended).toBe(true);
     expect(changes).toHaveLength(clip.frames.length - 1);
     // Exposures are 1/12 s apart: no change happens between grid points.
-    for (const [index, t] of changes.entries()) expect(Math.floor((t * KETTLE_FPS) / 1000)).toBe(index + 1);
+    for (const [index, t] of changes.entries()) expect(Math.floor((t * 12) / 1000)).toBe(index + 1);
   });
 
   it('steps gaze following on the exposure grid and comes back exactly to rest', () => {
     const follow = new FollowLayer(resolveTuning(GAZE_FOLLOW.id));
     follow.setTarget({ x: 1, y: 0.5 });
     const moves: number[] = [];
-    for (let t = 0; t < 1000; t += 1000 / 60) if (follow.update(t, 'stepped')) moves.push(Math.floor((t * KETTLE_FPS) / 1000));
+    for (let t = 0; t < 1000; t += 1000 / 60) if (follow.update(t, 'stepped')) moves.push(Math.floor((t * 12) / 1000));
     expect(new Set(moves).size).toBe(moves.length); // at most one move per exposure
     expect(follow.x).toBe(1);
     follow.setTarget(null);
     for (let t = 1000; t < 3000; t += 1000 / 60) follow.update(t, 'stepped');
     expect([follow.x, follow.y]).toEqual([0, 0]);
+  });
+});
+
+describe('drag spring', () => {
+  it('returns monotonically without overshoot at 0, and overshoots once with the default', () => {
+    const plain = springBack(90, 10, 0);
+    expect(plain.at(-1)).toBe(0);
+    for (let i = 1; i < plain.length; i++) expect(plain[i]!).toBeLessThanOrEqual(plain[i - 1]!);
+    expect(plain.every((turn) => turn >= 0)).toBe(true);
+    const lively = springBack(90, 10, resolveTuning('drag-release').amount.springOvershoot!);
+    expect(Math.min(...lively)).toBeLessThan(0);
+    expect(lively.at(-1)).toBe(0);
   });
 });

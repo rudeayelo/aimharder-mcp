@@ -27,6 +27,7 @@ import type { ModelSplats } from './model.ts';
 import { ClipPlayer, type PlayOptions } from './player.ts';
 import { BODY_CHANNELS, CHANNELS, EYE_CHANNELS, lerpPose, neutralPose, type Pose } from './pose.ts';
 import { SplatLayer, colorTexture } from './splat-mesh.ts';
+import { springBack } from './spring.ts';
 import { DEFAULT_TUNING, createClip, parseTuning, resolveTuning, type Tuning } from './tuning.ts';
 
 export type Surface = 'landing' | 'footer' | 'portal' | 'none';
@@ -106,6 +107,7 @@ export interface KettleState {
   renders: number;
   /** Last clip skipped because reduced motion replaces it with the still pose. */
   skipped: string | null;
+  camera: CameraView;
 }
 
 export interface Kettle {
@@ -173,7 +175,11 @@ const NONRIGID = ['stretch', 'bulge', 'bend', 'bendFront', 'twist', 'flop', 'flo
 
 function webglAvailable(): boolean {
   try {
-    return typeof WebGL2RenderingContext !== 'undefined' && document.createElement('canvas').getContext('webgl2') !== null;
+    if (typeof WebGL2RenderingContext === 'undefined') return false;
+    const probe = document.createElement('canvas').getContext('webgl2');
+    // Release the probe at once: browsers cap the number of live contexts.
+    probe?.getExtension('WEBGL_lose_context')?.loseContext();
+    return probe !== null;
   } catch {
     return false;
   }
@@ -201,7 +207,7 @@ export function createKettle(options: KettleOptions): Kettle {
   const state: KettleState = {
     status: 'loading', clip: null, frame: 0, frames: 0, playing: false, paused: false, pose: neutralPose(),
     gaze: { x: 0, y: 0 }, dragTurn: 0, dragging: false, reducedMotion: false, interactions: { ...interactions },
-    timing: { ...timing }, visible: true, renders: 0, skipped: null,
+    timing: { ...timing }, visible: false, renders: 0, skipped: null, camera: CAMERA_PRESETS.front,
   };
   const reduced = () => (reducedSetting === 'auto' ? reducedQuery.matches : reducedSetting);
   state.reducedMotion = reduced();
@@ -239,6 +245,8 @@ export function createKettle(options: KettleOptions): Kettle {
     scene.add(shadow);
   }
 
+  const loading = new AbortController();
+  let colors: DataTexture | null = null;
   let model: ModelSplats | null = null;
   let support: Float32Array = new Float32Array();
   let main: SplatLayer | null = null;
@@ -250,6 +258,8 @@ export function createKettle(options: KettleOptions): Kettle {
   let raf = 0;
   let dirty = true;
   let suspendedPlayback = false;
+  /** When the Kettle went off-screen or hidden; clip time and the spring stand still meanwhile. */
+  let suspendedAt: number | null = null;
   let lastExposure = -1;
   /** A caller (not the pointer) aims the eyes, e.g. the portal guide looking at its bubble. */
   let externalGaze = false;
@@ -279,7 +289,8 @@ export function createKettle(options: KettleOptions): Kettle {
   const setCamera = (view: CameraPreset | Partial<CameraView>) => {
     cameraView = typeof view === 'string' ? CAMERA_PRESETS[view] : { ...cameraView, ...view };
     applyCamera();
-    wake();
+    if (canRun()) render();
+    emit();
   };
   cameraView = typeof options.camera === 'string' || !options.camera ? CAMERA_PRESETS[options.camera ?? 'front'] : { ...cameraView, ...options.camera };
   applyCamera();
@@ -296,6 +307,7 @@ export function createKettle(options: KettleOptions): Kettle {
     state.reducedMotion = reduced();
     state.interactions = { ...interactions };
     state.timing = { ...timing };
+    state.camera = { ...cameraView };
     for (const listener of listeners) listener(state);
   };
 
@@ -366,7 +378,43 @@ export function createKettle(options: KettleOptions): Kettle {
     if (poster) poster.style.visibility = 'hidden';
   };
 
-  const canRun = () => !destroyed && state.status === 'ready' && state.visible && !document.hidden;
+  /** Not animating: still loading, off-screen, in a hidden tab, or showing the poster. */
+  const suspended = () => state.status !== 'ready' || !state.visible || document.hidden;
+  const canRun = () => !destroyed && !suspended();
+  const exposureAt = (time: number) => Math.floor((time * KETTLE_FPS) / 1000);
+
+  /** Freezes clip time and the drag spring while the Kettle cannot be seen. */
+  function suspend(): void {
+    if (suspendedAt !== null) return;
+    suspendedAt = performance.now();
+    if (player.playing) {
+      player.pause();
+      suspendedPlayback = true;
+    }
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+  }
+  function unsuspend(): void {
+    if (destroyed || suspended()) return;
+    const now = performance.now();
+    if (spring && suspendedAt !== null) spring.start += exposureAt(now) - exposureAt(suspendedAt);
+    if (suspendedPlayback) player.resume(now);
+    suspendedPlayback = false;
+    suspendedAt = null;
+    dirty = true;
+    wake();
+  }
+  /** Ends the clip (settling its promise) when the Kettle can no longer animate. */
+  function toPoster(): void {
+    state.status = 'poster';
+    player.stop();
+    spring = null;
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+    if (poster) poster.style.visibility = 'visible';
+    if (canvas) canvas.style.visibility = 'hidden';
+    emit();
+  }
 
   function wake() {
     if (!raf && canRun()) raf = requestAnimationFrame(loop);
@@ -399,12 +447,11 @@ export function createKettle(options: KettleOptions): Kettle {
   // ---- Loading ----
   const ready = (async () => {
     if (!webglAvailable()) {
-      state.status = 'poster';
-      emit();
+      toPoster();
       return;
     }
     try {
-      model = await loadKettleBody(options.asset);
+      model = await loadKettleBody(options.asset, loading.signal);
       if (destroyed) return;
       renderer = new WebGLRenderer({ alpha: true, antialias: false, premultipliedAlpha: true, powerPreference: 'low-power' });
       renderer.setClearColor(0x000000, 0);
@@ -415,15 +462,12 @@ export function createKettle(options: KettleOptions): Kettle {
       container.append(canvas);
       canvas.addEventListener('webglcontextlost', (event) => {
         event.preventDefault();
-        state.status = 'poster';
-        if (poster) poster.style.visibility = 'visible';
-        canvas!.style.visibility = 'hidden';
-        emit();
+        if (!destroyed) toPoster();
       });
       support = supportSamples(model);
       bakedCenters = new Float32Array(model.count * 3);
       bakedCov = new Float32Array(model.count * 6);
-      const colors = colorTexture(model.colors, model.count);
+      colors = colorTexture(model.colors, model.count);
       main = new SplatLayer(model.count, colors);
       body.add(main.mesh);
       for (const [index, group] of echoGroups.entries()) {
@@ -434,16 +478,19 @@ export function createKettle(options: KettleOptions): Kettle {
       }
       eyes = createEyeRig();
       body.add(eyes.group);
+      state.status = 'ready';
       resize();
       applyPose(composeAt(null));
-      state.status = 'ready';
       bindPointer();
-      render();
+      if (suspended()) suspend();
+      else {
+        unsuspend();
+        render();
+      }
       emit();
-      wake();
     } catch (error) {
-      state.status = 'poster';
-      emit();
+      if (destroyed) return;
+      toPoster();
       throw error;
     }
   })();
@@ -462,7 +509,7 @@ export function createKettle(options: KettleOptions): Kettle {
     main?.setViewport(w, h);
     for (const layer of echoes) layer.setViewport(w, h);
     dirty = true;
-    if (state.status === 'ready') render();
+    if (canRun()) render();
   }
   const resizeObserver = new ResizeObserver(() => resize());
   resizeObserver.observe(container);
@@ -470,43 +517,20 @@ export function createKettle(options: KettleOptions): Kettle {
   const setVisible = (visible: boolean) => {
     if (state.visible === visible) return;
     state.visible = visible;
-    const now = performance.now();
-    if (!visible || document.hidden) {
-      if (player.playing) {
-        player.pause();
-        suspendedPlayback = true;
-      }
-      if (raf) cancelAnimationFrame(raf);
-      raf = 0;
-    } else {
-      if (suspendedPlayback) player.resume(now);
-      suspendedPlayback = false;
-      dirty = true;
-      wake();
-    }
+    if (suspended()) suspend();
+    else unsuspend();
     emit();
   };
   const intersection = new IntersectionObserver((entries) => setVisible(entries.some((entry) => entry.isIntersecting)));
   intersection.observe(container);
   const onVisibility = () => {
-    if (document.hidden) {
-      if (player.playing) {
-        player.pause();
-        suspendedPlayback = true;
-      }
-    } else if (suspendedPlayback && state.visible) {
-      player.resume(performance.now());
-      suspendedPlayback = false;
-    }
-    wake();
+    if (suspended()) suspend();
+    else unsuspend();
+    emit();
   };
   document.addEventListener('visibilitychange', onVisibility);
   const onReducedChange = () => {
-    if (reducedSetting === 'auto') {
-      state.reducedMotion = reduced();
-      wake();
-      emit();
-    }
+    if (reducedSetting === 'auto') kettle.setReducedMotion('auto');
   };
   reducedQuery.addEventListener('change', onReducedChange);
 
@@ -536,15 +560,10 @@ export function createKettle(options: KettleOptions): Kettle {
   const startSpring = (from: number, speed: number) => {
     const reaction = resolveTuning('drag-release', tuning['drag-release']);
     const turn = ((((from + 180) % 360) + 360) % 360) - 180;
-    const steps = Math.max(2, reaction.timing.springBack!);
-    const overshoot = reduced() ? 0 : reaction.amount.springOvershoot!;
-    const values: number[] = [];
-    for (let i = 1; i <= steps; i++) {
-      const u = i / steps;
-      values.push(i === steps ? 0 : turn * (1 - u) ** 2 * Math.cos(Math.PI * u * (1 + 2 * overshoot)));
-    }
+    // Under reduced motion the turn eases straight back, never past the front.
+    const values = springBack(turn, reaction.timing.springBack!, reduced() ? 0 : reaction.amount.springOvershoot!);
     dragTurn = turn;
-    spring = { start: Math.floor((performance.now() * KETTLE_FPS) / 1000), values };
+    spring = { start: exposureAt(performance.now()), values };
     const { minSpeed, fullSpeed } = reaction.amount;
 
     if (!reduced() && Math.abs(speed) >= minSpeed!) {
@@ -554,7 +573,8 @@ export function createKettle(options: KettleOptions): Kettle {
   };
 
   const onPointerDown = (event: PointerEvent) => {
-    if (event.button !== 0 || (!interactions.poke && !interactions.drag) || state.status !== 'ready') return;
+    // One pointer at a time: a second finger or the mouse during a drag is ignored.
+    if (pointer || event.button !== 0 || (!interactions.poke && !interactions.drag) || state.status !== 'ready') return;
     canvas!.setPointerCapture(event.pointerId);
     // Input timestamps, not processing time, so a slow frame does not hide a fast fling.
     pointer = { id: event.pointerId, x: event.clientX, y: event.clientY, startTurn: dragTurn, dragging: false, samples: [[event.timeStamp, dragTurn]] };
@@ -571,35 +591,55 @@ export function createKettle(options: KettleOptions): Kettle {
     dragTarget = pointer.startTurn + dx * DRAG_DEGREES_PER_PIXEL;
     const now = event.timeStamp;
     pointer.samples.push([now, dragTarget]);
-    while (pointer.samples.length > 2 && now - pointer.samples[0]![0] > 100) pointer.samples.shift();
+    while (pointer.samples.length > 2 && now - pointer.samples[0]![0] > 200) pointer.samples.shift();
     wake();
   };
-  const onPointerUp = (event: PointerEvent) => {
+  /**
+   * Turn speed (degrees per second) at the release itself. A pointer that stood
+   * still before letting go has speed 0: "still" means no move for 100 ms, or
+   * for 1.5 × the recent gap between moves when input arrives more slowly.
+   */
+  const releaseSpeed = (samples: Array<[number, number]>, at: number): number => {
+    const before = samples.filter(([t]) => t <= at);
+    const last = before.at(-1), previous = before.at(-2);
+    if (!last || !previous) return 0;
+    const gap = last[0] - previous[0];
+    if (at - last[0] > Math.max(100, 1.5 * gap)) return 0;
+    const recent = before.filter(([t]) => at - t <= Math.max(120, 1.5 * gap));
+    const from = recent.length >= 2 ? recent[0]! : previous;
+    return last[0] > from[0] ? ((last[1] - from[1]) * 1000) / (last[0] - from[0]) : 0;
+  };
+  /** Ends the active pointer: `release` may fling or poke; `cancel` only springs back. */
+  const endPointer = (event: PointerEvent, kind: 'release' | 'cancel') => {
     if (!pointer || event.pointerId !== pointer.id) return;
     const ended = pointer;
     pointer = null;
+    if (canvas?.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
     if (ended.dragging) {
-      // Release speed over the last ~120 ms of the drag (at least the last two samples).
-      const samples = ended.samples, last = samples[samples.length - 1]!;
-      const recent = samples.filter(([t]) => last[0] - t <= 120);
-      const first = recent.length >= 2 ? recent[0]! : samples[Math.max(0, samples.length - 2)]!;
-      const speed = last[0] > first[0] ? ((last[1] - first[1]) * 1000) / (last[0] - first[0]) : 0;
-      startSpring(dragTarget, event.type === 'pointercancel' ? 0 : speed);
-    } else if (interactions.poke && event.type === 'pointerup') {
-      const face = faceOnScreen();
-      const id = pokeClips[pokeIndex++ % pokeClips.length]!;
-      void play(id, { mirror: face !== null && event.clientX < face.x });
+      startSpring(dragTarget, kind === 'release' ? releaseSpeed(ended.samples, event.timeStamp) : 0);
+    } else if (kind === 'release' && interactions.poke && canvas) {
+      // Captured pointers report their release anywhere; only a release over the Kettle pokes.
+      const rect = canvas.getBoundingClientRect();
+      const inside = event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom;
+      if (inside) {
+        const face = faceOnScreen();
+        const id = pokeClips[pokeIndex++ % pokeClips.length]!;
+        void play(id, { mirror: face !== null && event.clientX < face.x });
+      }
     }
     wake();
     emit();
   };
+  const onPointerUp = (event: PointerEvent) => endPointer(event, 'release');
+  const onPointerCancel = (event: PointerEvent) => endPointer(event, 'cancel');
 
   function bindPointer() {
     if (!canvas) return;
     canvas.addEventListener('pointerdown', onPointerDown);
     canvas.addEventListener('pointermove', onPointerMove);
     canvas.addEventListener('pointerup', onPointerUp);
-    canvas.addEventListener('pointercancel', onPointerUp);
+    canvas.addEventListener('pointercancel', onPointerCancel);
+    canvas.addEventListener('lostpointercapture', onPointerCancel);
     updateCursor();
   }
   function updateCursor() {
@@ -615,6 +655,8 @@ export function createKettle(options: KettleOptions): Kettle {
   // ---- Public API ----
   function play(id: string, playOptions: PlayOptions = {}): Promise<void> {
     const definition = definitionOf(id);
+    // Without WebGL (or after teardown) nothing animates: settle at once.
+    if (destroyed || state.status === 'poster') return Promise.resolve();
     if (reduced() && definition.reducedMotion === 'still') {
       player.stop();
       state.skipped = id;
@@ -625,6 +667,12 @@ export function createKettle(options: KettleOptions): Kettle {
     state.skipped = null;
     return new Promise((resolve) => {
       player.play(clipFor(id), performance.now(), playOptions, resolve);
+      // Queued while unseen: it starts from its first exposure once visible.
+      suspendedPlayback = false;
+      if (suspended()) {
+        player.pause();
+        suspendedPlayback = true;
+      }
       echoShown.fill('');
       wake();
       emit();
@@ -645,10 +693,12 @@ export function createKettle(options: KettleOptions): Kettle {
     },
     pause() {
       player.pause();
+      suspendedPlayback = false;
       emit();
     },
     resume() {
-      player.resume(performance.now());
+      if (suspended()) suspendedPlayback = player.clip !== null;
+      else player.resume(performance.now());
       wake();
       emit();
     },
@@ -690,6 +740,11 @@ export function createKettle(options: KettleOptions): Kettle {
     setReducedMotion(value) {
       reducedSetting = value;
       shown = null;
+      // Re-pose at once so no frame shows the previous setting's motion.
+      if (canRun()) {
+        applyPose(composeAt(null));
+        render();
+      }
       wake();
       emit();
     },
@@ -717,7 +772,10 @@ export function createKettle(options: KettleOptions): Kettle {
       return () => listeners.delete(listener);
     },
     destroy() {
+      if (destroyed) return;
       destroyed = true;
+      loading.abort();
+      player.stop();
       if (raf) cancelAnimationFrame(raf);
       resizeObserver.disconnect();
       intersection.disconnect();
@@ -729,10 +787,15 @@ export function createKettle(options: KettleOptions): Kettle {
       main?.dispose();
       for (const layer of echoes) layer.dispose();
       eyes?.dispose();
+      colors?.dispose();
       shadow?.geometry.dispose();
       shadow?.material.map?.dispose();
       shadow?.material.dispose();
-      renderer?.dispose();
+      if (renderer) {
+        canvas?.removeEventListener('pointerdown', onPointerDown);
+        renderer.dispose();
+        renderer.forceContextLoss();
+      }
       canvas?.remove();
       poster?.remove();
       listeners.clear();

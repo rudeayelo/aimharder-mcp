@@ -16,7 +16,7 @@ export interface Layers {
   reduced: boolean;
 }
 
-/** Eye travel kept for clip-driven gaze under reduced motion. */
+/** Largest eye travel under reduced motion, for clips, following and directed gaze alike. */
 const REDUCED_GAZE = 0.35;
 
 export function stripBody(source: Pose): Pose {
@@ -35,5 +35,10 @@ export function composePose(layers: Layers): Pose {
   }
   const clipOwnsGaze = layers.clipPlaying && layers.clip?.ownsGaze === true;
   if (layers.follow && (!clipOwnsGaze || layers.directed)) result = addPoses(result, layers.follow);
+  // Under reduced motion the gaze stays small whatever the tuning or the page asks for.
+  if (layers.reduced) {
+    result.gazeX = Math.max(-REDUCED_GAZE, Math.min(REDUCED_GAZE, result.gazeX));
+    result.gazeY = Math.max(-REDUCED_GAZE, Math.min(REDUCED_GAZE, result.gazeY));
+  }
   return result;
 }
