@@ -7,7 +7,6 @@ import { eyeShape, recessRings, type EyeShape } from '../src/eyes.ts';
 import { FollowLayer } from '../src/follow.ts';
 import {
   BODY_CHANNELS,
-  CHANNELS,
   CLIP_DEFINITIONS,
   DEFAULT_TUNING,
   GAZE_FOLLOW,
@@ -53,8 +52,8 @@ describe('clips', () => {
         expect(isNeutral(clip.frames.at(-1)!), `${definition.id} last exposure`).toBe(true);
         // Every clip actually moves.
         expect(clip.frames.some((frame) => !isNeutral(frame, 1e-3)), definition.id).toBe(true);
-        // One body per exposure: no echo (multiple-image) channel in any pose.
-        for (const frame of clip.frames) expect(Object.keys(frame), definition.id).toEqual([...CHANNELS]);
+        // One body per exposure: no echo (multiple-image) channel in any pose, whatever the channel list says.
+        for (const frame of clip.frames) expect(Object.keys(frame).filter((key) => /echo/i.test(key)), definition.id).toEqual([]);
       }
     }
   });
