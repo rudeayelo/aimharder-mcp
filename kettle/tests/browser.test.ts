@@ -284,6 +284,28 @@ describe('Kettle lab in Chromium', () => {
     await page.context().close();
   });
 
+  it('rejects pasted JSON that is not an object, with the module tuning error', async () => {
+    const { page } = await open('/#viewer');
+    await ready(page);
+    for (const payload of ['[]', 'true', '42', 'null']) {
+      await page.locator('textarea.json').fill(payload);
+      await page.getByRole('button', { name: 'Apply pasted JSON' }).click();
+      expect(await page.locator('.tuning p[role="status"]').textContent(), payload).toBe('Not applied: Tuning must be a JSON object keyed by clip id');
+    }
+    await page.context().close();
+  });
+
+  it('keeps an imported floor minimum light the slider cannot show when only the eye colour changes', async () => {
+    const { page } = await open('/#viewer');
+    await ready(page);
+    await page.locator('textarea.json').fill(JSON.stringify({ eyes: { color: '#ffab62', minLight: 0.813 } }));
+    await page.getByRole('button', { name: 'Apply pasted JSON' }).click();
+    await page.fill('input[aria-label="Eye colour"]', '#3366ff');
+    await page.getByRole('button', { name: 'Copy as JSON' }).click();
+    expect(JSON.parse(await page.locator('textarea.json').inputValue()).eyes).toEqual({ color: '#3366ff', minLight: 0.813 });
+    await page.context().close();
+  });
+
   it('keeps the free orbit on the pointer that started it', async () => {
     const { page } = await open('/#viewer', { hasTouch: true });
     await ready(page);

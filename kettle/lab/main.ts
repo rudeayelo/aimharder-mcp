@@ -279,7 +279,10 @@ function viewer(): HTMLElement {
   copyButton.addEventListener('click', async () => (jsonStatus.textContent = await copyText(copied(), jsonArea)));
   applyButton.addEventListener('click', () => {
     try {
-      const { eyes, ...clips } = JSON.parse(jsonArea.value) as Record<string, unknown>;
+      const data: unknown = JSON.parse(jsonArea.value);
+      // Anything but a plain object gets the module's own error, before `eyes` is taken out.
+      if (data === null || typeof data !== 'object' || Array.isArray(data)) parseTuning(data as object);
+      const { eyes, ...clips } = data as Record<string, unknown>;
       const parsed = parseTuning(clips);
       if (eyes !== undefined) {
         const look = eyes as Partial<EyeLook>;
@@ -334,15 +337,16 @@ function viewer(): HTMLElement {
   function renderEyes(): void {
     eyeColor.value = eyeLook.color;
     eyeMinLight.value = String(eyeLook.minLight);
-    eyeMinLightValue.textContent = eyeLook.minLight.toFixed(2);
+    eyeMinLightValue.textContent = String(eyeLook.minLight);
   }
-  const updateEyes = () => {
-    setEyeLook({ color: eyeColor.value, minLight: Number(eyeMinLight.value) });
+  // Each control changes only its own value, so an imported value the slider cannot show survives a colour change.
+  const updateEyes = (change: Partial<EyeLook>) => {
+    setEyeLook({ ...eyeLook, ...change });
     renderEyes();
     jsonArea.value = copied();
   };
-  eyeColor.addEventListener('input', updateEyes);
-  eyeMinLight.addEventListener('input', updateEyes);
+  eyeColor.addEventListener('input', () => updateEyes({ color: eyeColor.value }));
+  eyeMinLight.addEventListener('input', () => updateEyes({ minLight: Number(eyeMinLight.value) }));
   const resetEyes = button('Brand accent');
   resetEyes.addEventListener('click', () => {
     setEyeLook({ ...DEFAULT_EYE_LOOK });
