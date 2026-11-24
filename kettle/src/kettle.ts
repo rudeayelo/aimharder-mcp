@@ -271,7 +271,7 @@ export function createKettle(options: KettleOptions): Kettle {
   let dragTarget = 0;
   let pointer: { id: number; x: number; y: number; startTurn: number; dragging: boolean; samples: Array<[number, number]> } | null = null;
   /** `start` is the exposure of its first value, or null while it waits for the Kettle to be seen. */
-  let spring: { start: number | null; values: number[] } | null = null;
+  let spring: { start: number | null; shown: number; values: number[] } | null = null;
 
   const matrix = new Matrix4();
   const setRotation = (group: Group, rotation: Matrix3, position: [number, number, number]) => {
@@ -437,8 +437,14 @@ export function createKettle(options: KettleOptions): Kettle {
     if (pointer?.dragging) {
       if (timing.drag === 'smooth' || newExposure) dragTurn = dragTarget;
     } else if (spring) {
+      // Like clips, the spring never skips a value: one per due exposure, re-anchored when late.
       spring.start ??= exposure;
-      const index = Math.max(0, exposure - spring.start);
+      const due = Math.max(0, exposure - spring.start);
+      if (due > spring.shown) {
+        spring.shown += 1;
+        if (due > spring.shown) spring.start = exposure - spring.shown;
+      }
+      const index = Math.max(0, spring.shown);
       dragTurn = index < spring.values.length ? spring.values[index]! : 0;
       if (index >= spring.values.length) spring = null;
     }
@@ -570,7 +576,7 @@ export function createKettle(options: KettleOptions): Kettle {
     // Under reduced motion the turn eases straight back, never past the front.
     const values = springBack(turn, reaction.timing.springBack!, reduced() ? 0 : reaction.amount.springOvershoot!);
     dragTurn = turn;
-    spring = { start: suspended() ? null : exposureAt(performance.now()), values };
+    spring = { start: suspended() ? null : exposureAt(performance.now()), shown: -1, values };
     const { minSpeed, fullSpeed } = reaction.amount;
     if (fling && !reduced() && Math.abs(speed) >= minSpeed!) {
       const intensity = Math.max(0.35, Math.min(1, (Math.abs(speed) - minSpeed!) / Math.max(1, fullSpeed! - minSpeed!)));
@@ -750,7 +756,7 @@ export function createKettle(options: KettleOptions): Kettle {
       // A running spring may overshoot; under reduced motion it becomes a plain return from where it is.
       if (spring && reduced()) {
         const reaction = resolveTuning('drag-release', tuning['drag-release']);
-        spring = { start: suspended() ? null : exposureAt(performance.now()), values: springBack(dragTurn, reaction.timing.springBack!, 0) };
+        spring = { start: suspended() ? null : exposureAt(performance.now()), shown: -1, values: springBack(dragTurn, reaction.timing.springBack!, 0) };
       }
       // Re-pose at once so no frame shows the previous setting's motion.
       if (canRun()) {

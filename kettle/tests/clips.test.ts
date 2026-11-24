@@ -76,6 +76,19 @@ describe('stepped playback', () => {
     for (const [index, t] of changes.entries()) expect(Math.floor((t * 12) / 1000)).toBe(index + 1);
   });
 
+  it('shows every exposure in order when frames arrive slower than the exposure grid', () => {
+    // A slow device draws every 250 ms (3 exposures); key poses such as the shut eye must still appear.
+    const clip = createClip('double-blink');
+    const player = new ClipPlayer();
+    let ended = false;
+    player.play(clip, 0, {}, () => (ended = true));
+    const shown: number[] = [];
+    for (let t = 0; !ended && t < 60_000; t += 250) if (player.tick(t)) shown.push(player.frame);
+    expect(ended).toBe(true);
+    expect(shown).toEqual(Array.from({ length: clip.frames.length - 1 }, (_, i) => i + 1));
+    expect(clip.frames.some((pose, frame) => pose.blinkL > 0.9 && shown.includes(frame))).toBe(true);
+  });
+
   it('steps gaze following on the exposure grid and comes back exactly to rest', () => {
     const follow = new FollowLayer(resolveTuning(GAZE_FOLLOW.id));
     follow.setTarget({ x: 1, y: 0.5 });

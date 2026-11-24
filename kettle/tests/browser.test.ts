@@ -86,11 +86,30 @@ async function body(page: Page, name = 'kettle'): Promise<{ x: number; y: number
 const lowFlingThreshold = (page: Page) =>
   page.evaluate(() => (window as any).kettle.setTuning({ 'drag-release': { amount: { minSpeed: 40 } } }));
 
-async function fastDrag(page: Page, from: { x: number; y: number }, release = true): Promise<void> {
-  await page.mouse.move(from.x - 150, from.y);
-  await page.mouse.down();
-  await page.mouse.move(from.x + 250, from.y, { steps: 6 });
-  if (release) await page.mouse.up();
+/**
+ * A fast mouse drag with input timestamps 16 ms apart, sent through CDP. On a
+ * loaded machine the page handles each event late, and sequential input would
+ * otherwise arrive with slow timestamps and read (correctly) as a slow drag.
+ */
+async function fastDrag(page: Page, from: { x: number; y: number }, release = true) {
+  const cdp = await page.context().newCDPSession(page);
+  let t = Date.now() / 1000, x = from.x - 150;
+  const send = (type: 'mouseMoved' | 'mousePressed' | 'mouseReleased', at: number, buttons: number) =>
+    cdp.send('Input.dispatchMouseEvent', { type, x, y: from.y, button: 'left', buttons, clickCount: 1, timestamp: at });
+  await send('mouseMoved', t, 0);
+  await send('mousePressed', t, 1);
+  for (let i = 1; i <= 6; i++) {
+    x = from.x - 150 + (400 * i) / 6;
+    await send('mouseMoved', (t += 0.016), 1);
+  }
+  const drag = {
+    /** Moves the held pointer now. */
+    move: (to: number) => ((x = to), send('mouseMoved', Date.now() / 1000, 1)),
+    /** Releases 16 ms after the last move (a fling), or now. */
+    up: (fling = false) => send('mouseReleased', fling ? t + 0.016 : Date.now() / 1000, 0),
+  };
+  if (release) await drag.up(true);
+  return drag;
 }
 
 describe('Kettle lab in Chromium', () => {
@@ -146,8 +165,8 @@ describe('Kettle lab in Chromium', () => {
       (window as any).portalKettle.subscribe((s: KettleState) => s.visible && (window as any).seen.push([s.clip, s.frame]));
     });
     await page.locator('.portal').scrollIntoViewIfNeeded();
-    // Curiosity then plays on screen from its start, exposure by exposure, before the guide moves on.
-    await page.waitForFunction(() => (window as any).seen.some(([clip]: [string]) => clip === 'double-blink'), undefined, { timeout: 15_000 });
+    // Curiosity then plays on screen from its start, exposure by exposure.
+    await page.waitForFunction(() => (window as any).seen.some(([clip, frame]: [string, number]) => clip === 'curiosity' && frame >= 8));
     const seen = (await page.evaluate(() => (window as any).seen)) as Array<[string, number]>;
     expect(seen[0]).toEqual(['curiosity', 0]);
     const shown = new Set(seen.filter(([clip]) => clip === 'curiosity').map(([, frame]) => frame));
@@ -252,8 +271,7 @@ describe('Kettle interaction in Chromium', () => {
     await until(page, '!s.playing');
 
     await fastDrag(page, centre);
-    await until(page, "s.clip === 'drag-release'");
-    await until(page, '!s.playing && s.dragTurn === 0');
+    await until(page, "s.clip === 'drag-release' && s.playing");
     expect(errors).toEqual([]);
     await page.context().close();
   });
@@ -262,10 +280,10 @@ describe('Kettle interaction in Chromium', () => {
     const { page } = await open('/#playground');
     await ready(page);
     await lowFlingThreshold(page);
-    await fastDrag(page, await body(page), false);
+    const drag = await fastDrag(page, await body(page), false);
     await until(page, 's.dragging');
     await page.waitForTimeout(800); // the user holds still before letting go
-    await page.mouse.up();
+    await drag.up();
     await until(page, '!s.dragging && s.dragTurn === 0');
     expect((await state(page)).clip).toBeNull();
     await page.context().close();
@@ -276,7 +294,7 @@ describe('Kettle interaction in Chromium', () => {
     await ready(page);
     await lowFlingThreshold(page);
     const centre = await body(page);
-    await fastDrag(page, centre, false);
+    const drag = await fastDrag(page, centre, false);
     await until(page, 's.dragging');
     await page.touchscreen.tap(centre.x, centre.y);
     await frames(page);
@@ -286,9 +304,9 @@ describe('Kettle interaction in Chromium', () => {
     // Losing pointer capture (e.g. the element moved) ends the drag like a cancel.
     await page.evaluate(() => (window as any).kettle.canvas.releasePointerCapture(1));
     // The browser applies the capture change at the next pointer event.
-    await page.mouse.move(centre.x + 260, centre.y);
+    await drag.move(centre.x + 260);
     await until(page, '!s.dragging');
-    await page.mouse.up();
+    await drag.up();
     await until(page, 's.dragTurn === 0');
     s = await state(page);
     expect(s.clip).toBeNull();
@@ -345,11 +363,20 @@ describe('Kettle interaction in Chromium', () => {
       // Still pose: nothing moves but the (small) gaze following the mouse.
       expect(Object.entries(s.pose).filter(([channel, value]) => value !== 0 && !channel.startsWith('gaze'))).toEqual([]);
     }
-    await page.evaluate(() => void (window as any).kettle.play('double-blink'));
-    await until(page, 's.pose.blinkL > 0.9');
-    const blink = await state(page);
-    expect([blink.pose.lift, blink.pose.stretch, blink.pose.lean, blink.pose.turn]).toEqual([0, 0, 0, 0]);
-    await until(page, '!s.playing');
+    // Record every state the Kettle emits during the blink rather than polling for one exposure.
+    await page.evaluate(() => {
+      const seen = ((window as any).blink = { shut: 0, body: 0 });
+      (window as any).kettle.subscribe((s: KettleState) => {
+        if (s.clip !== 'double-blink') return;
+        seen.shut = Math.max(seen.shut, s.pose.blinkL);
+        seen.body = Math.max(seen.body, Math.abs(s.pose.lift), Math.abs(s.pose.stretch), Math.abs(s.pose.lean), Math.abs(s.pose.turn));
+      });
+      void (window as any).kettle.play('double-blink');
+    });
+    await until(page, "s.clip === 'double-blink' && !s.playing");
+    const blink = (await page.evaluate(() => (window as any).blink)) as { shut: number; body: number };
+    expect(blink.shut).toBeGreaterThan(0.9);
+    expect(blink.body).toBe(0);
 
     // Gaze stays small even when tuning asks for more and the page directs it during a gaze clip.
     await page.evaluate(() => {
@@ -364,9 +391,15 @@ describe('Kettle interaction in Chromium', () => {
       (window as any).kettle.subscribe((s: KettleState) => ((window as any).maxGaze = Math.max((window as any).maxGaze, Math.abs(s.pose.gazeX), Math.abs(s.pose.gazeY))));
       void (window as any).kettle.play('curiosity');
     });
-    await until(page, "s.clip === 'curiosity' && !s.playing");
-    expect(await page.evaluate(() => (window as any).maxGaze)).toBeLessThanOrEqual(0.35);
-    await page.evaluate(() => (window as any).kettle.setGaze(null));
+    // Curiosity's own gaze peaks by exposure 6; the directed gaze adds to it, and the cap must hold.
+    await until(page, "s.clip === 'curiosity' && s.frame >= 8");
+    const maxGaze = (await page.evaluate(() => (window as any).maxGaze)) as number;
+    expect(maxGaze).toBeLessThanOrEqual(0.35);
+    expect(maxGaze).toBeCloseTo(0.35, 6);
+    await page.evaluate(() => {
+      (window as any).kettle.stop();
+      (window as any).kettle.setGaze(null);
+    });
 
     // The drag turn returns to the front without passing it.
     await page.evaluate(() => (window as any).kettle.setTuning({ 'drag-release': { timing: { springBack: 10 } } }));

@@ -19,12 +19,15 @@ export class ClipPlayer {
   paused = false;
   private options: Required<PlayOptions> = { loop: false, speed: 1, mirror: false, intensity: 1 };
   private origin = 0;
+  /** Exposures shown since `origin`; the current exposure. */
+  private shown = 0;
   private onEnd: (() => void) | null = null;
 
   play(clip: Clip, now: number, options: PlayOptions = {}, onEnd?: () => void): void {
     this.finish(false);
     this.clip = clip;
     this.frame = 0;
+    this.shown = 0;
     this.paused = false;
     this.options = { loop: false, speed: 1, mirror: false, intensity: 1, ...options };
     this.origin = now;
@@ -55,6 +58,7 @@ export class ClipPlayer {
   resume(now: number): void {
     if (!this.clip || !this.paused) return;
     this.paused = false;
+    this.shown = this.frame;
     this.origin = now - (this.frame * 1000) / (KETTLE_FPS * this.options.speed);
   }
 
@@ -62,6 +66,7 @@ export class ClipPlayer {
   seek(frame: number): void {
     if (!this.clip) return;
     this.frame = Math.max(0, Math.min(this.clip.frames.length - 1, Math.round(frame)));
+    this.shown = this.frame;
     this.paused = true;
   }
 
@@ -69,24 +74,32 @@ export class ClipPlayer {
     this.finish(false);
   }
 
-  /** Advances to the exposure due at `now`. Returns true when the exposure changed. */
+  /**
+   * Advances to the next exposure once it is due. It never skips one: when
+   * frames arrive later than the 12 fps grid (a slow device), every exposure is
+   * still shown in order and the clip runs longer, so key poses such as a shut
+   * eye or an impact squash are never dropped. Returns true when the exposure changed.
+   */
   tick(now: number): boolean {
     const clip = this.clip;
     if (!clip || this.paused) return false;
-    const due = Math.floor(((now - this.origin) * KETTLE_FPS * this.options.speed) / 1000);
+    const exposure = 1000 / (KETTLE_FPS * this.options.speed);
+    const due = Math.floor((now - this.origin) / exposure);
+    if (due <= this.shown) return false;
+    this.shown += 1;
+    // Late: re-anchor so the exposure just shown still gets its full time.
+    if (due > this.shown) this.origin = now - this.shown * exposure;
     const length = clip.frames.length;
-    let next = due;
-    if (due >= length) {
-      if (this.options.loop) next = due % length;
-      else {
-        const changed = this.frame !== length - 1;
-        this.frame = length - 1;
+    if (this.shown >= length) {
+      if (this.options.loop) {
+        this.shown %= length;
+        this.origin = now - this.shown * exposure;
+      } else {
         this.finish(true);
-        return changed;
+        return false;
       }
     }
-    if (next === this.frame) return false;
-    this.frame = next;
+    this.frame = this.shown;
     return true;
   }
 
