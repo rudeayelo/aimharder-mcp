@@ -3,10 +3,14 @@
 // state machines, which a browser cannot time reliably. Reduced motion is
 // checked in browser.test.ts.
 import { describe, expect, it } from 'vitest';
-import { eyeShape, recessRings, type EyeShape } from '../src/eyes.ts';
+import { hexToLinear, linearToOklch } from '../src/color.ts';
+import { createEyeRig, eyeShape, recessRings, type EyeShape } from '../src/eyes.ts';
 import { FollowLayer } from '../src/follow.ts';
+import type { BufferGeometry, Mesh } from 'three';
 import {
   BODY_CHANNELS,
+  BRAND_COLORS,
+  DEFAULT_EYE_LOOK,
   CLIP_DEFINITIONS,
   DEFAULT_TUNING,
   GAZE_FOLLOW,
@@ -224,5 +228,43 @@ describe('drag spring', () => {
     const lively = springBack(90, 10, resolveTuning('drag-release').amount.springOvershoot!);
     expect(Math.min(...lively)).toBeLessThan(0);
     expect(lively.at(-1)).toBe(0);
+  });
+});
+
+describe('eye colour', () => {
+  /** OKLCH of the darkest floor point the rig draws over every exposure of a few clips. */
+  function darkestFloor(look?: { color: string; minLight: number }) {
+    const rig = createEyeRig(look);
+    let darkest = { l: Infinity, c: 0, h: 0 };
+    for (const id of ['curiosity', 'tilted-spin', 'look-around']) {
+      for (const pose of createClip(id).frames) {
+        rig.apply(pose);
+        for (const mesh of rig.group.children as Array<Mesh<BufferGeometry>>) {
+          const colors = mesh.geometry.attributes.color!;
+          // The floor is the centre and the first four rings of 96 points.
+          for (let i = 0; i <= 4 * 96; i++) {
+            const point = linearToOklch([colors.getX(i), colors.getY(i), colors.getZ(i)]);
+            if (point.l < darkest.l) darkest = point;
+          }
+        }
+      }
+    }
+    rig.dispose();
+    return darkest;
+  }
+
+  it('shades the eye floor in lightness only: its darkest point keeps the configured hue and chroma', () => {
+    expect(DEFAULT_EYE_LOOK.color).toBe(BRAND_COLORS.accent);
+    // Colours sRGB can hold at that lightness (very saturated colours shaded far darker must lose chroma).
+    for (const look of [DEFAULT_EYE_LOOK, { color: '#e0405a', minLight: 0.8 }, { color: '#ffd166', minLight: 0.8 }]) {
+      const target = linearToOklch(hexToLinear(look.color));
+      const darkest = darkestFloor(look);
+      const hue = Math.abs(((darkest.h - target.h + 3 * Math.PI) % (2 * Math.PI)) - Math.PI) * (180 / Math.PI);
+      expect(hue, `${look.color} hue shift (degrees)`).toBeLessThan(1);
+      expect(Math.abs(darkest.c - target.c) / target.c, `${look.color} chroma change`).toBeLessThan(0.03);
+      // Darker than the colour itself, never below the configured minimum light.
+      expect(darkest.l).toBeLessThan(target.l);
+      expect(darkest.l).toBeGreaterThanOrEqual(target.l * look.minLight - 1e-6);
+    }
   });
 });

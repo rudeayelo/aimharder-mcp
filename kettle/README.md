@@ -22,8 +22,8 @@ pnpm poster         # re-renders design/assets/kettle/kettle-poster-front.png
 
 ## The lab
 
-- **Viewer:** clip list with a keep / adjust / remove marker and a note per clip, play, loop, frame-by-frame stepping, speed, fixed cameras (front, three-quarter, side, eye detail) and free orbit. **Copy decisions as Markdown** produces the table to paste into [#134](https://github.com/rudeayelo/aimharder-mcp/issues/134), with any tuned values.
-- **Tuning:** every timing (in exposures) and amount of the selected clip. **Copy as JSON** copies the entry in the format of [`src/tuning.json`](src/tuning.json); pasting it over the same key there makes it the module's value. **Apply pasted JSON** takes the same format back.
+- **Viewer:** clip list with a keep / adjust / remove marker and a note per clip, play, loop, frame-by-frame stepping, speed, fixed cameras (front, three-quarter, side, eye detail) and free orbit. Under the stage, an eye colour picker and the eye floor's minimum light apply to every Kettle in the lab. **Copy decisions as Markdown** produces the table to paste into [#134](https://github.com/rudeayelo/aimharder-mcp/issues/134), with any tuned values.
+- **Tuning:** every timing (in exposures) and amount of the selected clip. **Copy as JSON** copies the entry in the format of [`src/tuning.json`](src/tuning.json); pasting it over the same key there makes it the module's value. The copy also carries an `eyes` entry (eye colour and floor minimum light): it is the value of the module's `eyes` option, not part of `tuning.json`. **Apply pasted JSON** takes the same format back.
 - **Interaction playground:** gaze following, poke and drag each switched on or off, stepped (12 fps) or smooth timing for gaze and drag, surface presets, the portal guide cue and celebration, and an event log. For touch, open the browser's device toolbar.
 - **Compositions:** rough mockups of the landing hero, the footer and the portal onboarding cue (with its celebration dialog), each Kettle on its surface's defaults, coloured only with the phase 1 Figma variables in [`lab/public/tokens.css`](lab/public/tokens.css).
 - Header toggles switch Light/Dark and simulate `prefers-reduced-motion` for every Kettle on the page. Markers, notes and tuned values persist in the browser's local storage; a saved tuned value is dropped when the module's defaults for its clip change (or the clip is removed), and markers and notes stay.
@@ -51,6 +51,7 @@ kettle.setGaze({ x: 0.8, y: 0.3 }); // look at something (portal guide); null re
 | `setGaze(target \| null)` | Points the eyes and a little of the head at a normalised target. |
 | `setInteractions({ gaze, poke, drag })`, `setTiming({ gaze, drag })` | Interaction switches; `stepped` (12 fps, the default for both) or `smooth` (display rate). |
 | `setReducedMotion('auto' \| boolean)` | `auto` follows `prefers-reduced-motion`. |
+| `setEyes({ color, minLight })` | Eye floor colour (`#rrggbb`, default the brand accent `BRAND_COLORS.accent`) and its minimum light (default 0.8). The floor is shaded in OKLCH lightness only, so it keeps its hue and chroma instead of going brown; very saturated colours at a low minimum light lose some chroma to fit sRGB. Also the `eyes` option of `createKettle`. |
 | `setTuning(tuning)`, `setCamera(preset \| view)`, `subscribe(listener)`, `state`, `destroy()` | Live tuning, camera, observation and teardown. |
 
 Defaults by surface, from `SURFACES` in [`src/kettle.ts`](src/kettle.ts). `surface` sets them; the `interactions`, `timing`, `pokeClips` and `entrance` options override them. They are **provisional** ([motion spec](../docs/product-experience.md#kettle-motion-spec)).

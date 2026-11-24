@@ -17,9 +17,10 @@ import {
   WebGLRenderer,
 } from 'three';
 import { KETTLE_FPS, type Clip, type ClipTuning } from './clip.ts';
+import { hexToLinear } from './color.ts';
 import { composePose } from './compose.ts';
 import { bakeSplats, placeBody, supportSamples, type Matrix3 } from './deform.ts';
-import { createEyeRig, type EyeRig } from './eyes.ts';
+import { DEFAULT_EYE_LOOK, createEyeRig, type EyeLook, type EyeRig } from './eyes.ts';
 import { FollowLayer, type Motion } from './follow.ts';
 import { GAZE_FOLLOW, definitionOf } from './library.ts';
 import { loadKettleBody } from './load.ts';
@@ -83,6 +84,8 @@ export interface KettleOptions {
    * A clip the page plays before that replaces it; reduced motion is read when the Kettle is first seen.
    */
   entrance?: string | null;
+  /** Eye floor colour and its minimum light; defaults to the brand accent (`DEFAULT_EYE_LOOK`). */
+  eyes?: Partial<EyeLook>;
   /** Ground shadow under the body. */
   shadow?: boolean;
   /** Maximum device pixel ratio. */
@@ -136,6 +139,8 @@ export interface Kettle {
   /** Replaces tuned values (same format as `tuning.json`); a playing clip is rebuilt in place. */
   setTuning(tuning: Tuning): void;
   setCamera(view: CameraPreset | Partial<CameraView>): void;
+  /** Changes the eye floor colour or its minimum light. */
+  setEyes(look: Partial<EyeLook>): void;
   subscribe(listener: (state: KettleState) => void): () => void;
   destroy(): void;
 }
@@ -227,6 +232,7 @@ export function createKettle(options: KettleOptions): Kettle {
   const player = new ClipPlayer();
   const follow = new FollowLayer(resolveTuning(GAZE_FOLLOW.id, tuning[GAZE_FOLLOW.id]));
   const clipCache = new Map<string, Clip>();
+  let eyeLook: EyeLook = { ...DEFAULT_EYE_LOOK, ...options.eyes };
   const clipFor = (id: string): Clip => {
     let clip = clipCache.get(id);
     if (!clip) clipCache.set(id, (clip = createClip(id, tuning[id])));
@@ -487,7 +493,7 @@ export function createKettle(options: KettleOptions): Kettle {
       colors = colorTexture(model.colors, model.count);
       main = new SplatLayer(model.count, colors);
       body.add(main.mesh);
-      eyes = createEyeRig();
+      eyes = createEyeRig(eyeLook);
       body.add(eyes.group);
       state.status = 'ready';
       resize();
@@ -785,6 +791,17 @@ export function createKettle(options: KettleOptions): Kettle {
       emit();
     },
     setCamera,
+    setEyes(look) {
+      const next = { ...eyeLook, ...look };
+      hexToLinear(next.color); // throws on anything but #rrggbb, before changing anything
+      eyes?.setLook(next);
+      eyeLook = next;
+      shown = null;
+      if (canRun()) {
+        applyPose(composeAt(null));
+        render();
+      }
+    },
     subscribe(listener) {
       listeners.add(listener);
       return () => listeners.delete(listener);

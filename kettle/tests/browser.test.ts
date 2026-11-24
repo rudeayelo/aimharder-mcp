@@ -207,7 +207,7 @@ describe('Kettle lab in Chromium', () => {
     await page.context().close();
   });
 
-  it('copies tuned values as JSON and applies them back to the same clip', async () => {
+  it('copies tuned values and the eye colour as JSON and applies them back', async () => {
     const { page } = await open('/#viewer');
     await ready(page);
     await page.click('[data-clip="little-hop"]');
@@ -221,15 +221,24 @@ describe('Kettle lab in Chromium', () => {
     await height.dispatchEvent('change');
     const tunedLift = await apexLift();
     expect(tunedLift).toBeGreaterThan(defaultLift);
+    // The eye floor colour and minimum light travel in the same JSON.
+    await page.fill('input[aria-label="Eye colour"]', '#3366ff');
+    await page.fill('input[aria-label="Eye floor minimum light"]', '0.6');
     await page.getByRole('button', { name: 'Copy as JSON' }).click();
     const copied = await page.locator('textarea.json').inputValue();
-    // The copied text is the module's own tuning format.
-    expect(parseTuning(copied)['little-hop']!.amount.height).toBe(0.8);
+    // The clip entry is the module's own tuning format; `eyes` is the module's `eyes` option.
+    const { eyes, ...clips } = JSON.parse(copied);
+    expect(parseTuning(clips)['little-hop']!.amount.height).toBe(0.8);
+    expect(eyes).toEqual({ color: '#3366ff', minLight: 0.6 });
     await page.getByRole('button', { name: 'Reset to module values' }).click();
+    await page.getByRole('button', { name: 'Brand accent' }).click();
     expect(await apexLift()).toBeCloseTo(defaultLift, 6);
+    expect(await page.inputValue('input[aria-label="Eye colour"]')).toBe('#ffab62');
     await page.locator('textarea.json').fill(copied);
     await page.getByRole('button', { name: 'Apply pasted JSON' }).click();
     expect(await apexLift()).toBeCloseTo(tunedLift, 6);
+    expect(await page.inputValue('input[aria-label="Eye colour"]')).toBe('#3366ff');
+    expect(await page.inputValue('input[aria-label="Eye floor minimum light"]')).toBe('0.6');
     await page.context().close();
   });
 

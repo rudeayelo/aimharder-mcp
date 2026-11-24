@@ -4,6 +4,8 @@
 // whole: size, width, lid line, happy arc, tilt and gaze move floor, walls and
 // lip together while the outer seam stays fixed to the face.
 import { BufferAttribute, BufferGeometry, Color, DoubleSide, DynamicDrawUsage, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
+import { BRAND_COLORS } from './brand.ts';
+import { hexToLinear, linearToOklch, shadeLightness, type Oklch } from './color.ts';
 import { createDeformer } from './deform.ts';
 import { toModel } from './model.ts';
 import type { Pose } from './pose.ts';
@@ -202,13 +204,37 @@ export function recessRings(shape: EyeShape, side: number): { center: [number, n
   return { center: finish([cx, cy]), rings, depth };
 }
 
+/** How the recess floor looks; the walls and bevel take the face's colours. */
+export interface EyeLook {
+  /** Floor colour, `#rrggbb`. */
+  color: string;
+  /**
+   * Floor lightness where it faces away from the light, as a share of `color`'s OKLCH lightness (0..1).
+   * Hue and chroma stay, except where sRGB cannot hold that chroma so dark (very saturated colours at a low value).
+   */
+  minLight: number;
+}
+
+/** The brand accent, kept from going dark: shading may lower its lightness to 80% and never shifts hue or chroma. */
+export const DEFAULT_EYE_LOOK: Readonly<EyeLook> = { color: BRAND_COLORS.accent, minLight: 0.8 };
+
+/** Lightness share of a floor point: `minLight` facing away from the light, 1 facing it. */
+export function floorLight(look: EyeLook, facing: number): number {
+  const min = Math.max(0, Math.min(1, look.minLight));
+  return min + (1 - min) * Math.max(0, Math.min(1, facing));
+}
+
 export interface EyeRig {
   group: Group;
   apply(p: Pose): void;
+  /** Changes the floor look; takes effect at the next `apply`. */
+  setLook(look: EyeLook): void;
   dispose(): void;
 }
 
-export function createEyeRig(): EyeRig {
+export function createEyeRig(initial: EyeLook = DEFAULT_EYE_LOOK): EyeRig {
+  let look = { ...initial };
+  let floorBase: Oklch = linearToOklch(hexToLinear(look.color));
   const indices: number[] = [];
   for (let j = 0; j < N; j++) indices.push(0, 1 + ((j + 1) % N), 1 + j);
   for (let ring = 1; ring < LAYERS; ring++) {
@@ -280,16 +306,23 @@ export function createEyeRig(): EyeRig {
           normal.fromBufferAttribute(normals, j);
           const light = 0.65 + 0.35 * Math.max(0, normal.dot(key));
           const tone = eye.tones[j]!;
-          if (tone > 1.5) color.setRGB(0.99 * light, 0.61 * light, 0.2 * light);
-          else {
-            const shade = tone === 1 ? 1 : tone * light;
-            color.setRGB(eye.rgb[j * 3]! * shade, eye.rgb[j * 3 + 1]! * shade, eye.rgb[j * 3 + 2]! * shade);
+          if (tone > 1.5) {
+            // Floor: lightness only, in OKLCH, so shading never turns the colour brown. The rig's
+            // winding points normals into the face, so the floor faces the light along −normal.
+            colors.setXYZ(j, ...shadeLightness(floorBase, floorLight(look, -normal.dot(key))));
+            continue;
           }
+          const shade = tone === 1 ? 1 : tone * light;
+          color.setRGB(eye.rgb[j * 3]! * shade, eye.rgb[j * 3 + 1]! * shade, eye.rgb[j * 3 + 2]! * shade);
           color.convertSRGBToLinear();
           colors.setXYZ(j, color.r, color.g, color.b);
         }
         colors.needsUpdate = true;
       });
+    },
+    setLook(next) {
+      floorBase = linearToOklch(hexToLinear(next.color));
+      look = { ...next };
     },
     dispose() {
       for (const eye of eyes) eye.geometry.dispose();

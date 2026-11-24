@@ -10,3 +10,6 @@ export { DEFAULT_TUNING, TUNABLE_IDS, createClip, parseTuning, resolveTuning, se
 export type { Tuning } from './tuning.ts';
 export { CHANNELS, BODY_CHANNELS, EYE_CHANNELS, neutralPose, isNeutral } from './pose.ts';
 export type { Channel, Pose } from './pose.ts';
+export { BRAND_COLORS } from './brand.ts';
+export { DEFAULT_EYE_LOOK } from './eyes.ts';
+export type { EyeLook } from './eyes.ts';
