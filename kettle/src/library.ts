@@ -1,8 +1,8 @@
 // The Kettle's clips. Style: strongly marked cartoon on a 12 fps exposure grid
 // (on twos): hard anticipation, squash and stretch, overshoot and snappy holds,
 // with the eyes carrying the emotion. Rules (#134): no echo or multiple-image
-// frames; no snap into a pose right before the return to neutral, which eases
-// out of the last held pose; eye shapes stay readable.
+// frames; no body snap into a new pose right before the return to neutral,
+// which eases out of the last held pose; eye shapes stay readable.
 import { Timeline, type ClipDefinition, type ParamRange, type Values } from './clip.ts';
 
 const exposures = (label: string, max = 12, min = 1): ParamRange => ({ min, max, step: 1, label });
