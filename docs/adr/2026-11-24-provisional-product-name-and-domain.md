@@ -38,4 +38,3 @@ Decided by the maintainer on 2026-11-24 and recorded in [#141](https://github.co
 - The domain changes from `aiharder.link` to **`askharder.com`**, which the maintainer registered. A `.com` is the address people guess and trust most in an invitation link or email sender, and it is the one worth holding if the product continues under its own name after the AimHarder conversation.
 - The support address becomes `support@askharder.com` (working value, still to be confirmed).
 - Everything else in this decision stands: AskHarder is provisional, the same two reopening triggers apply, the trademark risk is still knowingly accepted for the pilot, and the independent-project disclosure stays visible.
-
