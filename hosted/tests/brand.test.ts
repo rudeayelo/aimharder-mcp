@@ -24,7 +24,8 @@ const deploymentTokens: Record<string, string[]> = {
 };
 // The historical records that may name the retired host, listed explicitly. A whole file is
 // allowed only where every part is a record of its time (past ADR bodies, research); otherwise
-// only the named `## ` sections ('' is the text before the first one). Anything else in the
+// only the named `## ` sections ('' is the text before the first one). Every section is checked
+// on its own, and a listed heading must occur exactly once in its file. Anything else in the
 // repository fails, whatever notes it carries. Each entry must still exist and still name the
 // host, so the list cannot silently go stale.
 const retiredHostAnywhere = /ahmcp\.link/i;
@@ -32,7 +33,8 @@ const retiredHostRecords: Record<string, 'whole file' | string[]> = {
   'docs/adr/2026-10-16-proposed-cloudflare-hosted-runtime.md': 'whole file',
   'docs/adr/2026-10-18-isolated-cloudflare-test-environment.md': 'whole file',
   'docs/adr/2026-10-18-resend-transactional-delivery.md': 'whole file',
-  'docs/adr/2026-11-24-provisional-product-name-and-domain.md': 'whole file',
+  // Still current (amended for #142): only its original status, context and consequences.
+  'docs/adr/2026-11-24-provisional-product-name-and-domain.md': ['', '## Context', '## Consequences'],
   'docs/research/2026-10-28-product-experience-references.md': 'whole file',
   'docs/hosted-admission.md': ['## Configured Resend stage (2026-10-18)', '## Read-only provider readiness (2026-10-18)'],
   'docs/hosted-feasibility.md': ['## Initial 20-participant cost envelope'],
@@ -250,12 +252,16 @@ test('the retired host appears only in the listed historical records', async () 
     const allowed = retiredHostRecords[file];
     if (!retiredHostAnywhere.test(text)) continue;
     if (allowed === 'whole file') { unused.delete(file); continue; }
-    const sections = new Map<string, string>();
-    for (const part of text.split(/^(?=## )/m)) sections.set(part.startsWith('## ') ? part.split('\n')[0]! : '', part);
-    for (const [heading, part] of sections)
+    // One entry per heading occurrence, so a repeated title cannot hide an earlier section.
+    const sections = text.split(/^(?=## )/m).map(part => ({ heading: part.startsWith('## ') ? part.split('\n')[0]! : '', part }));
+    for (const { heading, part } of sections)
       if (retiredHostAnywhere.test(part) && !allowed?.includes(heading)) offenders.push(`${file}: ${heading || 'before the first section'}`);
-    for (const heading of allowed ?? [])
-      if (!retiredHostAnywhere.test(sections.get(heading) ?? '')) offenders.push(`${file}: listed section ${heading || '(before the first section)'} no longer names the host`);
+    for (const heading of allowed ?? []) {
+      const matches = sections.filter(section => section.heading === heading);
+      const label = heading || '(before the first section)';
+      if (matches.length !== 1) offenders.push(`${file}: listed section ${label} occurs ${matches.length} times`);
+      else if (!retiredHostAnywhere.test(matches[0]!.part)) offenders.push(`${file}: listed section ${label} no longer names the host`);
+    }
     unused.delete(file);
   }
   for (const file of unused) offenders.push(`${file}: listed but no longer names the host`);

@@ -1438,6 +1438,8 @@ The repository now names only the new hosts. The test environment is `https://pi
   - the retired host in a new ledger entry;
   - the retired host with a copied note in a current runbook's preamble.
 
+  Round 3 tightened the list in two ways. The provisional name and domain ADR is no longer exempt as a whole file: only its status, Context and Consequences are, so a stale URL in its current amendment fails. Each heading occurrence is now checked separately, and a listed heading must occur exactly once, so a repeated title no longer hides an earlier stale section. Before the change, both breaks passed; after it, both fail, and so does a duplicate of a listed historical heading.
+
   Both versions catch the old origin put back in the current "Fixed boundary" table of `hosted-test-environment.md`. The list-based version also fails on an unreadable file (`EACCES`) and on a listed file that no longer names the host. On the source side, `askharder.com` added elsewhere on the grant-claim line fails the source check.
 - Hosted, Node 26.12 locally, each under `timeout 600`:
   - `tsc --noEmit` and `pnpm build` passed.

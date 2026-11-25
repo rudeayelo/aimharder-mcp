@@ -23,7 +23,7 @@ Target state, from [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142)
 1. Merge the repository change; the deploy builds from `main`.
 2. Resend domain, records and a restricted key on `askharder.com`.
 3. Google, done by the operator if the available credentials allow it, otherwise by the maintainer following exact guided steps the operator prepares: authorized domain `askharder.com` and the AskHarder name in Branding first, then the new origin and callback on the existing client. Read back the authorized domains, both callback sets and the effective name.
-4. Deploy, in one change. First capture the live version, bindings, vars, secret names and custom domains, and diff the dry-run's effective configuration against that baseline. Then deploy, adding the new custom domain and setting `BASE_URL`, `MAIL_FROM` and the new key, with the old custom domain still attached. If the new host's TLS or GET fails after `BASE_URL` flips, read back the version and domain state, roll back to the captured version and verify password sign-in on the old host. Waiting is not safe: once `BASE_URL` changes, every portal form POST on the old host fails the origin check.
+4. Deploy, in one change. First capture the live version, bindings, vars, secret names and custom domains, and diff the dry-run's effective configuration against that baseline. Then deploy, adding the new custom domain while the old custom domain stays attached. `BASE_URL` and `MAIL_FROM` (`noreply@askharder.com`) are set as plain-text vars in the private config's `vars`, as in the baseline. The secrets file holds only the replacement `RESEND_API_KEY`, which stays a secret. The diff confirms both binding types. If the new host's TLS or GET fails after `BASE_URL` flips, read back the version and domain state, roll back to the captured version and verify password sign-in on the old host. Waiting is not safe: once `BASE_URL` changes, every portal form POST on the old host fails the origin check.
 5. Re-register the Hermes client only against `https://pilot-test.askharder.com/mcp`; ChatGPT is left for later.
 6. Owner verification on the new host: password sign-in, Google sign-in, Hermes authorization and one read-only call, then one password recovery for email delivery. The recovery changes the password and revokes sessions, so sign-in with the new password is verified again before the next step.
 7. Remove the old custom domain, Resend domain, key and Google entries.
@@ -143,6 +143,8 @@ Deploy with the fixed configuration only after the database is ready:
 ```sh
 WRANGLER_SEND_METRICS=false pnpm exec wrangler deploy --config "$TEST_WORKER_CONFIG" --secrets-file "$TEST_WORKER_SECRETS_FILE" --strict --upload-source-maps=false --autoconfig=false
 ```
+
+Keep binding types as they are deployed. Plain-text settings such as `BASE_URL` and `MAIL_FROM` belong in the private config's `vars`, which replaces the deployed plain-text set, so the private config must list every var. The secrets file carries only platform secrets: a fresh `AUTH_SECRET` on first installation, or a replacement secret such as `RESEND_API_KEY`.
 
 This avoids activating a first version without its authentication secret. The secrets file applies additively; omitted existing secrets are preserved. For later rotation, use the platform-secret path and preserve the secret binding instead of replacing it with a plain-text variable.
 

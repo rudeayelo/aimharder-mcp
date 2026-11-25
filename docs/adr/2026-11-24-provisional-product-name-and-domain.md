@@ -45,7 +45,7 @@ Decided by the maintainer on 2026-11-24 and recorded in [#141](https://github.co
 
 Decided by the maintainer on 2026-11-24 and recorded in [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142).
 
-- The hosted service moves from `ahmcp.link` to `askharder.com` as is. The project is in development and nobody else has access, so there is **no redirect** from the old hosts. They are removed once the switch is verified.
+- The hosted service moves from its retired host (named in the note above) to `askharder.com` as is. The project is in development and nobody else has access, so there is **no redirect** from the old hosts. They are removed once the switch is verified.
 - The isolated test environment moves now, to `pilot-test.askharder.com`. Production deployment is still out of scope.
 - The internal OAuth grant claim becomes `https://askharder.com/mcp-grant`. The issuer, the MCP resource identifier (audience) and that claim all change, so the owner needs a new host-scoped portal session and a new MCP authorization, and the operator registers the Hermes client again. ChatGPT is not re-registered in this switch; its full flow is checked later ([2026-11-25 decision](https://github.com/rudeayelo/aimharder-mcp/issues/142#issuecomment-7167447797)). The underlying rows are kept: accounts, sign-in methods, the earlier session, grant, consent and client rows, and the encrypted AimHarder connections stay in the same databases and Durable Object namespace, but earlier sessions and tokens no longer apply on the new host.
 - Mail is sent from `noreply@askharder.com` through a Resend domain verified on `askharder.com`. `support@askharder.com` stays reserved until [#116](https://github.com/rudeayelo/aimharder-mcp/issues/116).
