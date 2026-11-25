@@ -51,7 +51,7 @@ function brandSwap(brandModule?: string): Plugin[] {
 const fixtureModule = fileURLToPath(new URL('./brand-fixture.ts', import.meta.url));
 
 type Mail = { to: string; subject: string; text: string };
-type Surfaces = { pages: Record<string, string>; consent: string; server: unknown; resourceLabel: string | undefined; mail: Mail[] };
+type Surfaces = { pages: Record<string, string>; server: unknown; resourceLabel: string | undefined; mail: Mail[] };
 
 /** Bundles the real Worker, optionally with another brand module, and walks what a participant sees. */
 async function renderSurfaces(variant: string, brandModule?: string): Promise<Surfaces> {
@@ -98,7 +98,7 @@ async function renderSurfaces(variant: string, brandModule?: string): Promise<Su
   const consentUrl = new URL((await authorize.json() as { url: string }).url, origin);
   const consentPage = await fetch(consentUrl, { headers: { cookie } });
   expect(consentPage.status).toBe(200);
-  const consent = await consentPage.text();
+  pages['/consent (signed in)'] = await consentPage.text();
   const approved = await fetch(origin + '/portal/oauth/consent', { method: 'POST', redirect: 'manual',
     headers: { origin, cookie, 'content-type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({ oauth_query: consentUrl.search.slice(1), accept: 'true' }) });
@@ -120,7 +120,7 @@ async function renderSurfaces(variant: string, brandModule?: string): Promise<Su
     callbackURL: origin + '/verification-result' }, { 'x-portal-invitation': invitation })).status).toBe(200);
   expect((await post('/api/auth/request-password-reset', { email: 'participant@example.invalid', redirectTo: origin + '/reset-password' })).status).toBe(200);
   expect(mail).toHaveLength(3);
-  return { pages, consent, server, resourceLabel, mail };
+  return { pages, server, resourceLabel, mail };
 }
 
 /** Runs the operator's offline client-registration script and returns the resource label its SQL would store. */
@@ -139,6 +139,18 @@ async function preparedResourceLabel(variant: string, brandModule?: string): Pro
   } finally { await rm(parent, { recursive: true, force: true }); }
 }
 
+/** The declarations of the page's inline stylesheet, by selector and property. */
+function styleRules(html: string): Record<string, Record<string, string>> {
+  const rules: Record<string, Record<string, string>> = {};
+  for (const [, selectors, body] of (/<style>([^<]*)<\/style>/.exec(html)?.[1] ?? '').matchAll(/([^{}]+)\{([^}]*)\}/g))
+    for (const selector of selectors!.split(',').map(item => item.trim()))
+      for (const declaration of body!.split(';')) {
+        const at = declaration.indexOf(':');
+        if (at > 0) (rules[selector] ??= {})[declaration.slice(0, at).trim()] = declaration.slice(at + 1).trim();
+      }
+  return rules;
+}
+
 /** Each branded field on its own, so a single field that stops reading the module fails by name. */
 function expectBranded(surfaces: Surfaces, b: Brand, other: Brand) {
   for (const [path, html] of Object.entries(surfaces.pages)) {
@@ -146,11 +158,18 @@ function expectBranded(surfaces: Surfaces, b: Brand, other: Brand) {
     if (path.startsWith('/ ') || path === '/') expect(title, `${path} title`).toBe(b.name);
     else expect(title, `${path} title`).toMatch(new RegExp(` · ${b.name}$`));
     expect(html, `${path} nav`).toContain(`<nav><a href="/">${b.name}</a></nav>`);
-    for (const color of Object.values(b.colors)) expect(html, `${path} colors`).toContain(color);
+    const rules = styleRules(html);
+    for (const [selector, property, value] of [['body', 'color', b.colors.ink], ['body', 'background', b.colors.surface],
+      ['button', 'background', b.colors.primary], ['button', 'color', b.colors.onPrimary], ['a', 'color', b.colors.primary],
+      ['.confirmation-switch input', 'background', b.colors.track], ['.confirmation-switch input', 'border', `1px solid ${b.colors.border}`],
+      ['.confirmation-switch input::before', 'background', b.colors.thumb],
+      ['.confirmation-switch input:checked', 'background', b.colors.primary], ['.confirmation-switch input:checked', 'border-color', b.colors.primary],
+      ['.confirmation-switch input:focus-visible', 'outline', `3px solid ${b.colors.ink}`]] as const)
+      expect(rules[selector]?.[property], `${path} ${selector} { ${property} }`).toBe(value);
     for (const color of Object.values(other.colors)) expect(html, `${path} colors`).not.toContain(color);
   }
   expect(surfaces.pages['/connect-clients (signed in)'], 'Hermes command').toContain(`<code>hermes mcp login ${b.slug}</code>`);
-  expect(surfaces.consent, 'consent sentence').toContain(`requests access to your ${b.name} portal account.`);
+  expect(surfaces.pages['/consent (signed in)'], 'consent sentence').toContain(`requests access to your ${b.name} portal account.`);
   expect(surfaces.server, 'MCP server info').toMatchObject({ name: b.slug, title: b.name });
   expect(surfaces.resourceLabel, 'seeded OAuth resource label').toBe(b.name);
   const [invitation, verification] = surfaces.mail.filter(message => message.to === 'invitee@example.invalid');
