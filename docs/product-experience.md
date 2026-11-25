@@ -25,7 +25,7 @@ These come from the #95 spec, approved by the maintainer.
 
 1. **Scope: invitation-only pilot, designed to be opened later.** No open registration, waiting list or sign-up flow is designed. Access-mode copy and the entry actions are isolated as a component variant, so opening the service later is a variant change, not a redesign.
 2. **Order: participant journey first**, then the landing (see [Screen inventory](#screen-inventory-by-phase)).
-3. **Name: AskHarder** (renamed from AIHarder on 2026-11-24, see the [name and domain decision](adr/2026-11-24-provisional-product-name-and-domain.md)) in everything a user sees: web, emails, the hosted MCP server display name and service-authored text shown to users, OAuth consent and user documentation. `aimharder-mcp` is only the npm package and repository name. Domain `aiharder.link`, support address `support@askharder.com`.
+3. **Name: AskHarder** (renamed from AIHarder on 2026-11-24, see the [name and domain decision](adr/2026-11-24-provisional-product-name-and-domain.md)) in everything a user sees: web, emails, the hosted MCP server display name and service-authored text shown to users, OAuth consent and user documentation. `aimharder-mcp` is only the npm package and repository name. Domain `askharder.com`, support address `support@askharder.com`.
 4. **Figma: a new file «AIHarder».** The iteration-1 file [AIHarder — Design](https://www.figma.com/design/9jDoWpeUEGTbtMoENvbzAB) is read-only.
 5. **The brand is provisional and cheap to change.** The plan is to run the pilot with real users and, with good feedback, propose an agreement to AimHarder (collaboration, partnership or acquisition). If they decline, the project closes; if they accept the product but not the name, the name and domain change and the product continues separately on their API. The full rationale and reopening triggers are in the [name and domain ADR](adr/2026-11-24-provisional-product-name-and-domain.md).
 6. **Logo: no new investment** beyond adapting the existing logo to the new tokens. Iterating the logo is a separate, lower-priority enhancement.
@@ -143,7 +143,7 @@ Surface defaults, **provisional**: proposed with the decision, not yet confirmed
 
 ### Logo
 
-The flat Kettle mark to the left of the **AIHARDER** wordmark in Krona One. “AI” is blue; “HARDER” is navy in Light and a light neutral in Dark. The mark is navy in Light and white in Dark, with a transparent circular face cutout. It is adapted to the new tokens only, bound to the brand variables, with no redesign.
+The flat Kettle mark to the left of the product wordmark in Krona One, bound to the brand name variable. Iteration 1 drew it as **AIHARDER** with “AI” in blue and “HARDER” navy in Light and a light neutral in Dark; how the two-tone split applies to **ASKHARDER** is settled in the Figma brand round ([#137](https://github.com/rudeayelo/aimharder-mcp/issues/137)). The mark is navy in Light and white in Dark, with a transparent circular face cutout. It is adapted to the new tokens only, bound to the brand variables, with no redesign.
 
 ## Landing recommendations from the iteration-1 critique
 

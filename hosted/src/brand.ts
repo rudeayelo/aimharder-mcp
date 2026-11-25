@@ -9,7 +9,14 @@
  * comes from BASE_URL and the mail sender from MAIL_FROM until the hosts move
  * (issue #142). `aimharder-mcp` stays the package and repository name.
  */
-export const brand = {
+export type Brand = {
+  name: string;
+  slug: string;
+  domain: string;
+  supportEmail: string;
+  colors: { ink: string; surface: string; primary: string; onPrimary: string; border: string; track: string; thumb: string };
+};
+export const brand: Brand = {
   name: 'AskHarder',
   /** Lowercase identifier for places that need one, such as the MCP server name. */
   slug: 'askharder',
@@ -25,5 +32,4 @@ export const brand = {
     track: '#d9e1df',
     thumb: '#ffffff',
   },
-} as const;
-export type Brand = typeof brand;
+};

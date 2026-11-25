@@ -1,5 +1,5 @@
 import { readFile, readdir } from 'node:fs/promises';
-import { dirname } from 'node:path';
+import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterAll, expect, test } from 'vitest';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
@@ -18,7 +18,7 @@ const deploymentHosts: Record<string, RegExp> = {
   'scripts/smoke-test-environment.ts': /'https:\/\/pilot-test\.ahmcp\.link'/,
 };
 const origin = 'http://localhost:8787';
-const sourceDirectory = fileURLToPath(new URL('../src', import.meta.url));
+const brandSource = fileURLToPath(new URL('../src/brand.ts', import.meta.url));
 const workers: Miniflare[] = [];
 afterAll(async () => { await Promise.all(workers.map(worker => worker.dispose())); });
 
@@ -42,7 +42,7 @@ class ParticipantClient implements OAuthClientProvider {
 /** Bundles the real Worker, optionally with another brand module, and collects what a participant sees. */
 async function renderSurfaces(variant: string, brandModule?: string): Promise<Record<string, string>> {
   const plugins: Plugin[] = brandModule ? [{ name: 'brand-fixture', setup(build) {
-    build.onResolve({ filter: /^\.\/brand\.js$/ }, args => dirname(args.importer) === sourceDirectory ? { path: brandModule } : undefined);
+    build.onResolve({ filter: /\/brand\.(js|ts)$/ }, args => resolve(args.resolveDir, args.path).replace(/\.js$/, '.ts') === brandSource ? { path: brandModule } : undefined);
   } }] : [];
   const script = `dist/brand-${variant}-worker.js`;
   await buildWorker('tests/mcp-auth-fixture-worker.ts', script, { plugins });

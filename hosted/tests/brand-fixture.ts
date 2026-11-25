@@ -6,4 +6,4 @@ export const brand: Brand = {
   domain: 'zentrovia.example',
   supportEmail: 'help@zentrovia.example',
   colors: { ink: '#101010', surface: '#202020', primary: '#303030', onPrimary: '#404040', border: '#505050', track: '#606060', thumb: '#707070' },
-} as unknown as Brand;
+};
