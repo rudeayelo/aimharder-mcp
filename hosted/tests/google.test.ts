@@ -87,7 +87,7 @@ beforeAll(async () => {
     await db.exec((await readFile(`migrations/${file}`, 'utf8')).replaceAll('\n', ' '));
   await worker.dispatchFetch(origin + '/__fixture');
   expect((await post('/api/auth/sign-up/email', { email: 'owner@example.invalid', name: 'Owner', password }, '', 'synthetic-owner-invitation')).status).toBe(200);
-  await worker.dispatchFetch(messageUrl('owner@example.invalid', 'Verify your email'), { redirect: 'manual' });
+  await worker.dispatchFetch(messageUrl('owner@example.invalid', `Verify your email for ${brand.name}`), { redirect: 'manual' });
   admin = cookies(await post('/api/auth/sign-in/email', { email: 'owner@example.invalid', password }));
 });
 afterAll(async () => { await worker?.dispose(); });
@@ -173,7 +173,7 @@ test('a Google-created participant explicitly adds a password after fresh Google
   const googleAgain = await finishGoogle(await startGoogle(), email);
   expect((await identity(cookies(googleAgain)))?.user).toMatchObject({ id: before!.user.id, name: 'My portal configuration' });
   expect((await post('/api/auth/request-password-reset', { email, redirectTo: origin + '/reset-password' })).status).toBe(200);
-  const recovery = await worker.dispatchFetch(messageUrl(email, 'Reset your portal password'), { redirect: 'manual' });
+  const recovery = await worker.dispatchFetch(messageUrl(email, `Reset your ${brand.name} password`), { redirect: 'manual' });
   const resetToken = new URL(recovery.headers.get('location')!).searchParams.get('token')!;
   expect((await post('/api/auth/reset-password', { token: resetToken, newPassword: 'synthetic-recovered-password' })).status).toBe(200);
   const recovered = await post('/api/auth/sign-in/email', { email, password: 'synthetic-recovered-password' });
@@ -255,7 +255,7 @@ test('Google form pages permit the fixed Google authorization redirect while unr
   const email = 'google-csp@example.invalid';
   const invitation = await invite(email);
   expect((await post('/api/auth/sign-up/email', { email, name: 'CSP Participant', password }, '', invitation.token)).status).toBe(200);
-  await worker.dispatchFetch(messageUrl(email, 'Verify your email'), { redirect: 'manual' });
+  await worker.dispatchFetch(messageUrl(email, `Verify your email for ${brand.name}`), { redirect: 'manual' });
   const unlinkedCookie = cookies(await post('/api/auth/sign-in/email', { email, password }));
   for (const [path, cookie] of [['/sign-in', ''], ['/accept-invitation?token=synthetic-preview', ''], ['/account', unlinkedCookie]]) {
     const response = await worker.dispatchFetch(origin + path, { headers: { cookie } });

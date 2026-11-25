@@ -15,8 +15,8 @@ export async function sendPortalMail(env: HostedEnvironment, message: PortalMail
   if (!mailConfigured(env)) throw new Error('Email delivery unavailable');
   const subject = {
     invitation: `Your ${brand.name} invitation`,
-    verification: 'Verify your email',
-    recovery: 'Reset your portal password',
+    verification: `Verify your email for ${brand.name}`,
+    recovery: `Reset your ${brand.name} password`,
   }[message.kind];
   try {
     const body = JSON.stringify({ from: env.MAIL_FROM!, to: [message.to], subject,
