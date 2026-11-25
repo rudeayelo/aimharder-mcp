@@ -16,18 +16,21 @@ Historical status, 2026-10-21: the full reviewed production executable **ee424ca
 
 ## Host switch to askharder.com (pending)
 
-Target state, from [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142): the isolated environment is served at **`https://pilot-test.askharder.com`**, with `BASE_URL` set to that origin, mail from `noreply@askharder.com` through a Resend domain verified on `askharder.com`, Google sign-in registered for that origin, and the Hermes and ChatGPT clients registered against `https://pilot-test.askharder.com/mcp`. The repository already describes this state: [`hosted/wrangler.test.example.jsonc`](../hosted/wrangler.test.example.jsonc) routes the new host, the smoke script defaults to and only accepts it, and the OAuth grant claim is `https://askharder.com/mcp-grant`.
+Target state, from [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142): the isolated environment is served at **`https://pilot-test.askharder.com`**, with `BASE_URL` set to that origin, mail from `noreply@askharder.com` through a Resend domain verified on `askharder.com`, Google sign-in registered for that origin, and the Hermes client registered against `https://pilot-test.askharder.com/mcp`. ChatGPT is not re-registered in this switch; its full flow is checked later ([maintainer decision](https://github.com/rudeayelo/aimharder-mcp/issues/142#issuecomment-7167447797)). The repository already describes this state: [`hosted/wrangler.test.example.jsonc`](../hosted/wrangler.test.example.jsonc) routes the new host, the smoke script defaults to and only accepts it, and the OAuth grant claim is `https://askharder.com/mcp-grant`.
 
-**Status, 2026-11-25: pending operator steps.** No provider has been changed yet. The deployed Worker still runs an earlier bundle on its previous host. The steps are, in order:
+**Status, 2026-11-25: pending operator steps.** No provider has been changed yet. The deployed Worker still runs an earlier bundle on its previous host. The [plan on #142](https://github.com/rudeayelo/aimharder-mcp/issues/142#issuecomment-7167397367) gives each step's owner, read-only probe and rollback. In order:
 
-1. Resend domain.
-2. Google entries.
-3. One deploy from `main`, after this repository change merges, that adds the new custom domain and sets `BASE_URL`, `MAIL_FROM` and the new key, keeping the old custom domain attached.
-4. Re-registering the static clients.
-5. Owner verification of sign-in, Hermes authorization and email delivery, plus `pnpm smoke:test-environment`.
-6. Removing the old custom domain, Resend domain and Google entries.
+1. Merge the repository change; the deploy builds from `main`.
+2. Resend domain, records and a restricted key on `askharder.com`.
+3. Google, done by the operator if the available credentials allow it, otherwise by the maintainer following exact guided steps the operator prepares: authorized domain `askharder.com` and the AskHarder name in Branding first, then the new origin and callback on the existing client. Read back the authorized domains, both callback sets and the effective name.
+4. Deploy, in one change. First capture the live version, bindings, vars, secret names and custom domains, and diff the dry-run's effective configuration against that baseline. Then deploy, adding the new custom domain and setting `BASE_URL`, `MAIL_FROM` and the new key, with the old custom domain still attached. If the new host's TLS or GET fails after `BASE_URL` flips, read back the version and domain state, roll back to the captured version and verify password sign-in on the old host. Waiting is not safe: once `BASE_URL` changes, every portal form POST on the old host fails the origin check.
+5. Re-register the Hermes client only against `https://pilot-test.askharder.com/mcp`; ChatGPT is left for later.
+6. Owner verification on the new host: password sign-in, Google sign-in, Hermes authorization and one read-only call, then one password recovery for email delivery. The recovery changes the password and revokes sessions, so sign-in with the new password is verified again before the next step.
+7. Remove the old custom domain, Resend domain, key and Google entries.
 
-Each step has a read-only probe and a rollback in the [plan on #142](https://github.com/rudeayelo/aimharder-mcp/issues/142#issuecomment-7166962650). Until step 3, `pnpm smoke:test-environment` without `HOSTED_SMOKE_BASE_URL` targets a host that does not resolve yet. The switch invalidates every session, token, grant, consent and client registration, but keeps the databases and the account namespace. Observed results will be recorded here and in [validation](validation.md) when the operator reports them.
+Page probes use a TLS-verified GET with the body discarded, for example `curl -sS --proto '=https' -o /dev/null -w '%{http_code} ssl_verify=%{ssl_verify_result}\n' https://pilot-test.askharder.com/sign-in`, expecting `200 ssl_verify=0`. The portal renders only GET, so a `HEAD` (`curl -I`) returns 404 even on a healthy host. Every smoke run against the deployed origin uses `HOSTED_SMOKE_MAIL_STAGE=configured`, as in [the smoke section](#anonymous-smoke-checks). Until step 4, the smoke script's default target does not resolve yet.
+
+For the owner, the switch means a new portal session on the new host, because cookies are host-scoped. It also means a new MCP authorization through the re-registered Hermes client (ChatGPT later), because the issuer, the resource (audience) and the grant claim change and earlier tokens no longer validate. The underlying rows are kept: the same databases and account namespace hold the accounts, sign-in methods, earlier session, grant, consent and client rows, and the encrypted AimHarder connection. Observed results will be recorded here and in [validation](validation.md) when the operator reports them.
 
 ## Complex prescription code-only rollout (2026-10-21)
 
@@ -147,11 +150,13 @@ The custom-domain route can provision its DNS/certificate; read back the Worker 
 
 ## Anonymous smoke checks
 
-From `hosted/`, the following script targets only the fixed test HTTPS origin by default, with optional HTTP loopback override for local verification:
+From `hosted/`, the following script targets only the fixed test HTTPS origin by default, with optional HTTP loopback override for local verification. The deployed environment has mail configured, so always run it there with the configured mail stage, which omits the delivery-capable enrollment and recovery probes:
 
 ```sh
-pnpm smoke:test-environment
+HOSTED_SMOKE_MAIL_STAGE=configured pnpm smoke:test-environment
 ```
+
+The default `disabled` stage is only for a loopback `pnpm preview` without a sender.
 
 It uses no credentials, cookies or real recipient data and prints only check labels/statuses. It checks public page content, anonymous administrator denial, absent fixture/bootstrap routes, the maintained MCP challenge/resource discovery, same-origin enrollment/recovery's safe missing-sender outcome, and foreign-origin form rejection. The synthetic `.invalid` inputs cannot establish a participant or send mail in this disabled stage. The default `HOSTED_SMOKE_MAIL_STAGE=disabled` explicitly checks missing-mail outcomes and fails if mail is enabled. Once mail is configured, use `HOSTED_SMOKE_MAIL_STAGE=configured pnpm smoke:test-environment`: this runs eleven safe checks and omits both enrollment/recovery probes. It never tests a recipient, creates a pending identity or requests mail in the configured stage. The stage flag is an operator assertion, not proof of provider readiness. It does not verify login, real email, Google, MCP client onboarding or AimHarder connectivity.
 

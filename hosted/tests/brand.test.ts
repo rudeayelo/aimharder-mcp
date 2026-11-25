@@ -22,12 +22,27 @@ const deploymentTokens: Record<string, string[]> = {
   'src/oauth-grants.ts': ["'https://askharder.com/mcp-grant'"],
   'scripts/smoke-test-environment.ts': ["'https://pilot-test.askharder.com'"],
 };
-// Repository-wide, the retired host may appear only in historical records carrying this dated
-// note: a note before a file's first `## ` heading marks the whole file (an ADR, the validation
-// ledger, research); a note inside a `## ` section marks only that section, so the current
-// sections of a mixed runbook stay checked.
+// The historical records that may name the retired host, listed explicitly. A whole file is
+// allowed only where every part is a record of its time (past ADR bodies, research); otherwise
+// only the named `## ` sections ('' is the text before the first one). Anything else in the
+// repository fails, whatever notes it carries. Each entry must still exist and still name the
+// host, so the list cannot silently go stale.
 const retiredHostAnywhere = /ahmcp\.link/i;
-const retiredHostNote = 'Retired host note (2026-11-25)';
+const retiredHostRecords: Record<string, 'whole file' | string[]> = {
+  'docs/adr/2026-10-16-proposed-cloudflare-hosted-runtime.md': 'whole file',
+  'docs/adr/2026-10-18-isolated-cloudflare-test-environment.md': 'whole file',
+  'docs/adr/2026-10-18-resend-transactional-delivery.md': 'whole file',
+  'docs/adr/2026-11-24-provisional-product-name-and-domain.md': 'whole file',
+  'docs/research/2026-10-28-product-experience-references.md': 'whole file',
+  'docs/hosted-admission.md': ['## Configured Resend stage (2026-10-18)', '## Read-only provider readiness (2026-10-18)'],
+  'docs/hosted-feasibility.md': ['## Initial 20-participant cost envelope'],
+  'docs/hosted-google.md': ['## Provider callback update observed (2026-10-18)'],
+  'docs/hosted-pilot-cost.md': ['## Actual observations'],
+  'docs/hosted-test-environment.md': ['## Configured Resend deployment stage'],
+  // Ledger entries written before the switch; a new entry is never on this list.
+  'docs/validation.md': ['', '## Resend delivery replacement (2026-10-18, issue #71)',
+    '## Invited password portal (2026-10-18, local portion of issue #71)', '## Hosted brand module (#141, 2026-11-25)'],
+};
 const origin = 'http://localhost:8787';
 const brandSource = fileURLToPath(new URL('../src/brand.ts', import.meta.url));
 const workers: Miniflare[] = [];
@@ -223,19 +238,26 @@ test('no hosted source outside the brand module names the product, its domain, s
   expect(offenders).toEqual([]);
 });
 
-test('the retired host appears only in annotated historical records', async () => {
+test('the retired host appears only in the listed historical records', async () => {
   const root = fileURLToPath(new URL('../..', import.meta.url));
   const { stdout } = await promisify(execFile)('git', ['ls-files', '--cached', '--others', '--exclude-standard', '-z'], { cwd: root, maxBuffer: 64 * 1024 * 1024 });
   const offenders: string[] = [];
+  const unused = new Set(Object.keys(retiredHostRecords));
   for (const file of stdout.split('\0').filter(Boolean)) {
     let text: string;
-    try { text = await readFile(join(root, file), 'utf8'); } catch { continue; }
+    try { text = await readFile(join(root, file), 'utf8'); }
+    catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') continue; throw error; } // deleted but still tracked
+    const allowed = retiredHostRecords[file];
     if (!retiredHostAnywhere.test(text)) continue;
-    const [preamble, ...sections] = text.split(/^(?=## )/m);
-    if (preamble!.includes(retiredHostNote)) continue;
-    for (const section of [preamble!, ...sections])
-      if (retiredHostAnywhere.test(section) && !section.includes(retiredHostNote))
-        offenders.push(`${file}: ${section.startsWith('## ') ? section.split('\n')[0] : 'before the first section'}`);
+    if (allowed === 'whole file') { unused.delete(file); continue; }
+    const sections = new Map<string, string>();
+    for (const part of text.split(/^(?=## )/m)) sections.set(part.startsWith('## ') ? part.split('\n')[0]! : '', part);
+    for (const [heading, part] of sections)
+      if (retiredHostAnywhere.test(part) && !allowed?.includes(heading)) offenders.push(`${file}: ${heading || 'before the first section'}`);
+    for (const heading of allowed ?? [])
+      if (!retiredHostAnywhere.test(sections.get(heading) ?? '')) offenders.push(`${file}: listed section ${heading || '(before the first section)'} no longer names the host`);
+    unused.delete(file);
   }
+  for (const file of unused) offenders.push(`${file}: listed but no longer names the host`);
   expect(offenders).toEqual([]);
 });
