@@ -1415,3 +1415,13 @@ The integrity-verified public npm archive is byte-identical to the CI pack artif
 ## Copy editor publication regression (2026-11-13)
 
 The anonymized regression initially failed with the old source comparator and now verifies preparation, multipart exercise fields and simulated own read-back. The focused publication suite passed 76 tests, and the root suite passed 511 tests. Root and hosted typecheck and build passed. The rebuilt client prepared the reported RX source with four explicit kilogram loads and a completed-round score. Chrome intercepted the matching editor request before dispatch. No live activity was published.
+
+## Hosted brand module (#141, 2026-11-25)
+
+The hosted service now reads its user-facing name (AskHarder), domain (`askharder.com`), support address and portal colors from [`hosted/src/brand.ts`](../hosted/src/brand.ts). Verified locally, with no deploy:
+
+- `hosted/tests/brand.test.ts` bundles the real Worker in local workerd/D1 and collects what a participant sees: anonymous and signed-in portal pages, the OAuth consent screen and the MCP server description reached through the MCP SDK's OAuth flow, and the password-reset and invitation emails captured at the Resend boundary. It failed before the change (pages titled "AimHarder MCP", nine source lines with retired names and one with hard-coded colors) and passes after it. A second run bundles a substitute brand module and shows every surface changes with it; a source check rejects brand values or retired names anywhere in `hosted/src` and `hosted/scripts` outside the module, except the two deployment identifiers left for [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142).
+- Full hosted suite (CI command): 19 files, 234 tests passed. `mcp-auth.test.ts` binds fixed port 9999, which an unrelated local Docker service held, so the suite ran inside an isolated network namespace. Root `pnpm typecheck`, `pnpm test` (18 files, 511 tests) and both builds passed.
+- `pnpm smoke:test-environment` passed against a local `pnpm preview` of the new bundle, and against the unchanged `pilot-test.ahmcp.link` deployment with `HOSTED_SMOKE_MAIL_STAGE=configured` (anonymous checks only). The isolated environment still runs the earlier bundle and shows the old name until its next authorized deploy.
+
+Not done here: live hostnames, the Resend sender domain, the Google OAuth application name and the internal OAuth grant claim stay on `ahmcp.link` until #142. The support address is not shown to users while it receives no mail.

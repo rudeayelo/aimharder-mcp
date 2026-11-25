@@ -6,7 +6,7 @@ Capacity amendment (2026-10-29): the Free-only planning premise below is superse
 
 ## Context
 
-The owner wants LogNorth to support diagnosis and aggregate operational understanding of the hosted AimHarder MCP service while remaining on Workers Free. Cross-request participant tracking would aid individual support but would create additional persistent identifying telemetry outside the minimal operational purpose.
+The owner wants LogNorth to support diagnosis and aggregate operational understanding of the hosted AskHarder service while remaining on Workers Free. Cross-request participant tracking would aid individual support but would create additional persistent identifying telemetry outside the minimal operational purpose.
 
 ## Decision
 

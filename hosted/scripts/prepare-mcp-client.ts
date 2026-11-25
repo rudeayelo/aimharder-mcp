@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { mkdir, realpath, writeFile } from 'node:fs/promises';
 import { basename, dirname, isAbsolute, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { brand } from '../src/brand.ts';
 
 // Operator-owned, offline registration preparation. No metadata URL is fetched.
 const kind = process.env.MCP_CLIENT_KIND;
@@ -31,7 +32,7 @@ const scopes = ['openid', 'profile', 'offline_access', 'mcp:access'];
 const q = (value: string) => `'${value.replaceAll("'", "''")}'`;
 const sql = [
   `INSERT INTO oauthClient (id,clientId,name,redirectUris,tokenEndpointAuthMethod,applicationType,grantTypes,responseTypes,requirePKCE,scopes,skipConsent,subjectType) VALUES (${q(clientId)},${q(clientId)},${q(name)},${q(JSON.stringify([callback.href]))},'none','${kind === 'hermes' ? 'native' : 'web'}','["authorization_code","refresh_token"]','["code"]',1,${q(JSON.stringify(scopes))},0,'public');`,
-  `INSERT OR IGNORE INTO oauthResource (id,identifier,name,allowedScopes) VALUES (${q(randomUUID())},${q(resource)},'AimHarder MCP', '["mcp:access"]');`,
+  `INSERT OR IGNORE INTO oauthResource (id,identifier,name,allowedScopes) VALUES (${q(randomUUID())},${q(resource)},${q(brand.name)}, '["mcp:access"]');`,
   `INSERT INTO oauthClientResource (id,clientId,resourceId) VALUES (${q(randomUUID())},${q(clientId)},${q(resource)});`,
 ].join('\n') + '\n';
 await writeFile(resolve(directory, 'mcp-client.sql'), sql, { flag: 'wx', mode: 0o600 });

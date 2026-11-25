@@ -8,7 +8,7 @@ Design iteration 1 started in pen.dev (`design/ahmcp.pen`) with HTML prototypes 
 
 ## Decision
 
-- Figma is the design source of truth for AIHarder: foundations, components, screens and the brand variables.
+- Figma is the design source of truth for AskHarder (named AIHarder when this was decided): foundations, components, screens and the brand variables.
 - The redesign happens in a **new Figma file, «AIHarder»**, built on a real design system (variables for brand, color roles with Light and Dark modes, typography, spacing, radius and elevation; components that reference roles, never raw colors).
 - The existing file [AIHarder — Design](https://www.figma.com/design/9jDoWpeUEGTbtMoENvbzAB) is **iteration 1 and read-only**. It stays available for reference; nothing new is drawn in it.
 - The `.pen` file, the HTML prototypes, the identity and motion studies, the generated videos and the source PLY are historical. They live only at tag [`archive/95-iteration-1`](https://github.com/rudeayelo/aimharder-mcp/tree/archive/95-iteration-1) (commit `75f80c5`) and are not brought into `main`.

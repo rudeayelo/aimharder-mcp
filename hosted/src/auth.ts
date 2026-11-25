@@ -6,6 +6,7 @@ import { APIError, createAuthMiddleware, addOAuthServerContext, getOAuthState, g
 import { admitVerifiedIdentity, claimInvitation, canRecover, denyAdmission, digest, invited, participant, pendingInvitation, verificationLifetimeSeconds } from './admission.js';
 import { issueGrantClaim, readIssuingGrant } from './oauth-grants.js';
 import { mailConfigured, sendPortalMail } from './mail.js';
+import { brand } from './brand.js';
 
 export interface HostedEnvironment extends TelemetryConfiguration {
   /** Invocation scoped; never persisted in account objects. */
@@ -215,7 +216,7 @@ export function createAuth(env: HostedEnvironment) {
         customAccessTokenClaims: ({ user }) => issueGrantClaim(env, issuingGrant, user?.id),
         consentPage: '/consent',
         resource: `${env.BASE_URL}/mcp`,
-        resources: [{ identifier: `${env.BASE_URL}/mcp`, name: 'AimHarder MCP', allowedScopes: ['mcp:access', 'offline_access'] }],
+        resources: [{ identifier: `${env.BASE_URL}/mcp`, name: brand.name, allowedScopes: ['mcp:access', 'offline_access'] }],
         resourceSeedMode: 'merge',
         scopes: ['openid', 'profile', 'offline_access', 'mcp:access'],
         grantTypes: ['authorization_code', 'refresh_token'],

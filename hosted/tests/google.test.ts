@@ -1,3 +1,4 @@
+import { brand } from '../src/brand.js';
 import { initializeTestRecovery } from './recovery-fixture.js';
 import { readFile, readdir } from 'node:fs/promises';
 import { afterAll, beforeAll, expect, test } from 'vitest';
@@ -24,7 +25,7 @@ async function invite(email: string) {
   const issued = await post('/api/portal/invitations', { email }, admin);
   expect(issued.status).toBe(201);
   const { id } = await issued.json() as { id: string };
-  return { id, token: new URL(messageUrl(email, 'Your AimHarder MCP invitation')).searchParams.get('token')! };
+  return { id, token: new URL(messageUrl(email, `Your ${brand.name} invitation`)).searchParams.get('token')! };
 }
 async function startGoogle(invitation = '', cookie = '', link = false) {
   const started = await post(`/api/auth/${link ? 'link-social' : 'sign-in/social'}`, {

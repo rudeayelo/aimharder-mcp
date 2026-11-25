@@ -1,4 +1,5 @@
 import type { HostedEnvironment } from './auth.js';
+import { brand } from './brand.js';
 
 export type PortalMail = {
   kind: 'invitation' | 'verification' | 'recovery';
@@ -13,13 +14,13 @@ export function mailConfigured(env: HostedEnvironment): boolean {
 export async function sendPortalMail(env: HostedEnvironment, message: PortalMail): Promise<void> {
   if (!mailConfigured(env)) throw new Error('Email delivery unavailable');
   const subject = {
-    invitation: 'Your AimHarder MCP invitation',
+    invitation: `Your ${brand.name} invitation`,
     verification: 'Verify your email',
     recovery: 'Reset your portal password',
   }[message.kind];
   try {
     const body = JSON.stringify({ from: env.MAIL_FROM!, to: [message.to], subject,
-      text: `${subject}\n\n${message.url}\n\nThis link expires. If you did not request it, you can ignore this message.` });
+      text: `${subject}\n\n${message.url}\n\nThis link expires. If you did not request it, you can ignore this message.\n\n${brand.name}` });
     if (new TextEncoder().encode(body).byteLength > 16_384) throw new Error('Email delivery unavailable');
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST', redirect: 'manual', signal: AbortSignal.timeout(10_000),

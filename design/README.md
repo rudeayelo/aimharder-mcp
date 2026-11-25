@@ -1,6 +1,6 @@
 # Design
 
-Figma is the design source of truth for AIHarder ([decision](../docs/adr/2026-11-24-figma-design-source-of-truth.md)). This directory holds only what implementation needs from design; it does not mirror Figma.
+Figma is the design source of truth for AskHarder ([decision](../docs/adr/2026-11-24-figma-design-source-of-truth.md)). This directory holds only what implementation needs from design; it does not mirror Figma.
 
 ## Figma files
 
