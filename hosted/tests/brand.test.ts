@@ -15,11 +15,35 @@ import { initializeTestRecovery } from './recovery-fixture.js';
 
 // Names and hosts that earlier iterations showed to users. None may reach a user again.
 const retired = /\bAimHarder MCP\b|\bAimHarder Connect\b|AIHarder|aiharder\.link|ahmcp\.link|aimharder-mcp-hosted/i;
-// Deployment identifiers, not brand text; they move with the live hosts in #142.
-// Only these exact tokens are exempt; anything else on the same line is still checked.
+// Deployment identifiers that contain the domain but are not brand text: a rebrand must not
+// move them silently (renaming the grant claim invalidates every grant, and the smoke target is
+// a real host). Only these exact tokens are exempt; anything else on the same line is still checked.
 const deploymentTokens: Record<string, string[]> = {
-  'src/oauth-grants.ts': ["'https://ahmcp.link/mcp-grant'"],
-  'scripts/smoke-test-environment.ts': ["'https://pilot-test.ahmcp.link'"],
+  'src/oauth-grants.ts': ["'https://askharder.com/mcp-grant'"],
+  'scripts/smoke-test-environment.ts': ["'https://pilot-test.askharder.com'"],
+};
+// The historical records that may name the retired host, listed explicitly. A whole file is
+// allowed only where every part is a record of its time (past ADR bodies, research); otherwise
+// only the named `## ` sections ('' is the text before the first one). Every section is checked
+// on its own, and a listed heading must occur exactly once in its file. Anything else in the
+// repository fails, whatever notes it carries. Each entry must still exist and still name the
+// host, so the list cannot silently go stale.
+const retiredHostAnywhere = /ahmcp\.link/i;
+const retiredHostRecords: Record<string, 'whole file' | string[]> = {
+  'docs/adr/2026-10-16-proposed-cloudflare-hosted-runtime.md': 'whole file',
+  'docs/adr/2026-10-18-isolated-cloudflare-test-environment.md': 'whole file',
+  'docs/adr/2026-10-18-resend-transactional-delivery.md': 'whole file',
+  // Still current (amended for #142): only its original status, context and consequences.
+  'docs/adr/2026-11-24-provisional-product-name-and-domain.md': ['', '## Context', '## Consequences'],
+  'docs/research/2026-10-28-product-experience-references.md': 'whole file',
+  'docs/hosted-admission.md': ['## Configured Resend stage (2026-10-18)', '## Read-only provider readiness (2026-10-18)'],
+  'docs/hosted-feasibility.md': ['## Initial 20-participant cost envelope'],
+  'docs/hosted-google.md': ['## Provider callback update observed (2026-10-18)'],
+  'docs/hosted-pilot-cost.md': ['## Actual observations'],
+  'docs/hosted-test-environment.md': ['## Configured Resend deployment stage'],
+  // Ledger entries written before the switch; a new entry is never on this list.
+  'docs/validation.md': ['', '## Resend delivery replacement (2026-10-18, issue #71)',
+    '## Invited password portal (2026-10-18, local portion of issue #71)', '## Hosted brand module (#141, 2026-11-25)'],
 };
 const origin = 'http://localhost:8787';
 const brandSource = fileURLToPath(new URL('../src/brand.ts', import.meta.url));
@@ -207,11 +231,39 @@ test('no hosted source outside the brand module names the product, its domain, s
     const path = `${directory}/${file}`;
     if (!/\.(ts|mjs|js)$/.test(path) || path === 'src/brand.ts') continue;
     (await readFile(path, 'utf8')).split('\n').forEach((line, index) => {
-      const lower = line.toLowerCase();
-      if (values.some(value => lower.includes(value.toLowerCase()))) offenders.push(`${path}:${index + 1} hard-codes a brand value`);
       const checked = (deploymentTokens[path] ?? []).reduce((rest, token) => rest.replaceAll(token, ''), line);
+      const lower = checked.toLowerCase();
+      if (values.some(value => lower.includes(value.toLowerCase()))) offenders.push(`${path}:${index + 1} hard-codes a brand value`);
       if (retired.test(checked)) offenders.push(`${path}:${index + 1} uses a retired name or host`);
     });
   }
+  expect(offenders).toEqual([]);
+});
+
+test('the retired host appears only in the listed historical records', async () => {
+  const root = fileURLToPath(new URL('../..', import.meta.url));
+  const { stdout } = await promisify(execFile)('git', ['ls-files', '--cached', '--others', '--exclude-standard', '-z'], { cwd: root, maxBuffer: 64 * 1024 * 1024 });
+  const offenders: string[] = [];
+  const unused = new Set(Object.keys(retiredHostRecords));
+  for (const file of stdout.split('\0').filter(Boolean)) {
+    let text: string;
+    try { text = await readFile(join(root, file), 'utf8'); }
+    catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') continue; throw error; } // deleted but still tracked
+    const allowed = retiredHostRecords[file];
+    if (!retiredHostAnywhere.test(text)) continue;
+    if (allowed === 'whole file') { unused.delete(file); continue; }
+    // One entry per heading occurrence, so a repeated title cannot hide an earlier section.
+    const sections = text.split(/^(?=## )/m).map(part => ({ heading: part.startsWith('## ') ? part.split('\n')[0]! : '', part }));
+    for (const { heading, part } of sections)
+      if (retiredHostAnywhere.test(part) && !allowed?.includes(heading)) offenders.push(`${file}: ${heading || 'before the first section'}`);
+    for (const heading of allowed ?? []) {
+      const matches = sections.filter(section => section.heading === heading);
+      const label = heading || '(before the first section)';
+      if (matches.length !== 1) offenders.push(`${file}: listed section ${label} occurs ${matches.length} times`);
+      else if (!retiredHostAnywhere.test(matches[0]!.part)) offenders.push(`${file}: listed section ${label} no longer names the host`);
+    }
+    unused.delete(file);
+  }
+  for (const file of unused) offenders.push(`${file}: listed but no longer names the host`);
   expect(offenders).toEqual([]);
 });

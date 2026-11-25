@@ -2,6 +2,8 @@
 
 Operator setup for the local [invited password portal](hosted-admission.md), [ticket #71](https://github.com/rudeayelo/aimharder-mcp/issues/71). On 2026-10-18 the user authorized creating this test environment without purchases or plan changes. This is not authorization for a production launch, billing activation, broader token permissions, a new mail provider or real AimHarder actions. The user subsequently supplied an existing Resend token for this mail gate; the [Resend decision](adr/2026-10-18-resend-transactional-delivery.md) records that additional authorization. The [test-environment decision](adr/2026-10-18-isolated-cloudflare-test-environment.md) records the boundary.
 
+Host switch, 2026-11-25: the move to `pilot-test.askharder.com` is [pending operator steps](#host-switch-to-askhardercom-pending).
+
 Current status, 2026-11-10: [the RFT publication rollout](hosted-rft-publication-deployment.md) is verified for integrated source `47446f44701a77cabd654f0524cdf6718ef48406`, exact module hash `236e70c4d33a747b2b7fc21f0c0c1fcbf57d319ae37991a9987264e1d6ab5c30`, preserved provider configuration and fresh native read-only RFT draft/ready behavior. No sporting write was performed. npm `0.5.5` is published; exact registry verification is recorded separately in that receipt.
 
 Previous status, 2026-11-02: [the workout interpretation rollout and 0.5.4 release](hosted-workout-interpretation-deployment.md) are verified. Integrated source `65fc4ce0f7309de04b884677551c176383564fda` is active with exact module SHA-256 `6867f75235842e460eddfc3f0c1f5dffa2dac85cacc205e147bcc0a1a2c5af8a`. All seventeen bindings/seven secrets and effective resources are preserved; only the telemetry source-release label changed. Eleven public smoke checks, unchanged authenticated context and fresh native cycling/consecutive EMOM reads pass. Application telemetry contains the new source revision. The separately published `0.5.4` registry artifact passed clean-install authenticated read-only checks. No sporting write occurred; broader client, source-format and coverage limits remain explicit in the linked receipt.
@@ -11,6 +13,24 @@ Previous confirmation-switch checkpoint, 2026-10-30: [the booking/workout confir
 Previous telemetry checkpoint, 2026-10-30: reviewed source `803c27e9bcd8123694a7442c768f2b65691dbce7` remains deployed to the same isolated Worker with module SHA-256 `1e2cc09f33dd0202bbc1746761fb75ef2fe13aa50bd2997a65731aa11875103d`. The [bounded native validation](hosted-telemetry-cpu-capture.md) is complete after the separate unavailable-only repetition. The later [owner-authorized sustained activation](hosted-telemetry-sustained-activation.md) leaves `LOGNORTH_ENABLED=true` with environment `pilot-test`; all other bindings/secrets and effective resources remain preserved. There are seventeen bindings/seven secrets, the original five-minute cron, disabled persistent platform logging and no temporary observer/tail. Actual read-tool delivery and unchanged query output were verified after activation. The [temporary LogNorth patch](hosted-telemetry-compatibility-validation.md) addresses discovery storage; the independently confirmed owner-selected Paid plan is used. Sustainable cost/loaded capacity remain unverified. Main integration and npm publication do not redeploy this Worker. Earlier deployment checkpoints below remain historical.
 
 Historical status, 2026-10-21: the full reviewed production executable **ee424cac9e946273c59d8a765fa272d743920eab**, adding bounded preparation residency to the earlier calendar/offline-refresh corrections, is active at the same isolated origin. The [code-only activation below](#bounded-residency-code-only-activation-2026-10-21) has exact module/configuration read-back and successful separate native context. Initial activation used 76686e4 and the prior refresh correction used 98da176; their historical checkpoints remain preserved. The offline-access resource policy is now deployed and independently read back; fresh Hermes consent/context and actual one-hour default-policy rotation with the original grant now pass after portal sign-out. Later participant revocation passes cached-access and maintained-refresh denial with different-subject administrator continuity, as recorded below. ChatGPT semantic renewal remains pending despite observed same-grant provider rotation. The completed cutover below supersedes the historical #71–#74 deployment stages, while preserving their separate owner mail/Google/key acceptance. Actual ChatGPT/Hermes journeys and sustainable cost remain [#84 gates](hosted-pilot-acceptance.md). The original anonymous setup table/commands describe that earlier stage; a new current installation must follow all committed application migrations plus the independent authority/bootstrap requirements in [deletion and recovery](hosted-account-deletion.md#bindings-and-activation), rather than deploy the original two-migration bundle.
+
+## Host switch to askharder.com (pending)
+
+Target state, from [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142): the isolated environment is served at **`https://pilot-test.askharder.com`**, with `BASE_URL` set to that origin, mail from `noreply@askharder.com` through a Resend domain verified on `askharder.com`, Google sign-in registered for that origin, and the Hermes client registered against `https://pilot-test.askharder.com/mcp`. ChatGPT is not re-registered in this switch; its full flow is checked later ([maintainer decision](https://github.com/rudeayelo/aimharder-mcp/issues/142#issuecomment-7167447797)). The repository already describes this state: [`hosted/wrangler.test.example.jsonc`](../hosted/wrangler.test.example.jsonc) routes the new host, the smoke script defaults to and only accepts it, and the OAuth grant claim is `https://askharder.com/mcp-grant`.
+
+**Status, 2026-11-25: pending operator steps.** No provider has been changed yet. The deployed Worker still runs an earlier bundle on its previous host. The [plan on #142](https://github.com/rudeayelo/aimharder-mcp/issues/142#issuecomment-7167397367) gives each step's owner, read-only probe and rollback. In order:
+
+1. Merge the repository change; the deploy builds from `main`.
+2. Resend domain, records and a restricted key on `askharder.com`.
+3. Google, done by the operator if the available credentials allow it, otherwise by the maintainer following exact guided steps the operator prepares: authorized domain `askharder.com` and the AskHarder name in Branding first, then the new origin and callback on the existing client. Read back the authorized domains, both callback sets and the effective name.
+4. Deploy, in one change. First capture the live version, bindings, vars, secret names and custom domains, and diff the dry-run's effective configuration against that baseline. Then deploy, adding the new custom domain while the old custom domain stays attached. `BASE_URL` and `MAIL_FROM` (`noreply@askharder.com`) are set as plain-text vars in the private config's `vars`, as in the baseline. The secrets file holds only the replacement `RESEND_API_KEY`, which stays a secret. The diff confirms both binding types. If the new host's TLS or GET fails after `BASE_URL` flips, read back the version and domain state, roll back to the captured version and verify password sign-in on the old host. Waiting is not safe: once `BASE_URL` changes, every portal form POST on the old host fails the origin check.
+5. Re-register the Hermes client only against `https://pilot-test.askharder.com/mcp`; ChatGPT is left for later.
+6. Owner verification on the new host: password sign-in, Google sign-in, Hermes authorization and one read-only call, then one password recovery for email delivery. The recovery changes the password and revokes sessions, so sign-in with the new password is verified again before the next step.
+7. Remove the old custom domain, Resend domain, key and Google entries.
+
+Page probes use a TLS-verified GET with the body discarded, for example `curl -sS --proto '=https' -o /dev/null -w '%{http_code} ssl_verify=%{ssl_verify_result}\n' https://pilot-test.askharder.com/sign-in`, expecting `200 ssl_verify=0`. The portal renders only GET, so a `HEAD` (`curl -I`) returns 404 even on a healthy host. Every smoke run against the deployed origin uses `HOSTED_SMOKE_MAIL_STAGE=configured`, as in [the smoke section](#anonymous-smoke-checks). Until step 4, the smoke script's default target does not resolve yet.
+
+For the owner, the switch means a new portal session on the new host, because cookies are host-scoped. It also means a new MCP authorization through the re-registered Hermes client (ChatGPT later), because the issuer, the resource (audience) and the grant claim change and earlier tokens no longer validate. The underlying rows are kept: the same databases and account namespace hold the accounts, sign-in methods, earlier session, grant, consent and client rows, and the encrypted AimHarder connection. Observed results will be recorded here and in [validation](validation.md) when the operator reports them.
 
 ## Complex prescription code-only rollout (2026-10-21)
 
@@ -76,7 +96,7 @@ Future upgrades must preserve the independent authority/history, keys, exact app
 | --- | --- |
 | Worker | `aimharder-mcp-pilot-test` |
 | Database | `aimharder-mcp-pilot-test-auth`, bound as `AUTH_DB` |
-| HTTPS origin | `https://pilot-test.ahmcp.link` |
+| HTTPS origin | `https://pilot-test.askharder.com` (switch pending, see [above](#host-switch-to-askhardercom-pending)) |
 | Entry | The production `hosted/dist/worker.js`, never a fixture entry |
 | Runtime | Compatibility date `2026-10-12`, `nodejs_compat` |
 | Secret | Fresh `AUTH_SECRET`, injected securely by the operator; never a repository value |
@@ -124,17 +144,21 @@ Deploy with the fixed configuration only after the database is ready:
 WRANGLER_SEND_METRICS=false pnpm exec wrangler deploy --config "$TEST_WORKER_CONFIG" --secrets-file "$TEST_WORKER_SECRETS_FILE" --strict --upload-source-maps=false --autoconfig=false
 ```
 
+Keep binding types as they are deployed. Plain-text settings such as `BASE_URL` and `MAIL_FROM` belong in the private config's `vars`, which replaces the deployed plain-text set, so the private config must list every var. The secrets file carries only platform secrets: a fresh `AUTH_SECRET` on first installation, or a replacement secret such as `RESEND_API_KEY`.
+
 This avoids activating a first version without its authentication secret. The secrets file applies additively; omitted existing secrets are preserved. For later rotation, use the platform-secret path and preserve the secret binding instead of replacing it with a plain-text variable.
 
 The custom-domain route can provision its DNS/certificate; read back the Worker deployment, bindings and domain association and verify normal HTTPS. Do not disable TLS verification. Leave existing DNS/scripts/routes untouched. Do not enable Worker logs or dump full request URLs: invitation, verification and recovery URLs contain capabilities. Do not apply a plan change if any command requires one. Remote access, deployment success and a standard usage model are not a verified operating-cost estimate.
 
 ## Anonymous smoke checks
 
-From `hosted/`, the following script targets only the fixed test HTTPS origin by default, with optional HTTP loopback override for local verification:
+From `hosted/`, the following script targets only the fixed test HTTPS origin by default, with optional HTTP loopback override for local verification. The deployed environment has mail configured, so always run it there with the configured mail stage, which omits the delivery-capable enrollment and recovery probes:
 
 ```sh
-pnpm smoke:test-environment
+HOSTED_SMOKE_MAIL_STAGE=configured pnpm smoke:test-environment
 ```
+
+The default `disabled` stage is only for a loopback `pnpm preview` without a sender.
 
 It uses no credentials, cookies or real recipient data and prints only check labels/statuses. It checks public page content, anonymous administrator denial, absent fixture/bootstrap routes, the maintained MCP challenge/resource discovery, same-origin enrollment/recovery's safe missing-sender outcome, and foreign-origin form rejection. The synthetic `.invalid` inputs cannot establish a participant or send mail in this disabled stage. The default `HOSTED_SMOKE_MAIL_STAGE=disabled` explicitly checks missing-mail outcomes and fails if mail is enabled. Once mail is configured, use `HOSTED_SMOKE_MAIL_STAGE=configured pnpm smoke:test-environment`: this runs eleven safe checks and omits both enrollment/recovery probes. It never tests a recipient, creates a pending identity or requests mail in the configured stage. The stage flag is an operator assertion, not proof of provider readiness. It does not verify login, real email, Google, MCP client onboarding or AimHarder connectivity.
 
@@ -157,6 +181,8 @@ The operator then applied exactly the reviewed `0004-mcp-grants.sql` once to the
 Fresh post-deployment provider/D1 read-back confirmed the same seven binding names/types, unchanged owner portal identity/profile and exactly one credential method plus one Google method. This slice did not repeat owner login. It created no actual MCP client grant and performed no real ChatGPT/Hermes callback, refresh/revocation journey or AimHarder request. The local SDK/loopback evidence remains separate from actual-client acceptance in #84. No purchases, plan changes or provider-permission expansion occurred.
 
 ## Configured Resend deployment stage
+
+Retired host note (2026-11-25): this dated record names the retired host `ahmcp.link`, kept as it was observed. The service moves to `askharder.com` in [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142), with no redirect.
 
 The operator subsequently configured the owner-supplied existing Resend service without changing Workers Free, purchasing capacity or expanding permissions. The `ahmcp.link` sending domain was created in `eu-west-1`. Exactly four provider-returned DNS records were added and matched public DNS: DKIM TXT at `resend._domainkey`, MX and TXT at `send`, and CNAME at `rsend`. The domain and every record were subsequently read back as verified. Open/click tracking read back as disabled. An enforced-TLS update returned success; domain reads omit that setting, so persistent read-back is not established. Root receiving MX and unrelated DNS were preserved.
 

@@ -2,7 +2,7 @@
 
 Ticket [#73](https://github.com/rudeayelo/aimharder-mcp/issues/73) implements the public HTTP authorization boundary and participant client controls. The maintained Better Auth 1.7.10 provider owns discovery, signed authorization continuation, consent validation, PKCE, token exchange and refresh. MCP SDK v2 2.3.1 owns the stateless HTTP transport. The [authorization decision](adr/2026-10-18-hosted-mcp-client-authorization.md) records client provisioning and current-grant enforcement.
 
-The canonical production endpoint is `https://ahmcp.link/mcp`, once that origin is independently activated and verified. The existing isolated environment uses `https://pilot-test.ahmcp.link/mcp`. Client registration, issuer, callbacks and resource identifiers belong to exactly one environment; never mix them. Local harness success does not establish production routing or actual ChatGPT/Hermes compatibility. The [test environment](hosted-test-environment.md) records what is deployed separately.
+The canonical production endpoint is `https://askharder.com/mcp`, once that origin is independently activated and verified. The isolated environment uses `https://pilot-test.askharder.com/mcp`; that host switch is pending operator steps in [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142), and clients registered against an earlier host must be registered again with the commands below. Client registration, issuer, callbacks and resource identifiers belong to exactly one environment; never mix them. Local harness success does not establish production routing or actual ChatGPT/Hermes compatibility. The [test environment](hosted-test-environment.md) records what is deployed separately.
 
 Current implementation status (2026-10-21): tickets #70–#83 now supply all 18 tools, encrypted connection custody, confirmed actions, role policy and lifecycle/restoration enforcement. Reviewed executable source ee424ca adds bounded preparation residency to the calendar/offline-refresh corrections and has [qualified code-only activation](hosted-test-environment.md#bounded-residency-code-only-activation-2026-10-21), with current issuer/resource/S256 and no DCR/CIMD read back. Historical #73-only results below remain evidence for that slice. Both distinct public registrations have exact policy/callback/resource read-back. Actual ChatGPT and installed Hermes OAuth, 18-tool discovery and authenticated account context now pass independently; remaining query/refresh/revocation/action/lifecycle/cost journeys remain in the [whole-pilot ledger](hosted-pilot-acceptance.md). Discovery and account context do not complete client acceptance. The separate native Codex Apps calendar error was reproduced, corrected and verified through actual installed-Hermes October/September reads. The first ChatGPT default-expiry refresh failed before the deployed offline-access correction; fresh Hermes and ChatGPT authorizations subsequently established separate offline-family/current-grant evidence. Hermes passes its actual one-hour default-policy trial. The later [ChatGPT trial](#actual-chatgpt-default-policy-rotation-with-unobserved-context-success-2026-10-20) observes same-grant provider rotation, but the browser response fails to load and semantic context success remains unobserved; combined ChatGPT renewal acceptance stays open.
 
@@ -274,7 +274,7 @@ Use a pre-registered **public** PKCE client with no client secret. Current [Open
 After the exact callback has been confirmed in that client's current setup UI/configuration, prepare a reviewed registration in a new private directory outside the checkout:
 
 ```sh
-BASE_URL=https://pilot-test.ahmcp.link \
+BASE_URL=https://pilot-test.askharder.com \
 MCP_CLIENT_KIND=hermes \
 MCP_REDIRECT_URI=http://127.0.0.1:8765/callback \
 MCP_CLIENT_OUTPUT_DIR=/absolute/private/new-client-directory \
@@ -303,7 +303,7 @@ Use a current Hermes release with the documented OAuth/pre-registered-client sup
 ```yaml
 mcp_servers:
   askharder:
-    url: "https://pilot-test.ahmcp.link/mcp"
+    url: "https://pilot-test.askharder.com/mcp"
     auth: oauth
     oauth:
       client_id: "<operator-issued-id>"

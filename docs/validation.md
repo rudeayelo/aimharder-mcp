@@ -1,5 +1,7 @@
 # Validation record
 
+Retired host note (2026-11-25): `ahmcp.link` in entries dated before this note is the retired host, kept as it was observed or decided at the time. The service moves to `askharder.com`, with the isolated test environment at `pilot-test.askharder.com`, in [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142). There is no redirect, and the old hosts are removed once the switch is verified.
+
 ## Independent booking and workout switches (2026-10-30)
 
 [Issue #120](https://github.com/rudeayelo/aimharder-mcp/issues/120) implements two independent per-account switches for booking creation and activity publication, both enabled by default. The earlier global-policy checkpoint was superseded before release; its cancellation/deletion bypass is removed.
@@ -1425,3 +1427,28 @@ The hosted service now reads its user-facing name (AskHarder), slug and portal c
 - `pnpm smoke:test-environment` passed against a local `pnpm preview` of the new bundle, and against the unchanged `pilot-test.ahmcp.link` deployment with `HOSTED_SMOKE_MAIL_STAGE=configured` (anonymous checks only). The isolated environment still runs the earlier bundle and shows the old name until its next authorized deploy.
 
 Not done here: live hostnames, the Resend sender domain, the Google OAuth application name and the internal OAuth grant claim stay on `ahmcp.link` until #142.
+
+## Host switch to askharder.com, repository part (#142, 2026-11-25)
+
+The repository now names only the new hosts. The test environment is `https://pilot-test.askharder.com` in `hosted/wrangler.test.example.jsonc` (route and `BASE_URL`), and the smoke script defaults to and only accepts it besides loopback. The OAuth grant claim is `https://askharder.com/mcp-grant`, and the runbooks name `noreply@askharder.com`, the new Google origin and callback, and `https://pilot-test.askharder.com/mcp` for client registration. Historical records keep the old host, each with a dated retired-host note. The provider steps are [planned on #142](https://github.com/rudeayelo/aimharder-mcp/issues/142#issuecomment-7167397367) and **pending**. Nothing was deployed, and no provider was changed or called with credentials.
+
+- `hosted/tests/brand.test.ts` now fails if any tracked or untracked repository file names the retired host outside an explicit list of historical records in the test. The list holds whole past ADRs and the research record, and otherwise named `##` sections, including this ledger's entries written before the switch. Each listed entry must still exist and still name the host. A read error other than an absent tracked file fails the test. The dated notes in the docs are for readers; the test does not rely on them. The hosted-source check exempts the two new deployment identifiers by exact token, from both the brand-value check and the retired-name check.
+- Red first: before the edits, the repository check listed 19 files and the source check flagged the old exemptions. The first, note-based version of the repository check missed three breaks, which the list-based version catches:
+  - the retired host under a new section of a current runbook carrying a copied note;
+  - the retired host in a new ledger entry;
+  - the retired host with a copied note in a current runbook's preamble.
+
+  Round 3 tightened the list in two ways. The provisional name and domain ADR is no longer exempt as a whole file: only its status, Context and Consequences are, so a stale URL in its current amendment fails. Each heading occurrence is now checked separately, and a listed heading must occur exactly once, so a repeated title no longer hides an earlier stale section. Before the change, both breaks passed; after it, both fail, and so does a duplicate of a listed historical heading.
+
+  Both versions catch the old origin put back in the current "Fixed boundary" table of `hosted-test-environment.md`. The list-based version also fails on an unreadable file (`EACCES`) and on a listed file that no longer names the host. On the source side, `askharder.com` added elsewhere on the grant-claim line fails the source check.
+- Hosted, Node 26.12 locally, each under `timeout 600`:
+  - `tsc --noEmit` and `pnpm build` passed.
+  - The CI command `pnpm exec vitest run --no-file-parallelism --testTimeout=30000` passed 19 files and 235 tests. It ran inside `unshare -rn`, because an unrelated local service holds port 9999.
+  - One round-2 run, made while the root suite ran at the same time, failed once in `tests/activity-queries.test.ts`, a file this change does not touch. That test's forbidden-content pattern includes `100.5` with an unescaped `.`, so a random `trace_id` UUID can match it. The file passed three isolated runs, and the next full run passed 19 files and 235 tests. This flake predates the change and is not fixed here.
+- `pnpm smoke:test-environment` passed against a local `pnpm preview` at `http://localhost:8787`. It now refuses the previous deployed origin.
+- Root `pnpm typecheck`, `pnpm test` (18 files, 511 tests), `pnpm build` and `pnpm test:package` passed.
+- Read-only public DNS before the switch: the `askharder.com` zone is on Cloudflare name servers with no records, and `pilot-test.askharder.com` and the Resend record names do not resolve.
+
+The corrected plan (revision 2, superseding the first) adds a baseline capture, a configuration diff and a partial-deploy branch to the deploy, and a GET probe instead of `HEAD`. It also has the configured mail stage for every live smoke run, the Google Branding order and read-back, and re-verification of sign-in after the recovery reset. The packaged README sentence ships with a patch changeset. Following the [maintainer decisions of 2026-11-25](https://github.com/rudeayelo/aimharder-mcp/issues/142#issuecomment-7167447797), only Hermes is re-registered now, with ChatGPT checked later, and the Google console step falls to the maintainer with guided steps if the operator's credentials don't allow it.
+
+Pending: every provider step on #142, followed by the issue's verification of sign-in, Hermes authorization, email delivery and the smoke check on the new origin, and then removal of the old hosts.

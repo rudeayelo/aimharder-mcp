@@ -12,8 +12,8 @@
   "send_metrics": false,
   "triggers": { "crons": ["*/5 * * * *"] },
   "observability": { "enabled": false },
-  "routes": [{ "pattern": "pilot-test.ahmcp.link", "custom_domain": true }],
-  "vars": { "LOGNORTH_ENABLED": "false", "BASE_URL": "https://pilot-test.ahmcp.link", "RECOVERY_AUTHORITY_ID": "REPLACE_WITH_PINNED_AUTHORITY_ID" },
+  "routes": [{ "pattern": "pilot-test.askharder.com", "custom_domain": true }],
+  "vars": { "LOGNORTH_ENABLED": "false", "BASE_URL": "https://pilot-test.askharder.com", "RECOVERY_AUTHORITY_ID": "REPLACE_WITH_PINNED_AUTHORITY_ID" },
   "d1_databases": [
     {
       "binding": "AUTH_DB",

@@ -2,7 +2,7 @@ import { recoveryAdmission } from './recovery-authority.js';
 import { APIError } from 'better-auth/api';
 import type { HostedEnvironment } from './auth.js';
 import { digest, participant } from './admission.js';
-export const grantClaim = 'https://ahmcp.link/mcp-grant';
+export const grantClaim = 'https://askharder.com/mcp-grant';
 interface Grant { id: string; userId: string; clientId: string; revocationGeneration: number; }
 function invalidGrant(): never {
   throw new APIError('BAD_REQUEST', { error: 'invalid_grant', error_description: 'Authorization is unavailable. Authorize this client again.' });
