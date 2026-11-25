@@ -10,6 +10,8 @@ Later owner steering on the same date: [design ticket #95](https://github.com/ru
 
 Designing the public website and invited-participant portal for **AimHarder MCP**, primarily for members of the owner's gym who want to use AimHarder through an AI chat. The portal explains the service, guides self-service setup and manages connections. Sporting queries and actions remain in the AI chat. The intended domain is `ahmcp.link`; selecting it for a design does not establish a production deployment.
 
+Retired host note (2026-11-25): `ahmcp.link` in this research record is the retired host, kept as it was observed or decided at the time. The service moves to `askharder.com`, with the isolated test environment at `pilot-test.askharder.com`, in [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142). There is no redirect, and the old hosts are removed once the switch is verified.
+
 The accepted brief is recorded in [Product experience design](../product-experience.md). Its constraints include concise instructions for each client, independent client disconnection, mobile-first attention to invitation/sign-in/upstream connection, English project copy, and no time-zone controls or explanations in the frontend. Existing backend safeguards and unresolved engineering work are not replaced by visual references.
 
 Research used Refero's connected API to search archived **web screens** from four angles: integration setup, setup checklists, connected-account settings, and FAQs. A fifth search covered connection flows. Full details were retrieved for four selected standalone screens and Cursor flow **9917**. Raw screenshot images were visually inspected for all six selected screens and the flow's intermediate connecting screen.

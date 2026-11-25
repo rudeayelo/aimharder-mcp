@@ -15,12 +15,16 @@ import { initializeTestRecovery } from './recovery-fixture.js';
 
 // Names and hosts that earlier iterations showed to users. None may reach a user again.
 const retired = /\bAimHarder MCP\b|\bAimHarder Connect\b|AIHarder|aiharder\.link|ahmcp\.link|aimharder-mcp-hosted/i;
-// Deployment identifiers, not brand text; they move with the live hosts in #142.
-// Only these exact tokens are exempt; anything else on the same line is still checked.
+// Deployment identifiers that contain the domain but are not brand text: a rebrand must not
+// move them silently (renaming the grant claim invalidates every grant, and the smoke target is
+// a real host). Only these exact tokens are exempt; anything else on the same line is still checked.
 const deploymentTokens: Record<string, string[]> = {
-  'src/oauth-grants.ts': ["'https://ahmcp.link/mcp-grant'"],
-  'scripts/smoke-test-environment.ts': ["'https://pilot-test.ahmcp.link'"],
+  'src/oauth-grants.ts': ["'https://askharder.com/mcp-grant'"],
+  'scripts/smoke-test-environment.ts': ["'https://pilot-test.askharder.com'"],
 };
+// A file may name the retired host only if it is a historical record carrying this dated note.
+const retiredHost = /ahmcp\.link/i;
+const retiredHostNote = 'Retired host note (2026-11-25)';
 const origin = 'http://localhost:8787';
 const brandSource = fileURLToPath(new URL('../src/brand.ts', import.meta.url));
 const workers: Miniflare[] = [];
@@ -207,11 +211,23 @@ test('no hosted source outside the brand module names the product, its domain, s
     const path = `${directory}/${file}`;
     if (!/\.(ts|mjs|js)$/.test(path) || path === 'src/brand.ts') continue;
     (await readFile(path, 'utf8')).split('\n').forEach((line, index) => {
-      const lower = line.toLowerCase();
-      if (values.some(value => lower.includes(value.toLowerCase()))) offenders.push(`${path}:${index + 1} hard-codes a brand value`);
       const checked = (deploymentTokens[path] ?? []).reduce((rest, token) => rest.replaceAll(token, ''), line);
+      const lower = checked.toLowerCase();
+      if (values.some(value => lower.includes(value.toLowerCase()))) offenders.push(`${path}:${index + 1} hard-codes a brand value`);
       if (retired.test(checked)) offenders.push(`${path}:${index + 1} uses a retired name or host`);
     });
+  }
+  expect(offenders).toEqual([]);
+});
+
+test('the retired host appears only in annotated historical records', async () => {
+  const root = fileURLToPath(new URL('../..', import.meta.url));
+  const { stdout } = await promisify(execFile)('git', ['ls-files', '--cached', '--others', '--exclude-standard', '-z'], { cwd: root, maxBuffer: 64 * 1024 * 1024 });
+  const offenders: string[] = [];
+  for (const file of stdout.split('\0').filter(Boolean)) {
+    let text: string;
+    try { text = await readFile(join(root, file), 'utf8'); } catch { continue; }
+    if (retiredHost.test(text) && !text.includes(retiredHostNote)) offenders.push(file);
   }
   expect(offenders).toEqual([]);
 });

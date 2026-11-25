@@ -4,6 +4,8 @@ Status: accepted on 2026-10-16 as the candidate to validate for the [hosted pilo
 
 Superseded in part, 2026-11-24: the user-facing product name and domain (AimHarder MCP, `ahmcp.link`) are superseded by the [provisional product name and domain decision](2026-11-24-provisional-product-name-and-domain.md) (now AskHarder, `askharder.com`). The hosted code reads the name from one brand module since [#141](https://github.com/rudeayelo/aimharder-mcp/issues/141). The existing zone, origins and OAuth configuration recorded below, including the Google application name AimHarder MCP, stay in place until the host switch in [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142).
 
+Retired host note (2026-11-25): `ahmcp.link` in this record is the retired host, kept as it was observed or decided at the time. The service moves to `askharder.com`, with the isolated test environment at `pilot-test.askharder.com`, in [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142). There is no redirect, and the old hosts are removed once the switch is verified. The Google application is renamed AskHarder as part of that switch; see the [host switch amendment](2026-11-24-provisional-product-name-and-domain.md#amendment-host-switch-to-askhardercom).
+
 Validation-scope amendment, 2026-10-28: the [scoped hosted-pilot acceptance decision](2026-10-28-scoped-hosted-pilot-acceptance.md) supersedes the requirement to keep #84/#69 open for every outstanding observation. Product features, security invariants and the planning target remain unchanged; deferred or excluded checks are not validated by closure.
 
 ## Context

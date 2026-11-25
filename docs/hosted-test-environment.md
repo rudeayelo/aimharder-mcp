@@ -2,6 +2,23 @@
 
 Operator setup for the local [invited password portal](hosted-admission.md), [ticket #71](https://github.com/rudeayelo/aimharder-mcp/issues/71). On 2026-10-18 the user authorized creating this test environment without purchases or plan changes. This is not authorization for a production launch, billing activation, broader token permissions, a new mail provider or real AimHarder actions. The user subsequently supplied an existing Resend token for this mail gate; the [Resend decision](adr/2026-10-18-resend-transactional-delivery.md) records that additional authorization. The [test-environment decision](adr/2026-10-18-isolated-cloudflare-test-environment.md) records the boundary.
 
+## Host switch to askharder.com (pending)
+
+Target state, from [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142): the isolated environment is served at **`https://pilot-test.askharder.com`**, with `BASE_URL` set to that origin, mail from `noreply@askharder.com` through a Resend domain verified on `askharder.com`, Google sign-in registered for that origin, and the Hermes and ChatGPT clients registered against `https://pilot-test.askharder.com/mcp`. The repository already describes this state: [`hosted/wrangler.test.example.jsonc`](../hosted/wrangler.test.example.jsonc) routes the new host, the smoke script defaults to and only accepts it, and the OAuth grant claim is `https://askharder.com/mcp-grant`.
+
+**Status, 2026-11-25: pending operator steps.** No provider has been changed yet. The deployed Worker still runs an earlier bundle on its previous host. The steps are, in order:
+
+1. Resend domain.
+2. Google entries.
+3. One deploy from `main`, after this repository change merges, that adds the new custom domain and sets `BASE_URL`, `MAIL_FROM` and the new key, keeping the old custom domain attached.
+4. Re-registering the static clients.
+5. Owner verification of sign-in, Hermes authorization and email delivery, plus `pnpm smoke:test-environment`.
+6. Removing the old custom domain, Resend domain and Google entries.
+
+Each step has a read-only probe and a rollback in the [plan on #142](https://github.com/rudeayelo/aimharder-mcp/issues/142#issuecomment-7166962650). Until step 3, `pnpm smoke:test-environment` without `HOSTED_SMOKE_BASE_URL` targets a host that does not resolve yet. The switch invalidates every session, token, grant, consent and client registration, but keeps the databases and the account namespace. Observed results will be recorded here and in [validation](validation.md) when the operator reports them.
+
+Retired host note (2026-11-25): `ahmcp.link` in the dated records below is the retired host, kept as it was observed. There is no redirect, and the old hosts are removed once the switch is verified.
+
 Current status, 2026-11-10: [the RFT publication rollout](hosted-rft-publication-deployment.md) is verified for integrated source `47446f44701a77cabd654f0524cdf6718ef48406`, exact module hash `236e70c4d33a747b2b7fc21f0c0c1fcbf57d319ae37991a9987264e1d6ab5c30`, preserved provider configuration and fresh native read-only RFT draft/ready behavior. No sporting write was performed. npm `0.5.5` is published; exact registry verification is recorded separately in that receipt.
 
 Previous status, 2026-11-02: [the workout interpretation rollout and 0.5.4 release](hosted-workout-interpretation-deployment.md) are verified. Integrated source `65fc4ce0f7309de04b884677551c176383564fda` is active with exact module SHA-256 `6867f75235842e460eddfc3f0c1f5dffa2dac85cacc205e147bcc0a1a2c5af8a`. All seventeen bindings/seven secrets and effective resources are preserved; only the telemetry source-release label changed. Eleven public smoke checks, unchanged authenticated context and fresh native cycling/consecutive EMOM reads pass. Application telemetry contains the new source revision. The separately published `0.5.4` registry artifact passed clean-install authenticated read-only checks. No sporting write occurred; broader client, source-format and coverage limits remain explicit in the linked receipt.
@@ -76,7 +93,7 @@ Future upgrades must preserve the independent authority/history, keys, exact app
 | --- | --- |
 | Worker | `aimharder-mcp-pilot-test` |
 | Database | `aimharder-mcp-pilot-test-auth`, bound as `AUTH_DB` |
-| HTTPS origin | `https://pilot-test.ahmcp.link` |
+| HTTPS origin | `https://pilot-test.askharder.com` (switch pending, see [above](#host-switch-to-askhardercom-pending)) |
 | Entry | The production `hosted/dist/worker.js`, never a fixture entry |
 | Runtime | Compatibility date `2026-10-12`, `nodejs_compat` |
 | Secret | Fresh `AUTH_SECRET`, injected securely by the operator; never a repository value |

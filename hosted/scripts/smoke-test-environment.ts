@@ -1,10 +1,10 @@
 // Anonymous public HTTP checks only. Never accepts credentials or prints bodies.
 let target: URL;
-try { target = new URL(process.env.HOSTED_SMOKE_BASE_URL ?? 'https://pilot-test.ahmcp.link'); }
+try { target = new URL(process.env.HOSTED_SMOKE_BASE_URL ?? 'https://pilot-test.askharder.com'); }
 catch { throw new Error('Smoke target must be a valid origin.'); }
 const loopback = ['localhost', '127.0.0.1', '[::1]'].includes(target.hostname);
 if (target.username || target.password || target.pathname !== '/' || target.search || target.hash ||
-    (target.origin !== 'https://pilot-test.ahmcp.link' && !(loopback && target.protocol === 'http:')))
+    (target.origin !== 'https://pilot-test.askharder.com' && !(loopback && target.protocol === 'http:')))
   throw new Error('Smoke target must be the isolated test HTTPS origin or a local HTTP loopback origin.');
 
 const results: { check: string; status: number; result: 'passed' }[] = [];
