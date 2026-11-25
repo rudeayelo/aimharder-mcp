@@ -4,7 +4,7 @@ Status: accepted on 2026-10-18 after the user supplied an existing Resend creden
 
 Superseded in part, 2026-11-24: the support address `support@ahmcp.link` is superseded by `support@askharder.com` in the [provisional product name and domain decision](2026-11-24-provisional-product-name-and-domain.md). The Resend Inboxes choice and its pending activation are unchanged; current sending configuration stays in place until the host switch in [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142).
 
-Retired host note (2026-11-25): `ahmcp.link` in this record is the retired host, kept as it was observed or decided at the time. The service moves to `askharder.com`, with the isolated test environment at `pilot-test.askharder.com`, in [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142). There is no redirect, and the old hosts are removed once the switch is verified. The decision is unchanged; the sending domain becomes `askharder.com` with sender `noreply@askharder.com`, verified the same way.
+Retired host note (2026-11-25): `ahmcp.link` in this record is the retired host, kept as it was observed or decided at the time. The service moves to `askharder.com`, with the isolated test environment at `pilot-test.askharder.com`, in [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142). There is no redirect, and the old hosts are removed once the switch is verified. The decision is unchanged; see the [host switch amendment](2026-11-24-provisional-product-name-and-domain.md#amendment-host-switch-to-askhardercom). The sending domain becomes `askharder.com` with sender `noreply@askharder.com`, verified the same way.
 
 ## Context
 

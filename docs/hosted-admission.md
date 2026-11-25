@@ -51,6 +51,8 @@ One private singleton-owner bootstrap insert was applied to the dedicated D1. It
 
 ## Read-only provider readiness (2026-10-18)
 
+Retired host note (2026-11-25): this dated record names the retired host `ahmcp.link`, kept as it was observed. The service moves to `askharder.com` in [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142), with no redirect.
+
 After the local implementation, a separate operator check used the existing 1Password service-account environment and Cloudflare credential in memory. Only metadata and Cloudflare GET requests were used; secret values, account/zone identifiers and raw provider responses were not retained in repository evidence. The account-owned token is active, verified through the account-token endpoint. The user-token verification endpoint is inapplicable to this token type.
 
 | Boundary | Observed result |

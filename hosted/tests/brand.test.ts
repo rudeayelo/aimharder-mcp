@@ -22,8 +22,11 @@ const deploymentTokens: Record<string, string[]> = {
   'src/oauth-grants.ts': ["'https://askharder.com/mcp-grant'"],
   'scripts/smoke-test-environment.ts': ["'https://pilot-test.askharder.com'"],
 };
-// A file may name the retired host only if it is a historical record carrying this dated note.
-const retiredHost = /ahmcp\.link/i;
+// Repository-wide, the retired host may appear only in historical records carrying this dated
+// note: a note before a file's first `## ` heading marks the whole file (an ADR, the validation
+// ledger, research); a note inside a `## ` section marks only that section, so the current
+// sections of a mixed runbook stay checked.
+const retiredHostAnywhere = /ahmcp\.link/i;
 const retiredHostNote = 'Retired host note (2026-11-25)';
 const origin = 'http://localhost:8787';
 const brandSource = fileURLToPath(new URL('../src/brand.ts', import.meta.url));
@@ -227,7 +230,12 @@ test('the retired host appears only in annotated historical records', async () =
   for (const file of stdout.split('\0').filter(Boolean)) {
     let text: string;
     try { text = await readFile(join(root, file), 'utf8'); } catch { continue; }
-    if (retiredHost.test(text) && !text.includes(retiredHostNote)) offenders.push(file);
+    if (!retiredHostAnywhere.test(text)) continue;
+    const [preamble, ...sections] = text.split(/^(?=## )/m);
+    if (preamble!.includes(retiredHostNote)) continue;
+    for (const section of [preamble!, ...sections])
+      if (retiredHostAnywhere.test(section) && !section.includes(retiredHostNote))
+        offenders.push(`${file}: ${section.startsWith('## ') ? section.split('\n')[0] : 'before the first section'}`);
   }
   expect(offenders).toEqual([]);
 });

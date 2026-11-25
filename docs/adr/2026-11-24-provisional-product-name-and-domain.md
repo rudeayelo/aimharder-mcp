@@ -1,6 +1,8 @@
 # ADR: provisional product name and domain
 
-Status: accepted on 2026-11-24 by the maintainer as decisions 3 and 5 of the [#95 spec](https://github.com/rudeayelo/aimharder-mcp/issues/95). **Provisional** until the conversation with AimHarder described below. Amended on 2026-11-24 by the maintainer in [#141](https://github.com/rudeayelo/aimharder-mcp/issues/141): the name changes from AIHarder to **AskHarder** and the domain from `aiharder.link` to **`askharder.com`** (see [Amendment](#amendment-askharder-and-askhardercom)). Amended again on 2026-11-25 for the host switch in [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142) (see [Host switch](#amendment-host-switch-to-askhardercom)). Supersedes in part the user-facing name and domain in [the Cloudflare runtime candidate](2026-10-16-proposed-cloudflare-hosted-runtime.md) (`ahmcp.link`, the AimHarder MCP OAuth application name), the support address in [Resend transactional delivery](2026-10-18-resend-transactional-delivery.md) (`support@ahmcp.link`) and the AimHarder MCP name in the earlier product brief. No runtime origin, OAuth callback, DNS record or mail configuration changes with this decision.
+Status: accepted on 2026-11-24 by the maintainer as decisions 3 and 5 of the [#95 spec](https://github.com/rudeayelo/aimharder-mcp/issues/95). **Provisional** until the conversation with AimHarder described below. Amended on 2026-11-24 by the maintainer in [#141](https://github.com/rudeayelo/aimharder-mcp/issues/141): the name changes from AIHarder to **AskHarder** and the domain from `aiharder.link` to **`askharder.com`** (see [Amendment](#amendment-askharder-and-askhardercom)). Amended again on 2026-11-25, recording the maintainer's 2026-11-24 decisions on the host switch in [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142) (see [Host switch](#amendment-host-switch-to-askhardercom)). Supersedes in part the user-facing name and domain in [the Cloudflare runtime candidate](2026-10-16-proposed-cloudflare-hosted-runtime.md) (`ahmcp.link`, the AimHarder MCP OAuth application name), the support address in [Resend transactional delivery](2026-10-18-resend-transactional-delivery.md) (`support@ahmcp.link`) and the AimHarder MCP name in the earlier product brief. No runtime origin, OAuth callback, DNS record or mail configuration changes with this decision.
+
+Retired host note (2026-11-25): `ahmcp.link` in the status above and the context below is the retired host, kept as it was decided at the time.
 
 ## Context
 
@@ -42,8 +44,6 @@ Decided by the maintainer on 2026-11-24 and recorded in [#141](https://github.co
 ## Amendment: host switch to askharder.com
 
 Decided by the maintainer on 2026-11-24 and recorded in [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142).
-
-Retired host note (2026-11-25): `ahmcp.link` in the context and status above is the retired host, kept as it was decided at the time.
 
 - The hosted service moves from `ahmcp.link` to `askharder.com` as is. The project is in development and nobody else has access, so there is **no redirect** from the old hosts. They are removed once the switch is verified.
 - The isolated test environment moves now, to `pilot-test.askharder.com`. Production deployment is still out of scope.
