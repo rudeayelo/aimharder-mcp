@@ -27,6 +27,7 @@ import { registerBookingCreation } from './booking-creation.js';
 import { registerActivityQueries } from './activity-queries.js';
 import { registerScheduleQueries } from './schedule-queries.js';
 import { handleAimHarderSettings } from './aimharder-settings.js';
+import { brand } from './brand.js';
 export { AccountConnection } from './account-connection.js';
 
 /** Retained feasibility-harness adapter; production uses the private account object. */
@@ -53,7 +54,7 @@ async function dispatchHostedRequest(
       const handler = createMcpHandler(
         () => {
           const server = new McpServer(
-            { name: 'aimharder-mcp-hosted', version: '0.0.0' },
+            { name: brand.slug, title: brand.name, version: '0.0.0' },
             { jsonSchemaValidator: new CfWorkerJsonSchemaValidator() }
           );
           server.registerTool(

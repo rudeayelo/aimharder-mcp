@@ -302,7 +302,7 @@ Use a current Hermes release with the documented OAuth/pre-registered-client sup
 
 ```yaml
 mcp_servers:
-  aimharder:
+  askharder:
     url: "https://pilot-test.ahmcp.link/mcp"
     auth: oauth
     oauth:
@@ -313,7 +313,7 @@ mcp_servers:
       scope: "openid profile offline_access mcp:access"
 ```
 
-Run `hermes mcp login aimharder` from a fresh terminal, sign in to the portal and approve consent. Then restart or reload the intended Hermes session. [Hermes remote-host guidance](https://hermes-agent.nousresearch.com/docs/guides/oauth-over-ssh) describes forwarding the pinned loopback port when the browser and Hermes are on different machines. Keep callback links and tokens private; the service operator does not need them. The service does not advertise device-code login, open DCR or CIMD. Actual installed-version behavior, callbacks, refresh, revocation and complete Hermes journeys remain #84 acceptance.
+Run `hermes mcp login` with the server key from your own config, for example `hermes mcp login askharder`, from a fresh terminal (the key is a local label; an existing `aimharder` entry keeps working under its own name), sign in to the portal and approve consent. Then restart or reload the intended Hermes session. [Hermes remote-host guidance](https://hermes-agent.nousresearch.com/docs/guides/oauth-over-ssh) describes forwarding the pinned loopback port when the browser and Hermes are on different machines. Keep callback links and tokens private; the service operator does not need them. The service does not advertise device-code login, open DCR or CIMD. Actual installed-version behavior, callbacks, refresh, revocation and complete Hermes journeys remain #84 acceptance.
 
 The configured **900-second client callback wait does not extend the signed consent query's approximately ten-minute lifetime** (599 seconds observed; provider default 600 seconds). Complete the current consent while valid; an expired page is not evidence of a slow callback. Stop that attempt, preserve its result and obtain a separately reviewed fresh flow rather than replaying an expired URL, automatically approving follow-up tabs or weakening signature/expiry policy. See the [diagnostic evidence](#consent-stage-denial-diagnosis-and-signed-lifetime-2026-10-20).
 

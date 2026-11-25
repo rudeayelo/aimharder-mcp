@@ -1,13 +1,13 @@
 # Product experience design
 
-This is the single decision record for the AIHarder user experience: what the hosted service must feel like for an invited gym member, what is kept from design iteration 1 and what the redesign in [#95](https://github.com/rudeayelo/aimharder-mcp/issues/95) has to produce. It describes the current state. History lives in the issues and at tag [`archive/95-iteration-1`](https://github.com/rudeayelo/aimharder-mcp/tree/archive/95-iteration-1).
+This is the single decision record for the AskHarder user experience: what the hosted service must feel like for an invited gym member, what is kept from design iteration 1 and what the redesign in [#95](https://github.com/rudeayelo/aimharder-mcp/issues/95) has to produce. It describes the current state. History lives in the issues and at tag [`archive/95-iteration-1`](https://github.com/rudeayelo/aimharder-mcp/tree/archive/95-iteration-1).
 
 - Spec: [#95 — Redesign AIHarder in Figma](https://github.com/rudeayelo/aimharder-mcp/issues/95). Its Decisions section is binding; this document restates it and does not override it.
 - Parent: [#103 — Deliver the remote MCP UX/UI and GitHub documentation](https://github.com/rudeayelo/aimharder-mcp/issues/103), which owns implementation tickets #106–#117.
 - Design source: the new Figma file «AIHarder», per the [Figma decision](adr/2026-11-24-figma-design-source-of-truth.md). Pointer and asset locations: [design/README.md](../design/README.md).
 - Name and domain: [provisional product name and domain](adr/2026-11-24-provisional-product-name-and-domain.md).
 
-Nothing here is implemented or deployed by being written down. Implementation is #106–#117; the brand change in code is [#141](https://github.com/rudeayelo/aimharder-mcp/issues/141).
+Nothing here is implemented or deployed by being written down. Implementation is #106–#117; the brand module in code landed with [#141](https://github.com/rudeayelo/aimharder-mcp/issues/141) and the live host switch is [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142).
 
 ## Who it is for and the journey
 
@@ -25,7 +25,7 @@ These come from the #95 spec, approved by the maintainer.
 
 1. **Scope: invitation-only pilot, designed to be opened later.** No open registration, waiting list or sign-up flow is designed. Access-mode copy and the entry actions are isolated as a component variant, so opening the service later is a variant change, not a redesign.
 2. **Order: participant journey first**, then the landing (see [Screen inventory](#screen-inventory-by-phase)).
-3. **Name: AIHarder** in everything a user sees: web, emails, the hosted MCP server display name and service-authored text shown to users, OAuth consent and user documentation. `aimharder-mcp` is only the npm package and repository name. Domain `aiharder.link`, support address `support@aiharder.link`.
+3. **Name: AskHarder** (renamed from AIHarder on 2026-11-24, see the [name and domain decision](adr/2026-11-24-provisional-product-name-and-domain.md)) in everything a user sees: web, emails, the hosted MCP server display name and service-authored text shown to users, OAuth consent and user documentation. `aimharder-mcp` is only the npm package and repository name. Domain `askharder.com`, support address `support@askharder.com`.
 4. **Figma: a new file «AIHarder».** The iteration-1 file [AIHarder — Design](https://www.figma.com/design/9jDoWpeUEGTbtMoENvbzAB) is read-only.
 5. **The brand is provisional and cheap to change.** The plan is to run the pilot with real users and, with good feedback, propose an agreement to AimHarder (collaboration, partnership or acquisition). If they decline, the project closes; if they accept the product but not the name, the name and domain change and the product continues separately on their API. The full rationale and reopening triggers are in the [name and domain ADR](adr/2026-11-24-provisional-product-name-and-domain.md).
 6. **Logo: no new investment** beyond adapting the existing logo to the new tokens. Iterating the logo is a separate, lower-priority enhancement.
@@ -63,7 +63,7 @@ These are accepted requirements that every screen has to respect.
 
 ### Support and help
 
-- Support is a dedicated human-operated address, `support@aiharder.link`, intended to be handled in Resend Inboxes. The address is a design target: it is not configured or tested. Before activation, check the account's inbox availability and the domain's receiving setup, preserve existing mail routing, and test one inbound message and one reply ([Resend decision](adr/2026-10-18-resend-transactional-delivery.md)).
+- Support is a dedicated human-operated address, `support@askharder.com`, intended to be handled in Resend Inboxes. The address is a design target: it is not configured or tested. Before activation, check the account's inbox availability and the domain's receiving setup, preserve existing mail routing, and test one inbound message and one reply ([Resend decision](adr/2026-10-18-resend-transactional-delivery.md)).
 - Provider capabilities, from Resend's public documentation: the [Inboxes dashboard](https://resend.com/docs/dashboard/inboxes/introduction) receives, organizes and replies to threads, so a human-operated inbox needs no custom UI or receiving webhook here. [Creating an inbox](https://resend.com/docs/dashboard/inboxes/create-inboxes) requires a verified sending domain and either MX records or forwarding to a Resend receiving address; sending-domain verification alone does not make the address receive mail. [Pricing](https://resend.com/pricing) lists three inboxes on the free plan, counted against the transactional quota; these are published allowances, not this account's quota. No account, inbox, DNS or mail change has been made for this.
 - **Contact support** opens a plain `mailto:` with no prefilled user data, configuration, credentials or diagnostic logs.
 - Help is a short FAQ with concise expandable answers, each resolving one question with a next action when needed. Setup instructions stay in the client guides; recovery instructions stay next to the state they recover from. No search, ticketing or custom inbox in the portal.
@@ -143,13 +143,13 @@ Surface defaults, **provisional**: proposed with the decision, not yet confirmed
 
 ### Logo
 
-The flat Kettle mark to the left of the **AIHARDER** wordmark in Krona One. “AI” is blue; “HARDER” is navy in Light and a light neutral in Dark. The mark is navy in Light and white in Dark, with a transparent circular face cutout. It is adapted to the new tokens only, bound to the brand variables, with no redesign.
+The flat Kettle mark to the left of the product wordmark in Krona One, bound to the brand name variable. Iteration 1 drew it as **AIHARDER** with “AI” in blue and “HARDER” navy in Light and a light neutral in Dark; how the two-tone split applies to **ASKHARDER** is settled in the Figma brand round ([#137](https://github.com/rudeayelo/aimharder-mcp/issues/137)). The mark is navy in Light and white in Dark, with a transparent circular face cutout. It is adapted to the new tokens only, bound to the brand variables, with no redesign.
 
 ## Landing recommendations from the iteration-1 critique
 
 The [landing critique](research/2026-11-10-landing-page-critique.md) scored the iteration-1 desktop landing 14/20 (no P0 or P1). Its specific findings become these general rules for phase 3:
 
-1. **Say what the product is in the hero.** The supporting line states the relationship directly: AIHarder connects your AimHarder account to the AI chat you already use. The headline can stay a benefit; the sentence under it must not leave the visitor to infer the connection from the app strip or the setup steps.
+1. **Say what the product is in the hero.** The supporting line states the relationship directly: AskHarder connects your AimHarder account to the AI chat you already use. The headline can stay a benefit; the sentence under it must not leave the visitor to infer the connection from the app strip or the setup steps.
 2. **Keep demonstrations short and evidence the promise.** One question, one concrete answer, nothing unrelated. Every capability the copy names (book classes, see workouts, review records) is shown by at least one visible request and result, including an action, not only a lookup.
 3. **Decoration must not carry information.** The question wall keeps its motion and character, but the emphasized question is readable and matches the active topic, and no capability is explained only in faded text. Prefer fewer, more readable rows to a wall taller than the hero.
 4. **Measure contrast in both themes, especially small active states.** White labels sit on the darker action blue, never on the light brand blue (white on `#47a3f6` measured 2.68:1; white on `#2490f4` is 3.30:1). Informative inactive labels need the same 4.5:1 as other text.
@@ -178,7 +178,7 @@ These are inputs to phase 1, not final values. Final values live only in the Fig
 - **Brand blue:** AimHarder's `#2490f4`, observed in their [public stylesheet](https://aimharder.com/new-web/assets/main-CbA3Gj31.css) as `--color-ah-blue` (implementation evidence, not a brand guide). It is an identity color, not a background for small white text; actions use a darker derived blue (iteration 1 used `#1765B0`, 5.96:1 with white).
 - **Accent:** the Kettle's orange (`#FFAB62`) was the iteration-1 counterpoint, with dark text on it. Phase 1 measures and chooses the complementary accent. The accent never stands in for warning or success.
 - **Type:** Krona One for the wordmark only; Geist was the provisional UI family.
-- **Tone:** restrained and approachable: readable type, generous spacing, one accent, quiet separators, 48px touch targets. [Reference research](research/2026-10-28-product-experience-references.md) inspires; the AIHarder design system decides.
+- **Tone:** restrained and approachable: readable type, generous spacing, one accent, quiet separators, 48px touch targets. [Reference research](research/2026-10-28-product-experience-references.md) inspires; the AskHarder design system decides.
 
 ### Checks every phase posts
 
@@ -194,7 +194,7 @@ The current hosted service predates this design. Its gaps against the requiremen
 - The portal ([portal.ts](../hosted/src/portal.ts)) renders single-column server HTML; [connections.ts](../hosted/src/connections.ts) supplies client setup, consent and per-client revocation; [aimharder-settings.ts](../hosted/src/aimharder-settings.ts) supplies the AimHarder connection and gym settings; [mail.ts](../hosted/src/mail.ts) sends plain-text invitation, verification and recovery email.
 - Remote client setup still needs an operator to provision a public client ID and exact callback. That is the runtime baseline until the self-service replacement is designed, implemented and verified; the design must not imply that copying a server URL alone completes setup.
 - There is no first-successful-query indicator, and none is planned: consent is not evidence of a working query, and no telemetry is added for it.
-- Code and some documents still use AimHarder MCP and `ahmcp.link` until [#141](https://github.com/rudeayelo/aimharder-mcp/issues/141).
+- The hosted service reads its name, domain, support address and portal colors from one brand module, [brand.ts](../hosted/src/brand.ts) ([#141](https://github.com/rudeayelo/aimharder-mcp/issues/141)); `hosted/tests/brand.test.ts` fails if a page, email, consent screen or the MCP server description shows a retired name or if hosted source hard-codes a brand value. Live hostnames (`ahmcp.link`, `pilot-test.ahmcp.link`), the mail sender and the OAuth provider configuration stay on the existing hosts until [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142). The support address is not shown to users yet because it receives no mail.
 
 ## Vocabulary and existing decisions
 
@@ -216,4 +216,4 @@ Use the terms in [CONTEXT.md](../CONTEXT.md), especially portal account, AimHard
 - Help: whether it is a navigation entry or a persistent secondary FAQ link, and its exact content.
 - Privacy policy content beyond the design draft.
 - Licenses of the models behind the Kettle's source reconstruction, for public use (see the [asset notes](../design/assets/kettle/README.md#licenses)).
-- Support inbox activation and `aiharder.link` activation in DNS, OAuth, Resend and the Worker, coordinated with the maintainer.
+- Support inbox activation and `askharder.com` activation in DNS, OAuth, Resend and the Worker, coordinated with the maintainer ([#142](https://github.com/rudeayelo/aimharder-mcp/issues/142)).

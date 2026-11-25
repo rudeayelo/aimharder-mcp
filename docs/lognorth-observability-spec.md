@@ -8,7 +8,7 @@ Capacity amendment (2026-10-29): the owner reports completing an upgrade to Work
 
 ## Purpose and scope
 
-Provide technical diagnosis and aggregate operational understanding of the hosted AimHarder MCP service using the existing LogNorth installation while remaining on Workers Free. Cover portal, authentication, all 18 hosted MCP tools and scheduled deletion maintenance. Local stdio instrumentation, durable delivery, participant tracking, portal diagnostics, uptime pings, recurring functional journeys and alerts for missing cron executions are outside this delivery.
+Provide technical diagnosis and aggregate operational understanding of the hosted AskHarder service using the existing LogNorth installation while remaining on Workers Free. Cover portal, authentication, all 18 hosted MCP tools and scheduled deletion maintenance. Local stdio instrumentation, durable delivery, participant tracking, portal diagnostics, uptime pings, recurring functional journeys and alerts for missing cron executions are outside this delivery.
 
 Telemetry is not an audit record or proof that a sporting write occurred. Existing action coordination, account isolation and independent recovery/deletion records remain authoritative. Unsampled instrumentation and aggregate metrics describe received observations, not exhaustive history or exact business totals.
 

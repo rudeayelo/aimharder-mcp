@@ -1,3 +1,4 @@
+import { brand } from '../src/brand.js';
 import { initializeTestRecovery } from './recovery-fixture.js';
 import { readFile, readdir } from 'node:fs/promises';
 import { afterAll, beforeAll, expect, test } from 'vitest';
@@ -72,7 +73,7 @@ test('the invited owner verifies email before password sign-in, through maintain
   expect(signup.status).toBe(200);
   expect(cookies(signup)).not.toContain('session_token');
   expect((await post('/api/auth/sign-in/email', { email: 'owner@example.invalid', password })).status).toBe(403);
-  const verification = await worker.dispatchFetch(messageUrl('owner@example.invalid', 'Verify your email'), { redirect: 'manual' });
+  const verification = await worker.dispatchFetch(messageUrl('owner@example.invalid', `Verify your email for ${brand.name}`), { redirect: 'manual' });
   expect(verification.status).toBe(302);
   const signIn = await post('/api/auth/sign-in/email', { email: 'owner@example.invalid', password });
   expect(signIn.status).toBe(200);
@@ -85,7 +86,7 @@ async function issueInvitation(email: string) {
   const response = await post('/api/portal/invitations', { email }, { cookie: adminCookie });
   expect(response.status).toBe(201);
   const { id } = await response.json() as { id: string };
-  const url = new URL(messageUrl(email, 'Your AimHarder MCP invitation'));
+  const url = new URL(messageUrl(email, `Your ${brand.name} invitation`));
   return { id, token: url.searchParams.get('token')! };
 }
 async function signup(email: string, token?: string) {
@@ -99,7 +100,7 @@ test('only the administrator issues, lists and revokes email-bound invitations; 
   expect((await signup('uninvited@example.invalid')).status).toBe(403);
   expect((await signup('wrong-address@example.invalid', token)).status).toBe(403);
   expect((await signup('MEMBER@example.invalid', token)).status).toBe(200);
-  const verified = await worker.dispatchFetch(messageUrl('member@example.invalid', 'Verify your email'), { redirect: 'manual' });
+  const verified = await worker.dispatchFetch(messageUrl('member@example.invalid', `Verify your email for ${brand.name}`), { redirect: 'manual' });
   expect(verified.status).toBe(302);
   const signIn = await post('/api/auth/sign-in/email', { email: 'member@example.invalid', password });
   expect(signIn.status).toBe(200);
@@ -132,7 +133,7 @@ test('recovery preserves the admitted identity, revokes old sessions and cannot 
   const oldCookie = cookies(oldSignIn);
   const identity = await oldSignIn.json() as { user: { id: string } };
   expect((await post('/api/auth/request-password-reset', { email: 'member@example.invalid', redirectTo: origin + '/reset-password' })).status).toBe(200);
-  const resetCallback = await worker.dispatchFetch(messageUrl('member@example.invalid', 'Reset your portal password'), { redirect: 'manual' });
+  const resetCallback = await worker.dispatchFetch(messageUrl('member@example.invalid', `Reset your ${brand.name} password`), { redirect: 'manual' });
   expect(resetCallback.status).toBe(302);
   const resetUrl = new URL(resetCallback.headers.get('location')!);
   const resetPage = await worker.dispatchFetch(resetUrl);
@@ -152,7 +153,7 @@ test('recovery preserves the admitted identity, revokes old sessions and cannot 
 test('revoking a pending invitation blocks its verification; a new invitation creates a fresh credential generation', async () => {
   const first = await issueInvitation('reinvited@example.invalid');
   expect((await signup('reinvited@example.invalid', first.token)).status).toBe(200);
-  const oldVerification = messageUrl('reinvited@example.invalid', 'Verify your email');
+  const oldVerification = messageUrl('reinvited@example.invalid', `Verify your email for ${brand.name}`);
   expect((await post(`/api/portal/invitations/${first.id}/revoke`, {}, { cookie: adminCookie })).status).toBe(200);
   expect((await worker.dispatchFetch(oldVerification, { redirect: 'manual' })).status).toBe(403);
   const second = await issueInvitation('reinvited@example.invalid');
@@ -161,7 +162,7 @@ test('revoking a pending invitation blocks its verification; a new invitation cr
     callbackURL: origin + '/verification-result',
   }, { 'x-portal-invitation': second.token });
   expect(freshSignup.status).toBe(200);
-  const newVerification = messageUrl('reinvited@example.invalid', 'Verify your email');
+  const newVerification = messageUrl('reinvited@example.invalid', `Verify your email for ${brand.name}`);
   expect(newVerification !== oldVerification).toBe(true);
   expect((await worker.dispatchFetch(oldVerification, { redirect: 'manual' })).status).toBe(403);
   expect((await worker.dispatchFetch(newVerification, { redirect: 'manual' })).status).toBe(302);
@@ -182,19 +183,19 @@ test('expired invitations fail both admission stages while already admitted user
   await seedInvitation('expires-accepted@example.invalid', 'synthetic-accepted-expiry', Date.now() + 1000);
   expect((await signup('expires-pending@example.invalid', 'synthetic-pending-expiry')).status).toBe(200);
   expect((await signup('expires-accepted@example.invalid', 'synthetic-accepted-expiry')).status).toBe(200);
-  expect((await worker.dispatchFetch(messageUrl('expires-accepted@example.invalid', 'Verify your email'), { redirect: 'manual' })).status).toBe(302);
+  expect((await worker.dispatchFetch(messageUrl('expires-accepted@example.invalid', `Verify your email for ${brand.name}`), { redirect: 'manual' })).status).toBe(302);
   await new Promise(resolve => setTimeout(resolve, 1050));
-  expect((await worker.dispatchFetch(messageUrl('expires-pending@example.invalid', 'Verify your email'), { redirect: 'manual' })).status).toBe(403);
+  expect((await worker.dispatchFetch(messageUrl('expires-pending@example.invalid', `Verify your email for ${brand.name}`), { redirect: 'manual' })).status).toBe(403);
   const recovery = await post('/api/auth/request-password-reset', { email: 'expires-accepted@example.invalid', redirectTo: origin + '/reset-password' });
   expect(recovery.status).toBe(200);
-  expect(Boolean(messageUrl('expires-accepted@example.invalid', 'Reset your portal password'))).toBe(true);
+  expect(Boolean(messageUrl('expires-accepted@example.invalid', `Reset your ${brand.name} password`))).toBe(true);
 });
 
 test('verification and revoke races have one durable outcome, including simultaneous verification retries', async () => {
   const email = 'racing@example.invalid';
   const invite = await issueInvitation(email);
   expect((await signup(email, invite.token)).status).toBe(200);
-  const verificationUrl = messageUrl(email, 'Verify your email');
+  const verificationUrl = messageUrl(email, `Verify your email for ${brand.name}`);
   const [verification, revoke] = await Promise.all([
     worker.dispatchFetch(verificationUrl, { redirect: 'manual' }),
     post(`/api/portal/invitations/${invite.id}/revoke`, {}, { cookie: adminCookie }),
@@ -210,7 +211,7 @@ test('verification and revoke races have one durable outcome, including simultan
   }
   const duplicate = await issueInvitation('simultaneous@example.invalid');
   await signup('simultaneous@example.invalid', duplicate.token);
-  const url = messageUrl('simultaneous@example.invalid', 'Verify your email');
+  const url = messageUrl('simultaneous@example.invalid', `Verify your email for ${brand.name}`);
   const attempts = await Promise.all([worker.dispatchFetch(url, { redirect: 'manual' }), worker.dispatchFetch(url, { redirect: 'manual' })]);
   expect(attempts.map(response => response.status)).toEqual([302, 302]);
   expect((await post('/api/auth/sign-in/email', { email: 'simultaneous@example.invalid', password })).status).toBe(200);
@@ -228,7 +229,7 @@ test('invitation and verification delivery failures report unavailable while rec
   } finally { mailFails = false; }
   const resend = await post('/api/auth/send-verification-email', { email: 'mail-retry@example.invalid', callbackURL: origin + '/verification-result' });
   expect(resend.status).toBe(200);
-  expect((await worker.dispatchFetch(messageUrl('mail-retry@example.invalid', 'Verify your email'), { redirect: 'manual' })).status).toBe(302);
+  expect((await worker.dispatchFetch(messageUrl('mail-retry@example.invalid', `Verify your email for ${brand.name}`), { redirect: 'manual' })).status).toBe(302);
   const list = await worker.dispatchFetch(origin + '/api/portal/invitations', { headers: { cookie: adminCookie } });
   const data = await list.json() as { invitations: { email: string; status: string }[] };
   expect(data.invitations.find(item => item.email === 'undelivered@example.invalid')?.status).toBe('revoked');
@@ -248,7 +249,7 @@ test('public HTML forms complete enrollment, sign-in and sign-out, and reject cr
   const enrollment = await form('/portal/sign-up', { invitation: invite.token, email: 'forms@example.invalid', name: 'Form Participant', password });
   expect(enrollment.status).toBe(200);
   expect(await enrollment.text()).toContain('Check your email');
-  await worker.dispatchFetch(messageUrl('forms@example.invalid', 'Verify your email'), { redirect: 'manual' });
+  await worker.dispatchFetch(messageUrl('forms@example.invalid', `Verify your email for ${brand.name}`), { redirect: 'manual' });
   const login = await form('/portal/sign-in', { email: 'forms@example.invalid', password });
   expect(login.status).toBe(303);
   const cookie = cookies(login);

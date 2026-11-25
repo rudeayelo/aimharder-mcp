@@ -2,6 +2,8 @@
 
 Status: accepted for scope and privacy on 2026-10-28. The owner confirmed the consolidated specification, published as [issue #94](https://github.com/rudeayelo/aimharder-mcp/issues/94); implementation and deployment are not authorized by this ADR.
 
+Superseded in part, 2026-11-25: the product name AimHarder MCP used below is superseded by AskHarder in the [provisional product name and domain decision](2026-11-24-provisional-product-name-and-domain.md#amendment-askharder-and-askhardercom). The observability scope and privacy decision is unchanged.
+
 Capacity amendment (2026-10-29): the Free-only planning premise below is superseded by the owner-selected Paid reference in the [delivery ADR amendment](2026-10-28-best-effort-hosted-telemetry-delivery.md#owner-selected-paid-capacity-reference-2026-10-29). The scope/privacy decision remains accepted and unchanged; the current Paid subscription was later independently [verified in the authenticated dashboard](../hosted-telemetry-resource-followup.md#authenticated-dashboard-verification-2026-10-29).
 
 ## Context

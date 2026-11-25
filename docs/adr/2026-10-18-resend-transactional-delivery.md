@@ -2,7 +2,7 @@
 
 Status: accepted on 2026-10-18 after the user supplied an existing Resend credential for the authorized isolated test environment, with no purchases or plan changes. Supersedes only the native Cloudflare email-provider selection in the [invited password decision](2026-10-18-invited-password-admission.md). Complements the [test-environment boundary](2026-10-18-isolated-cloudflare-test-environment.md).
 
-Superseded in part, 2026-11-24: the support address `support@ahmcp.link` is superseded by `support@aiharder.link` in the [provisional product name and domain decision](2026-11-24-provisional-product-name-and-domain.md). The Resend Inboxes choice and its pending activation are unchanged; current sending configuration stays in place until [#141](https://github.com/rudeayelo/aimharder-mcp/issues/141) and its coordinated activation.
+Superseded in part, 2026-11-24: the support address `support@ahmcp.link` is superseded by `support@askharder.com` in the [provisional product name and domain decision](2026-11-24-provisional-product-name-and-domain.md). The Resend Inboxes choice and its pending activation are unchanged; current sending configuration stays in place until the host switch in [#142](https://github.com/rudeayelo/aimharder-mcp/issues/142).
 
 ## Context
 
