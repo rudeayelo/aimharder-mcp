@@ -201,15 +201,16 @@ test('ready preview uses independent account audience, exact source and structur
   expect(activityWrites()).toHaveLength(0);
 });
 
-test('an account settings response that is not JSON fails closed before any workout read', async () => {
+test.each([
+  ['an HTML page (the old settings page)', '<!doctype html><div id="root"></div>'],
+  ['truncated JSON', '{"data":'],
+])('an account settings response that is %s fails closed before any workout read', async (_name, body) => {
   const client = await connect();
-  for (const body of ['<!doctype html><div id="root"></div>', '{"data":']) {
-    upstream.use(http.get(settingsUrl, () => HttpResponse.text(body)));
-    const result = await prepare(client);
-    expect(result.isError).toBe(true);
-    expect(JSON.stringify(result)).toContain('INVALID_ACTIVITY_PREFERENCES');
-    expect(requests.filter(r => r.path === '/' || r.path.startsWith('/api/activity'))).toHaveLength(0);
-  }
+  upstream.use(http.get(settingsUrl, () => HttpResponse.text(body)));
+  const result = await prepare(client);
+  expect(result.isError).toBe(true);
+  expect(JSON.stringify(result)).toContain('INVALID_ACTIVITY_PREFERENCES');
+  expect(requests.filter(r => r.path === '/' || r.path.startsWith('/api/activity'))).toHaveLength(0);
   expect(activityWrites()).toHaveLength(0);
 });
 

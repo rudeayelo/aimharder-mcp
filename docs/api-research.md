@@ -344,4 +344,10 @@ An authenticated, read-only inspection on 2026-11-26 found `GET https://aimharde
 
 The values matched the screen for the inspected account (followers, WOD TV shown). The save still posts `USPRIVACIDADDEF` and `USPRIVCAST`, so the value semantics above are unchanged. The AimHarder UI coerces a missing value to `0`; the checkout does not.
 
-The checkout reads this endpoint for every publication preview, execution recheck and recovery. It accepts only the exact integers `privacy` `1|2|4` and `privCast` `0|1` with `isAimfighter: false`. Anything else, including `null`, a missing field, a numeric string, an unknown number, an Aimfighter account or a body that is not JSON (such as the old HTML page), fails closed with `INVALID_ACTIVITY_PREFERENCES` before any workout read. This is fixture-verified; a live read through the new code is pending the maintainer's read-only check. The rest of the publication read chain (gym page publisher marker, feed, own detail, Copy source) returned the same shapes in the same inspection.
+The checkout reads this endpoint first whenever it reads the publication source: for a preview, for the recheck before execution and for recovery. It accepts only the exact integers `privacy` `1|2|4` and `privCast` `0|1` with `isAimfighter: false`. Anything else is invalid, including `null`, a missing field, a numeric string, an unknown number, an Aimfighter account or a body that is not JSON (such as the old HTML page). What happens then depends on the step:
+
+- Preparation returns `INVALID_ACTIVITY_PREFERENCES` before any workout read, and issues no reference.
+- Execution returns `stale` before dispatch, and sends no POST.
+- Recovery treats it as a failed source validation and may continue with the own calendar and detail read-back.
+
+These behaviors are fixture-verified. A live read-only check on 2026-11-26 is recorded in the [validation record](validation.md#publication-audience-from-the-settings-api-157-2026-11-26). The diagnosis inspection above also found the rest of the publication read chain (gym page publisher marker, feed, own detail, Copy source) returning the same shapes as before.
