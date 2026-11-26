@@ -34,13 +34,7 @@ test('one MCP client previews, publishes, reads back, previews deletion, and obs
     http.get('https://aimharder.es/api/whoami', () => HttpResponse.json({ data: [{ id: 42, roles: [
       { role: 'client', boid: 200, gym: 'Sample Gym', centre_url: 'sample-gym.aimharder.es' },
     ] }] })),
-    http.get('https://aimharder.es/settings', () => HttpResponse.text(`<form id="frmConfiguration">¿Quién puede ver tus publicaciones?
-      <input type="radio" name="USPRIVACIDADDEF" value="2">
-      <input type="radio" name="USPRIVACIDADDEF" value="1" checked>
-      <input type="radio" name="USPRIVACIDADDEF" value="4">
-      <input type="radio" name="USPRIVCAST" value="0" checked>
-      <input type="radio" name="USPRIVCAST" value="1">
-    </form>`)),
+    http.get('https://aimharder.es/api/settings/context', () => HttpResponse.json({ data: { privacy: 1, privCast: 0, isAimfighter: false } })),
     http.get('https://sample-gym.aimharder.es/', () => HttpResponse.text('timeLineContent: 7, userID: 300')),
     http.get('https://sample-gym.aimharder.es/api/activity', () => HttpResponse.json({
       timeLineContent: '7', timeLineFormat: '0', curDate: '20260928',

@@ -850,7 +850,10 @@ export class AimHarderClient {
   }
 
   async #readPublicationSource(gym: Gym, boxId: number, sourceId: number) {
-    const audience = parsePublicationAudience(await this.#request({ kind: 'account-settings' }));
+    // An unreadable body (not JSON, such as the retired HTML settings page, empty or oversized) leaves the audience unverified.
+    const audience = parsePublicationAudience(await this.#request({ kind: 'settings-context' }).catch((error: unknown) => {
+      throw error instanceof AimHarderError && error.code === 'INVALID_RESPONSE' ? new AimHarderError('INVALID_ACTIVITY_PREFERENCES') : error;
+    }));
     const html = await this.#request({ kind: 'gym-page', gymId: gym.id });
     if (typeof html !== 'string') throw new AimHarderError('INVALID_WORKOUT_RESPONSE');
     const publishers = [...html.matchAll(/timeLineContent:\s*7,\s*userID:\s*(\d+)/g)].map(match => Number(match[1]));
@@ -1118,7 +1121,7 @@ export class AimHarderClient {
     return [...gyms.values()];
   }
 
-  async #request(operation: { kind: 'activity-calendar'; month: string } | { kind: 'activity-detail'; sourceId: number } | { kind: 'activity-delete'; gymId: string; sourceId: number } | 'login' | 'identity' | { kind: 'classes'; gymId: string; boxId: number; date: string } | { kind: 'book-create'; gymId: string; sourceId: number; date: string } | { kind: 'book-cancel'; gymId: string; reservationId: number; late: boolean } | { kind: 'activity-post'; gymId: string; form: FormData } | { kind: 'upcoming'; gymId: string; boxId: number } | { kind: 'gym-page'; gymId: string } | { kind: 'account-settings' } | { kind: 'feed'; gymId: string; publisher: number } | { kind: 'workout'; gymId: string; sourceId: number } | { kind: 'copy-source'; gymId: string; sourceId: number } | { kind: 'exercise-detail'; gymId: string; exerciseId: number; accountId: number } | { kind: 'exercise-search'; gymId: string; name: string }, beforeDispatch?: () => Promise<void>): Promise<unknown> {
+  async #request(operation: { kind: 'activity-calendar'; month: string } | { kind: 'activity-detail'; sourceId: number } | { kind: 'activity-delete'; gymId: string; sourceId: number } | 'login' | 'identity' | { kind: 'classes'; gymId: string; boxId: number; date: string } | { kind: 'book-create'; gymId: string; sourceId: number; date: string } | { kind: 'book-cancel'; gymId: string; reservationId: number; late: boolean } | { kind: 'activity-post'; gymId: string; form: FormData } | { kind: 'upcoming'; gymId: string; boxId: number } | { kind: 'gym-page'; gymId: string } | { kind: 'settings-context' } | { kind: 'feed'; gymId: string; publisher: number } | { kind: 'workout'; gymId: string; sourceId: number } | { kind: 'copy-source'; gymId: string; sourceId: number } | { kind: 'exercise-detail'; gymId: string; exerciseId: number; accountId: number } | { kind: 'exercise-search'; gymId: string; name: string }, beforeDispatch?: () => Promise<void>): Promise<unknown> {
     let url: string;
     if (typeof operation === 'string') url = operation === 'login' ? loginUrl : identityUrl;
     else {
@@ -1128,7 +1131,7 @@ export class AimHarderClient {
         case 'activity-detail': url = `${origin}/api/activity/workout?SEID=${operation.sourceId}`; break;
         case 'activity-delete': url = `${origin}/api/activity/${operation.sourceId}`; break;
         case 'gym-page': url = `${origin}/`; break;
-        case 'account-settings': url = 'https://aimharder.es/settings'; break;
+        case 'settings-context': url = 'https://aimharder.es/api/settings/context'; break;
         case 'feed': url = `${origin}/api/activity?${new URLSearchParams({ timeLineFormat: '0', timeLineContent: '7', userID: String(operation.publisher) })}`; break;
         case 'workout': url = `${origin}/api/activity/workout?SEID=${operation.sourceId}`; break;
         case 'copy-source': url = `${origin}/api/activity/samewod/${operation.sourceId}`; break;
@@ -1185,7 +1188,7 @@ export class AimHarderClient {
       for (const setCookie of response.headers.getSetCookie()) {
         await this.#cookies.setCookie(setCookie, url);
       }
-      return await readResponse(response, typeof operation === 'object' && (operation.kind === 'gym-page' || operation.kind === 'account-settings'));
+      return await readResponse(response, typeof operation === 'object' && operation.kind === 'gym-page');
     } catch (error) {
       if (error instanceof AimHarderError || error instanceof SessionExpired) throw error;
       throw new AimHarderError('REQUEST_FAILED');
