@@ -31,25 +31,20 @@ export const publicationExecutionSchema = z.object({
 }).strict();
 
 export type PublicationAudience = { publication: 'everyone' | 'followers' | 'only-me'; wodTvResults: boolean };
-function checkedRadio(form: string, name: string, values: readonly string[]): string {
-  const inputs = [...form.matchAll(/<input\b[^>]*>/gi)].map(match => match[0]!).filter(input =>
-    new RegExp(`\\bname=["']${name}["']`, 'i').test(input));
-  if (inputs.length !== values.length) throw new AimHarderError('INVALID_ACTIVITY_PREFERENCES');
-  const found = inputs.map(input => ({ value: /\bvalue=["']([^"']+)["']/i.exec(input)?.[1], checked: /\bchecked(?:\s*=|\s|>)/i.test(input) }));
-  if (new Set(found.map(row => row.value)).size !== values.length || found.some(row => !row.value || !values.includes(row.value)))
-    throw new AimHarderError('INVALID_ACTIVITY_PREFERENCES');
-  const selected = found.filter(row => row.checked);
-  if (selected.length !== 1) throw new AimHarderError('INVALID_ACTIVITY_PREFERENCES');
-  return selected[0]!.value!;
-}
+// GET https://aimharder.es/api/settings/context. Only exact integer values are
+// accepted: AimHarder's own UI coerces a missing value to 0, which must not happen
+// here. Aimfighter accounts have a different option set and stay unsupported.
+const settingsContextSchema = z.object({ data: z.object({
+  privacy: z.union([z.literal(1), z.literal(2), z.literal(4)]),
+  privCast: z.union([z.literal(0), z.literal(1)]),
+  isAimfighter: z.literal(false),
+}) });
+const publicationByPrivacy = { 1: 'followers', 2: 'everyone', 4: 'only-me' } as const;
 
 export function parsePublicationAudience(body: unknown): PublicationAudience {
-  if (typeof body !== 'string') throw new AimHarderError('INVALID_ACTIVITY_PREFERENCES');
-  const form = /<form\b[^>]*\bid=["']frmConfiguration["'][^>]*>([\s\S]*?)<\/form>/i.exec(body)?.[1];
-  if (!form || !form.includes('¿Quién puede ver tus publicaciones?')) throw new AimHarderError('INVALID_ACTIVITY_PREFERENCES');
-  const publication = checkedRadio(form, 'USPRIVACIDADDEF', ['1', '2', '4']);
-  const wodTv = checkedRadio(form, 'USPRIVCAST', ['0', '1']);
-  return { publication: publication === '1' ? 'followers' : publication === '2' ? 'everyone' : 'only-me', wodTvResults: wodTv === '0' };
+  const context = settingsContextSchema.safeParse(body);
+  if (!context.success) throw new AimHarderError('INVALID_ACTIVITY_PREFERENCES');
+  return { publication: publicationByPrivacy[context.data.data.privacy], wodTvResults: context.data.data.privCast === 0 };
 }
 
 const copySchema = z.object({ box: z.array(z.object({

@@ -1,0 +1,55 @@
+{
+  "data": {
+    "name": "Sample Athlete",
+    "sex": "H",
+    "bio": "",
+    "boxId": 300,
+    "boxName": "Sample Gym - City, Country",
+    "photoUrl": "https://example.invalid/sample.jpg",
+    "hasPhoto": true,
+    "defaultPhotoUrl": "https://aimharder.es/Images/headHombre.jpg",
+    "headerUrl": null,
+    "headerFallbackUrl": "https://aimharder.es/Images/bgUser.jpg",
+    "privacy": 1,
+    "privCast": 0,
+    "languageId": 1,
+    "notifBooked": 0,
+    "notifBookedByBox": 0,
+    "notifCancelled": 0,
+    "notifCancelledByBox": 0,
+    "notifClassCancelled": 0,
+    "mail": "athlete@example.invalid",
+    "mailBlocked": false,
+    "commercialBlocked": false,
+    "askPassword": true,
+    "isAimfighter": false,
+    "redirectHome": false,
+    "pageTitle": "AimHarder / Ajustes",
+    "languages": [
+      {
+        "id": 3,
+        "name": "Català"
+      },
+      {
+        "id": 2,
+        "name": "English"
+      },
+      {
+        "id": 1,
+        "name": "Español"
+      },
+      {
+        "id": 5,
+        "name": "Euskara"
+      },
+      {
+        "id": 4,
+        "name": "Galego"
+      }
+    ]
+  },
+  "info": {
+    "version": "1.0",
+    "copyright": "Copyright © 2026 Aimharder Global. All rights reserved."
+  }
+}

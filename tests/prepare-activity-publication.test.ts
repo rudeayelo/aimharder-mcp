@@ -18,13 +18,9 @@ const feed = (elements: unknown[] = [{ id: sourceId, wodClass: 'WOD', ejerRate: 
 const copy = (extra: Record<string, unknown> = {}) => ({ box: [{ boxID: 200, userId: 300,
   date: '2026-09-28T00:00:00', rates: [sourceExercise], TIPOWODs: [sourceBlock],
   userNom: 'Publisher Private Name', userPic: 'private-image', ...extra }] });
-const settings = (audience = '1', tv = '0') => `<form id="frmConfiguration">¿Quién puede ver tus publicaciones?
-  <input type="radio" name="USPRIVACIDADDEF" value="2" ${audience === '2' ? 'checked' : ''}>
-  <input type="radio" name="USPRIVACIDADDEF" value="1" ${audience === '1' ? 'checked' : ''}>
-  <input type="radio" name="USPRIVACIDADDEF" value="4" ${audience === '4' ? 'checked' : ''}>
-  <input type="radio" name="USPRIVCAST" value="0" ${tv === '0' ? 'checked' : ''}>
-  <input type="radio" name="USPRIVCAST" value="1" ${tv === '1' ? 'checked' : ''}>
-  </form>`;
+const settings = (privacy = 1, privCast = 0) => ({ data: { name: 'Sample Athlete', boxId: 300, privacy, privCast,
+  isAimfighter: false, languageId: 1 }, info: { version: '1.0' } });
+const settingsUrl = 'https://aimharder.es/api/settings/context';
 
 beforeAll(() => upstream.listen({ onUnhandledRequest: 'error' }));
 beforeEach(() => {
@@ -37,7 +33,7 @@ beforeEach(() => {
     http.get('https://aimharder.es/api/whoami', () => HttpResponse.json({ data: [{ id: 42, roles: [
       { role: 'client', boid: 200, gym: 'Sample Gym', centre_url: 'sample-gym.aimharder.es' },
     ] }] })),
-    http.get('https://aimharder.es/settings', () => HttpResponse.text(settings())),
+    http.get(settingsUrl, () => HttpResponse.json(settings())),
     http.get('https://sample-gym.aimharder.es/', () => HttpResponse.text('timeLineContent: 7, userID: 300')),
     http.get('https://sample-gym.aimharder.es/api/activity', () => HttpResponse.json(feed())),
     http.get('https://sample-gym.aimharder.es/api/activity/workout', () => HttpResponse.json(detail())),
@@ -205,6 +201,18 @@ test('ready preview uses independent account audience, exact source and structur
   expect(activityWrites()).toHaveLength(0);
 });
 
+test('an account settings response that is not JSON fails closed before any workout read', async () => {
+  const client = await connect();
+  for (const body of ['<!doctype html><div id="root"></div>', '{"data":']) {
+    upstream.use(http.get(settingsUrl, () => HttpResponse.text(body)));
+    const result = await prepare(client);
+    expect(result.isError).toBe(true);
+    expect(JSON.stringify(result)).toContain('INVALID_ACTIVITY_PREFERENCES');
+    expect(requests.filter(r => r.path === '/' || r.path.startsWith('/api/activity'))).toHaveLength(0);
+  }
+  expect(activityWrites()).toHaveLength(0);
+});
+
 test('missing source in bounded feed has no reference and never probes an arbitrary source ID', async () => {
   const result = await prepare(await connect(), { sourceActivityId: 9999 });
   expect(result.structuredContent).toMatchObject({ status: 'missing' });
@@ -215,9 +223,9 @@ test('missing source in bounded feed has no reference and never probes an arbitr
 
 test('unsupported audience, source identity, date and score kind never issue a reference', async () => {
   const client = await connect();
-  upstream.use(http.get('https://aimharder.es/settings', () => HttpResponse.text(settings('9'))));
+  upstream.use(http.get(settingsUrl, () => HttpResponse.json(settings(9))));
   expect((await prepare(client)).isError).toBe(true);
-  upstream.use(http.get('https://aimharder.es/settings', () => HttpResponse.text(settings())));
+  upstream.use(http.get(settingsUrl, () => HttpResponse.json(settings())));
   upstream.use(http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy({ boxID: 201 }))));
   expect((await prepare(client)).isError).toBe(true);
   upstream.use(http.get('https://sample-gym.aimharder.es/api/activity/samewod/:id', () => HttpResponse.json(copy())));
@@ -546,10 +554,10 @@ test('missing confirmation, changed preferences, expired and reused references s
   const client = await connect();
   const one = (await prepare(client)).structuredContent as { actionReference: string };
   expect((await execute(client, one.actionReference, { confirmed: false })).isError).toBe(true);
-  upstream.use(http.get('https://aimharder.es/settings', () => HttpResponse.text(settings('4'))));
+  upstream.use(http.get(settingsUrl, () => HttpResponse.json(settings(4))));
   expect((await execute(client, one.actionReference)).structuredContent).toMatchObject({ status: 'stale' });
   expect((await execute(client, one.actionReference)).isError).toBe(true);
-  upstream.use(http.get('https://aimharder.es/settings', () => HttpResponse.text(settings())));
+  upstream.use(http.get(settingsUrl, () => HttpResponse.json(settings())));
   const two = (await prepare(client)).structuredContent as { actionReference: string };
   vi.setSystemTime(new Date('2026-09-28T12:03:00Z'));
   expect((await execute(client, two.actionReference)).isError).toBe(true);
