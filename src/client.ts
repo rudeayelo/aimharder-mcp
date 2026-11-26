@@ -850,7 +850,7 @@ export class AimHarderClient {
   }
 
   async #readPublicationSource(gym: Gym, boxId: number, sourceId: number) {
-    // A body that is not JSON (such as the retired HTML settings page) leaves the audience unverified.
+    // An unreadable body (not JSON, such as the retired HTML settings page, empty or oversized) leaves the audience unverified.
     const audience = parsePublicationAudience(await this.#request({ kind: 'settings-context' }).catch((error: unknown) => {
       throw error instanceof AimHarderError && error.code === 'INVALID_RESPONSE' ? new AimHarderError('INVALID_ACTIVITY_PREFERENCES') : error;
     }));
