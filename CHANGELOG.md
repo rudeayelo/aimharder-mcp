@@ -1,5 +1,12 @@
 # aimharder-mcp
 
+## 0.5.7
+
+### Patch Changes
+
+- e073c6a: Update the README's note on the hosted service: its isolated test environment is configured for `pilot-test.askharder.com`.
+- 6eb310f: Fix `prepare_activity_publication` always failing with `INVALID_ACTIVITY_PREFERENCES`. AimHarder's redesigned settings page no longer contains the publication audience, so the server now reads it, and the WOD TV setting, from AimHarder's settings API. Unknown values and Aimfighter accounts still fail closed.
+
 ## 0.5.6
 
 ### Patch Changes
